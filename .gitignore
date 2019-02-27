@@ -1,0 +1,22 @@
+#######
+# SDK #
+#######
+
+*.log
+*.jou
+
+sdk/.metadata/
+sdk/.sdk/
+
+sdk/webtalk/
+sdk/system.hdf_expanded/
+
+sdk/**/Debug/
+sdk/**/Release/
+
+sdk/*.hdf
+
+sdk/**/*.bit
+sdk/**/*.a
+sdk/**/*.o
+sdk/**/*.d
