@@ -16,9 +16,9 @@ interface. Please ensure a duplicate issue doesn't already exist.
 2. Write enough details in the description that anyone else familiar
    with the project can take action and be productive on this topic
 3. Populate metadata fields
-  a. Use "Assignees" to assign relevant people to work on the issue
-  b. Use "Labels" to assign appropriate tags
-  c. Use "Milestone" to assign issue to group
+   1. Use `Assignees` to assign relevant people to work on the issue
+   2. Use `Labels` to assign appropriate tags
+   3. Use `Milestone` to assign issue to group
 
 # How to provide a patch for a new feature
 
