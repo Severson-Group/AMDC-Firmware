@@ -19,14 +19,18 @@ volatile u32 *LEDs;
  */
 double ReadADC(u32 uiADCnum)
 {
-	signed int iADC = 0;
-	double dbADCval = 0, dbTemp;
+	float v;
+	analog_getf(uiADCnum, &v);
+	return v;
 
-	if ( (uiADCnum > 0) && (uiADCnum < 13) )
-		iADC = PECB[uiADCnum-1];
-	dbTemp = iADC;
-	dbADCval = (dbTemp / 0x7FF) * 10;
-	return dbADCval;
+//	signed int iADC = 0;
+//	double dbADCval = 0, dbTemp;
+//
+//	if ( (uiADCnum > 0) && (uiADCnum < 13) )
+//		iADC = PECB[uiADCnum-1];
+//	dbTemp = iADC;
+//	dbADCval = (dbTemp / 0x7FF) * 10;
+//	return dbADCval;
 }
 
 /*void WriteDutyFraction(u32 Leg, float frac)
@@ -47,8 +51,9 @@ double ReadADC(u32 uiADCnum)
  */
 void WriteDutyRatio(u32 Leg, unsigned char value)
 {
+	inverter_set_duty(Leg-1, value);
 
-	PECB[Leg-1] = value;
+//	PECB[Leg-1] = value;
 
 }
 

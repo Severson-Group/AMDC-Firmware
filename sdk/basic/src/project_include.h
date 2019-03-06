@@ -10,7 +10,7 @@
 #include "xparameters_ps.h"	/* defines XPAR values */
 #include "xil_cache.h"
 #include "netif/xadapter.h"
-#include "xgpio.h"
+// #include "xgpio.h"
 #include "xscutimer.h"
 #include "xscugic.h"
 #include "xil_exception.h"
@@ -33,6 +33,8 @@
 #include "lwip_glue.h"
 #include "control.h"
 #include "io_pecb.h"
+
+#include "../bsp/bsp.h"
 
 //Control applications (maybe make this conditional)
 #include "../control_apps/VSI_DQ_SVPWM.h"
