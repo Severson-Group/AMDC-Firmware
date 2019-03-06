@@ -928,7 +928,12 @@
 	assign D_L[23] = slv_reg23;
 	
 	// Carrier	
-	triangle_carrier gen_carrier (CLK, 1'b1, 8'd0, carrier);
+	triangle_carrier iCarrier (
+		.clk(CLK),
+		.rst_n(S_AXI_ARESETN),
+		.divider(8'd0),
+		.carrier(carrier)
+	);
 	
 	// PWM
 	pwm_gen_var pwmL1 (CLK, 1'b1, carrier, D_L[0], sL[0]);

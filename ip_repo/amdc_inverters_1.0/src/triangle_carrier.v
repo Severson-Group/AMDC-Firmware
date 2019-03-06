@@ -1,65 +1,81 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+
+// ****************
+// Triangle Carrier
+// ****************
+//
+// Original implementation by Eric Severson,
 // 
-// Create Date:    17:22:05 06/07/2013 
-// Design Name: 
-// Module Name:    triangle_carrier 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
+// Cleaned up by Nathan Petersen, March 5, 2019
 //
-// Dependencies: 
+// ------
+// 
+// Generates a triangle waveform from 0 to 255 to 0, etc.
 //
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
+// INPUTS:
+//   - clk:     system clock, expected 50MHz
+//   - rst_n:   active low reset signal
+//   - divider: 8-bit clock divider
+//              
+//       Switching frequency = ((50e6 / (divider+1)) / (2*255)) Hz
 //
-//////////////////////////////////////////////////////////////////////////////////
-module triangle_carrier(sys_clk, sys_ce,
-    divider, carrier);
+// OUTPUTS:
+//   - carrier: triangle waveform
+//
+//
 
+module triangle_carrier(clk, rst_n, divider, carrier);
 
-input sys_clk, sys_ce;
-input [7:0] divider; // clock divider, switching frequency = 50e6/(divider+1)/510 Hz
+input clk, rst_n;
+input [7:0] divider;
 output wire [7:0] carrier;
 
-reg [7:0] count = 0;	
-reg [7:0] div_count = 0;
-reg dp = 1;		//direction to count: 1 for up, 0 for down
+reg [7:0] count;	
+reg [7:0] div_count;
 
+// Direction to count:
+// 1 for up, 0 for down
+reg dp;
 
-
-wire CLK;
-assign CLK = sys_clk & sys_ce;
 assign carrier = count;
 
-always @(posedge CLK)
-	begin
-	if (div_count < divider)
-		div_count <= div_count + 8'd1;
-	else
-	begin
-		div_count <= 8'd0;
-       if (dp == 1'b1)
-			if (count < 8'hFF)
-          count <=count+1;
-         else //(count == 7'hFF) 
-			begin
-          dp <= 1'b0;
-			 count <= count-1;
+always @(posedge clk, negedge rst_n) begin
+	if (!rst_n) begin
+		// Reset registers
+		count     <= 8'b0;
+		div_count <= 8'b0;
+		dp        <= 1'b1;
+	end else begin
+		if (div_count < divider)
+			div_count <= div_count + 8'd1;
+		else begin
+			div_count <= 8'd0;
+		
+			if (dp == 1'b1) begin
+				// Counter going up
+				
+				if (count < 8'hFF) begin
+					// count < 8'hFF
+					count <= count + 1;
+				end else begin
+					// count == 8'hFF
+					dp <= 1'b0;
+					count <= count - 1;
+				end
+			end else begin
+				// Counter going down
+				
+				if (count > 8'b0) begin
+					// count > 0
+					count <= count - 1;
+				end else begin
+					// count == 0
+					dp <= 1'b1;
+					count <= count + 1;
+				end
 			end
-		else //dp == 1'b0 <-- going down
-			if (count > 7'b0)
-				count <= count-1;
-			else	//count == 0
-			begin
-				count <= count+1;
-				dp <= 1'b1;
-			end
+		end
 	end
-			
 end
+
 endmodule
