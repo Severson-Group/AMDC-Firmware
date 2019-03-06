@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER amdc_inverters
+	OPTION supported_peripherals = (amdc_inverters);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = amdc_inverters;
+END DRIVER
