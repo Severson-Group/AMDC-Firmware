@@ -1,5 +1,5 @@
-#ifndef INVERTER_H
-#define INVERTER_H
+#ifndef PWM_H
+#define PWM_H
 
 #include <stdint.h>
 
@@ -20,13 +20,15 @@
 //	uint8_t fault_temp;
 //} inverter_status_t;
 
-void inverter_init(void);
+void pwm_init(void);
 
-void inverter_set_duty(uint8_t idx, uint8_t value);
+void pwm_set_duty(uint8_t idx, uint8_t value);
+
+void pwm_set_switching_freq(uint8_t divisor);
 
 //void inverter_set_duty_ratio(inverter_e inv, uint8_t pwm_idx, uint8_t value);
 //void inverter_set_dead_time (uint8_t inv_idx, uint8_t pwm_idx, uint8_t value);
 
 //void inverter_get_status(uint8_t idx, inverter_status_t *status);
 
-#endif // INVERTER_H
+#endif // PWM_H

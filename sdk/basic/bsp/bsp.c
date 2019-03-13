@@ -4,7 +4,7 @@ void bsp_init(void)
 {
     encoder_init();
     analog_init();
-    inverter_init();
+    pwm_init();
     io_init();
     gpio_init();
 }
