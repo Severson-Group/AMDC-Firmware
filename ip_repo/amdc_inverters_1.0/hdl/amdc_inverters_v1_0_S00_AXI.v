@@ -15,7 +15,7 @@
 	)
 	(
 		// Users to add ports here
-		input wire CLK,
+		input wire CLK_PWM,
         input wire [7:0] rdy,
         input wire [7:0] flt_desat,
         input wire [7:0] flt_temp,
@@ -895,10 +895,19 @@
 
 	// Add user logic here
 
-    wire [7:0] carrier;
+    wire [15:0] carrier;
+	
+	wire [7:0] carrier_clk_div;
+	assign carrier_clk_div[7:0] = slv_reg24[7:0];
+	
+	wire [15:0] carrier_max;
+	assign carrier_max[15:0] = slv_reg25[15:0];
+	
+	wire [15:0] deadtime;
+	assign deadtime[15:0] = (slv_reg26[15:0] < 16'd5) ? 16'd5 : slv_reg26[15:0];
 	
 	// PWM and switching logic
-	wire [7:0] D_L[23:0];
+	wire [15:0] D_L[23:0];
 	wire sL[23:0];
 	
 	// Assign duty ratios from regs received
@@ -929,69 +938,72 @@
 	
 	// Carrier	
 	triangle_carrier iCarrier (
-		.clk(CLK),
+		.clk(CLK_PWM),
 		.rst_n(S_AXI_ARESETN),
-		.divider(8'd0),
-		.carrier(carrier)
+		.divider(carrier_clk_div),
+		.carrier(carrier),
+		.carrier_max(carrier_max)
 	);
 	
 	// PWM
-	pwm_gen_var pwmL1 (CLK, 1'b1, carrier, D_L[0], sL[0]);
-	pwm_gen_var pwmL2 (CLK, 1'b1, carrier, D_L[1], sL[1]);
-	pwm_gen_var pwmL3 (CLK, 1'b1, carrier, D_L[2], sL[2]);
-	pwm_gen_var pwmL4 (CLK, 1'b1, carrier, D_L[3], sL[3]);
-	pwm_gen_var pwmL5 (CLK, 1'b1, carrier, D_L[4], sL[4]);
-	pwm_gen_var pwmL6 (CLK, 1'b1, carrier, D_L[5], sL[5]);
-	pwm_gen_var pwmL7 (CLK, 1'b1, carrier, D_L[6], sL[6]);
-	pwm_gen_var pwmL8 (CLK, 1'b1, carrier, D_L[7], sL[7]);
-	pwm_gen_var pwmL9 (CLK, 1'b1, carrier, D_L[8], sL[8]);
-	pwm_gen_var pwmL10 (CLK, 1'b1, carrier, D_L[9], sL[9]);
-	pwm_gen_var pwmL11 (CLK, 1'b1, carrier, D_L[10], sL[10]);
-	pwm_gen_var pwmL12 (CLK, 1'b1, carrier, D_L[11], sL[11]);
-	pwm_gen_var pwmL13 (CLK, 1'b1, carrier, D_L[12], sL[12]);
-	pwm_gen_var pwmL14 (CLK, 1'b1, carrier, D_L[13], sL[13]);
-	pwm_gen_var pwmL15 (CLK, 1'b1, carrier, D_L[14], sL[14]);
-	pwm_gen_var pwmL16 (CLK, 1'b1, carrier, D_L[15], sL[15]);
-	pwm_gen_var pwmL17 (CLK, 1'b1, carrier, D_L[16], sL[16]);
-	pwm_gen_var pwmL18 (CLK, 1'b1, carrier, D_L[17], sL[17]);
-	pwm_gen_var pwmL19 (CLK, 1'b1, carrier, D_L[18], sL[18]);
-	pwm_gen_var pwmL20 (CLK, 1'b1, carrier, D_L[19], sL[19]);
-	pwm_gen_var pwmL21 (CLK, 1'b1, carrier, D_L[20], sL[20]);
-	pwm_gen_var pwmL22 (CLK, 1'b1, carrier, D_L[21], sL[21]);
-	pwm_gen_var pwmL23 (CLK, 1'b1, carrier, D_L[22], sL[22]);
-	pwm_gen_var pwmL24 (CLK, 1'b1, carrier, D_L[23], sL[23]);
+	pwm_gen_var pwmL0  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[0]), .So(sL[0]));
+	pwm_gen_var pwmL1  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[1]), .So(sL[1]));
+	pwm_gen_var pwmL2  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[2]), .So(sL[2]));
+	pwm_gen_var pwmL3  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[3]), .So(sL[3]));
+	pwm_gen_var pwmL4  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[4]), .So(sL[4]));
+	pwm_gen_var pwmL5  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[5]), .So(sL[5]));
+	pwm_gen_var pwmL6  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[6]), .So(sL[6]));
+	pwm_gen_var pwmL7  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[7]), .So(sL[7]));
+	pwm_gen_var pwmL8  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[8]), .So(sL[8]));
+	pwm_gen_var pwmL9  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[9]), .So(sL[9]));
+	pwm_gen_var pwmL10 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[10]), .So(sL[10]));
+	pwm_gen_var pwmL11 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[11]), .So(sL[11]));
+	pwm_gen_var pwmL12 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[12]), .So(sL[12]));
+	pwm_gen_var pwmL13 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[13]), .So(sL[13]));
+	pwm_gen_var pwmL14 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[14]), .So(sL[14]));
+	pwm_gen_var pwmL15 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[15]), .So(sL[15]));
+	pwm_gen_var pwmL16 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[16]), .So(sL[16]));
+	pwm_gen_var pwmL17 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[17]), .So(sL[17]));
+	pwm_gen_var pwmL18 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[18]), .So(sL[18]));
+	pwm_gen_var pwmL19 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[19]), .So(sL[19]));
+	pwm_gen_var pwmL20 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[20]), .So(sL[20]));
+	pwm_gen_var pwmL21 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[21]), .So(sL[21]));
+	pwm_gen_var pwmL22 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[22]), .So(sL[22]));
+	pwm_gen_var pwmL23 (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[23]), .So(sL[23]));
 
-	single_leg_switch leg1 (CLK, sL[0], inverter1_pwm[0], inverter1_pwm[1]);
-	single_leg_switch leg2 (CLK, sL[1], inverter1_pwm[2], inverter1_pwm[3]);
-	single_leg_switch leg3 (CLK, sL[2], inverter1_pwm[4], inverter1_pwm[5]);
 	
-	single_leg_switch leg4 (CLK, sL[3], inverter2_pwm[0], inverter2_pwm[1]);
-    single_leg_switch leg5 (CLK, sL[4], inverter2_pwm[2], inverter2_pwm[3]);
-    single_leg_switch leg6 (CLK, sL[5], inverter2_pwm[4], inverter2_pwm[5]);
+	// Single Leg Switches
+	single_leg_switch leg1 (CLK_PWM, sL[0], inverter1_pwm[0], inverter1_pwm[1], deadtime);
+	single_leg_switch leg2 (CLK_PWM, sL[1], inverter1_pwm[2], inverter1_pwm[3], deadtime);
+	single_leg_switch leg3 (CLK_PWM, sL[2], inverter1_pwm[4], inverter1_pwm[5], deadtime);
+	
+	single_leg_switch leg4 (CLK_PWM, sL[3], inverter2_pwm[0], inverter2_pwm[1], deadtime);
+    single_leg_switch leg5 (CLK_PWM, sL[4], inverter2_pwm[2], inverter2_pwm[3], deadtime);
+    single_leg_switch leg6 (CLK_PWM, sL[5], inverter2_pwm[4], inverter2_pwm[5], deadtime);
     
-    single_leg_switch leg7 (CLK, sL[6], inverter3_pwm[0], inverter3_pwm[1]);
-    single_leg_switch leg8 (CLK, sL[7], inverter3_pwm[2], inverter3_pwm[3]);
-    single_leg_switch leg9 (CLK, sL[8], inverter3_pwm[4], inverter3_pwm[5]);
+    single_leg_switch leg7 (CLK_PWM, sL[6], inverter3_pwm[0], inverter3_pwm[1], deadtime);
+    single_leg_switch leg8 (CLK_PWM, sL[7], inverter3_pwm[2], inverter3_pwm[3], deadtime);
+    single_leg_switch leg9 (CLK_PWM, sL[8], inverter3_pwm[4], inverter3_pwm[5], deadtime);
    
-    single_leg_switch leg10 (CLK, sL[9], inverter4_pwm[0], inverter4_pwm[1]);
-    single_leg_switch leg11 (CLK, sL[10], inverter4_pwm[2], inverter4_pwm[3]);
-    single_leg_switch leg12 (CLK, sL[11], inverter4_pwm[4], inverter4_pwm[5]);
+    single_leg_switch leg10 (CLK_PWM, sL[9], inverter4_pwm[0], inverter4_pwm[1], deadtime);
+    single_leg_switch leg11 (CLK_PWM, sL[10], inverter4_pwm[2], inverter4_pwm[3], deadtime);
+    single_leg_switch leg12 (CLK_PWM, sL[11], inverter4_pwm[4], inverter4_pwm[5], deadtime);
     
-    single_leg_switch leg13 (CLK, sL[12], inverter5_pwm[0], inverter5_pwm[1]);
-    single_leg_switch leg14 (CLK, sL[13], inverter5_pwm[2], inverter5_pwm[3]);
-    single_leg_switch leg15 (CLK, sL[14], inverter5_pwm[4], inverter5_pwm[5]);
+    single_leg_switch leg13 (CLK_PWM, sL[12], inverter5_pwm[0], inverter5_pwm[1], deadtime);
+    single_leg_switch leg14 (CLK_PWM, sL[13], inverter5_pwm[2], inverter5_pwm[3], deadtime);
+    single_leg_switch leg15 (CLK_PWM, sL[14], inverter5_pwm[4], inverter5_pwm[5], deadtime);
     
-    single_leg_switch leg16 (CLK, sL[15], inverter6_pwm[0], inverter6_pwm[1]);
-    single_leg_switch leg17 (CLK, sL[16], inverter6_pwm[2], inverter6_pwm[3]);
-    single_leg_switch leg18 (CLK, sL[17], inverter6_pwm[4], inverter6_pwm[5]);
+    single_leg_switch leg16 (CLK_PWM, sL[15], inverter6_pwm[0], inverter6_pwm[1], deadtime);
+    single_leg_switch leg17 (CLK_PWM, sL[16], inverter6_pwm[2], inverter6_pwm[3], deadtime);
+    single_leg_switch leg18 (CLK_PWM, sL[17], inverter6_pwm[4], inverter6_pwm[5], deadtime);
     
-    single_leg_switch leg19 (CLK, sL[18], inverter7_pwm[0], inverter7_pwm[1]);
-    single_leg_switch leg20 (CLK, sL[19], inverter7_pwm[2], inverter7_pwm[3]);
-    single_leg_switch leg21 (CLK, sL[20], inverter7_pwm[4], inverter7_pwm[5]);
+    single_leg_switch leg19 (CLK_PWM, sL[18], inverter7_pwm[0], inverter7_pwm[1], deadtime);
+    single_leg_switch leg20 (CLK_PWM, sL[19], inverter7_pwm[2], inverter7_pwm[3], deadtime);
+    single_leg_switch leg21 (CLK_PWM, sL[20], inverter7_pwm[4], inverter7_pwm[5], deadtime);
     
-    single_leg_switch leg22 (CLK, sL[21], inverter8_pwm[0], inverter8_pwm[1]);
-    single_leg_switch leg23 (CLK, sL[22], inverter8_pwm[2], inverter8_pwm[3]);
-    single_leg_switch leg24 (CLK, sL[23], inverter8_pwm[4], inverter8_pwm[5]);
+    single_leg_switch leg22 (CLK_PWM, sL[21], inverter8_pwm[0], inverter8_pwm[1], deadtime);
+    single_leg_switch leg23 (CLK_PWM, sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
+    single_leg_switch leg24 (CLK_PWM, sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
 
 	// User logic ends
 

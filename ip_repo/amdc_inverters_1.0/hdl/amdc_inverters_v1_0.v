@@ -15,7 +15,7 @@
 	)
 	(
 		// Users to add ports here
-		input wire CLK,
+		input wire CLK_PWM,
         input wire [7:0] rdy,
         input wire [7:0] flt_desat,
         input wire [7:0] flt_temp,
@@ -81,7 +81,7 @@
 		.S_AXI_RRESP(s00_axi_rresp),
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
-		.CLK(CLK),
+		.CLK_PWM(CLK_PWM),
 		.rdy(rdy),
         .flt_desat(flt_desat),
         .flt_temp(flt_temp),

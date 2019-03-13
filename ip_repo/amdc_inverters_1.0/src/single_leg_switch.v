@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module single_leg_switch(CLK, Sin, Q1, Q2);
+module single_leg_switch(CLK, Sin, Q1, Q2, deadtime);
 input CLK;		//50 MHz clock
 //input RST;		//reset signal
 input Sin;		//1 if leg output should be high, 0 if leg output should be low
@@ -26,22 +26,25 @@ output reg Q1;		//1 if top switch should be on, 0 if top switch should be off
 output reg Q2;		//1 if bot switch should be on, 0 if top switch should be off
 
 
+//dead time = (DEADTIME_COUNT+1)/50e6 (but note: the FPGA pin rise/fall time and delays cause this to be about 10-20ns shorter than we expect from this EQ)
+input [15:0] deadtime;
+
+
 parameter Q1OFF_Q2OFF = 4'b0,  //switch states
 			 Q1OFF_Q2ON = 4'b1,
 			 Q1ON_Q2OFF = 4'd2,
-			 Q1ON_Q2ON = 4'd3,		//should not be possible
-			 DEADTIME_COUNT = 8'd5;	//dead time = (DEADTIME_COUNT+1)/50e6 (but note: the FPGA pin rise/fall time and delays cause this to be about 10-20ns shorter than we expect from this EQ)
+			 Q1ON_Q2ON = 4'd3;		//should not be possible
 			 
 reg [2:0] State, nextState;
 //reg curS;			//1 if the leg was previously high, 0 if leg was previously low
 
-reg [7:0] deadtime_count;
+reg [15:0] deadtime_count;
 parameter [3:0] A=0, B=1, C=2, D=3, E=4, F=5, G=6, H=7;
 parameter [7:0] period=30;
 
 initial
 	begin	
-		deadtime_count = 7'b0;
+		deadtime_count = 16'b0;
 		State = Q1OFF_Q2OFF;
 		nextState = Q1OFF_Q2OFF;
 		Q1 = 1'b0;
@@ -55,7 +58,7 @@ begin
 	case (State)
 		Q1OFF_Q2OFF:
 			//dead time...
-			if (deadtime_count >= DEADTIME_COUNT) //ready to move on
+			if (deadtime_count >= deadtime) //ready to move on
 				if (Sin == 1'b1)	//going high
 					nextState <= Q1ON_Q2OFF;
 				else					//going low
