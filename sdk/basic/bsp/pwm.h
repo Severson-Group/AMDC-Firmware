@@ -22,9 +22,14 @@
 
 void pwm_init(void);
 
-void pwm_set_duty(uint8_t idx, uint8_t value);
+void pwm_set_switching_freq(double freq_hz);
 
-void pwm_set_switching_freq(uint8_t divisor);
+void pwm_set_duty_raw(uint8_t idx, uint16_t value);
+//void pwm_set_duty(uint8_t idx, double duty);
+
+void pwm_set_carrier_divisor(uint8_t divisor);
+void pwm_set_carrier_max(uint16_t max);
+void pwm_set_deadtime_ns(uint16_t deadtime);
 
 //void inverter_set_duty_ratio(inverter_e inv, uint8_t pwm_idx, uint8_t value);
 //void inverter_set_dead_time (uint8_t inv_idx, uint8_t pwm_idx, uint8_t value);
