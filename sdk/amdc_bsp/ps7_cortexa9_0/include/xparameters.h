@@ -234,6 +234,11 @@
 #define XPAR_PS7_SLCR_0_S_AXI_HIGHADDR 0xF8000FFF
 
 
+/* Definitions for peripheral PS7_QSPI_LINEAR_0 */
+#define XPAR_PS7_QSPI_LINEAR_0_S_AXI_BASEADDR 0xFC000000
+#define XPAR_PS7_QSPI_LINEAR_0_S_AXI_HIGHADDR 0xFCFFFFFF
+
+
 /******************************************************************/
 
 /* Definitions for driver GPIOPS */
@@ -251,6 +256,29 @@
 #define XPAR_XGPIOPS_0_DEVICE_ID XPAR_PS7_GPIO_0_DEVICE_ID
 #define XPAR_XGPIOPS_0_BASEADDR 0xE000A000
 #define XPAR_XGPIOPS_0_HIGHADDR 0xE000AFFF
+
+
+/******************************************************************/
+
+/* Definitions for driver QSPIPS */
+#define XPAR_XQSPIPS_NUM_INSTANCES 1
+
+/* Definitions for peripheral PS7_QSPI_0 */
+#define XPAR_PS7_QSPI_0_DEVICE_ID 0
+#define XPAR_PS7_QSPI_0_BASEADDR 0xE000D000
+#define XPAR_PS7_QSPI_0_HIGHADDR 0xE000DFFF
+#define XPAR_PS7_QSPI_0_QSPI_CLK_FREQ_HZ 200000000
+#define XPAR_PS7_QSPI_0_QSPI_MODE 0
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral PS7_QSPI_0 */
+#define XPAR_XQSPIPS_0_DEVICE_ID XPAR_PS7_QSPI_0_DEVICE_ID
+#define XPAR_XQSPIPS_0_BASEADDR 0xE000D000
+#define XPAR_XQSPIPS_0_HIGHADDR 0xE000DFFF
+#define XPAR_XQSPIPS_0_QSPI_CLK_FREQ_HZ 200000000
+#define XPAR_XQSPIPS_0_QSPI_MODE 0
 
 
 /******************************************************************/
@@ -320,6 +348,37 @@
 #define XPAR_SCUWDT_0_DEVICE_ID XPAR_PS7_SCUWDT_0_DEVICE_ID
 #define XPAR_SCUWDT_0_BASEADDR 0xF8F00620
 #define XPAR_SCUWDT_0_HIGHADDR 0xF8F006FF
+
+
+/******************************************************************/
+
+/* Definitions for driver SDPS */
+#define XPAR_XSDPS_NUM_INSTANCES 1
+
+/* Definitions for peripheral PS7_SD_1 */
+#define XPAR_PS7_SD_1_DEVICE_ID 0
+#define XPAR_PS7_SD_1_BASEADDR 0xE0101000
+#define XPAR_PS7_SD_1_HIGHADDR 0xE0101FFF
+#define XPAR_PS7_SD_1_SDIO_CLK_FREQ_HZ 100000000
+#define XPAR_PS7_SD_1_HAS_CD 1
+#define XPAR_PS7_SD_1_HAS_WP 0
+#define XPAR_PS7_SD_1_BUS_WIDTH 0
+#define XPAR_PS7_SD_1_MIO_BANK 0
+#define XPAR_PS7_SD_1_HAS_EMIO 0
+
+
+/******************************************************************/
+
+/* Canonical definitions for peripheral PS7_SD_1 */
+#define XPAR_XSDPS_0_DEVICE_ID XPAR_PS7_SD_1_DEVICE_ID
+#define XPAR_XSDPS_0_BASEADDR 0xE0101000
+#define XPAR_XSDPS_0_HIGHADDR 0xE0101FFF
+#define XPAR_XSDPS_0_SDIO_CLK_FREQ_HZ 100000000
+#define XPAR_XSDPS_0_HAS_CD 1
+#define XPAR_XSDPS_0_HAS_WP 0
+#define XPAR_XSDPS_0_BUS_WIDTH 0
+#define XPAR_XSDPS_0_MIO_BANK 0
+#define XPAR_XSDPS_0_HAS_EMIO 0
 
 
 /******************************************************************/
@@ -398,4 +457,9 @@
 
 /******************************************************************/
 
+/* Xilinx FAT File System Library (XilFFs) User Settings */
+#define FILE_SYSTEM_INTERFACE_SD
+#define FILE_SYSTEM_USE_MKFS
+#define FILE_SYSTEM_NUM_LOGIC_VOL 2
+#define FILE_SYSTEM_USE_STRFUNC 0
 #endif  /* end of protection macro */
