@@ -118,6 +118,8 @@ static int CmdWD(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTRE(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTRT(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTCE(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice);
 
 typedef struct command_table_entry {
 	char *szCmd;
@@ -125,8 +127,8 @@ typedef struct command_table_entry {
 	int (*cmd_function)(const char *, char *, void *);
 } command_table_entry;
 
-#define NUM_CMD 18
-command_table_entry command_table[] = {
+#define NUM_CMD 20
+command_table_entry command_table[NUM_CMD] = {
 		{"BMK", "Benchmark the PI controller logic", CmdBMK},
 		{"CFG", "CFG=d: Write setting d to configuration register (d = 0 to 255)", CmdCFG},
 		{"CNT", "CNT=n,cmd: Send the control application a message", CmdCNT},
@@ -144,7 +146,9 @@ command_table_entry command_table[] = {
 		{"TCE", "Clear timing errors", CmdTCE},
 		{"TRE", "Read timing errors", CmdTRE},
 		{"TRT", "Read timer ticks", CmdTRT},
-		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD}
+		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD},
+		{"VSL", "VSL=l1,l2,l3: Set output legs for VSI", CmdVSL},
+		{"VSI", "VSI=V,omega: Set V (VSI peak voltage percent of Vbus, 0-100), with omega (Hz)", CmdVSI}
 	};
 
 
@@ -524,8 +528,49 @@ void HBA_100usTick()
 		WriteDutyRatio(HBA_uiLeg1, duty1);
 		WriteDutyRatio(HBA_uiLeg2, duty2);
 	}
-
 }
+
+
+uint8_t VSI_enabled = 0;
+uint8_t VSI_leg1;
+uint8_t VSI_leg2;
+uint8_t VSI_leg3;
+double VSI_Vpercent;
+double VSI_omega;
+double theta = 0;
+
+/*****************************
+ * CmdVSI()
+ * Handle the 100uS tick for the VSI function.
+ */
+void VSI_100usTick(void)
+{
+	if (VSI_enabled) {
+		uint8_t duty1, duty2, duty3;
+		double update_da = VSI_omega / 10000.0;
+
+		theta += update_da;
+		if (theta > 6.283185307179586)
+			theta -= 6.283185307179586;
+
+		double percent1 = VSI_Vpercent*cos(theta);
+		double percent2 = VSI_Vpercent*cos(theta - PI23);
+		double percent3 = VSI_Vpercent*cos(theta + PI23);
+
+		duty1 = (unsigned char) 127*(1 + percent1);
+		duty2 = (unsigned char) 127*(1 + percent2);
+		duty3 = (unsigned char) 127*(1 + percent3);
+
+		WriteDutyRatio(VSI_leg1, duty1);
+		WriteDutyRatio(VSI_leg2, duty2);
+		WriteDutyRatio(VSI_leg3, duty3);
+	} else {
+		WriteDutyRatio(VSI_leg1, 0);
+		WriteDutyRatio(VSI_leg2, 0);
+		WriteDutyRatio(VSI_leg3, 0);
+	}
+}
+
 
 /*****************************
  * CmdHBA()
@@ -1001,6 +1046,177 @@ static int CmdCST(const char * szCmd, char *szResponse, void *CommDevice)
 
 	return strlen(szResponse);
 }
+
+/*****************************
+ * CmdVSL()
+ * Handle the VSL command.
+ *
+ * VSL=leg1,leg2,leg3
+ *
+ * leg1: number of leg 1 (1 to NUM_LEGS)
+ * leg2: number of leg 2 (1 to NUM_LEGS)
+ * leg3: number of leg 3 (1 to NUM_LEGS)
+ *
+ * Response: OK
+ *
+ *szCmd: the command
+ *szResponse: the response
+ */
+
+static char bufferVSL[128];
+
+static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferVSL, 0, 128);
+	strcpy(bufferVSL, szCmd);
+
+	// Parse out tokens
+	int iLeg1 = 0;
+	int iLeg2 = 0;
+	int iLeg3 = 0;
+
+	p = strtok(bufferVSL, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'VSL'
+			break;
+		case 1:
+			iLeg1 = atoi(p);
+			break;
+		case 2:
+			iLeg2 = atoi(p);
+			break;
+		case 3:
+			iLeg3 = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iLeg1 = 0;
+			iLeg2 = 1;
+			iLeg3 = 1;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check if all 0 => disable VSI
+	if (iLeg1 == 0 && iLeg2 == 0 && iLeg3 == 0) {
+		VSI_enabled = 0;
+		strcat(szResponse, "OK");
+		return strlen(szResponse);
+	}
+
+	// Check if errors in leg numbers
+	int bError = 0;
+	if (iLeg1 <= 0 || iLeg1 > NUM_LEGS) bError = 1;
+	if (iLeg2 <= 0 || iLeg2 > NUM_LEGS) bError = 1;
+	if (iLeg3 <= 0 || iLeg3 > NUM_LEGS) bError = 1;
+
+	if (bError) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// Set legs for VSI
+	VSI_leg1 = iLeg1;
+	VSI_leg2 = iLeg2;
+	VSI_leg3 = iLeg3;
+
+	// Enable VSI
+	VSI_enabled = 1;
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+/*****************************
+ * CmdVSI()
+ * Handle the VSI command.
+ *
+ * VSI=voltage,omega
+ *
+ * voltage: peak voltage output percent of Vbus (0 to 100)
+ * omega: frequency of output (Hz)
+ *
+ * Response: OK
+ *
+ *szCmd: the command
+ *szResponse: the response
+ */
+
+static char bufferVSI[128];
+
+static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferVSI, 0, 128);
+	strcpy(bufferVSI, szCmd);
+
+	// Parse out tokens
+	int iVoltagePercent = 0;
+	int iHz = 0;
+
+	p = strtok(bufferVSI, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'VSI'
+			break;
+		case 1:
+			iVoltagePercent = atoi(p);
+			break;
+		case 2:
+			iHz = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iHz = 0;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check for errors while parsing
+	if (iHz == 0 || iVoltagePercent == 0) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// Convert voltage percent input to double percentage
+	VSI_Vpercent = iVoltagePercent / 100.0;
+	if (VSI_Vpercent > 100) VSI_Vpercent = 100.0;
+	if (VSI_Vpercent < 0)   VSI_Vpercent = 0.0;
+
+	// Convert omega input to rad/sec
+	VSI_omega = 2 * PI * iHz;
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+
+
+
 
 //call this with the CR removed
 //load the response into szResponse

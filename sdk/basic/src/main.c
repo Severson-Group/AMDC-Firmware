@@ -294,6 +294,7 @@ int LeaveProtection(int State) {
 		}
 
 		HBA_100usTick();
+		VSI_100usTick();
 
 		if (bTimer100usTick)
 			Timing100usErrorCount++;

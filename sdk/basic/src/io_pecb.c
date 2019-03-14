@@ -51,7 +51,7 @@ double ReadADC(u32 uiADCnum)
  */
 void WriteDutyRatio(u32 Leg, unsigned char value)
 {
-	pwm_set_duty(Leg-1, value);
+	pwm_set_duty_raw(Leg-1, value);
 
 //	PECB[Leg-1] = value;
 
