@@ -148,7 +148,7 @@ command_table_entry command_table[NUM_CMD] = {
 		{"TRT", "Read timer ticks", CmdTRT},
 		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD},
 		{"VSL", "VSL=l1,l2,l3: Set output legs for VSI", CmdVSL},
-		{"VSI", "VSI=V,omega: Set V (VSI peak voltage percent of Vbus, 0-100), with omega (Hz)", CmdVSI}
+		{"VSI", "VSI=V,freq(,ramptime): Set V (percent output voltage, 0-100), with freq (Hz). Optional ramp time (ms)", CmdVSI}
 	};
 
 
@@ -531,13 +531,52 @@ void HBA_100usTick()
 }
 
 
+// Ramps between `current` and `setpoint` values assuming Fs = 10kHz
+// Updates `current` as it ramps.
+//
+// `ramprate` is in (units of `current`) / sec
+//     0 implies no ramp
+//
+//
+// Returns delta in Ts for theta update
+//
+double omega_ramp_fcn(double *current, double *setpoint, double ramprate)
+{
+	double ret;
+
+	if (ramprate != 0 && *current != *setpoint) {
+		// Ramping
+		double dir = (*setpoint > *current) ? 1 : -1;
+		double del = ramprate / 10000.0;
+
+		*current += (dir * del);
+		ret = *current / 10000.0;
+
+		// Check if done ramping
+		if ((dir == 1)  && (*current > *setpoint)) *current = *setpoint;
+		if ((dir == -1) && (*current < *setpoint)) *current = *setpoint;
+	} else {
+		// Not ramping
+		ret = *setpoint / 10000.0;
+	}
+
+	return ret;
+}
+
 uint8_t VSI_enabled = 0;
 uint8_t VSI_leg1;
 uint8_t VSI_leg2;
 uint8_t VSI_leg3;
-double VSI_Vpercent;
-double VSI_omega;
+double VSI_Vpercent = 0;
+double VSI_omega = 0;
 double theta = 0;
+
+double VSI_omega_ramp = 0;
+double VSI_old_Vpercent = 0;
+double VSI_old_omega = 0;
+
+double VSI_R;
+double VSI_V0;
 
 /*****************************
  * CmdVSI()
@@ -547,15 +586,22 @@ void VSI_100usTick(void)
 {
 	if (VSI_enabled) {
 		uint8_t duty1, duty2, duty3;
-		double update_da = VSI_omega / 10000.0;
+
+		// Calculate `da`
+		double update_da = omega_ramp_fcn(&VSI_old_omega, &VSI_omega, VSI_omega_ramp);
+
+		// Calculate dv
+		// ramp(&VSI_old_Vpercent, &VSI_Vpercent, 0.1);
 
 		theta += update_da;
 		if (theta > 6.283185307179586)
 			theta -= 6.283185307179586;
 
-		double percent1 = VSI_Vpercent*cos(theta);
-		double percent2 = VSI_Vpercent*cos(theta - PI23);
-		double percent3 = VSI_Vpercent*cos(theta + PI23);
+		double v = (VSI_R * VSI_old_omega) + VSI_V0;
+
+		double percent1 = v*cos(theta);
+		double percent2 = v*cos(theta - PI23);
+		double percent3 = v*cos(theta + PI23);
 
 		duty1 = (unsigned char) 127*(1 + percent1);
 		duty2 = (unsigned char) 127*(1 + percent2);
@@ -1144,10 +1190,11 @@ static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice)
  * CmdVSI()
  * Handle the VSI command.
  *
- * VSI=voltage,omega
+ * VSI=voltage,freq(,ramp)
  *
  * voltage: peak voltage output percent of Vbus (0 to 100)
- * omega: frequency of output (Hz)
+ * freq: frequency of output (Hz)
+ * ramptime: (optional) duration of ramping (ms)
  *
  * Response: OK
  *
@@ -1169,6 +1216,7 @@ static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
 	// Parse out tokens
 	int iVoltagePercent = 0;
 	int iHz = 0;
+	int iRamptime = 0;
 
 	p = strtok(bufferVSI, "=,");
 	while (p != NULL) {
@@ -1183,6 +1231,9 @@ static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
 		case 2:
 			iHz = atoi(p);
 			break;
+		case 3:
+			iRamptime = atoi(p);
+			break;
 		default:
 			// This is an error!
 			// Force error below
@@ -1196,18 +1247,38 @@ static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
 	}
 
 	// Check for errors while parsing
-	if (iHz == 0 || iVoltagePercent == 0) {
-		strcat(szResponse, "ERROR");
-		return strlen(szResponse);
-	}
+//	if (iHz == 0 || iVoltagePercent == 0) {
+//		strcat(szResponse, "ERROR");
+//		return strlen(szResponse);
+//	}
 
 	// Convert voltage percent input to double percentage
+	VSI_old_Vpercent = VSI_Vpercent;
 	VSI_Vpercent = iVoltagePercent / 100.0;
 	if (VSI_Vpercent > 100) VSI_Vpercent = 100.0;
 	if (VSI_Vpercent < 0)   VSI_Vpercent = 0.0;
 
-	// Convert omega input to rad/sec
+
+	// Convert freq input to rad/sec
+	VSI_old_omega = VSI_omega;
 	VSI_omega = 2 * PI * iHz;
+
+	if (iRamptime > 0) {
+		VSI_omega_ramp = abs(VSI_old_omega - VSI_omega) / (iRamptime / 1000.0); // (rad/sec) / sec
+	} else {
+		VSI_omega_ramp = 0;
+	}
+
+
+	if (VSI_omega != VSI_old_omega) {
+		// There is delta freq requested
+		VSI_R = (VSI_Vpercent - VSI_old_Vpercent) / (VSI_omega - VSI_old_omega);
+		VSI_V0 = VSI_Vpercent - (VSI_R * VSI_omega);
+	} else {
+		// Instaneous voltage change
+		VSI_R = 0;
+		VSI_V0 = VSI_Vpercent;
+	}
 
 	strcat(szResponse, "OK");
 	return strlen(szResponse);
