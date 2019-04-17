@@ -39,3 +39,5 @@ sdk/**/*.bit
 sdk/**/*.a
 sdk/**/*.o
 sdk/**/*.d
+
+**/bootimage/
