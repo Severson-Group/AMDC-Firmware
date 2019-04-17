@@ -1,6 +1,6 @@
 # AMDC-Firmware
 
-Advanced Motor Drive Controller (AMDC), is an open-source project from the Severson Research Group at UW-Madison, affiliated with Wisconsin Electric Machines and Power Electrics Consortium (WEMPEC).
+Advanced Motor Drive Controller (AMDC), is an open-source project from the [Severson Research Group](https://severson.wempec.wisc.edu/) at [UW-Madison](http://www.engr.wisc.edu/department/electrical-computer-engineering/), affiliated with [Wisconsin Electric Machines and Power Electrics Consortium (WEMPEC)](https://wempec.wisc.edu/).
 
 AMDC design includes both hardware and firmware. This repository contains the low-level firmware which runs AMDC, as well as example applications.
 
@@ -112,12 +112,8 @@ Back in SDK:
 
 Getting AMDC is start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
 
-Xilinx tools also have **many** bugs/quirks. Good luck getting everything working!
+Xilinx tools also have **many** quirks. Good luck getting everything working!
 
-
-## Authors
-
-Initial firmware design work by Nathan Petersen during 2018-2019.
 
 ## License
 
