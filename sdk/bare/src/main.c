@@ -1,13 +1,14 @@
 /*
- * Basic AMDC Application
+ * Bare AMDC Application
  *
- * Nathan Petersen, 12/12/2018
+ * Nathan Petersen, 4/17/2019
  *
  * -----------
  *
- * This is a basic application to test the AMDC board
+ * This is a bare application which can be used as
+ * a starting point for simple AMDC applications.
  *
- * It uses UART of 115200 baud
+ * NOTE: UART uses 115200 baud
  *
  */
 

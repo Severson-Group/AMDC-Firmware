@@ -16,7 +16,6 @@
 #define SYS_TICK_USEC	(SEC_TO_USEC(1) / SYS_TICK_FREQ)
 
 
-
 /**
  * Tasks
  */

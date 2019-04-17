@@ -6,6 +6,7 @@
 #include "io.h"
 #include "gpio.h"
 #include "pwm.h"
+#include "timer.h"
 
 void bsp_init(void);
 
