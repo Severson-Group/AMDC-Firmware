@@ -2,7 +2,6 @@
 #define TEST_TASK_H
 
 #include "defines.h"
-#include "sinetable.h"
 
 #define TEST_TASK_UPDATES_PER_SEC		(10000)
 #define TEST_TASK_INTERVAL_USEC			(USEC_IN_SEC / TEST_TASK_UPDATES_PER_SEC)

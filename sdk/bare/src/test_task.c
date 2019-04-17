@@ -1,7 +1,5 @@
 #include "test_task.h"
 #include "scheduler.h"
-#include "sinetable.h"
-
 #include "../bsp/bsp.h"
 
 #include <stdio.h>
@@ -42,24 +40,4 @@ void test_task_callback(void)
 	pwm_set_duty_raw(0, duty1);
 	pwm_set_duty_raw(1, duty2);
 	pwm_set_duty_raw(2, duty3);
-
-//
-//	pwm_set_duty(0, 0.1);
-//	pwm_set_duty(1, 0.1);
-//	pwm_set_duty(2, 0.1);
-//	printf("%f\n", t);
-
-	//	double out = (cos(2 * M_PI * TEST_VOLTAGE_FREQ * t) + 1) / 2.0;
-//	t += dt;
-
-
-//	pwm_set_duty(23, out);
-//	pwm_set_duty(0, sinetable[idx]);
-//	pwm_set_duty(1, sinetable[idx]);
-//	pwm_set_duty(2, sinetable[idx]);
-//
-//	idx++;
-//	if (idx >= SINETABLE_LENGTH) {
-//		idx = 0;
-//	}
 }
