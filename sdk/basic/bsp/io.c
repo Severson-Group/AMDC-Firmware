@@ -47,11 +47,11 @@ void io_init(void)
 	XGpioPs_WritePin(&Gpio, IO_LED_B_MIO_PIN, 0);
 }
 
-void io_led_set(io_led_color_t color)
+void io_led_set(io_led_color_t *color)
 {
-	uint8_t r = color.r > 0 ? 1 : 0;
-	uint8_t g = color.g > 0 ? 1 : 0;
-	uint8_t b = color.b > 0 ? 1 : 0;
+	uint8_t r = color->r > 0 ? 1 : 0;
+	uint8_t g = color->g > 0 ? 1 : 0;
+	uint8_t b = color->b > 0 ? 1 : 0;
 
 	XGpioPs_WritePin(&Gpio, IO_LED_R_MIO_PIN, r);
 	XGpioPs_WritePin(&Gpio, IO_LED_G_MIO_PIN, g);
