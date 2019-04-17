@@ -1,6 +1,6 @@
 # AMDC-Firmware
 
-Advanced Motor Drive Controller (AMDC), is an open-source project from the [Severson Research Group](https://severson.wempec.wisc.edu/) at [UW-Madison](http://www.engr.wisc.edu/department/electrical-computer-engineering/), affiliated with [Wisconsin Electric Machines and Power Electrics Consortium (WEMPEC)](https://wempec.wisc.edu/).
+Advanced Motor Drive Controller (AMDC), is an open-source project from the [Severson Research Group](https://severson.wempec.wisc.edu/) at [UW-Madison](http://www.engr.wisc.edu/department/electrical-computer-engineering/), affiliated with [Wisconsin Electric Machines and Power Electronics Consortium (WEMPEC)](https://wempec.wisc.edu/).
 
 AMDC design includes both hardware and firmware. This repository contains the low-level firmware which runs AMDC, as well as example applications.
 
