@@ -234,7 +234,7 @@
         </spirit:parameters>
       </spirit:busInterface>
       <spirit:busInterface>
-        <spirit:name>DATA.GPIOB</spirit:name>
+        <spirit:name>DATA.GPIOA</spirit:name>
         <spirit:displayName>Data</spirit:displayName>
         <spirit:description>Data</spirit:description>
         <spirit:busType spirit:library="signal" spirit:name="data" spirit:vendor="xilinx.com" spirit:version="1.0"/>
@@ -246,7 +246,7 @@
               <spirit:name>DATA</spirit:name>
             </spirit:logicalPort>
             <spirit:physicalPort>
-              <spirit:name>gpiob</spirit:name>
+              <spirit:name>gpioa</spirit:name>
             </spirit:physicalPort>
           </spirit:portMap>
         </spirit:portMaps>
@@ -263,7 +263,7 @@
         </spirit:parameters>
       </spirit:busInterface>
       <spirit:busInterface>
-        <spirit:name>DATA.GPIOA</spirit:name>
+        <spirit:name>DATA.GPIOB</spirit:name>
         <spirit:displayName>Data</spirit:displayName>
         <spirit:description>Data</spirit:description>
         <spirit:busType spirit:library="signal" spirit:name="data" spirit:vendor="xilinx.com" spirit:version="1.0"/>
@@ -275,7 +275,7 @@
               <spirit:name>DATA</spirit:name>
             </spirit:logicalPort>
             <spirit:physicalPort>
-              <spirit:name>gpioa</spirit:name>
+              <spirit:name>gpiob</spirit:name>
             </spirit:physicalPort>
           </spirit:portMap>
         </spirit:portMaps>
@@ -1024,7 +1024,7 @@
           </spirit:wire>
         </spirit:port>
         <spirit:port>
-          <spirit:name>gpiob</spirit:name>
+          <spirit:name>gpioa</spirit:name>
           <spirit:wire>
             <spirit:direction>out</spirit:direction>
             <spirit:vector>
@@ -1034,7 +1034,7 @@
           </spirit:wire>
         </spirit:port>
         <spirit:port>
-          <spirit:name>gpioa</spirit:name>
+          <spirit:name>gpiob</spirit:name>
           <spirit:wire>
             <spirit:direction>out</spirit:direction>
             <spirit:vector>
@@ -1292,6 +1292,7 @@
           <spirit:configurableElementValue spirit:referenceId="PCW_EN_RST1_PORT">0</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_EN_RST2_PORT">0</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_EN_RST3_PORT">0</spirit:configurableElementValue>
+          <spirit:configurableElementValue spirit:referenceId="PCW_P2F_UART0_INTR">1</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_IRQ_F2P_INTR">1</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_PRESET_BANK0_VOLTAGE">LVCMOS 3.3V</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="PCW_PRESET_BANK1_VOLTAGE">LVCMOS 1.8V</spirit:configurableElementValue>
@@ -1612,8 +1613,8 @@
       <spirit:adHocConnection>
         <spirit:name>xlconstant_0_dout</spirit:name>
         <spirit:internalPortReference spirit:componentRef="xlconstant_0" spirit:portRef="dout"/>
-        <spirit:externalPortReference spirit:portRef="gpioa"/>
         <spirit:externalPortReference spirit:portRef="gpiob"/>
+        <spirit:externalPortReference spirit:portRef="gpioa"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
         <spirit:name>adc1_clkout_1</spirit:name>
