@@ -15,9 +15,9 @@ static uint16_t deadtime;
 
 void pwm_init(void)
 {
-//	pwm_set_switching_freq(10000.0);
-	pwm_set_carrier_divisor(0);
-	pwm_set_carrier_max(255);
+	pwm_set_switching_freq(100000.0);
+//	pwm_set_carrier_divisor(3);
+//	pwm_set_carrier_max(255);
 
 	pwm_set_deadtime_ns(100);
 
@@ -40,17 +40,17 @@ void pwm_set_switching_freq(double freq_hz)
 	pwm_set_carrier_max(carrier_max);
 }
 
-//void pwm_set_duty(uint8_t idx, double duty)
-//{
-//	if (duty > 1.0) {
-//		pwm_set_duty_raw(idx, carrier_max);
-//	} else if (duty <= 0.0) {
-//		pwm_set_duty_raw(idx, 0);
-//	} else {
-//		pwm_set_duty_raw(idx, duty * carrier_max);
-//	}
-//
-//}
+void pwm_set_duty(uint8_t idx, double duty)
+{
+	if (duty > 1.0) {
+		pwm_set_duty_raw(idx, carrier_max);
+	} else if (duty <= 0.0) {
+		pwm_set_duty_raw(idx, 0);
+	} else {
+		pwm_set_duty_raw(idx, duty * carrier_max);
+	}
+
+}
 
 void pwm_set_duty_raw(uint8_t idx, uint16_t value)
 {
