@@ -17,7 +17,7 @@
 		// Users to add ports here
         input wire A,
         input wire B,
-        output wire [31:0] counter,
+        input wire Z,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -83,6 +83,9 @@
 		input wire  S_AXI_RREADY
 	);
 
+	wire [31:0] counter;
+	wire [31:0] position;
+	
 	// AXI4LITE signals
 	reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
 	reg  	axi_awready;
@@ -372,14 +375,14 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        2'h0   : reg_data_out <= slv_reg0;
-	        2'h1   : reg_data_out <= slv_reg1;
+	        2'h0   : reg_data_out <= counter;
+	        2'h1   : reg_data_out <= position;
 	        2'h2   : reg_data_out <= slv_reg2;
 	        2'h3   : reg_data_out <= slv_reg3;
 	        default : reg_data_out <= 0;
 	      endcase
 	end
-
+	
 	// Output register or memory read data
 	always @( posedge S_AXI_ACLK )
 	begin
@@ -394,8 +397,7 @@
 	      // output the read dada 
 	      if (slv_reg_rden)
 	        begin
-//	          axi_rdata <= reg_data_out;     // register read data
-	          axi_rdata <= counter;     // register read data
+	          axi_rdata <= reg_data_out;     // register read data
 	        end   
 	    end
 	end    
@@ -406,7 +408,10 @@
         .rst_n(S_AXI_ARESETN),
         .A(A),
         .B(B),
-        .counter(counter)
+		.Z(Z),
+        .counter(counter),
+		.position(position),
+		.pulses_per_rev_bits(slv_reg2)
     );
 
 

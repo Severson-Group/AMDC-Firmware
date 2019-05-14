@@ -22,7 +22,6 @@
         input wire alarm_B,
         input wire alarm_Z,
         input wire alarm_D,
-        output wire [31:0] counter,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -78,7 +77,7 @@
 		.S_AXI_RREADY(s00_axi_rready),
 		.A(A),
 		.B(B),
-		.counter(counter)
+		.Z(Z)
 	);
 
 	// Add user logic here
