@@ -1,15 +1,12 @@
-#include "test_task.h"
+#include "task_vsi.h"
+
 #include "scheduler.h"
 #include "../bsp/bsp.h"
-
+#include "defines.h"
 #include <stdio.h>
 #include <math.h>
 
 #define TEST_VOLTAGE_FREQ	(60) // Hz
-
-#define PI 3.14159265
-#define PI2 6.283185307179586
-#define PI23 2.094395102393195
 
 double Vpercent = 75.0 / 100.0;
 double theta = 0;

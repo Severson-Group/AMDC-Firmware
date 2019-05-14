@@ -19,7 +19,7 @@ typedef enum {
 	ANLG_CHNL13,
 	ANLG_CHNL14,
 	ANLG_CHNL15,
-	ANLG_CHNL_16
+	ANLG_CHNL16
 } analog_channel_e;
 
 typedef enum {

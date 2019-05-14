@@ -1,8 +1,9 @@
 #include "../bsp/gpio.h"
+#include <stdio.h>
 
 void gpio_init(void)
 {
-
+	printf("GPIO:\tInitializing...\n");
 }
 
 void gpio_pin_read(uint8_t port, uint8_t pin, uint8_t *value)

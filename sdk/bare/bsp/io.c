@@ -1,5 +1,5 @@
 #include "../bsp/io.h"
-
+#include <stdio.h>
 #include "xgpiops.h"
 
 #define IO_LED_R_MIO_PIN	(41)
@@ -15,6 +15,8 @@ static XGpioPs Gpio;
 
 void io_init(void)
 {
+	printf("IO:\tInitializing...\n");
+
 	int Status;
 	XGpioPs_Config *GPIOConfigPtr;
 

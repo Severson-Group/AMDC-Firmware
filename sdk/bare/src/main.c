@@ -17,28 +17,29 @@
 #include "../bsp/bsp.h"
 #include "platform.h"
 #include "scheduler.h"
-#include "test_task.h"
+#include "task_cc.h"
+#include "task_mc.h"
+#include "defines.h"
 
 int main()
 {
+	// Required system initialization
     init_platform();
+
+    // User BSP library initialization
     bsp_init();
 
-    io_led_color_t color;
-    color.r = 0;
-    color.g = 0;
-    color.b = 255;
-    io_led_set(&color);
+	// User tasks initialization
+    task_mc_init();
+	task_cc_init();
 
-	// Initialize tasks...
-	test_task_init();
+	// Command RPM to motion control task
+	task_mc_set_omega_star(PI2 * 2); // 2 RPM
 
 	// Initialize scheduler (sets up h/w timer, interrupt)
-	printf("Initializing scheduler...\n");
     scheduler_init();
 
     // Run scheduler => this takes over the system and never returns!
-	printf("Running scheduler...\n");
     scheduler_run();
 
     cleanup_platform();

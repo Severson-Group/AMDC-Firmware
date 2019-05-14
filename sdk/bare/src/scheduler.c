@@ -1,7 +1,7 @@
 #include "scheduler.h"
 #include "../bsp/bsp.h"
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct task_t {
 	task_callback_t callback;
@@ -17,25 +17,44 @@ static task_t tasks[MAX_NUM_TASKS];
 static uint8_t num_tasks = 0;
 
 static bool task_running = false;
+static volatile bool scheduler_idle = false;
 static volatile bool scheduler_paused = false;
 
 void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 {
+	if (scheduler_paused) {
+		return;
+	}
+
 	// We should be done running tasks in a time slice before this fires,
 	// so if a task is still running, we consumed too many cycles per slice
 	if (task_running) {
-		printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+		// printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+		io_led_color_t color;
+	    color.r = 255;
+	    color.g = 0;
+	    color.b = 0;
+	    io_led_set(&color);
+	    HANG;
 	}
 
 	elapsed_usec += SYS_TICK_USEC;
-	scheduler_paused = false;
+	scheduler_idle = false;
 
+}
+
+uint64_t scheduler_get_elapsed_usec(void)
+{
+	return elapsed_usec;
 }
 
 void scheduler_init(void)
 {
+	printf("SCHED:\tInitializing scheduler...\n");
+
 	// Start system timer for periodic interrupts
 	timer_init(scheduler_timer_isr, SYS_TICK_USEC);
+	printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
 void scheduler_register_task(task_callback_t callback, uint32_t interval_usec)
@@ -53,6 +72,8 @@ void scheduler_register_task(task_callback_t callback, uint32_t interval_usec)
 
 void scheduler_run(void)
 {
+	printf("SCHED:\tRunning scheduler...\n");
+
 	// This is the main event loop that runs the device
 	while (1) {
 		for (uint8_t i = 0; i < num_tasks; i++) {
@@ -71,7 +92,17 @@ void scheduler_run(void)
 		}
 
 		// Wait here until unpaused (i.e. when SysTick fires)
-		scheduler_paused = true;
-		while (scheduler_paused);
+		scheduler_idle = true;
+		while (scheduler_idle);
 	}
+}
+
+void scheduler_pause(void)
+{
+	scheduler_paused = true;
+}
+
+void scheduler_resume(void)
+{
+	scheduler_paused = false;
 }
