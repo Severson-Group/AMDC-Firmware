@@ -20,29 +20,30 @@
 #include "task_cc.h"
 #include "task_mc.h"
 #include "defines.h"
+#include "debug.h"
 
 int main()
 {
 	// Required system initialization
-    init_platform();
+	init_platform();
 
-    // User BSP library initialization
-    bsp_init();
+	// User BSP library initialization
+	bsp_init();
 
 	// User tasks initialization
-    task_mc_init();
+	task_mc_init();
 	task_cc_init();
 
 	// Command RPM to motion control task
 	task_mc_set_omega_star(PI2 * 2); // 2 RPM
 
 	// Initialize scheduler (sets up h/w timer, interrupt)
-    scheduler_init();
+	scheduler_init();
 
-    // Run scheduler => this takes over the system and never returns!
-    scheduler_run();
+	// Run scheduler => this takes over the system and never returns!
+	scheduler_run();
 
-    cleanup_platform();
-    return 0;
+	cleanup_platform();
+	return 0;
 }
 

@@ -9,7 +9,7 @@
 
 #define CC_BANDWIDTH				(200) // Hz
 
-#define CC_BUS_VOLTAGE				(10.0) // V
+#define CC_BUS_VOLTAGE				(30.0) // V
 
 #define ADC_TO_AMPS					(0.5) // amps = (raw ADC voltage value) * (this value)
 

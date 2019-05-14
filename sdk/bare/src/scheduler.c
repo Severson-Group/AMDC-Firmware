@@ -31,11 +31,11 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 	if (task_running) {
 		// printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
 		io_led_color_t color;
-	    color.r = 255;
+		color.r = 255;
 	    color.g = 0;
 	    color.b = 0;
-	    io_led_set(&color);
-	    HANG;
+		io_led_set(&color);
+		HANG;
 	}
 
 	elapsed_usec += SYS_TICK_USEC;
