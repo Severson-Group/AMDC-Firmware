@@ -122,6 +122,7 @@ static int CmdTCE(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdFSW(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdDEA(const char * szCmd, char *szResponse, void *CommDevice);
 
 typedef struct command_table_entry {
 	char *szCmd;
@@ -129,7 +130,7 @@ typedef struct command_table_entry {
 	int (*cmd_function)(const char *, char *, void *);
 } command_table_entry;
 
-#define NUM_CMD 21
+#define NUM_CMD 22
 command_table_entry command_table[NUM_CMD] = {
 		{"BMK", "Benchmark the PI controller logic", CmdBMK},
 		{"CFG", "CFG=d: Write setting d to configuration register (d = 0 to 255)", CmdCFG},
@@ -151,7 +152,8 @@ command_table_entry command_table[NUM_CMD] = {
 		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD},
 		{"VSL", "VSL=l1,l2,l3: Set output legs for VSI", CmdVSL},
 		{"VSI", "VSI=V,freq(,ramptime): Set V (percent output voltage, 0-100), with freq (Hz). Optional ramp time (ms)", CmdVSI},
-		{"FSW", "FSW=frequency: Set PWM switching frequency (100Hz to 4MHz)", CmdFSW}
+		{"FSW", "FSW=frequency: Set PWM switching frequency (100Hz to 4MHz)", CmdFSW},
+		{"DEA", "DEA=ns: Set PWM dead time in ns (25ns to ...)", CmdDEA}
 	};
 
 
@@ -1117,7 +1119,6 @@ static int CmdCST(const char * szCmd, char *szResponse, void *CommDevice)
  */
 
 static char bufferVSL[128];
-
 static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice)
 {
 	char *p;
@@ -1210,7 +1211,6 @@ static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice)
  */
 
 static char bufferVSI[128];
-
 static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
 {
 	char *p;
@@ -1292,7 +1292,6 @@ static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
 }
 
 static char bufferFSW[128];
-
 static int CmdFSW(const char * szCmd, char *szResponse, void *CommDevice)
 {
 	char *p;
@@ -1335,6 +1334,56 @@ static int CmdFSW(const char * szCmd, char *szResponse, void *CommDevice)
 
 	// do work
 	pwm_set_switching_freq((double) iHz);
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+
+static char bufferDEA[128];
+static int CmdDEA(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferDEA, 0, 128);
+	strcpy(bufferDEA, szCmd);
+
+	// Parse out tokens
+	int iNs = 0;
+
+	p = strtok(bufferDEA, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'DEA'
+			break;
+		case 1:
+			iNs = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iNs = 0;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check for errors while parsing
+	if (iNs < 25 || iNs > 1e9) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// do work
+	pwm_set_deadtime_ns(iNs);
 
 	strcat(szResponse, "OK");
 	return strlen(szResponse);
