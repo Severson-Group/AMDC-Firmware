@@ -34,8 +34,8 @@ int main()
 	task_mc_init();
 	task_cc_init();
 
-	// Command RPM to motion control task
-	task_mc_set_omega_star(PI2 * 2); // 2 RPM
+	// Command speed to motion control task
+	task_mc_set_omega_star(PI2 * 2); // 2 rev/s
 
 	// Initialize scheduler (sets up h/w timer, interrupt)
 	scheduler_init();
@@ -46,4 +46,3 @@ int main()
 	cleanup_platform();
 	return 0;
 }
-

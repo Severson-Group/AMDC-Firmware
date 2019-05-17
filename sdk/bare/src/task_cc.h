@@ -9,9 +9,13 @@
 
 #define CC_BANDWIDTH				(200) // Hz
 
-#define CC_BUS_VOLTAGE				(30.0) // V
+#define CC_BUS_VOLTAGE				(5.0) // V
 
-#define ADC_TO_AMPS					(0.5) // amps = (raw ADC voltage value) * (this value)
+// amps = (raw ADC voltage value) * (this value)
+#define ADC_TO_AMPS_PHASE_A			(0.503431)
+#define ADC_TO_AMPS_PHASE_B			(0.503755)
+#define ADC_TO_AMPS_PHASE_C			(0.504255)
+
 
 #define CC_PHASE_A_ADC				(ANLG_CHNL1)
 #define CC_PHASE_B_ADC				(ANLG_CHNL2)

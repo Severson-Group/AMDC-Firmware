@@ -49,13 +49,14 @@ void task_cc_set_Iq_star(double my_Iq_star) { Iq_star = my_Iq_star; }
 
 void _get_theta_da(double *theta_da)
 {
+#if 1
 	// Get raw encoder position
 	uint32_t position;
 	encoder_get_position(&position);
 
 	// Add offset (align to DQ frame)
 	position += ENCODER_PULSES_PER_REV;
-	position -= 9062;
+	position -= 9234;
 
 	while (position >= ENCODER_PULSES_PER_REV) {
 		position -= ENCODER_PULSES_PER_REV;
@@ -71,6 +72,13 @@ void _get_theta_da(double *theta_da)
 	while (*theta_da > PI2) {
 		*theta_da -= PI2;
 	}
+
+#else
+	*theta_da += (60.0 * PI2 / TASK_CC_UPDATES_PER_SEC); // 60 Hz
+	while (*theta_da > PI2) {
+		*theta_da -= PI2;
+	}
+#endif
 }
 
 void _get_Iabc(double *Iabc)
@@ -82,9 +90,9 @@ void _get_Iabc(double *Iabc)
 	analog_getf(CC_PHASE_C_ADC, &Iabc_f[2]);
 
 	// Convert ADC values to raw currents
-	Iabc[0] = (double) Iabc_f[0] * ADC_TO_AMPS;
-	Iabc[1] = (double) Iabc_f[1] * ADC_TO_AMPS;
-	Iabc[2] = (double) Iabc_f[2] * ADC_TO_AMPS;
+	Iabc[0] = (double) Iabc_f[0] * ADC_TO_AMPS_PHASE_A;
+	Iabc[1] = (double) Iabc_f[1] * ADC_TO_AMPS_PHASE_B;
+	Iabc[2] = (double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C;
 }
 
 //#define CC_FIND_DQ_FRAME_OFFSET
@@ -97,7 +105,6 @@ void task_cc_callback(void)
 #ifndef CC_FIND_DQ_FRAME_OFFSET
 	_get_theta_da(&theta_da);
 #endif
-
 
 	// ----------------------
 	// (1) Get current values

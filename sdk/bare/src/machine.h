@@ -18,8 +18,8 @@
 #define POLE_PAIRS		(16.0)
 
 // NOTE: use this to artificially limit current
-//#define I_rated_rms			(2.0)	// Arms
-#define I_rated_rms			(24.2)	// Arms
+#define I_rated_rms			(2.0)	// Arms
+//#define I_rated_rms			(24.2)	// Arms
 
 #define I_rated_pk			(I_rated_rms * SQRT2)	// Apk
 #define I_rated_dq			(I_rated_pk / SQRT23)	// A_dq
