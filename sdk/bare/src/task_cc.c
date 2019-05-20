@@ -4,6 +4,7 @@
 #include "machine.h"
 #include "defines.h"
 #include "transform.h"
+#include "debug.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -153,6 +154,31 @@ void task_cc_callback(void)
 	Iq_err = Iq_star - Iq;
 	Iq_err_acc += Iq_err;
 	Vq_star = (Kp_q * Iq_err) - (Ki_q * Ts * Iq_err_acc);
+
+
+#if 0
+
+	static int counter = 0;
+	static int prev_steps = 0;
+	const static int SAMPLES_PER_SEC = 10;
+
+	counter++;
+	if (counter >= TASK_CC_UPDATES_PER_SEC / SAMPLES_PER_SEC) {
+		counter = 0;
+
+		int32_t steps;
+		encoder_get_steps(&steps);
+		int32_t delta = steps - prev_steps;
+		prev_steps = steps;
+
+
+		char data[256];
+		snprintf(data, 256, "%d\t%d\t%d\t%f\n", SAMPLES_PER_SEC, delta, ENCODER_PULSES_PER_REV_BITS, Vq_star);
+
+		debug_print(data, strlen(data));
+	}
+
+#endif
 
 
 	// --------------------------------
