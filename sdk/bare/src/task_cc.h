@@ -11,10 +11,15 @@
 
 #define CC_BUS_VOLTAGE				(5.0) // V
 
-// amps = (raw ADC voltage value) * (this value)
-#define ADC_TO_AMPS_PHASE_A			(0.503431)
-#define ADC_TO_AMPS_PHASE_B			(0.503755)
-#define ADC_TO_AMPS_PHASE_C			(0.504255)
+// Current = GAIN * ADC_Voltage + Offset
+
+#define ADC_TO_AMPS_PHASE_A_GAIN	(0.50343077)
+#define ADC_TO_AMPS_PHASE_B_GAIN	(0.50375471)
+#define ADC_TO_AMPS_PHASE_C_GAIN	(0.50425522)
+
+#define ADC_TO_AMPS_PHASE_A_OFFSET	(0.022818905)
+#define ADC_TO_AMPS_PHASE_B_OFFSET	(0.025518978)
+#define ADC_TO_AMPS_PHASE_C_OFFSET	(0.010428336)
 
 
 #define CC_PHASE_A_ADC				(ANLG_CHNL1)

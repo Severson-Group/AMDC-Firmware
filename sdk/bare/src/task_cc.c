@@ -91,9 +91,9 @@ void _get_Iabc(double *Iabc)
 	analog_getf(CC_PHASE_C_ADC, &Iabc_f[2]);
 
 	// Convert ADC values to raw currents
-	Iabc[0] = (double) Iabc_f[0] * ADC_TO_AMPS_PHASE_A;
-	Iabc[1] = (double) Iabc_f[1] * ADC_TO_AMPS_PHASE_B;
-	Iabc[2] = (double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C;
+	Iabc[0] = ((double) Iabc_f[0] * ADC_TO_AMPS_PHASE_A_GAIN) + ADC_TO_AMPS_PHASE_A_OFFSET;
+	Iabc[1] = ((double) Iabc_f[1] * ADC_TO_AMPS_PHASE_B_GAIN) + ADC_TO_AMPS_PHASE_B_OFFSET;
+	Iabc[2] = ((double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C_GAIN) + ADC_TO_AMPS_PHASE_C_OFFSET;
 }
 
 //#define CC_FIND_DQ_FRAME_OFFSET
