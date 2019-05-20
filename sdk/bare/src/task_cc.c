@@ -174,7 +174,7 @@ void task_cc_callback(void)
 	if (saturate(-CC_BUS_VOLTAGE, CC_BUS_VOLTAGE, &Vabc_star[0]) != 0) color.g = 255;
 	if (saturate(-CC_BUS_VOLTAGE, CC_BUS_VOLTAGE, &Vabc_star[1]) != 0) color.g = 255;
 	if (saturate(-CC_BUS_VOLTAGE, CC_BUS_VOLTAGE, &Vabc_star[2]) != 0) color.g = 255;
-	io_led_set(&color);
+	io_led_set_c(0, 1, 0, &color);
 
 	// --------------------------------------
 	// (5) Write voltages out to PWM hardware

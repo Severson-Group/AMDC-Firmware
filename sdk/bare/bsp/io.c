@@ -51,14 +51,18 @@ void io_init(void)
 
 void io_led_set(io_led_color_t *color)
 {
-	uint8_t r = color->r > 0 ? 1 : 0;
-	uint8_t g = color->g > 0 ? 1 : 0;
-	uint8_t b = color->b > 0 ? 1 : 0;
+	io_led_set_c(1, 1, 1, color);
+}
 
-	XGpioPs_WritePin(&Gpio, IO_LED_R_MIO_PIN, r);
-	XGpioPs_WritePin(&Gpio, IO_LED_G_MIO_PIN, g);
-	XGpioPs_WritePin(&Gpio, IO_LED_B_MIO_PIN, b);
+void io_led_set_c(uint8_t r, uint8_t g, uint8_t b, io_led_color_t *color)
+{
+	uint8_t rr = color->r > 0 ? 1 : 0;
+	uint8_t gg = color->g > 0 ? 1 : 0;
+	uint8_t bb = color->b > 0 ? 1 : 0;
 
+	if (r) XGpioPs_WritePin(&Gpio, IO_LED_R_MIO_PIN, rr);
+	if (g) XGpioPs_WritePin(&Gpio, IO_LED_G_MIO_PIN, gg);
+	if (b) XGpioPs_WritePin(&Gpio, IO_LED_B_MIO_PIN, bb);
 }
 
 void io_switch_get(uint8_t *sw1, uint8_t *sw2)

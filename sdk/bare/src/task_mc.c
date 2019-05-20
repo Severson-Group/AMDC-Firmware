@@ -81,7 +81,7 @@ void task_mc_callback(void)
 
 	io_led_color_t color = {0, 0, 0};
 	if (saturate(MIN_CC_CURRENT, MAX_CC_CURRENT, &Iq_star) != 0) color.r = 255;
-	io_led_set(&color);
+	io_led_set_c(1, 0, 0, &color);
 
 	// ---------------
 	// Send to CC task
