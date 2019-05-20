@@ -33,6 +33,7 @@ int main()
 	// User tasks initialization
 	task_mc_init();
 	task_cc_init();
+	debug_init();
 
 	// Command speed to motion control task
 	task_mc_set_omega_star(PI2 * 2); // 2 rev/s
