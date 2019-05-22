@@ -13,7 +13,6 @@
  */
 
 #include <stdio.h>
-
 #include "../bsp/bsp.h"
 #include "platform.h"
 #include "scheduler.h"
@@ -21,6 +20,7 @@
 #include "task_mc.h"
 #include "defines.h"
 #include "debug.h"
+#include "commands.h"
 
 int main()
 {
@@ -30,13 +30,16 @@ int main()
 	// User BSP library initialization
 	bsp_init();
 
+	// Initialize system tasks
+	debug_init();
+	commands_init();
+
 	// User tasks initialization
 	task_mc_init();
 	task_cc_init();
-	debug_init();
 
-	// Command speed to motion control task
-	task_mc_set_omega_star(PI2 * 2); // 2 rev/s
+	// Command zero speed to motion control task
+	task_mc_set_omega_star(0); // rad/s
 
 	// Initialize scheduler (sets up h/w timer, interrupt)
 	scheduler_init();
