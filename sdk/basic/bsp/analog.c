@@ -1,5 +1,4 @@
 #include "../bsp/analog.h"
-
 #include "xil_io.h"
 #include <stdio.h>
 
@@ -10,6 +9,8 @@ float analog_offsetf[ANALOG_NUM_CHANNELS] = {0};
 
 void analog_init(void)
 {
+	printf("ANLG:\tInitializing...\n");
+
 	// Set SCK to 50MHz
 	analog_set_clkdiv(ANLG_CLKDIV4);
 }
@@ -37,6 +38,8 @@ void analog_calibrate(uint32_t num)
 
 void analog_set_clkdiv(analog_clkdiv_e div)
 {
+	printf("ANLG:\tSetting clkdiv to %d...\n", div);
+
 	// Make sure we are only writing lower 2 bits
 	uint32_t value = div & 0x00000003;
 

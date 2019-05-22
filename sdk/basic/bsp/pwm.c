@@ -1,5 +1,4 @@
 #include "pwm.h"
-
 #include "xil_io.h"
 #include <stdio.h>
 
@@ -15,8 +14,10 @@ static uint16_t deadtime;
 
 void pwm_init(void)
 {
+	printf("PWM:\tInitializing...\n");
+
 	pwm_set_switching_freq(100000.0);
-//	pwm_set_carrier_divisor(3);
+//	pwm_set_carrier_divisor(0);
 //	pwm_set_carrier_max(255);
 
 	pwm_set_deadtime_ns(100);
@@ -29,6 +30,8 @@ void pwm_init(void)
 
 void pwm_set_switching_freq(double freq_hz)
 {
+	printf("PWM:\tSetting switching freq to %f...\n", freq_hz);
+
 	// NOTE: freq_hz can be in range:
 	// 1526Hz ... 100MHz
 
@@ -38,11 +41,13 @@ void pwm_set_switching_freq(double freq_hz)
 	// Calculate what the carrier_max should be to achieve the right switching freq
 	carrier_max = (uint16_t) (((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
 	pwm_set_carrier_max(carrier_max);
+
+	printf("PWM:\tCarrier divisor: %d, carrier_max: %d\n", carrier_divisor, carrier_max);
 }
 
 void pwm_set_duty(uint8_t idx, double duty)
 {
-	if (duty > 1.0) {
+	if (duty >= 1.0) {
 		pwm_set_duty_raw(idx, carrier_max);
 	} else if (duty <= 0.0) {
 		pwm_set_duty_raw(idx, 0);
@@ -74,9 +79,11 @@ void pwm_set_carrier_max(uint16_t max)
 	Xil_Out32(PWM_BASE_ADDR + (25 * sizeof(uint32_t)), max);
 }
 
-void pwm_set_deadtime_ns(uint16_t time)
+void pwm_set_deadtime_ns(uint16_t time_ns)
 {
-	deadtime = time / 5;
+	printf("PWM:\tSetting deadtime to %d ns...\n", time_ns);
+
+	deadtime = time_ns / 5;
 
 	// NOTE: FPGA enforces minimum register value of 5
 	// This should prevent shoot-through events.
