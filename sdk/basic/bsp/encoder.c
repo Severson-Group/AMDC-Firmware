@@ -1,5 +1,4 @@
 #include "encoder.h"
-#include "../npetersen/defines.h"
 #include <stdio.h>
 #include <math.h>
 #include "xil_io.h"
