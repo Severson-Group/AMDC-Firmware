@@ -1,9 +1,9 @@
 #include "task_mc.h"
 #include "task_cc.h"
-#include "scheduler.h"
-#include "../bsp/bsp.h"
-#include "defines.h"
 #include "machine.h"
+#include "../bsp/bsp.h"
+#include "../src/scheduler.h"
+#include "../src/defines.h"
 #include <stdint.h>
 
 #define Wb		(MC_BANDWIDTH * PI2) // rad/s

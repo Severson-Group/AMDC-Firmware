@@ -1,7 +1,7 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 
-#include "defines.h"
+#include "../src/defines.h"
 
 
 // TG motor from Beta

@@ -1,8 +1,8 @@
 #ifndef TASK_CC_H
 #define TASK_CC_H
 
-#include "defines.h"
-#include "scheduler.h"
+#include "../src/defines.h"
+#include "../src/scheduler.h"
 
 #define TASK_CC_UPDATES_PER_SEC		(10000)
 #define TASK_CC_INTERVAL_USEC		(USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
