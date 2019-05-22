@@ -15,8 +15,10 @@
 
 #define HANG printf("HANG!!!\n"); while(1)
 
-#define SUCCESS		(1)
-#define FAILURE		(-1)
+#define SUCCESS					(1)
+#define FAILURE					(-1)
+#define INVALID_ARGUMENTS		(-2)
+#define UNKNOWN_CMD				(-3)
 
 #define PI 		(3.141592653589793238463)	// pi
 #define PI23 	(2.094395102393195492308)	// 2*pi/3

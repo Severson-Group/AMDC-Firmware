@@ -9,7 +9,4 @@
 void commands_init(void);
 void commands_callback(void);
 
-void command_handler(char **argv, int argc);
-
-
 #endif // COMMANDS_H
