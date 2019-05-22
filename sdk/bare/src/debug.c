@@ -20,10 +20,13 @@ static int print_idx = -1;
 // Amount of chars we need to print at the moment
 static int print_amount = 0;
 
+static task_control_block_t tcb;
+
 void debug_init(void)
 {
 	printf("DB:\tInitializing debug task...\n");
-	scheduler_register_task(debug_callback, DEBUG_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, debug_callback, DEBUG_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb);
 }
 
 void debug_callback(void)

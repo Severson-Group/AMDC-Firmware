@@ -36,11 +36,14 @@ void task_mc_set_omega_star(double my_omega_star)
 	omega_star = my_omega_star;
 }
 
+static task_control_block_t tcb;
+
 
 void task_mc_init(void)
 {
 	printf("MC:\tInitializing MC task...\n");
-	scheduler_register_task(task_mc_callback, TASK_MC_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_mc_callback, TASK_MC_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb);
 }
 
 void task_mc_callback(void)

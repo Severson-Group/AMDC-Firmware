@@ -38,11 +38,14 @@ inline static int saturate(double min, double max, double *value) {
 	}
 }
 
+static task_control_block_t tcb;
+
 
 void task_cc_init(void)
 {
 	printf("CC:\tInitializing CC task...\n");
-	scheduler_register_task(task_cc_callback, TASK_CC_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_cc_callback, TASK_CC_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb);
 }
 
 void task_cc_set_Id_star(double my_Id_star) { Id_star = my_Id_star; }

@@ -44,11 +44,17 @@ command_table_entry_t command_table[NUM_COMMANDS] = {
 		{"LOGE", 	"Usage: 'LOGE <log_var_idx>' -- Empty log for a previously logged variable", cmd_LOGE}
 };
 
+static task_control_block_t tcb;
+
 
 void commands_init(void)
 {
 	printf("CMD:\tInitializing command task...\n");
-	scheduler_register_task(commands_callback, COMMANDS_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, commands_callback, COMMANDS_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb);
+
+	debug_print("\r\n");
+	_show_help();
 }
 
 void commands_callback(void)
@@ -95,26 +101,26 @@ void commands_callback(void)
 			// Display command status to user
 			switch (err) {
 			case SUCCESS:
-				debug_print("SUCCESS\r\n");
+				debug_print("SUCCESS\r\n\n");
 				break;
 
 			case FAILURE:
-				debug_print("FAILURE\r\n");
+				debug_print("FAILURE\r\n\n");
 				break;
 
 			case INVALID_ARGUMENTS:
-				debug_print("INVALID_ARGUMENTS\r\n");
+				debug_print("INVALID ARGUMENTS\r\n\n");
 				break;
 
 			case UNKNOWN_CMD:
-				debug_print("UNKNOWN_CMD\r\n");
+				debug_print("UNKNOWN CMD\r\n\n");
 
 				// Couldn't find command to run, so display help screen
 				_show_help();
 				break;
 
 			default:
-				debug_print("UNKNOWN ERROR\r\n");
+				debug_print("UNKNOWN ERROR\r\n\n");
 				break;
 			}
 
@@ -157,7 +163,6 @@ static void _parse_cmd(void)
 
 static void _show_help(void)
 {
-	debug_print("\r\n");
 	debug_print("Available commands:\r\n");
 	debug_print("-------------------\r\n");
 

@@ -29,12 +29,15 @@ static log_var_t vars[LOG_MAX_NUM_VARS] = {0};
 
 static uint8_t log_running;
 
+static task_control_block_t tcb;
+
 void log_init(void)
 {
 	// Register task which samples variables etc
 	// NOTE: this runs at the base scheduler time quantum,
 	//       or as fast as possible!
-	scheduler_register_task(log_callback, SYS_TICK_USEC);
+	scheduler_tcb_init(&tcb, log_callback, SYS_TICK_USEC);
+	scheduler_tcb_register(&tcb);
 
 	// Initialize all the variables to NULL address,
 	// which indicates they aren't active
