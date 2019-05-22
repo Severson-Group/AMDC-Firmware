@@ -28,7 +28,4 @@ void scheduler_register_task(task_callback_t callback, uint32_t interval_usec);
 
 uint64_t scheduler_get_elapsed_usec(void);
 
-void scheduler_pause(void);
-void scheduler_resume(void);
-
 #endif // SCHEDULER_H

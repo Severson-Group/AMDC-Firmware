@@ -89,9 +89,7 @@ void log_dump_callback(void)
 		count = 0;
 		// Time to dump buffer
 
-		scheduler_pause();
 		log_dump_uart();
-		scheduler_resume();
 	}
 }
 

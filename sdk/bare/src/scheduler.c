@@ -22,10 +22,6 @@ static volatile bool scheduler_paused = false;
 
 void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 {
-	if (scheduler_paused) {
-		return;
-	}
-
 	// We should be done running tasks in a time slice before this fires,
 	// so if a task is still running, we consumed too many cycles per slice
 	if (task_running) {
@@ -40,7 +36,6 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 
 	elapsed_usec += SYS_TICK_USEC;
 	scheduler_idle = false;
-
 }
 
 uint64_t scheduler_get_elapsed_usec(void)
@@ -95,14 +90,4 @@ void scheduler_run(void)
 		scheduler_idle = true;
 		while (scheduler_idle);
 	}
-}
-
-void scheduler_pause(void)
-{
-	scheduler_paused = true;
-}
-
-void scheduler_resume(void)
-{
-	scheduler_paused = false;
 }
