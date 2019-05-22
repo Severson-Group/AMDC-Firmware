@@ -16,11 +16,12 @@
 #include "../bsp/bsp.h"
 #include "platform.h"
 #include "scheduler.h"
-#include "task_cc.h"
-#include "task_mc.h"
 #include "defines.h"
 #include "debug.h"
 #include "commands.h"
+#include "task_test.h"
+#include "task_cc.h"
+#include "task_mc.h"
 
 int main()
 {
@@ -37,6 +38,7 @@ int main()
 	// User tasks initialization
 	task_mc_init();
 	task_cc_init();
+	task_test_init();
 
 	// Command zero speed to motion control task
 	task_mc_set_omega_star(0); // rad/s
