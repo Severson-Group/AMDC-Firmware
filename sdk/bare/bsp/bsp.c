@@ -5,9 +5,11 @@ void bsp_init(void)
 {
 	printf("BSP:\tInitializing...\n");
 
-    encoder_init();
-    analog_init();
-    pwm_init();
-    io_init();
-    gpio_init();
+	uart_init();
+
+	encoder_init();
+	analog_init();
+	pwm_init();
+	io_init();
+	gpio_init();
 }

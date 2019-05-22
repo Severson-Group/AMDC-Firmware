@@ -6,5 +6,6 @@
 int uart_init(void);
 
 int uart_send(char *msg, int len);
+int uart_recv(char *msg, int len);
 
 #endif // UART_H
