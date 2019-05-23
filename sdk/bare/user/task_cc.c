@@ -18,6 +18,8 @@
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
+static int32_t dq_offset = 9234;
+
 static double Id_err_acc = 0.0;
 static double Iq_err_acc = 0.0;
 
@@ -59,6 +61,7 @@ void task_cc_deinit(void)
 
 void task_cc_set_Id_star(double my_Id_star) { Id_star = my_Id_star; }
 void task_cc_set_Iq_star(double my_Iq_star) { Iq_star = my_Iq_star; }
+void task_cc_set_dq_offset(int32_t offset) { dq_offset = offset; }
 
 void _get_theta_da(double *theta_da)
 {
@@ -69,7 +72,7 @@ void _get_theta_da(double *theta_da)
 
 	// Add offset (align to DQ frame)
 	position += ENCODER_PULSES_PER_REV;
-	position -= 9234;
+	position -= dq_offset;
 
 	while (position >= ENCODER_PULSES_PER_REV) {
 		position -= ENCODER_PULSES_PER_REV;
@@ -170,24 +173,25 @@ void task_cc_callback(void)
 
 #if 0
 
+	static double Vq_avg = 0.0;
+	static double Vd_avg = 0.0;
+	Vq_avg += Vq_star;
+	Vd_avg += Vd_star;
+
 	static int counter = 0;
-	static int prev_steps = 0;
-	const static int SAMPLES_PER_SEC = 10;
+	const static int SAMPLES_PER_SEC = 5;
 
 	counter++;
 	if (counter >= TASK_CC_UPDATES_PER_SEC / SAMPLES_PER_SEC) {
+		Vq_avg /= counter;
+		Vd_avg /= counter;
+
 		counter = 0;
 
-		int32_t steps;
-		encoder_get_steps(&steps);
-		int32_t delta = steps - prev_steps;
-		prev_steps = steps;
+		char msg[256];
+		snprintf(msg, 256, "%f\t%f\r\n", Vd_avg, Vq_avg);
 
-
-		char data[256];
-		snprintf(data, 256, "%d\t%d\t%d\t%f\n", SAMPLES_PER_SEC, delta, ENCODER_PULSES_PER_REV_BITS, Vq_star);
-
-		debug_print(data, strlen(data));
+		debug_print(msg);
 	}
 
 #endif

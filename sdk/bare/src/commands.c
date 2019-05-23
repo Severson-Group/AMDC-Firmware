@@ -25,6 +25,7 @@ static int _command_handler(char **argv, int argc);
 static int cmd_log(char **argv, int argc);
 static int cmd_cc(char **argv, int argc);
 static int cmd_mc(char **argv, int argc);
+static int cmd_enc(char **argv, int argc);
 
 typedef struct command_table_entry_t {
 	char *cmd;
@@ -32,11 +33,12 @@ typedef struct command_table_entry_t {
 	int (*cmd_function)(char**, int);
 } command_table_entry_t;
 
-#define NUM_COMMANDS	(3)
+#define NUM_COMMANDS	(4)
 command_table_entry_t command_table[NUM_COMMANDS] = {
 		{"log",	"Logging engine commands", cmd_log},
 		{"cc",	"Current controller commands", cmd_cc},
-		{"mc",	"Motion controller commands", cmd_mc}
+		{"mc",	"Motion controller commands", cmd_mc},
+		{"enc", "Encoder commands", cmd_enc}
 };
 
 typedef struct command_help_entry_t {
@@ -45,22 +47,26 @@ typedef struct command_help_entry_t {
 	char *desc;
 } command_help_entry_t;
 
-#define NUM_HELP_ENTRIES	(12)
+#define NUM_HELP_ENTRIES	(15)
 command_help_entry_t help_table[NUM_HELP_ENTRIES] = {
-		{2, "init", "Start motion controller"},
-		{2, "deinit", "Stop motion controller"},
-		{2, "rpm <rpms>", "Command speed to motion controller"},
+		{0, "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging"},
+		{0, "start", "Start logging"},
+		{0, "stop", "Stop logging"},
+		{0, "dump <log_var_idx>", "Dump log data to console"},
+		{0, "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"},
 
 		{1, "init", "Start current controller"},
 		{1, "deinit", "Stop current controller"},
 		{1, "Id* <milliamps>", "Command Id* to current controller"},
 		{1, "Iq* <milliamps>", "Command Iq* to current controller"},
+		{1, "offset <enc_pulses>", "Set DQ frame offset"},
 
-		{0, "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging"},
-		{0, "start", "Start logging"},
-		{0, "stop", "Stop logging"},
-		{0, "dump <log_var_idx>", "Dump log data to console"},
-		{0, "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"}
+		{2, "init", "Start motion controller"},
+		{2, "deinit", "Stop motion controller"},
+		{2, "rpm <rpms>", "Command speed to motion controller"},
+
+		{3, "steps", "Read encoder steps from power-up"},
+		{3, "pos", "Read encoder position"}
 };
 
 static task_control_block_t tcb;
@@ -242,6 +248,46 @@ int _command_handler(char **argv, int argc)
 }
 
 
+
+//
+// Handles the 'enc' command
+// and all sub-commands
+//
+static int cmd_enc(char **argv, int argc)
+{
+	char msg[128];
+
+	// Handle 'steps' sub-command
+	if (strcmp("steps", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		int32_t steps;
+		encoder_get_steps(&steps);
+
+		snprintf(msg, 128, "steps: %ld\r\n", steps);
+		debug_print(msg);
+
+		return SUCCESS;
+	}
+
+	// Handle 'pos' sub-command
+	if (strcmp("pos", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		uint32_t position;
+		encoder_get_position(&position);
+
+		snprintf(msg, 128, "pos: %ld\r\n", position);
+		debug_print(msg);
+
+		return SUCCESS;
+	}
+
+	return INVALID_ARGUMENTS;
+}
+
 //
 // Handles the 'cc' command
 // and all sub-commands
@@ -297,6 +343,18 @@ static int cmd_cc(char **argv, int argc)
 		Id_star /= 1000.0;
 
 		task_cc_set_Id_star(Id_star);
+		return SUCCESS;
+	}
+
+	// Handle 'offset' sub-command
+	if (strcmp("offset", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
+
+		// Pull out offset argument
+		int32_t offset = atoi(argv[2]);
+
+		task_cc_set_dq_offset(offset);
 		return SUCCESS;
 	}
 
