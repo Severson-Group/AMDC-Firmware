@@ -330,6 +330,7 @@ static int cmd_mc(char **argv, int argc)
 		if (!task_mc_is_inited()) return FAILURE;
 
 		task_mc_deinit();
+		task_mc_set_omega_star(0.0);
 		task_cc_set_Id_star(0.0);
 		task_cc_set_Iq_star(0.0);
 		return SUCCESS;
