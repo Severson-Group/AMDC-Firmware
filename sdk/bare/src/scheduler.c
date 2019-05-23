@@ -73,6 +73,35 @@ void scheduler_tcb_register(task_control_block_t *tcb)
 	tcb->next = NULL;
 }
 
+void scheduler_tcb_unregister(task_control_block_t *tcb)
+{
+	// Make sure list isn't empty
+	if (tasks == NULL) {
+		HANG;
+	}
+
+	// Special case: trying to remove the head of the list
+	if (tasks->id == tcb->id) {
+		tasks = tasks->next;
+		return;
+	}
+
+	// Now we know that 'tcb' to remove is NOT first node
+
+	task_control_block_t *prev = NULL;
+	task_control_block_t *curr = tasks;
+
+	// Find spot in linked list to remove tcb
+	while (curr->id != tcb->id) {
+		prev = curr;
+		curr = curr->next;
+	}
+
+	// 'curr' is now the one we want to remove!
+
+	prev->next = curr->next;
+}
+
 void scheduler_run(void)
 {
 	printf("SCHED:\tRunning scheduler...\n");

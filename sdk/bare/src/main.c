@@ -19,6 +19,7 @@
 #include "scheduler.h"
 #include "defines.h"
 #include "debug.h"
+#include "log.h"
 #include "commands.h"
 #include "../user/task_test.h"
 #include "../user/task_cc.h"
@@ -35,6 +36,7 @@ int main()
 	// Initialize system tasks
 	debug_init();
 	commands_init();
+	log_init();
 
 	// User tasks initialization
 	task_mc_init();

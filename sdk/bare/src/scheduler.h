@@ -36,6 +36,7 @@ void scheduler_run(void);
 
 void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback, uint32_t interval_usec);
 void scheduler_tcb_register(task_control_block_t *tcb);
+void scheduler_tcb_unregister(task_control_block_t *tcb);
 
 uint64_t scheduler_get_elapsed_usec(void);
 

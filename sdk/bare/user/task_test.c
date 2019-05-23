@@ -5,7 +5,8 @@
 #define MAX_VALUE	(100)
 #define MIN_VALUE	(-100)
 
-int32_t NPETERSEN_READ_ME;
+int32_t LOGGING_tri_i;
+double LOGGING_tri_d;
 static int dir = 1;
 
 static task_control_block_t tcb;
@@ -17,14 +18,17 @@ void task_test_init(void)
 	scheduler_tcb_init(&tcb, task_test_callback, TASK_TEST_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
-	NPETERSEN_READ_ME = 0;
+	LOGGING_tri_i = 0;
+	LOGGING_tri_d = 0.0;
 }
 
 void task_test_callback(void)
 {
-	if (NPETERSEN_READ_ME + dir > MAX_VALUE || NPETERSEN_READ_ME - dir < MIN_VALUE) {
+	if (LOGGING_tri_i + dir > MAX_VALUE || LOGGING_tri_i + dir < MIN_VALUE) {
 		dir *= -1;
 	}
 
-	NPETERSEN_READ_ME += dir;
+	LOGGING_tri_i += dir;
+
+	LOGGING_tri_d = (double)LOGGING_tri_i / (double) MAX_VALUE;
 }

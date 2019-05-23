@@ -37,7 +37,7 @@ typedef struct command_table_entry_t {
 #define NUM_COMMANDS	(6)
 command_table_entry_t command_table[NUM_COMMANDS] = {
 		{"MC",		"Usage: 'MC <rpms>' -- Commands speed to motion controller", cmd_MC},
-		{"LOGR", 	"Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec>' -- Register memory address for logging", cmd_LOGR},
+		{"LOGR", 	"Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>' -- Register memory address for logging", cmd_LOGR},
 		{"LOGS", 	"Usage: 'LOGS' -- Start logging", cmd_LOGS},
 		{"LOGT", 	"Usage: 'LOGT' -- Terminate logging", cmd_LOGT},
 		{"LOGD", 	"Usage: 'LOGD <log_var_idx>' -- Dump log data to console", cmd_LOGD},
@@ -214,19 +214,19 @@ static int cmd_MC(char **argv, int argc)
 }
 
 //
-// Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec>' -- Register memory address for logging
+// Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>' -- Register memory address for logging
 //
 static int cmd_LOGR(char **argv, int argc)
 {
 	// Check correct number of arguments
-	if (argc != 5) {
+	if (argc != 6) {
 		// ERROR
 		return INVALID_ARGUMENTS;
 	}
 
 	// Parse arg1: log_var_idx
 	int log_var_idx = atoi(argv[1]);
-	if (log_var_idx >= LOG_MAX_NUM_VARS) {
+	if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
 		// ERROR
 		return INVALID_ARGUMENTS;
 	}
@@ -244,8 +244,22 @@ static int cmd_LOGR(char **argv, int argc)
 		return INVALID_ARGUMENTS;
 	}
 
+	var_type_e type;
+	// Parse arg5: type
+	if (strcmp("int", argv[5]) == 0) {
+		type = INT;
+	} else if (strcmp("float", argv[5]) == 0) {
+		type = FLOAT;
+	} else if (strcmp("double", argv[5]) == 0) {
+		type = DOUBLE;
+	} else {
+		// ERROR
+		return INVALID_ARGUMENTS;
+	}
+
+
 	// Register the variable with the logging engine
-	log_var_register(log_var_idx, name, memory_addr, samples_per_sec);
+	log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
 
 	return SUCCESS;
 }
@@ -259,6 +273,11 @@ static int cmd_LOGS(char **argv, int argc)
 	if (argc != 1) {
 		// ERROR
 		return INVALID_ARGUMENTS;
+	}
+
+	// Make sure log was stopped before this
+	if (log_is_logging() != 0) {
+		return FAILURE;
 	}
 
 	log_start();
@@ -277,6 +296,11 @@ static int cmd_LOGT(char **argv, int argc)
 		return INVALID_ARGUMENTS;
 	}
 
+	// Make sure log was running before this
+	if (log_is_logging() == 0) {
+		return FAILURE;
+	}
+
 	log_stop();
 
 	return SUCCESS;
@@ -293,9 +317,14 @@ static int cmd_LOGD(char **argv, int argc)
 		return INVALID_ARGUMENTS;
 	}
 
+	// Ensure logging was stopped before this
+	if (log_is_logging() != 0) {
+		return FAILURE;
+	}
+
 	// Parse arg1: log_var_idx
 	int log_var_idx = atoi(argv[1]);
-	if (log_var_idx >= LOG_MAX_NUM_VARS) {
+	if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
 		// ERROR
 		return INVALID_ARGUMENTS;
 	}

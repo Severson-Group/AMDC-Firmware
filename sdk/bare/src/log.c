@@ -8,14 +8,17 @@
 
 #define LOG_BUFFER_LENGTH	(LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 
+#define LOG_VAR_NAME_MAX_CHARS	(16)
+
 typedef struct buffer_entry_t {
 	uint32_t timestamp;
 	uint32_t value;
 } buffer_entry_t;
 
 typedef struct log_var_t {
-	char *name;
+	char name[LOG_VAR_NAME_MAX_CHARS];
 	void *addr;
+	var_type_e type;
 
 	uint32_t log_interval_usec;
 	uint64_t last_logged_usec;
@@ -30,6 +33,7 @@ static log_var_t vars[LOG_MAX_NUM_VARS] = {0};
 static uint8_t log_running;
 
 static task_control_block_t tcb;
+
 
 void log_init(void)
 {
@@ -71,7 +75,17 @@ void log_callback(void)
 			v->last_logged_usec = elapsed_usec;
 
 			v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
-			v->buffer[v->buffer_idx].value = *((uint32_t *)v->addr);
+
+			if (v->type == INT) {
+				v->buffer[v->buffer_idx].value = *((uint32_t *)v->addr);
+			} else if (v->type == FLOAT) {
+				float *f = (float *) &(v->buffer[v->buffer_idx].value);
+				*f = *((float *)v->addr);
+			} else if (v->type == DOUBLE) {
+				float *f = (float *) &(v->buffer[v->buffer_idx].value);
+				double value = *((double *)v->addr);
+				*f = (float) value;
+			}
 
 			v->buffer_idx++;
 			if (v->buffer_idx >= LOG_BUFFER_LENGTH) {
@@ -95,14 +109,20 @@ void log_stop(void)
 	log_running = 0;
 }
 
-void log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec)
+uint8_t log_is_logging(void)
+{
+	return log_running;
+}
+
+void log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec, var_type_e type)
 {
 	// Sanity check variable idx
 	if (idx < 0 || idx >= LOG_MAX_NUM_VARS) { HANG; }
 
-	// Append task to task list
-	vars[idx].name = name;
+	// Populate variable entry...
+	strncpy(vars[idx].name, name, LOG_VAR_NAME_MAX_CHARS);
 	vars[idx].addr = addr;
+	vars[idx].type = type;
 
 	// Calculate 'log_interval_usec' from samples per second
 	vars[idx].log_interval_usec = USEC_IN_SEC / samples_per_sec;
@@ -117,33 +137,116 @@ void log_var_empty(int idx)
 	memset(vars[idx].buffer, 0, LOG_BUFFER_LENGTH);
 }
 
+
+
+
+
+
+
+typedef enum sm_states_e {
+	TITLE = 1,
+	NUM_SAMPLES,
+	HEADER,
+	VARIABLES,
+	FOOTER,
+	REMOVE_TASK
+} sm_states_e;
+
+typedef struct sm_ctx_t {
+	sm_states_e state;
+	int var_idx;
+	int sample_idx;
+	task_control_block_t tcb;
+} sm_ctx_t;
+
 #define MSG_LENGTH		(128)
+
+#define SM_UPDATES_PER_SEC		(10000)
+#define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
+
+void state_machine(sm_ctx_t *ctx)
+{
+	char msg[MSG_LENGTH];
+	log_var_t *v = &vars[ctx->var_idx];
+	buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+
+	switch (ctx->state) {
+	case TITLE:
+		memset(msg, 0, MSG_LENGTH);
+		snprintf(msg, MSG_LENGTH, "LOG OF VARIABLE: '%s'\r\n", v->name);
+		debug_print(msg);
+
+		ctx->state = NUM_SAMPLES;
+		break;
+
+	case NUM_SAMPLES:
+		memset(msg, 0, MSG_LENGTH);
+		snprintf(msg, MSG_LENGTH, "NUM SAMPLES: %d\r\n", v->num_samples);
+		debug_print(msg);
+
+		ctx->state = HEADER;
+		break;
+
+	case HEADER:
+		debug_print("-------\r\n");
+		debug_print("IDX\t\tTS\t\tVALUE\r\n");
+
+		ctx->state = VARIABLES;
+		break;
+
+	case VARIABLES:
+		memset(msg, 0, MSG_LENGTH);
+
+		if (v->type == INT) {
+			snprintf(msg, MSG_LENGTH, "%d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
+		} else if (v->type == FLOAT || v->type == DOUBLE) {
+			float *f = (float *) &(e->value);
+			snprintf(msg, MSG_LENGTH, "%d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
+		}
+
+		debug_print(msg);
+
+		ctx->sample_idx++;
+
+		if (ctx->sample_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
+			ctx->state = FOOTER;
+		}
+		break;
+
+	case FOOTER:
+		debug_print("-------\r\n");
+		debug_print("\r\n");
+
+		ctx->state = REMOVE_TASK;
+		break;
+
+	case REMOVE_TASK:
+		scheduler_tcb_unregister(&ctx->tcb);
+		break;
+
+	default:
+		// Can't happen
+		HANG;
+		break;
+	}
+}
+
+static sm_ctx_t ctx;
+
+
+void state_machine_callback(void)
+{
+	state_machine(&ctx);
+}
 
 void log_var_dump_uart(int log_var_idx)
 {
-	char msg[MSG_LENGTH];
+	// Initialize the state machine context
+	ctx.state = TITLE;
+	ctx.var_idx = log_var_idx;
+	ctx.sample_idx = 0;
 
-	log_var_t *v = &vars[log_var_idx];
-
-	memset(msg, 0, MSG_LENGTH);
-	snprintf(msg, MSG_LENGTH, "LOG OF '%s'\r\n", v->name);
-	debug_print(msg);
-
-	memset(msg, 0, MSG_LENGTH);
-	snprintf(msg, MSG_LENGTH, "NUM SAMPLES: %d\r\n", v->num_samples);
-	debug_print(msg);
-
-	memset(msg, 0, MSG_LENGTH);
-	snprintf(msg, MSG_LENGTH, "IDX\t\tTS\t\tVALUE\r\n");
-	debug_print(msg);
-
-	for (int i = 0; i < LOG_VARIABLE_SAMPLE_DEPTH; i++) {
-		buffer_entry_t *e = &v->buffer[i];
-
-		memset(msg, 0, MSG_LENGTH);
-		snprintf(msg, MSG_LENGTH, "%d\t\t%ld\t\t%ld\r\n", i, e->timestamp, e->value);
-		debug_print(msg);
-	}
-
-	debug_print("-------\r\n");
+	// Initialize the state machine callback tcb
+	scheduler_tcb_init(&ctx.tcb, state_machine_callback, SM_INTERVAL_USEC);
+	scheduler_tcb_register(&ctx.tcb);
 }

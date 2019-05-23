@@ -7,7 +7,7 @@
 #include <string.h>
 
 
-#define OUTPUT_BUFFER_LENGTH	(4096)
+#define OUTPUT_BUFFER_LENGTH	(32 * 1024)
 
 static char output_buffer[OUTPUT_BUFFER_LENGTH] = {0};
 static int output_idx = 0;
