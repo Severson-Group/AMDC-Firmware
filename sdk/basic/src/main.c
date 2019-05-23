@@ -232,17 +232,17 @@ int LeaveProtection(int State) {
 		else
 		printf("\r\n");
 #endif
-//		print("Setting up ethernet and lwip...");
-//		if (SetupLWIP() == XST_SUCCESS)
-//			printf("Success!\r\n");
-//		else
-//			printf("Failure\r\n");
-//
-//		print("Setting up listening sockets...");
-//		if (start_tcpip() == XST_SUCCESS)
-//			printf("Success!\r\n");
-//		else
-//			printf("Failure\r\n");
+		print("Setting up ethernet and lwip...");
+		if (SetupLWIP() == XST_SUCCESS)
+			printf("Success!\r\n");
+		else
+			printf("Failure\r\n");
+
+		print("Setting up listening sockets...");
+		if (start_tcpip() == XST_SUCCESS)
+			printf("Success!\r\n");
+		else
+			printf("Failure\r\n");
 
 		//so we have two options to address the IO -- either directly with its address (0x41200000)
 		//or via XGpio functions.
@@ -257,7 +257,7 @@ int LeaveProtection(int State) {
 
 		print("Enter a command followed by CR\n\r");
 		while (1) {
-//			xemacif_input(echo_netif);
+			xemacif_input(echo_netif);
 
 			HandleCommandState = HandleCommandsUart(szRcvCmdUart,
 					HandleCommandState);
@@ -274,7 +274,7 @@ int LeaveProtection(int State) {
 			if (bEth250ms)
 			{
 				bEth250ms = FALSE;
-//				lwip_timer_callback();
+				lwip_timer_callback();
 			}
 		}
 
