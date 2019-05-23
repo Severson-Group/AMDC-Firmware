@@ -39,12 +39,7 @@ int main()
 	log_init();
 
 	// User tasks initialization
-	task_mc_init();
-	task_cc_init();
 	task_test_init();
-
-	// Command zero speed to motion control task
-	task_mc_set_omega_star(0); // rad/s
 
 	// Initialize scheduler (sets up h/w timer, interrupt, etc)
 	scheduler_init();
@@ -55,3 +50,4 @@ int main()
 	cleanup_platform();
 	return 0;
 }
+

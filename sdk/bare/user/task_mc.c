@@ -39,11 +39,20 @@ void task_mc_set_omega_star(double my_omega_star)
 static task_control_block_t tcb;
 
 
+uint8_t task_mc_is_inited(void)
+{
+	return scheduler_tcb_is_registered(&tcb);
+}
+
 void task_mc_init(void)
 {
-	printf("MC:\tInitializing MC task...\n");
 	scheduler_tcb_init(&tcb, task_mc_callback, TASK_MC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
+}
+
+void task_mc_deinit(void)
+{
+	scheduler_tcb_unregister(&tcb);
 }
 
 void task_mc_callback(void)

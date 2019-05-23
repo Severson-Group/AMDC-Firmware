@@ -3,6 +3,7 @@
 
 #include "../src/defines.h"
 #include "../src/scheduler.h"
+#include <stdint.h>
 
 #define TASK_CC_UPDATES_PER_SEC		(10000)
 #define TASK_CC_INTERVAL_USEC		(USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
@@ -31,7 +32,10 @@
 #define CC_PHASE_C_PWM_LEG_IDX		(2)
 
 void task_cc_init(void);
+void task_cc_deinit(void);
 void task_cc_callback(void);
+
+uint8_t task_cc_is_inited(void);
 
 void task_cc_set_Id_star(double my_Id_star);
 void task_cc_set_Iq_star(double my_Iq_star);

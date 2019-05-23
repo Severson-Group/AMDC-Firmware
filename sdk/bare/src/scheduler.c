@@ -57,6 +57,9 @@ void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback, uin
 
 void scheduler_tcb_register(task_control_block_t *tcb)
 {
+	// Mark as registered
+	tcb->registered = 1;
+
 	// Base case: there are no tasks in linked list
 	if (tasks == NULL) {
 		tasks = tcb;
@@ -75,6 +78,9 @@ void scheduler_tcb_register(task_control_block_t *tcb)
 
 void scheduler_tcb_unregister(task_control_block_t *tcb)
 {
+	// Mark as unregistered
+	tcb->registered = 0;
+
 	// Make sure list isn't empty
 	if (tasks == NULL) {
 		HANG;
@@ -100,6 +106,10 @@ void scheduler_tcb_unregister(task_control_block_t *tcb)
 	// 'curr' is now the one we want to remove!
 
 	prev->next = curr->next;
+}
+
+uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb) {
+	return tcb->registered;
 }
 
 void scheduler_run(void)

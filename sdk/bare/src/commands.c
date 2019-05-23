@@ -7,6 +7,7 @@
 #include "log.h"
 #include "../bsp/bsp.h"
 #include "../user/task_mc.h"
+#include "../user/task_cc.h"
 
 #define BUFFER_LENGTH	(512)
 static char recv_buffer[BUFFER_LENGTH] = {0};
@@ -15,18 +16,15 @@ static int recv_buffer_idx = 0;
 #define CMD_MAX_ARGS	(16)
 static char *cmd_argv[CMD_MAX_ARGS];
 static int cmd_argc = 0;
-static void _parse_cmd(void);
+static int _parse_cmd(void);
 
 static void _show_help(void);
 static int _command_handler(char **argv, int argc);
 
 // Internal functions for each command
-static int cmd_MC(char **argv, int argc);
-static int cmd_LOGR(char **argv, int argc);
-static int cmd_LOGS(char **argv, int argc);
-static int cmd_LOGT(char **argv, int argc);
-static int cmd_LOGD(char **argv, int argc);
-static int cmd_LOGE(char **argv, int argc);
+static int cmd_log(char **argv, int argc);
+static int cmd_cc(char **argv, int argc);
+static int cmd_mc(char **argv, int argc);
 
 typedef struct command_table_entry_t {
 	char *cmd;
@@ -34,14 +32,35 @@ typedef struct command_table_entry_t {
 	int (*cmd_function)(char**, int);
 } command_table_entry_t;
 
-#define NUM_COMMANDS	(6)
+#define NUM_COMMANDS	(3)
 command_table_entry_t command_table[NUM_COMMANDS] = {
-		{"MC",		"Usage: 'MC <rpms>' -- Commands speed to motion controller", cmd_MC},
-		{"LOGR", 	"Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>' -- Register memory address for logging", cmd_LOGR},
-		{"LOGS", 	"Usage: 'LOGS' -- Start logging", cmd_LOGS},
-		{"LOGT", 	"Usage: 'LOGT' -- Terminate logging", cmd_LOGT},
-		{"LOGD", 	"Usage: 'LOGD <log_var_idx>' -- Dump log data to console", cmd_LOGD},
-		{"LOGE", 	"Usage: 'LOGE <log_var_idx>' -- Empty log for a previously logged variable", cmd_LOGE}
+		{"log",	"Logging engine commands", cmd_log},
+		{"cc",	"Current controller commands", cmd_cc},
+		{"mc",	"Motion controller commands", cmd_mc}
+};
+
+typedef struct command_help_entry_t {
+	int cmd_idx;
+	char *subcmd;
+	char *desc;
+} command_help_entry_t;
+
+#define NUM_HELP_ENTRIES	(12)
+command_help_entry_t help_table[NUM_HELP_ENTRIES] = {
+		{2, "init", "Start motion controller"},
+		{2, "deinit", "Stop motion controller"},
+		{2, "rpm <rpms>", "Command speed to motion controller"},
+
+		{1, "init", "Start current controller"},
+		{1, "deinit", "Stop current controller"},
+		{1, "Id* <milliamps>", "Command Id* to current controller"},
+		{1, "Iq* <milliamps>", "Command Iq* to current controller"},
+
+		{0, "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging"},
+		{0, "start", "Start logging"},
+		{0, "stop", "Stop logging"},
+		{0, "dump <log_var_idx>", "Dump log data to console"},
+		{0, "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"}
 };
 
 static task_control_block_t tcb;
@@ -59,6 +78,7 @@ void commands_init(void)
 
 void commands_callback(void)
 {
+	int err;
 	char c;
 	int num_bytes = uart_recv(&c, 1);
 
@@ -93,35 +113,41 @@ void commands_callback(void)
 
 			// Create data structures to send to application
 			// i.e., the `argv` and `argc` variables
-			_parse_cmd();
+			err = _parse_cmd();
 
-			// Send cmd to application
-			int err = _command_handler(cmd_argv, cmd_argc);
-
-			// Display command status to user
-			switch (err) {
-			case SUCCESS:
-				debug_print("SUCCESS\r\n\n");
-				break;
-
-			case FAILURE:
-				debug_print("FAILURE\r\n\n");
-				break;
-
-			case INVALID_ARGUMENTS:
+			if (err != 0) {
+				// Too many arguments in cmd!
 				debug_print("INVALID ARGUMENTS\r\n\n");
-				break;
+				return;
+			} else {
+				// Send cmd to application
+				err = _command_handler(cmd_argv, cmd_argc);
 
-			case UNKNOWN_CMD:
-				debug_print("UNKNOWN CMD\r\n\n");
+				// Display command status to user
+				switch (err) {
+				case SUCCESS:
+					debug_print("SUCCESS\r\n\n");
+					break;
 
-				// Couldn't find command to run, so display help screen
-				_show_help();
-				break;
+				case FAILURE:
+					debug_print("FAILURE\r\n\n");
+					break;
 
-			default:
-				debug_print("UNKNOWN ERROR\r\n\n");
-				break;
+				case INVALID_ARGUMENTS:
+					debug_print("INVALID ARGUMENTS\r\n\n");
+					break;
+
+				case UNKNOWN_CMD:
+					debug_print("UNKNOWN CMD\r\n\n");
+
+					// Couldn't find command to run, so display help screen
+					_show_help();
+					break;
+
+				default:
+					debug_print("UNKNOWN ERROR\r\n\n");
+					break;
+				}
 			}
 
 			// Clear state for next command
@@ -133,7 +159,12 @@ void commands_callback(void)
 	}
 }
 
-static void _parse_cmd(void)
+// _parse_cmd
+//
+// Populates the global `argv` and `argc` variables
+// which are passed to the actual command
+//
+static int _parse_cmd(void)
 {
 	// First word is the first argv
 	cmd_argv[0] = &recv_buffer[0];
@@ -155,26 +186,49 @@ static void _parse_cmd(void)
 
 			// Only allow so many arguments
 			if (cmd_argc >= CMD_MAX_ARGS) {
-				HANG;
+				return -1;
 			}
 		}
 	}
+
+	return 0;
 }
 
+// _show_help
+//
+// Displays the help message to the console
+//
 static void _show_help(void)
 {
 	debug_print("Available commands:\r\n");
 	debug_print("-------------------\r\n");
 
 	char msg[128];
+
 	for (int i = 0; i < NUM_COMMANDS; i++) {
-		snprintf(msg, 128, "%s: %s\r\n", command_table[i].cmd, command_table[i].desc);
+		command_table_entry_t *c = &command_table[i];
+
+		snprintf(msg, 128, "%s -- %s\r\n", c->cmd, c->desc);
 		debug_print(msg);
+
+		for (int j = 0; j < NUM_HELP_ENTRIES; j++) {
+			command_help_entry_t *h = &help_table[j];
+
+			if (h->cmd_idx == i) {
+				snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
+				debug_print(msg);
+			}
+		}
 	}
 
 	debug_print("\r\n");
 }
 
+// _command_handler
+//
+// Takes `argv` and `argc` and finds
+// the command function to call.
+//
 int _command_handler(char **argv, int argc)
 {
 	for (int i = 0; i < NUM_COMMANDS; i++) {
@@ -187,172 +241,228 @@ int _command_handler(char **argv, int argc)
 	return UNKNOWN_CMD;
 }
 
+
 //
-// Usage: 'MC <rpms>' -- Commands speed to motion controller
+// Handles the 'cc' command
+// and all sub-commands
 //
-static int cmd_MC(char **argv, int argc)
+static int cmd_cc(char **argv, int argc)
 {
-	// Check correct number of arguments
-	if (argc != 2) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+	// Handle 'init' sub-command
+	if (strcmp("init", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		// Make sure mc task was not already inited
+		if (task_cc_is_inited()) return FAILURE;
+
+		task_cc_init();
+		return SUCCESS;
 	}
 
-	int arg1 = atoi(argv[1]);
+	// Handle 'deinit' sub-command
+	if (strcmp("deinit", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
 
-	double rpms = (double) arg1;
+		// Make sure mc task was already inited
+		if (!task_cc_is_inited()) return FAILURE;
 
-	// Saturate commanded speed to +/- 600 RPM
-	if (rpms >  600.0) rpms =  600.0;
-	if (rpms < -600.0) rpms = -600.0;
+		task_cc_deinit();
+		task_cc_set_Id_star(0.0);
+		task_cc_set_Iq_star(0.0);
+		return SUCCESS;
+	}
 
-	double rad_per_sec = rpms * PI / 30.0;
+	// Handle 'Iq*' sub-command
+	if (strcmp("Iq*", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
 
-	task_mc_set_omega_star(rad_per_sec);
+		// Pull out iq argument
+		double Iq_star = (double) atoi(argv[2]);
+		Iq_star /= 1000.0;
 
-	return SUCCESS;
+		task_cc_set_Iq_star(Iq_star);
+		return SUCCESS;
+	}
+
+	// Handle 'Id*' sub-command
+	if (strcmp("Id*", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
+
+		// Pull out iq argument
+		double Id_star = (double) atoi(argv[2]);
+		Id_star /= 1000.0;
+
+		task_cc_set_Id_star(Id_star);
+		return SUCCESS;
+	}
+
+	return INVALID_ARGUMENTS;
 }
 
 //
-// Usage: 'LOGR <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>' -- Register memory address for logging
+// Handles the 'mc' command
+// and all sub-commands
 //
-static int cmd_LOGR(char **argv, int argc)
+static int cmd_mc(char **argv, int argc)
 {
-	// Check correct number of arguments
-	if (argc != 6) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+	// Handle 'init' sub-command
+	if (strcmp("init", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		// Make sure mc task was not already inited
+		if (task_mc_is_inited()) return FAILURE;
+
+		task_mc_init();
+		return SUCCESS;
 	}
 
-	// Parse arg1: log_var_idx
-	int log_var_idx = atoi(argv[1]);
-	if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+	// Handle 'deinit' sub-command
+	if (strcmp("deinit", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		// Make sure mc task was already inited
+		if (!task_mc_is_inited()) return FAILURE;
+
+		task_mc_deinit();
+		task_cc_set_Id_star(0.0);
+		task_cc_set_Iq_star(0.0);
+		return SUCCESS;
 	}
 
-	// Parse arg2: name
-	char *name = argv[2];
+	// Handle 'rpm' sub-command
+	if (strcmp("rpm", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
 
-	// Parse arg3: memory_addr
-	void *memory_addr = (void *) atoi(argv[3]);
+		// Pull out rpm argument
+		double rpms = (double) atoi(argv[2]);
 
-	// Parse arg4: samples_per_sec
-	int samples_per_sec = atoi(argv[4]);
-	if (samples_per_sec > 1000 || samples_per_sec <= 0) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+		// Saturate commanded speed to +/- 600 RPM
+		if (rpms >  600.0) rpms =  600.0;
+		if (rpms < -600.0) rpms = -600.0;
+
+		double rad_per_sec = rpms * PI / 30.0;
+
+		task_mc_set_omega_star(rad_per_sec);
+		return SUCCESS;
 	}
 
-	var_type_e type;
-	// Parse arg5: type
-	if (strcmp("int", argv[5]) == 0) {
-		type = INT;
-	} else if (strcmp("float", argv[5]) == 0) {
-		type = FLOAT;
-	} else if (strcmp("double", argv[5]) == 0) {
-		type = DOUBLE;
-	} else {
-		// ERROR
-		return INVALID_ARGUMENTS;
-	}
-
-
-	// Register the variable with the logging engine
-	log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
-
-	return SUCCESS;
+	return INVALID_ARGUMENTS;
 }
 
 //
-// Usage: 'LOGS' -- Start logging
+// Handles the 'log' command
+// and all sub-commands
 //
-static int cmd_LOGS(char **argv, int argc)
+static int cmd_log(char **argv, int argc)
 {
-	// Check correct number of arguments
-	if (argc != 1) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+	// Handle 'reg' sub-command
+	if (strcmp("reg", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 7) return INVALID_ARGUMENTS;
+
+		// Parse arg1: log_var_idx
+		int log_var_idx = atoi(argv[1]);
+		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+			// ERROR
+			return INVALID_ARGUMENTS;
+		}
+
+		// Parse arg2: name
+		char *name = argv[2];
+
+		// Parse arg3: memory_addr
+		void *memory_addr = (void *) atoi(argv[3]);
+
+		// Parse arg4: samples_per_sec
+		int samples_per_sec = atoi(argv[4]);
+		if (samples_per_sec > 1000 || samples_per_sec <= 0) {
+			// ERROR
+			return INVALID_ARGUMENTS;
+		}
+
+		// Parse arg5: type
+		var_type_e type;
+		if (strcmp("int", argv[5]) == 0) {
+			type = INT;
+		} else if (strcmp("float", argv[5]) == 0) {
+			type = FLOAT;
+		} else if (strcmp("double", argv[5]) == 0) {
+			type = DOUBLE;
+		} else {
+			// ERROR
+			return INVALID_ARGUMENTS;
+		}
+
+		// Register the variable with the logging engine
+		log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
+		return SUCCESS;
 	}
 
-	// Make sure log was stopped before this
-	if (log_is_logging() != 0) {
-		return FAILURE;
+	// Handle 'start' sub-command
+	if (strcmp("start", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
+
+		// Make sure log was stopped before this
+		if (log_is_logging()) return FAILURE;
+
+		log_start();
+		return SUCCESS;
 	}
 
-	log_start();
+	// Handle 'stop' sub-command
+	if (strcmp("stop", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 2) return INVALID_ARGUMENTS;
 
-	return SUCCESS;
-}
+		// Make sure log was running before this
+		if (!log_is_logging()) return FAILURE;
 
-//
-// Usage: 'LOGT' -- Terminate logging
-//
-static int cmd_LOGT(char **argv, int argc)
-{
-	// Check correct number of arguments
-	if (argc != 1) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+		log_stop();
+		return SUCCESS;
 	}
 
-	// Make sure log was running before this
-	if (log_is_logging() == 0) {
-		return FAILURE;
+	// Handle 'dump' sub-command
+	if (strcmp("dump", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
+
+		// Ensure logging was stopped before this
+		if (log_is_logging()) return FAILURE;
+
+		// Parse arg1: log_var_idx
+		int log_var_idx = atoi(argv[1]);
+		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+			// ERROR
+			return INVALID_ARGUMENTS;
+		}
+
+		log_var_dump_uart(log_var_idx);
+		return SUCCESS;
 	}
 
-	log_stop();
+	// Handle 'empty' sub-command
+	if (strcmp("empty", argv[1]) == 0) {
+		// Check correct number of arguments
+		if (argc != 3) return INVALID_ARGUMENTS;
 
-	return SUCCESS;
-}
+		// Parse arg1: log_var_idx
+		int log_var_idx = atoi(argv[1]);
+		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+			// ERROR
+			return INVALID_ARGUMENTS;
+		}
 
-//
-// Usage: 'LOGD <log_var_idx>' -- Dump log data to console
-//
-static int cmd_LOGD(char **argv, int argc)
-{
-	// Check correct number of arguments
-	if (argc != 2) {
-		// ERROR
-		return INVALID_ARGUMENTS;
+		log_var_empty(log_var_idx);
+		return SUCCESS;
 	}
 
-	// Ensure logging was stopped before this
-	if (log_is_logging() != 0) {
-		return FAILURE;
-	}
-
-	// Parse arg1: log_var_idx
-	int log_var_idx = atoi(argv[1]);
-	if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
-		// ERROR
-		return INVALID_ARGUMENTS;
-	}
-
-	log_var_dump_uart(log_var_idx);
-
-	return SUCCESS;
-}
-
-//
-// Usage: 'LOGE <log_var_idx>' -- Empty log for a previously logged variable
-//
-static int cmd_LOGE(char **argv, int argc)
-{
-	// Check correct number of arguments
-	if (argc != 2) {
-		// ERROR
-		return INVALID_ARGUMENTS;
-	}
-
-	// Parse arg1: log_var_idx
-	int log_var_idx = atoi(argv[1]);
-	if (log_var_idx >= LOG_MAX_NUM_VARS) {
-		// ERROR
-		return INVALID_ARGUMENTS;
-	}
-
-	log_var_empty(log_var_idx);
-
-	return SUCCESS;
+	return INVALID_ARGUMENTS;
 }
