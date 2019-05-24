@@ -7,7 +7,7 @@
 #define TASK_MC_UPDATES_PER_SEC		(1000)
 #define TASK_MC_INTERVAL_USEC		(USEC_IN_SEC / TASK_MC_UPDATES_PER_SEC)
 
-#define MC_BANDWIDTH				(50) // Hz
+#define MC_BANDWIDTH				(20) // Hz
 
 void task_mc_init(void);
 void task_mc_deinit(void);

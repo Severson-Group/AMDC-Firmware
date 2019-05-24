@@ -16,11 +16,8 @@ void pwm_init(void)
 {
 	printf("PWM:\tInitializing...\n");
 
-	pwm_set_switching_freq(100000.0);
-//	pwm_set_carrier_divisor(0);
-//	pwm_set_carrier_max(255);
-
-	pwm_set_deadtime_ns(100);
+	pwm_set_switching_freq(60000.0);
+	pwm_set_deadtime_ns(500);
 
 	// Turn off all PWM outputs
 	for (int i = 0; i < 24; i++) {
@@ -83,10 +80,11 @@ void pwm_set_deadtime_ns(uint16_t time_ns)
 {
 	printf("PWM:\tSetting deadtime to %d ns...\n", time_ns);
 
+	// Convert time in ns to FPGA clock cycles
 	deadtime = time_ns / 5;
 
 	// NOTE: FPGA enforces minimum register value of 5
-	// This should prevent shoot-through events.
+	// This should help prevent shoot-through events.
 
 	// Write to slave reg 26 to set deadtime value
 	Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
