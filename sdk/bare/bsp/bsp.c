@@ -12,4 +12,5 @@ void bsp_init(void)
 	pwm_init();
 	io_init();
 	gpio_init();
+	dac_init();
 }

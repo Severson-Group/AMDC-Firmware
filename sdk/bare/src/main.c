@@ -22,6 +22,7 @@
 #include "log.h"
 #include "commands.h"
 #include "../user/task_test.h"
+#include "../user/task_dac_test.h"
 #include "../user/task_cc.h"
 #include "../user/task_mc.h"
 
@@ -40,6 +41,7 @@ int main()
 
 	// User tasks initialization
 	task_test_init();
+	task_dac_test_init();
 
 	// Initialize scheduler (sets up h/w timer, interrupt, etc)
 	scheduler_init();

@@ -8,6 +8,7 @@
 #include "pwm.h"
 #include "timer.h"
 #include "uart.h"
+#include "dac.h"
 
 void bsp_init(void);
 
