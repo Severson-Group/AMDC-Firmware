@@ -15,17 +15,17 @@
 	)
 	(
 		// Users to add ports here
-        output wire SCLK,
-        output wire DIN,
-        output wire SYNC,
-        output wire led1,
-        output wire led2,
-        output wire led3,
-        output wire led4,
-        output wire led5,
-        output wire led6,
-        output wire led7,
-        output wire led8,
+		output wire SCLK,
+		output wire DIN,
+		output wire SYNC,
+		output wire led1,
+		output wire led2,
+		output wire led3,
+		output wire led4,
+		output wire led5,
+		output wire led6,
+		output wire led7,
+		output wire led8,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -80,16 +80,16 @@
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
 		.SCLK(SCLK),
-        .DIN(DIN),
-        .SYNC(SYNC),
-        .led1(led1),
-        .led2(led2),
-        .led3(led3),
-        .led4(led4),
-        .led5(led5),
-        .led6(led6),
-        .led7(led7),
-        .led8(led8)
+		.DIN(DIN),
+		.SYNC(SYNC),
+		.led1(led1),
+		.led2(led2),
+		.led3(led3),
+		.led4(led4),
+		.led5(led5),
+		.led6(led6),
+		.led7(led7),
+		.led8(led8)
 	);
 
 	// Add user logic here

@@ -15,17 +15,17 @@
 	)
 	(
 		// Users to add ports here
-        output wire SCLK,
-        output wire DIN,
-        output wire SYNC,
-        output wire led1,
-        output wire led2,
-        output wire led3,
-        output wire led4,
-        output wire led5,
-        output wire led6,
-        output wire led7,
-        output wire led8,
+		output wire SCLK,
+		output wire DIN,
+		output wire SYNC,
+		output wire led1,
+		output wire led2,
+		output wire led3,
+		output wire led4,
+		output wire led5,
+		output wire led6,
+		output wire led7,
+		output wire led8,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -475,31 +475,31 @@
 
 	// Add user logic here
 
-    drv_dac128s085 iDRV(
-        .clk(S_AXI_ACLK),
-        .rst_n(S_AXI_ARESETN),
-        .dac1(slv_reg0[11:0]),
-        .dac2(slv_reg1[11:0]),
-        .dac3(slv_reg2[11:0]),
-        .dac4(slv_reg3[11:0]),
-        .dac5(slv_reg4[11:0]),
-        .dac6(slv_reg5[11:0]),
-        .dac7(slv_reg6[11:0]),
-        .dac8(slv_reg7[11:0]),
-        .SYNC(SYNC),
-        .SCLK(SCLK),
-        .DIN(DIN)
-    );
-    
-    assign led1 = slv_reg8[0];
-    assign led2 = slv_reg8[1];
-    assign led3 = slv_reg8[2];
-    assign led4 = slv_reg8[3];
-    assign led5 = slv_reg8[4];
-    assign led6 = slv_reg8[5];
-    assign led7 = slv_reg8[6];
-    assign led8 = slv_reg8[7];
-    
+	drv_dac128s085 iDRV(
+		.clk(S_AXI_ACLK),
+		.rst_n(S_AXI_ARESETN),
+		.dac1(slv_reg0[11:0]),
+		.dac2(slv_reg1[11:0]),
+		.dac3(slv_reg2[11:0]),
+		.dac4(slv_reg3[11:0]),
+		.dac5(slv_reg4[11:0]),
+		.dac6(slv_reg5[11:0]),
+		.dac7(slv_reg6[11:0]),
+		.dac8(slv_reg7[11:0]),
+		.SYNC(SYNC),
+		.SCLK(SCLK),
+		.DIN(DIN)
+	);
+
+	assign led1 = slv_reg8[0];
+	assign led2 = slv_reg8[1];
+	assign led3 = slv_reg8[2];
+	assign led4 = slv_reg8[3];
+	assign led5 = slv_reg8[4];
+	assign led6 = slv_reg8[5];
+	assign led7 = slv_reg8[6];
+	assign led8 = slv_reg8[7];
+
 	// User logic ends
 
 	endmodule
