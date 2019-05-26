@@ -164,8 +164,10 @@ typedef struct sm_ctx_t {
 #define SM_UPDATES_PER_SEC		(10000)
 #define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
-void state_machine(sm_ctx_t *ctx)
+void state_machine_callback(void *arg)
 {
+	sm_ctx_t *ctx = (sm_ctx_t *) arg;
+
 	char msg[MSG_LENGTH];
 	log_var_t *v = &vars[ctx->var_idx];
 	buffer_entry_t *e = &v->buffer[ctx->sample_idx];
@@ -233,12 +235,6 @@ void state_machine(sm_ctx_t *ctx)
 
 static sm_ctx_t ctx;
 
-
-void state_machine_callback(void *arg)
-{
-	state_machine(&ctx);
-}
-
 void log_var_dump_uart(int log_var_idx)
 {
 	// Initialize the state machine context
@@ -247,6 +243,6 @@ void log_var_dump_uart(int log_var_idx)
 	ctx.sample_idx = 0;
 
 	// Initialize the state machine callback tcb
-	scheduler_tcb_init(&ctx.tcb, state_machine_callback, NULL, SM_INTERVAL_USEC);
+	scheduler_tcb_init(&ctx.tcb, state_machine_callback, &ctx, SM_INTERVAL_USEC);
 	scheduler_tcb_register(&ctx.tcb);
 }
