@@ -9,12 +9,13 @@
 //
 // It uses a custom "RTOS" -- a simple cooperative
 // scheduler which manages device tasks. Users must
-// ensure that their tasks do not consume too many cycles.
+// ensure that their tasks do not consume too many
+// cycles in a single iteration, else the scheduler
+// time quantum will be overrun.
 //
 // NOTE: UART uses 115200 baud
 
 #include <stdio.h>
-
 #include "drv/bsp.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
@@ -22,8 +23,6 @@
 #include "sys/log.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
-#include "usr/task_cc.h"
-#include "usr/task_mc.h"
 #include "usr/task_test.h"
 
 int main()
