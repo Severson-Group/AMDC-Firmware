@@ -53,7 +53,7 @@ uint8_t task_cc_is_inited(void)
 
 void task_cc_init(void)
 {
-	scheduler_tcb_init(&tcb, task_cc_callback, TASK_CC_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_cc_callback, NULL, TASK_CC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
 
@@ -116,7 +116,7 @@ void _get_Iabc(double *Iabc)
 
 //#define CC_FIND_DQ_FRAME_OFFSET
 
-void task_cc_callback(void)
+void task_cc_callback(void *arg)
 {
 	// -------------------
 	// (0) Update theta_da

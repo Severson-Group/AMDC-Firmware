@@ -23,11 +23,11 @@ static task_control_block_t tcb;
 void debug_init(void)
 {
 	printf("DB:\tInitializing debug task...\n");
-	scheduler_tcb_init(&tcb, debug_callback, DEBUG_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, debug_callback, NULL, DEBUG_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
 
-void debug_callback(void)
+void debug_callback(void *arg)
 {
 	if (print_amount > 0) {
 		// Have work to do! i.e., some part of the code called `debug_print`

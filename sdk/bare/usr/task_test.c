@@ -15,14 +15,14 @@ void task_test_init(void)
 {
 	printf("TEST:\tInitializing test task...\n");
 
-	scheduler_tcb_init(&tcb, task_test_callback, TASK_TEST_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_test_callback, NULL, TASK_TEST_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
 	LOGGING_tri_i = 0;
 	LOGGING_tri_d = 0.0;
 }
 
-void task_test_callback(void)
+void task_test_callback(void *arg)
 {
 	if (LOGGING_tri_i + dir > MAX_VALUE || LOGGING_tri_i + dir < MIN_VALUE) {
 		dir *= -1;

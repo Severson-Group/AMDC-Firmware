@@ -8,7 +8,7 @@
 #define DEBUG_INTERVAL_USEC			(USEC_IN_SEC / DEBUG_UPDATES_PER_SEC)
 
 void debug_init(void);
-void debug_callback(void);
+void debug_callback(void *arg);
 
 void debug_print(const char *msg);
 

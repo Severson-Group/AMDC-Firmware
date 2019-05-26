@@ -33,7 +33,7 @@
 
 void task_cc_init(void);
 void task_cc_deinit(void);
-void task_cc_callback(void);
+void task_cc_callback(void *arg);
 
 uint8_t task_cc_is_inited(void);
 

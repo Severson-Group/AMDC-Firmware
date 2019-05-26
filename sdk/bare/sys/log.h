@@ -13,7 +13,7 @@ typedef enum var_type_e {
 } var_type_e;
 
 void log_init(void);
-void log_callback(void);
+void log_callback(void *arg);
 
 void log_start(void);
 void log_stop(void);

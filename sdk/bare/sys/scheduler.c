@@ -48,10 +48,12 @@ void scheduler_init(void)
 	printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
-void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback, uint32_t interval_usec)
+void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
+						void *callback_arg, uint32_t interval_usec)
 {
 	tcb->id = next_tcb_id++;
 	tcb->callback = callback;
+	tcb->callback_arg = callback_arg;
 	tcb->interval_usec = interval_usec;
 	tcb->last_run_usec = 0;
 }
@@ -127,7 +129,7 @@ void scheduler_run(void)
 
 			if (usec_since_last_run >= t->interval_usec) {
 				// Time to run this task!
-				t->callback();
+				t->callback(t->callback_arg);
 				t->last_run_usec = elapsed_usec;
 			}
 

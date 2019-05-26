@@ -11,7 +11,7 @@
 
 void task_mc_init(void);
 void task_mc_deinit(void);
-void task_mc_callback(void);
+void task_mc_callback(void *arg);
 
 uint8_t task_mc_is_inited(void);
 
