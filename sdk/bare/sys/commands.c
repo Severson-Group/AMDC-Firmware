@@ -1,13 +1,14 @@
 #include "commands.h"
-#include <string.h>
-#include <stdlib.h>
-#include "scheduler.h"
 #include "debug.h"
 #include "defines.h"
 #include "log.h"
-#include "../bsp/bsp.h"
-#include "../user/task_mc.h"
-#include "../user/task_cc.h"
+#include "scheduler.h"
+#include "../usr/task_cc.h"
+#include "../usr/task_mc.h"
+#include "../drv/encoder.h"
+#include "../drv/uart.h"
+#include <string.h>
+#include <stdlib.h>
 
 #define BUFFER_LENGTH	(512)
 static char recv_buffer[BUFFER_LENGTH] = {0};

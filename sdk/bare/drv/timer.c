@@ -1,11 +1,8 @@
 #include "timer.h"
-
 #include "xscugic.h"
 #include "xtmrctr.h"
 #include "xparameters.h"
-
 #include <stdio.h>
-#include "xil_printf.h"
 
 // Parameter definitions
 #define TMR_DEVICE_ID 					XPAR_CONTROL_TIMER_0_DEVICE_ID
@@ -16,11 +13,6 @@
 
 static XScuGic intCtrl;
 static XTmrCtr timer;
-
-//// This handler is called every 20 ms
-//void timerInterruptHandler(void *userParam, u8 TmrCtrNumber) {
-//	print("INTR!!!\n\r");
-//}
 
 void fatalError(char *str)
 {

@@ -1,11 +1,9 @@
 #include "debug.h"
-#include "scheduler.h"
-#include <stdio.h>
-#include "xil_printf.h"
 #include "defines.h"
-#include "../bsp/bsp.h"
+#include "scheduler.h"
+#include "../drv/uart.h"
+#include <stdio.h>
 #include <string.h>
-
 
 #define OUTPUT_BUFFER_LENGTH	(32 * 1024)
 

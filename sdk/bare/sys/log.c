@@ -1,10 +1,10 @@
 #include "log.h"
-#include "scheduler.h"
+#include "debug.h"
 #include "defines.h"
+#include "scheduler.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include "debug.h"
 
 #define LOG_BUFFER_LENGTH	(LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 

@@ -1,7 +1,6 @@
-#include "../bsp/analog.h"
+#include "analog.h"
 #include "xil_io.h"
 #include <stdio.h>
-
 
 #define ANALOG_BASE_ADDR				(0x43C00000)
 

@@ -1,7 +1,5 @@
 #include "encoder.h"
-#include "../src/defines.h"
 #include <stdio.h>
-#include <math.h>
 #include "xil_io.h"
 
 #define ENCODER_BASE_ADDR		(0x43C10000)

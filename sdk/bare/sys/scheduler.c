@@ -1,7 +1,8 @@
 #include "scheduler.h"
-#include "../bsp/bsp.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "../drv/io.h"
+#include "../drv/timer.h"
 
 // Used to give each task a unique ID
 static int next_tcb_id = 0;

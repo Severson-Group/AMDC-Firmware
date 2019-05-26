@@ -14,16 +14,17 @@
 // NOTE: UART uses 115200 baud
 
 #include <stdio.h>
-#include "../bsp/bsp.h"
-#include "platform.h"
-#include "scheduler.h"
-#include "defines.h"
-#include "debug.h"
-#include "log.h"
-#include "commands.h"
-#include "../user/task_test.h"
-#include "../user/task_cc.h"
-#include "../user/task_mc.h"
+
+#include "drv/bsp.h"
+#include "sys/commands.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/log.h"
+#include "sys/platform.h"
+#include "sys/scheduler.h"
+#include "usr/task_cc.h"
+#include "usr/task_mc.h"
+#include "usr/task_test.h"
 
 int main()
 {

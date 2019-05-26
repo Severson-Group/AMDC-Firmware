@@ -1,7 +1,7 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "defines.h"
+#include "../sys/defines.h"
 
 #define COMMANDS_UPDATES_PER_SEC	(10000)
 #define COMMANDS_INTERVAL_USEC		(USEC_IN_SEC / COMMANDS_UPDATES_PER_SEC)

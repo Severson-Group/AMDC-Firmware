@@ -1,4 +1,4 @@
-#include "../bsp/gpio.h"
+#include "gpio.h"
 #include <stdio.h>
 
 void gpio_init(void)

@@ -2,7 +2,8 @@
 #define SCHEDULER_H
 
 #include <stdint.h>
-#include "defines.h"
+
+#include "../sys/defines.h"
 
 
 // SysTick

@@ -1,4 +1,4 @@
-#include "../bsp/io.h"
+#include "io.h"
 #include <stdio.h>
 #include "xgpiops.h"
 

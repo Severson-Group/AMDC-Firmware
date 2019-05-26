@@ -1,10 +1,13 @@
 #include "task_cc.h"
 #include "machine.h"
-#include "../bsp/bsp.h"
-#include "../src/scheduler.h"
-#include "../src/defines.h"
-#include "../src/transform.h"
-#include "../src/debug.h"
+#include "../sys/debug.h"
+#include "../sys/defines.h"
+#include "../sys/scheduler.h"
+#include "../sys/transform.h"
+#include "../drv/analog.h"
+#include "../drv/encoder.h"
+#include "../drv/io.h"
+#include "../drv/pwm.h"
 #include <stdio.h>
 #include <math.h>
 

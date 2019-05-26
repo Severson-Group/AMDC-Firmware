@@ -1,10 +1,7 @@
 #include "uart.h"
 #include "xuartps.h"
-#include "xscugic.h"
 #include "xparameters.h"
-#include "xil_exception.h"
 #include <stdio.h>
-
 
 #define UART_DEVICE_ID		XPAR_XUARTPS_0_DEVICE_ID
 
