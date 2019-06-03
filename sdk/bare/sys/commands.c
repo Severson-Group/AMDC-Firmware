@@ -428,20 +428,20 @@ static int cmd_log(char **argv, int argc)
 		if (argc != 7) return INVALID_ARGUMENTS;
 
 		// Parse arg1: log_var_idx
-		int log_var_idx = atoi(argv[1]);
+		int log_var_idx = atoi(argv[2]);
 		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
 			// ERROR
 			return INVALID_ARGUMENTS;
 		}
 
 		// Parse arg2: name
-		char *name = argv[2];
+		char *name = argv[3];
 
 		// Parse arg3: memory_addr
-		void *memory_addr = (void *) atoi(argv[3]);
+		void *memory_addr = (void *) atoi(argv[4]);
 
 		// Parse arg4: samples_per_sec
-		int samples_per_sec = atoi(argv[4]);
+		int samples_per_sec = atoi(argv[5]);
 		if (samples_per_sec > 1000 || samples_per_sec <= 0) {
 			// ERROR
 			return INVALID_ARGUMENTS;
@@ -449,11 +449,11 @@ static int cmd_log(char **argv, int argc)
 
 		// Parse arg5: type
 		var_type_e type;
-		if (strcmp("int", argv[5]) == 0) {
+		if (strcmp("int", argv[6]) == 0) {
 			type = INT;
-		} else if (strcmp("float", argv[5]) == 0) {
+		} else if (strcmp("float", argv[6]) == 0) {
 			type = FLOAT;
-		} else if (strcmp("double", argv[5]) == 0) {
+		} else if (strcmp("double", argv[6]) == 0) {
 			type = DOUBLE;
 		} else {
 			// ERROR
@@ -498,7 +498,7 @@ static int cmd_log(char **argv, int argc)
 		if (log_is_logging()) return FAILURE;
 
 		// Parse arg1: log_var_idx
-		int log_var_idx = atoi(argv[1]);
+		int log_var_idx = atoi(argv[2]);
 		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
 			// ERROR
 			return INVALID_ARGUMENTS;
@@ -514,7 +514,7 @@ static int cmd_log(char **argv, int argc)
 		if (argc != 3) return INVALID_ARGUMENTS;
 
 		// Parse arg1: log_var_idx
-		int log_var_idx = atoi(argv[1]);
+		int log_var_idx = atoi(argv[2]);
 		if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
 			// ERROR
 			return INVALID_ARGUMENTS;
