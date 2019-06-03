@@ -3,17 +3,10 @@
 #include "defines.h"
 #include "log.h"
 #include "scheduler.h"
-#include "../usr/task_cc.h"
-#include "../usr/task_mc.h"
 #include "../drv/encoder.h"
 #include "../drv/uart.h"
 #include <string.h>
 #include <stdlib.h>
-
-#include "cmd/cmd_enc.h"
-#include "cmd/cmd_log.h"
-#include "../usr/cmd/cmd_cc.h"
-#include "../usr/cmd/cmd_mc.h"
 
 #define RECV_BUFFER_LENGTH	(512)
 static char recv_buffer[RECV_BUFFER_LENGTH] = {0};
@@ -27,59 +20,16 @@ static int _parse_cmd(void);
 static void _show_help(void);
 static int _command_handler(char **argv, int argc);
 
-typedef struct command_table_entry_t {
-	char *cmd;
-	char *desc;
-	int (*cmd_function)(char**, int);
-} command_table_entry_t;
-
-#define NUM_COMMANDS	(4)
-command_table_entry_t command_table[NUM_COMMANDS] = {
-		{"log",	"Logging engine commands", cmd_log},
-		{"cc",	"Current controller commands", cmd_cc},
-		{"mc",	"Motion controller commands", cmd_mc},
-		{"enc", "Encoder commands", cmd_enc}
-};
-
-typedef struct command_help_entry_t {
-	int cmd_idx;
-	char *subcmd;
-	char *desc;
-} command_help_entry_t;
-
-#define NUM_HELP_ENTRIES	(15)
-command_help_entry_t help_table[NUM_HELP_ENTRIES] = {
-		{0, "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging"},
-		{0, "start", "Start logging"},
-		{0, "stop", "Stop logging"},
-		{0, "dump <log_var_idx>", "Dump log data to console"},
-		{0, "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"},
-
-		{1, "init", "Start current controller"},
-		{1, "deinit", "Stop current controller"},
-		{1, "Id* <milliamps>", "Command Id* to current controller"},
-		{1, "Iq* <milliamps>", "Command Iq* to current controller"},
-		{1, "offset <enc_pulses>", "Set DQ frame offset"},
-
-		{2, "init", "Start motion controller"},
-		{2, "deinit", "Stop motion controller"},
-		{2, "rpm <rpms>", "Command speed to motion controller"},
-
-		{3, "steps", "Read encoder steps from power-up"},
-		{3, "pos", "Read encoder position"}
-};
+// Head of linked list of commands
+command_entry_t *cmds = NULL;
 
 static task_control_block_t tcb;
-
 
 void commands_init(void)
 {
 	printf("CMD:\tInitializing command task...\n");
 	scheduler_tcb_init(&tcb, commands_callback, NULL, "command", COMMANDS_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
-
-	debug_print("\r\n");
-	_show_help();
 }
 
 void commands_callback(void *arg)
@@ -165,6 +115,44 @@ void commands_callback(void *arg)
 	}
 }
 
+void commands_cmd_init(command_entry_t *cmd_entry,
+		const char *cmd, const char *desc,
+		command_help_t *help, int num_help_cmds,
+		int (*cmd_function)(char**, int)
+)
+{
+	cmd_entry->cmd = cmd;
+	cmd_entry->desc = desc;
+	cmd_entry->help = help;
+	cmd_entry->num_help_cmds = num_help_cmds;
+	cmd_entry->cmd_function = cmd_function;
+	cmd_entry->next = NULL;
+}
+
+void commands_cmd_register(command_entry_t *cmd_entry)
+{
+	// Base case: there are no tasks in linked list
+	if (cmds == NULL) {
+		cmds = cmd_entry;
+		cmds->next = NULL;
+		return;
+	}
+
+	// Find end of list
+	command_entry_t *curr = cmds;
+	while (curr->next != NULL) curr = curr->next;
+
+	// Append new cmd to end of list
+	curr->next = cmd_entry;
+	cmd_entry->next = NULL;
+}
+
+void commands_start_msg(void)
+{
+	debug_print("\r\n");
+	_show_help();
+}
+
 // _parse_cmd
 //
 // Populates the global `argv` and `argc` variables
@@ -211,20 +199,18 @@ static void _show_help(void)
 
 	char msg[128];
 
-	for (int i = 0; i < NUM_COMMANDS; i++) {
-		command_table_entry_t *c = &command_table[i];
-
+	command_entry_t *c = cmds;
+	while (c != NULL) {
 		snprintf(msg, 128, "%s -- %s\r\n", c->cmd, c->desc);
 		debug_print(msg);
 
-		for (int j = 0; j < NUM_HELP_ENTRIES; j++) {
-			command_help_entry_t *h = &help_table[j];
-
-			if (h->cmd_idx == i) {
-				snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
-				debug_print(msg);
-			}
+		for (int j = 0; j < c->num_help_cmds; j++) {
+			command_help_t *h = &c->help[j];
+			snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
+			debug_print(msg);
 		}
+
+		c = c->next;
 	}
 
 	debug_print("\r\n");
@@ -237,11 +223,15 @@ static void _show_help(void)
 //
 int _command_handler(char **argv, int argc)
 {
-	for (int i = 0; i < NUM_COMMANDS; i++) {
-		if (strcmp(argv[0], command_table[i].cmd) == 0) {
+	command_entry_t *c = cmds;
+
+	while (c != NULL) {
+		if (strcmp(argv[0], c->cmd) == 0) {
 			// Found command to run!
-			return command_table[i].cmd_function(argv, argc);
+			return c->cmd_function(argv, argc);
 		}
+
+		c = c->next;
 	}
 
 	return UNKNOWN_CMD;

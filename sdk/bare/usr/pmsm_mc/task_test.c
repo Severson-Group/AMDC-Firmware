@@ -1,6 +1,6 @@
 #include "task_test.h"
-#include "../sys/defines.h"
-#include "../sys/scheduler.h"
+#include "../../sys/defines.h"
+#include "../../sys/scheduler.h"
 
 #define MAX_VALUE	(100)
 #define MIN_VALUE	(-100)

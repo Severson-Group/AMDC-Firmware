@@ -2,6 +2,7 @@
 #include "debug.h"
 #include "defines.h"
 #include "scheduler.h"
+#include "cmd/cmd_log.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -51,6 +52,9 @@ void log_init(void)
 
 	// Start with logging disabled
 	log_stop();
+
+	// Register command
+	cmd_log_register();
 }
 
 void log_callback(void *arg)

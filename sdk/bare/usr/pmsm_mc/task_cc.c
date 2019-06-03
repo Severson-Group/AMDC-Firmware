@@ -1,13 +1,14 @@
 #include "task_cc.h"
 #include "machine.h"
-#include "../sys/debug.h"
-#include "../sys/defines.h"
-#include "../sys/scheduler.h"
-#include "../sys/transform.h"
-#include "../drv/analog.h"
-#include "../drv/encoder.h"
-#include "../drv/io.h"
-#include "../drv/pwm.h"
+#include "cmd/cmd_cc.h"
+#include "../../sys/debug.h"
+#include "../../sys/defines.h"
+#include "../../sys/scheduler.h"
+#include "../../sys/transform.h"
+#include "../../drv/analog.h"
+#include "../../drv/encoder.h"
+#include "../../drv/io.h"
+#include "../../drv/pwm.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -53,6 +54,7 @@ uint8_t task_cc_is_inited(void)
 
 void task_cc_init(void)
 {
+	// Register task with scheduler
 	scheduler_tcb_init(&tcb, task_cc_callback, NULL, "cc", TASK_CC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }

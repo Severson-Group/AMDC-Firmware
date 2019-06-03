@@ -1,9 +1,31 @@
 #include "cmd_enc.h"
 #include "../defines.h"
 #include "../debug.h"
+#include "../commands.h"
 #include "../../drv/encoder.h"
 #include <stdint.h>
 #include <string.h>
+
+static command_entry_t cmd_entry;
+
+#define NUM_HELP_ENTRIES	(2)
+static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+		{"steps", "Read encoder steps from power-up"},
+		{"pos", "Read encoder position"}
+};
+
+void cmd_enc_register(void)
+{
+	// Populate the command entry block
+	commands_cmd_init(&cmd_entry,
+			"enc", "Encoder commands",
+			cmd_help, NUM_HELP_ENTRIES,
+			cmd_enc
+	);
+
+	// Register the command
+	commands_cmd_register(&cmd_entry);
+}
 
 //
 // Handles the 'enc' command

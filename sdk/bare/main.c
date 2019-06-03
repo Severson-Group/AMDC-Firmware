@@ -15,6 +15,8 @@
 //
 // NOTE: UART uses 115200 baud
 
+#define APP_PMSM_MC
+
 #include <stdio.h>
 #include "drv/bsp.h"
 #include "sys/commands.h"
@@ -23,7 +25,10 @@
 #include "sys/log.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
-#include "usr/task_test.h"
+
+#ifdef APP_PMSM_MC
+#include "usr/pmsm_mc/app_pmsm_mc.h"
+#endif
 
 int main()
 {
@@ -39,7 +44,12 @@ int main()
 	log_init();
 
 	// User tasks initialization
-	task_test_init();
+#ifdef APP_PMSM_MC
+	app_pmsm_mc_init();
+#endif
+
+	// Show start message to user, asking for cmds
+	commands_start_msg();
 
 	// Initialize scheduler (sets up h/w timer, interrupt, etc)
 	scheduler_init();

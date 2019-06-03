@@ -1,10 +1,11 @@
 #include "task_mc.h"
 #include "task_cc.h"
 #include "machine.h"
-#include "../sys/defines.h"
-#include "../sys/scheduler.h"
-#include "../drv/encoder.h"
-#include "../drv/io.h"
+#include "cmd/cmd_mc.h"
+#include "../../sys/defines.h"
+#include "../../sys/scheduler.h"
+#include "../../drv/encoder.h"
+#include "../../drv/io.h"
 #include <stdint.h>
 
 #define Wb		(MC_BANDWIDTH * PI2) // rad/s
@@ -47,6 +48,7 @@ uint8_t task_mc_is_inited(void)
 
 void task_mc_init(void)
 {
+	// Register task with scheduler
 	scheduler_tcb_init(&tcb, task_mc_callback, NULL, "mc", TASK_MC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }

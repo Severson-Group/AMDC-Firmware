@@ -1,9 +1,34 @@
 #include "cmd_cc.h"
-#include "../../sys/defines.h"
+#include "../../../sys/defines.h"
+#include "../../../sys/commands.h"
 #include "../task_cc.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+
+static command_entry_t cmd_entry;
+
+#define NUM_HELP_ENTRIES	(5)
+static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+		{"init", "Start current controller"},
+		{"deinit", "Stop current controller"},
+		{"Id* <milliamps>", "Command Id* to current controller"},
+		{"Iq* <milliamps>", "Command Iq* to current controller"},
+		{"offset <enc_pulses>", "Set DQ frame offset"}
+};
+
+void cmd_cc_register(void)
+{
+	// Populate the command entry block
+	commands_cmd_init(&cmd_entry,
+			"cc", "Current controller commands",
+			cmd_help, NUM_HELP_ENTRIES,
+			cmd_cc
+	);
+
+	// Register the command
+	commands_cmd_register(&cmd_entry);
+}
 
 //
 // Handles the 'cc' command

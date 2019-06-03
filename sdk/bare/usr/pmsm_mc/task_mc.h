@@ -2,7 +2,7 @@
 #define TASK_MC_H
 
 #include <stdint.h>
-#include "../sys/defines.h"
+#include "../../sys/defines.h"
 
 #define TASK_MC_UPDATES_PER_SEC		(1000)
 #define TASK_MC_INTERVAL_USEC		(USEC_IN_SEC / TASK_MC_UPDATES_PER_SEC)

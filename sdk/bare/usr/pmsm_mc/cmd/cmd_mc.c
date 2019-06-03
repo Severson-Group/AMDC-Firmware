@@ -1,10 +1,33 @@
 #include "cmd_mc.h"
-#include "../../sys/defines.h"
+#include "../../../sys/defines.h"
+#include "../../../sys/commands.h"
 #include "../task_mc.h"
 #include "../task_cc.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+
+static command_entry_t cmd_entry;
+
+#define NUM_HELP_ENTRIES	(3)
+static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+		{"init", "Start motion controller"},
+		{"deinit", "Stop motion controller"},
+		{"rpm <rpms>", "Command speed to motion controller"}
+};
+
+void cmd_mc_register(void)
+{
+	// Populate the command entry block
+	commands_cmd_init(&cmd_entry,
+			"mc", "Motion controller commands",
+			cmd_help, NUM_HELP_ENTRIES,
+			cmd_mc
+	);
+
+	// Register the command
+	commands_cmd_register(&cmd_entry);
+}
 
 //
 // Handles the 'mc' command
