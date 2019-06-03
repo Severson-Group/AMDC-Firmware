@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include "drv/bsp.h"
 #include "sys/commands.h"
-#include "sys/debug.h"
+#include "sys/serial.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/platform.h"
@@ -34,7 +34,7 @@ int main()
 	bsp_init();
 
 	// Initialize system tasks
-	debug_init();
+	serial_init();
 	commands_init();
 	log_init();
 
