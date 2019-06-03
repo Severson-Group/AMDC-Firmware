@@ -40,7 +40,7 @@ void log_init(void)
 	// Register task which samples variables etc
 	// NOTE: this runs at the base scheduler time quantum,
 	//       or as fast as possible!
-	scheduler_tcb_init(&tcb, log_callback, NULL, SYS_TICK_USEC);
+	scheduler_tcb_init(&tcb, log_callback, NULL, "log", SYS_TICK_USEC);
 	scheduler_tcb_register(&tcb);
 
 	// Initialize all the variables to NULL address,
@@ -243,6 +243,6 @@ void log_var_dump_uart(int log_var_idx)
 	ctx.sample_idx = 0;
 
 	// Initialize the state machine callback tcb
-	scheduler_tcb_init(&ctx.tcb, state_machine_callback, &ctx, SM_INTERVAL_USEC);
+	scheduler_tcb_init(&ctx.tcb, state_machine_callback, &ctx, "logdump", SM_INTERVAL_USEC);
 	scheduler_tcb_register(&ctx.tcb);
 }

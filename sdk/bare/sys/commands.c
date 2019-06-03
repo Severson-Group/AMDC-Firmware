@@ -76,7 +76,7 @@ static task_control_block_t tcb;
 void commands_init(void)
 {
 	printf("CMD:\tInitializing command task...\n");
-	scheduler_tcb_init(&tcb, commands_callback, NULL, COMMANDS_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, commands_callback, NULL, "command", COMMANDS_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
 	debug_print("\r\n");

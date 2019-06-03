@@ -23,7 +23,7 @@ static task_control_block_t tcb;
 void debug_init(void)
 {
 	printf("DB:\tInitializing debug task...\n");
-	scheduler_tcb_init(&tcb, debug_callback, NULL, DEBUG_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, debug_callback, NULL, "debug", DEBUG_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
 

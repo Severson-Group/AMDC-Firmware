@@ -47,7 +47,7 @@ uint8_t task_mc_is_inited(void)
 
 void task_mc_init(void)
 {
-	scheduler_tcb_init(&tcb, task_mc_callback, NULL, TASK_MC_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_mc_callback, NULL, "mc", TASK_MC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
 

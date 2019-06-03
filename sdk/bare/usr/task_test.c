@@ -15,7 +15,7 @@ void task_test_init(void)
 {
 	printf("TEST:\tInitializing test task...\n");
 
-	scheduler_tcb_init(&tcb, task_test_callback, NULL, TASK_TEST_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_test_callback, NULL, "test", TASK_TEST_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
 	LOGGING_tri_i = 0;

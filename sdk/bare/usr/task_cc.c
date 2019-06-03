@@ -53,7 +53,7 @@ uint8_t task_cc_is_inited(void)
 
 void task_cc_init(void)
 {
-	scheduler_tcb_init(&tcb, task_cc_callback, NULL, TASK_CC_INTERVAL_USEC);
+	scheduler_tcb_init(&tcb, task_cc_callback, NULL, "cc", TASK_CC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
 

@@ -49,9 +49,11 @@ void scheduler_init(void)
 }
 
 void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
-						void *callback_arg, uint32_t interval_usec)
+						void *callback_arg, const char *name,
+						uint32_t interval_usec)
 {
 	tcb->id = next_tcb_id++;
+	tcb->name = name;
 	tcb->callback = callback;
 	tcb->callback_arg = callback_arg;
 	tcb->interval_usec = interval_usec;
