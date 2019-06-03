@@ -25,7 +25,7 @@ typedef void (*task_callback_t)(void *);
 //
 typedef struct task_control_block_t {
 	int id;
-	char *name;
+	const char *name;
 	uint8_t registered;
 	task_callback_t callback;
 	void *callback_arg;

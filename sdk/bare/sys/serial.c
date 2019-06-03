@@ -8,8 +8,9 @@
 static char output_buffer[OUTPUT_BUFFER_LENGTH] = {0};
 static int output_idx = 0;
 
-// Used to mark position in output_buffer of char which needs to output
-// -1 means not currenting outputting anything
+// Used to mark position in `output_buffer` of char which needs to output
+//
+// -1 means not currently outputting anything
 // >= 0 means trying to print at that idx
 static int print_idx = -1;
 
@@ -28,7 +29,7 @@ void serial_init(void)
 void serial_callback(void *arg)
 {
 	if (print_amount > 0) {
-		// Have work to do! i.e., some part of the code called `debug_print`
+		// Have work to do!
 
 		// Determine amount of chars to print before buffer wrap
 		int try_to_send = MIN(print_amount, OUTPUT_BUFFER_LENGTH - print_idx);
