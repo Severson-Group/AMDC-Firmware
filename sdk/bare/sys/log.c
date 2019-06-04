@@ -194,7 +194,7 @@ void state_machine_callback(void *arg)
 		break;
 
 	case HEADER:
-		debug_print("-------\r\n");
+		debug_print("-------START-------\r\n");
 		debug_print("IDX\t\tTS\t\tVALUE\r\n");
 
 		ctx->state = VARIABLES;
@@ -204,10 +204,10 @@ void state_machine_callback(void *arg)
 		memset(msg, 0, MSG_LENGTH);
 
 		if (v->type == INT) {
-			snprintf(msg, MSG_LENGTH, "%d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
+			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
 		} else if (v->type == FLOAT || v->type == DOUBLE) {
 			float *f = (float *) &(e->value);
-			snprintf(msg, MSG_LENGTH, "%d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
+			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
 		}
 
 		debug_print(msg);
@@ -220,7 +220,7 @@ void state_machine_callback(void *arg)
 		break;
 
 	case FOOTER:
-		debug_print("-------\r\n");
+		debug_print("-------END-------\r\n");
 		debug_print("\r\n");
 
 		ctx->state = REMOVE_TASK;
