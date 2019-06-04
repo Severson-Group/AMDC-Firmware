@@ -76,15 +76,3 @@ void serial_write(char *msg, int len)
 		_append_to_output_buffer(msg[i]);
 	}
 }
-
-int serial_read(char *msg, int len)
-{
-
-	return 0;
-}
-
-
-void serial_read_buffer(char *buffer)
-{
-
-}

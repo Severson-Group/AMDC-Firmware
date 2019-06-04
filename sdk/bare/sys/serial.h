@@ -11,7 +11,4 @@ void serial_callback(void *arg);
 
 void serial_write(char *msg, int len);
 
-int serial_read(char *msg, int len);
-void serial_read_buffer(char *buffer);
-
 #endif // SERIAL_H

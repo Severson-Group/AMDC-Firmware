@@ -3,114 +3,254 @@
 #include "defines.h"
 #include "log.h"
 #include "scheduler.h"
+#include "serial.h"
+#include "cmd/cmd_help.h"
 #include "../drv/encoder.h"
 #include "../drv/uart.h"
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
-#define RECV_BUFFER_LENGTH	(512)
+#define RECV_BUFFER_LENGTH	(4 * 1024)
 static char recv_buffer[RECV_BUFFER_LENGTH] = {0};
 static int recv_buffer_idx = 0;
 
-#define CMD_MAX_ARGS	(16)
-static char *cmd_argv[CMD_MAX_ARGS];
-static int cmd_argc = 0;
-static int _parse_cmd(void);
+#define CMD_MAX_ARGC			(16) // # of args accepted
+#define CMD_MAX_ARG_LENGTH		(12) // max chars of any arg
+typedef struct pending_cmd_t {
+	int argc;
+	char *argv[CMD_MAX_ARGC];
 
-static void _show_help(void);
+	// Used by parser to keep track of how
+	// long the argument is. If too long,
+	// throws an error!
+	int curr_arg_length;
+
+	// Error flag set by parser task
+	int err;
+
+	// Set to 1 to indicate ready to execute,
+	// 0 means not valid
+	int ready;
+} pending_cmd_t;
+
+// Note, this must be >= 2.
+//
+// We always need a buffer to be filling while we
+// execute the previous command
+//
+#define MAX_PENDING_CMDS	(8)
+static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = {0};
+static int pending_cmd_write_idx = 0;
+static int pending_cmd_read_idx = 0;
+
 static int _command_handler(char **argv, int argc);
 
 // Head of linked list of commands
 command_entry_t *cmds = NULL;
 
-static task_control_block_t tcb;
+static task_control_block_t tcb_parse;
+static task_control_block_t tcb_exec;
 
 void commands_init(void)
 {
-	printf("CMD:\tInitializing command task...\n");
-	scheduler_tcb_init(&tcb, commands_callback, NULL, "command", COMMANDS_INTERVAL_USEC);
-	scheduler_tcb_register(&tcb);
+	printf("CMD:\tInitializing command tasks...\n");
+
+	// Command parse task
+	scheduler_tcb_init(&tcb_parse, commands_callback_parse, NULL, "command_parse", COMMANDS_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb_parse);
+
+	// Command exec task
+	scheduler_tcb_init(&tcb_exec, commands_callback_exec, NULL, "command_exec", COMMANDS_INTERVAL_USEC);
+	scheduler_tcb_register(&tcb_exec);
+
+	cmd_help_register();
 }
 
-void commands_callback(void *arg)
+
+typedef enum state_e {
+	BEGIN = 1,
+	LOOKING_FOR_SPACE,
+	LOOKING_FOR_CHAR
+} state_e;
+
+state_e state = BEGIN;
+
+void _create_pending_cmds(char *buffer, int length)
 {
-	int err;
-	char c;
-	int num_bytes = uart_recv(&c, 1);
+	// Get current pending cmd slot
+	pending_cmd_t *p = &pending_cmds[pending_cmd_write_idx];
 
-	// If no user input, `num_bytes` == 0...
-	if (num_bytes > 0) {
+	for (int i = 0; i < length; i++) {
+		char c = buffer[i];
 
-		// Don't include '\n' or '\r' in the command to the user
-		if (c != '\r' && c != '\n') {
-			// Append received char to buffer
-			recv_buffer[recv_buffer_idx] = c;
+		if (state != BEGIN && (c == '\n' || c == '\r')) {
+			// End of a command!
 
-			// Only accept so many characters per command...
-			recv_buffer_idx++;
-			if (recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-				HANG;
+			// Set error flag if this arg was too long
+			if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
+				p->err = INPUT_TOO_LONG;
 			}
 
-			// Echo character back to terminal
-			char cc[2];
-			cc[0] = c;
-			cc[1] = 0;
-			debug_print(cc);
-		}
-
-		// Commands are delimited by the '\r' character
-
-		if (c == '\r') {
-			// End of the command!
+			// Put a NULL at the end of the last cmd arg
+			// (replaces a \r or \n, so nbd
+			buffer[i] = 0;
 
 			// Make console go to beginning of next line
-			debug_print("\r\r\n");
+			debug_print("\r\n");
 
-			// Create data structures to send to application
-			// i.e., the `argv` and `argc` variables
-			err = _parse_cmd();
+			p->ready = 1;
 
-			if (err != 0) {
-				// Too many arguments in cmd!
-				debug_print("INVALID ARGUMENTS\r\n\n");
-				return;
-			} else {
-				// Send cmd to application
-				err = _command_handler(cmd_argv, cmd_argc);
+			// Update current pending cmd slot
+			if (++pending_cmd_write_idx >= MAX_PENDING_CMDS) pending_cmd_write_idx = 0;
+			p = &pending_cmds[pending_cmd_write_idx];
+			p->ready = 0;
 
-				// Display command status to user
-				switch (err) {
-				case SUCCESS:
-					debug_print("SUCCESS\r\n\n");
-					break;
+			// Move on to next char, which starts
+			// next command sequence
+			state = BEGIN;
+			continue;
+		}
 
-				case FAILURE:
-					debug_print("FAILURE\r\n\n");
-					break;
+		// Echo character back to terminal
+		serial_write(&c, 1);
 
-				case INVALID_ARGUMENTS:
-					debug_print("INVALID ARGUMENTS\r\n\n");
-					break;
+		// Process incoming char `c`
+		switch (state) {
+		case BEGIN:
+			if (!isspace(c)) {
+				// Populate first argument
+				p->argc = 1;
+				p->argv[0] = &buffer[i];
+				p->err = SUCCESS; // Assume the parsing will work!
+				p->curr_arg_length = 1;
+				state = LOOKING_FOR_SPACE;
+			}
+			break;
 
-				case UNKNOWN_CMD:
-					debug_print("UNKNOWN CMD\r\n\n");
-
-					// Couldn't find command to run, so display help screen
-					_show_help();
-					break;
-
-				default:
-					debug_print("UNKNOWN ERROR\r\n\n");
-					break;
-				}
+		case LOOKING_FOR_SPACE:
+			if (c != ' ') {
+				p->curr_arg_length++;
 			}
 
-			// Clear state for next command
-			recv_buffer_idx = 0;
-			memset(&recv_buffer[0], 0, RECV_BUFFER_LENGTH);
-			cmd_argc = 0;
-			for (int i = 0; i < CMD_MAX_ARGS; i++) cmd_argv[i] = NULL;
+			if (c == ' ') {
+				// End of chars for the arg
+
+				// Set error flag if this arg was too long
+				if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
+					p->err = INPUT_TOO_LONG;
+				}
+
+				// Put NULL at end of arg (replaces ' ')
+				buffer[i] = 0;
+
+				state = LOOKING_FOR_CHAR;
+			}
+			break;
+
+		case LOOKING_FOR_CHAR:
+			if (c != ' ') {
+				p->argv[p->argc] = &buffer[i];
+				p->argc++;
+
+				// Check if argc too big!
+				if (p->argc > CMD_MAX_ARGC) {
+					p->err = INPUT_TOO_LONG;
+
+					// Put argc back to zero...
+					// NOTE: this ensure no buffer overruns,
+					//       but, screws up previous args.
+					//       This is okay as we are going to
+					//       throw away this pending cmd!
+					p->argc = 0;
+				}
+
+				p->curr_arg_length = 1;
+				state = LOOKING_FOR_SPACE;
+			}
+			break;
+
+		default:
+			// Impossible!
+			HANG;
+			break;
+		}
+	}
+}
+
+void commands_callback_parse(void *arg)
+{
+	// Read in bounded chunk of new chars
+	//
+	// NOTE: careful not to try and read too much!
+	//       would cause a buffer overrun!
+	//
+	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - recv_buffer_idx);
+	int num_bytes = uart_recv(&recv_buffer[recv_buffer_idx], try_to_read);
+
+	// Run state machine to create pending cmds to execute
+	_create_pending_cmds(&recv_buffer[recv_buffer_idx], num_bytes);
+
+	// Move along in recv buffer
+	recv_buffer_idx += num_bytes;
+	if (recv_buffer_idx >= RECV_BUFFER_LENGTH) {
+		recv_buffer_idx = 0;
+	}
+}
+
+
+void commands_callback_exec(void *arg)
+{
+	int err;
+
+	// Get current pending cmd slot
+	pending_cmd_t *p = &pending_cmds[pending_cmd_read_idx];
+
+	if (p->ready) {
+		// Run me!
+
+		// Don't run a cmd that has errors
+		err = p->err;
+		if (err == SUCCESS) {
+			err = _command_handler(p->argv, p->argc);
+		}
+
+		// Display command status to user
+		switch (err) {
+		case SUCCESS_QUIET:
+			// Don't print anything
+			break;
+
+		case SUCCESS:
+			debug_print("SUCCESS\r\n\n");
+			break;
+
+		case FAILURE:
+			debug_print("FAILURE\r\n\n");
+			break;
+
+		case INVALID_ARGUMENTS:
+			debug_print("INVALID ARGUMENTS\r\n\n");
+			break;
+
+		case INPUT_TOO_LONG:
+			debug_print("INPUT TOO LONG\r\n\n");
+			break;
+
+		case UNKNOWN_CMD:
+			debug_print("UNKNOWN CMD\r\n\n");
+			break;
+
+		default:
+			debug_print("UNKNOWN ERROR\r\n\n");
+			break;
+		}
+
+		p->ready = 0;
+
+		// Update READ index
+		if (++pending_cmd_read_idx >= MAX_PENDING_CMDS) {
+			pending_cmd_read_idx = 0;
 		}
 	}
 }
@@ -150,70 +290,7 @@ void commands_cmd_register(command_entry_t *cmd_entry)
 void commands_start_msg(void)
 {
 	debug_print("\r\n");
-	_show_help();
-}
-
-// _parse_cmd
-//
-// Populates the global `argv` and `argc` variables
-// which are passed to the actual command
-//
-static int _parse_cmd(void)
-{
-	// First word is the first argv
-	cmd_argv[0] = &recv_buffer[0];
-	cmd_argc++;
-
-	int cmd_char_len = strlen(recv_buffer);
-
-	for (int i = 1; i < cmd_char_len; i++) {
-		if (recv_buffer[i] == ' ') {
-			// Replace spaces with NULLs
-			recv_buffer[i] = 0;
-		}
-
-		// Look for the beginning of an argument:
-		if (recv_buffer[i-1] == 0 && recv_buffer[i] != 0) {
-			// We just ended one argument (and white space),
-			// now sitting on the first char of the next one
-			cmd_argv[cmd_argc++] = &recv_buffer[i];
-
-			// Only allow so many arguments
-			if (cmd_argc >= CMD_MAX_ARGS) {
-				return -1;
-			}
-		}
-	}
-
-	return 0;
-}
-
-// _show_help
-//
-// Displays the help message to the console
-//
-static void _show_help(void)
-{
-	debug_print("Available commands:\r\n");
-	debug_print("-------------------\r\n");
-
-	char msg[128];
-
-	command_entry_t *c = cmds;
-	while (c != NULL) {
-		snprintf(msg, 128, "%s -- %s\r\n", c->cmd, c->desc);
-		debug_print(msg);
-
-		for (int j = 0; j < c->num_help_cmds; j++) {
-			command_help_t *h = &c->help[j];
-			snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
-			debug_print(msg);
-		}
-
-		c = c->next;
-	}
-
-	debug_print("\r\n");
+	commands_display_help();
 }
 
 // _command_handler
@@ -235,4 +312,94 @@ int _command_handler(char **argv, int argc)
 	}
 
 	return UNKNOWN_CMD;
+}
+
+// ****************
+// State Machine
+// which outputs
+// the help messages
+// ****************
+
+typedef enum sm_states_e {
+	TITLE = 1,
+	CMD_HEADER,
+	SUB_CMD,
+	REMOVE_TASK
+} sm_states_e;
+
+typedef struct sm_ctx_t {
+	sm_states_e state;
+	command_entry_t *curr;
+	int sub_cmd_idx;
+	task_control_block_t tcb;
+} sm_ctx_t;
+
+#define MSG_LENGTH	(128)
+
+#define SM_UPDATES_PER_SEC		(10000)
+#define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
+
+void help_state_machine_callback(void *arg)
+{
+	sm_ctx_t *ctx = (sm_ctx_t *) arg;
+
+	char msg[MSG_LENGTH];
+
+	switch (ctx->state) {
+	case TITLE:
+		debug_print("\r\n");
+		debug_print("Available commands:\r\n");
+		debug_print("-------------------\r\n");
+
+		ctx->curr = cmds;
+		ctx->state = CMD_HEADER;
+		break;
+
+	case CMD_HEADER:
+		if (ctx->curr == NULL) {
+			// DONE!
+			debug_print("\r\n");
+			ctx->state = REMOVE_TASK;
+		} else {
+			snprintf(msg, 128, "%s -- %s\r\n", ctx->curr->cmd, ctx->curr->desc);
+			debug_print(msg);
+			ctx->sub_cmd_idx = 0;
+			ctx->state = SUB_CMD;
+		}
+		break;
+
+	case SUB_CMD:
+		if (ctx->sub_cmd_idx >= ctx->curr->num_help_cmds) {
+			ctx->curr = ctx->curr->next;
+			ctx->state = CMD_HEADER;
+		} else {
+			command_help_t *h = &ctx->curr->help[ctx->sub_cmd_idx++];
+			snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
+			debug_print(msg);
+		}
+		break;
+
+	case REMOVE_TASK:
+		scheduler_tcb_unregister(&ctx->tcb);
+		break;
+
+	default:
+		// Can't happen
+		HANG;
+		break;
+	}
+}
+
+static sm_ctx_t ctx;
+
+void commands_display_help(void)
+{
+	// Initialize the state machine context
+	ctx.state = TITLE;
+	ctx.curr = cmds;
+	ctx.sub_cmd_idx = 0;
+
+	// Initialize the state machine callback tcb
+	scheduler_tcb_init(&ctx.tcb, help_state_machine_callback, &ctx, "help_sm", SM_INTERVAL_USEC);
+	scheduler_tcb_register(&ctx.tcb);
 }

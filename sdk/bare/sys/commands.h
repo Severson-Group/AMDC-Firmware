@@ -28,7 +28,8 @@ typedef struct command_help_t {
 } command_help_t;
 
 void commands_init(void);
-void commands_callback(void *arg);
+void commands_callback_parse(void *arg);
+void commands_callback_exec(void *arg);
 
 void commands_cmd_init(command_entry_t *cmd_entry,
 		const char *cmd, const char *desc,
@@ -38,5 +39,6 @@ void commands_cmd_init(command_entry_t *cmd_entry,
 void commands_cmd_register(command_entry_t *cmd_entry);
 
 void commands_start_msg(void);
+void commands_display_help(void);
 
 #endif // COMMANDS_H
