@@ -71,8 +71,8 @@ int cmd_mc(char **argv, int argc)
 		double rpms = (double) atoi(argv[2]);
 
 		// Saturate commanded speed to +/- 600 RPM
-		if (rpms >  600.0) rpms =  600.0;
-		if (rpms < -600.0) rpms = -600.0;
+		if (rpms >  2000.0) return INVALID_ARGUMENTS;
+		if (rpms < -2000.0) return INVALID_ARGUMENTS;
 
 		double rad_per_sec = rpms * PI / 30.0;
 
