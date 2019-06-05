@@ -5,6 +5,7 @@
 #include "io.h"
 #include "pwm.h"
 #include "timer.h"
+#include "dac.h"
 #include "uart.h"
 #include <stdio.h>
 

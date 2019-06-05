@@ -4,9 +4,20 @@
 
 #define DAC_BASE_ADDR		(0x43C30000)
 
+// NOTE:
+// The DAC expansion card MUST be plugged into
+// the GPIO header during start-up.
+//
+// The FPGA configures the DAC IC _once_ during
+// start-up, so if the DAC IC misses these commands,
+// it will NOT work.
+
 void dac_init(void)
 {
 	printf("DAC:\tInitializing...\n");
+
+	// Set SCLK to 10MHz
+	dac_set_sclk_div(10);
 
 	// Start with all LEDs off and 0V output
 	for (int i = 0; i < 8; i++) {
@@ -15,8 +26,35 @@ void dac_init(void)
 	}
 }
 
+// Set the SCLK divisor
+//
+// The FPGA generates SCLK based on the system clock
+// which is 200MHz. SCLK frequency can be calculated:
+//
+// Fsclk = (200e6 / div) / 2
+//
+// i.e., with div = 100, Fsclk = 1MHz
+//
+void dac_set_sclk_div(uint32_t div)
+{
+	// NOTE: the FPGA enforces the divisor to be >= 10,
+	// so this isn't strictly necessary
+	if (div < 10) {
+		div = 10;
+	}
+
+	// Write to offset 9 to set sclk_div
+	Xil_Out32(DAC_BASE_ADDR + (9 * sizeof(uint32_t)), div);
+}
+
 void dac_set_voltage(uint8_t idx, uint16_t value)
 {
+	// Make sure we are trying to write a valid value
+	// 0 .. 4095
+	if (value > DAC_FULL_SCALE) {
+		value = DAC_FULL_SCALE;
+	}
+
 	// Write to offset 0 to set DAC1
 	Xil_Out32(DAC_BASE_ADDR + (idx * sizeof(uint32_t)), value);
 }
