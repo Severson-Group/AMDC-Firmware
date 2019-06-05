@@ -54,6 +54,7 @@ serial_16b iDUT(
 	.data(data),
 	.start(start),
 	.done(done),
+	.sclk_div(32'd16),
 	.SYNC(SYNC),
 	.SCLK(SCLK),
 	.DIN(DIN)

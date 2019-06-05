@@ -12,13 +12,15 @@
 //
 // 'done' will go high once the word has been sent.
 //
-module serial_16b(clk, rst_n, data, start, done, SYNC, SCLK, DIN);
+module serial_16b(clk, rst_n, data, start, done, sclk_div, SYNC, SCLK, DIN);
 
 input clk, rst_n;
 
 input [15:0] data;
 input start;
 input done;
+
+input [31:0] sclk_div;
 
 output wire SYNC;		// SYNC signal going to DAC IC
 output wire SCLK;		// SCLK signal going to DAC IC
@@ -31,29 +33,41 @@ output wire DIN;		// DIN  signal going to DAC IC
 // *****************************
 // *****************************
 
-// Create SCLK from system clock (200MHz)
-// This divides clk by 16 => SCLK = 12.5MHz
-reg [3:0] sclk_div;
+
+reg [31:0] sclk_counter;
+reg sclk_enabled;
+reg my_sclk;
+
+always @(posedge clk, negedge rst_n) begin
+	if (!rst_n) begin
+		sclk_counter <= 32'b0;
+		my_sclk = 1'b0;
+	end
+
+	else if (!sclk_enabled) begin
+		sclk_counter <= 32'b0;
+	end
+
+	else if (sclk_counter >= (sclk_div - 32'd1)) begin
+		sclk_counter <= 32'b0;
+		my_sclk <= !my_sclk;
+	end
+	
+	else begin
+		sclk_counter <= sclk_counter + 32'd1;
+	end
+
+end
+
+assign SCLK = my_sclk;
+
+// Find rising edge of SCLK
 wire SCLK_rise;
 wire SCLK_rise2;
 wire SCLK_fall;
-reg sclk_enabled;
-
-always @(posedge clk, negedge rst_n) begin
-	if (!rst_n)
-		sclk_div <= 4'b0;
-	else if (!sclk_enabled)
-		sclk_div <= 4'b0;
-	else
-		sclk_div <= sclk_div + 4'd1;
-end
-
-assign SCLK = sclk_div[3];
-
-// Find rising edge of SCLK
-assign SCLK_rise  = (sclk_div == 4'b0111);
-assign SCLK_rise2 = (sclk_div == 4'b0110);
-assign SCLK_fall  = (sclk_div == 4'b1111);
+assign SCLK_rise  = (my_sclk == 1'b0) & (sclk_counter == sclk_div - 32'd1);
+assign SCLK_rise2 = (my_sclk == 1'b0) & (sclk_counter == sclk_div - 32'd2);
+assign SCLK_fall  = (my_sclk == 1'b1) & (sclk_counter == sclk_div - 32'd1);
 
 
 // *************************
@@ -98,7 +112,7 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 // Shift out data MSB first
-assign DIN = spi_shift_reg[16];
+assign DIN = done ? 1'b0 : spi_shift_reg[16];
 
 
 // *************************

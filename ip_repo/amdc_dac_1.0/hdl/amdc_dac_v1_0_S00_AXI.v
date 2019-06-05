@@ -475,17 +475,25 @@
 
 	// Add user logic here
 
+    wire [31:0] sclk_div;
+    assign sclk_div = (slv_reg9 >= 32'd10) ? slv_reg9 : 32'd10;
+
+    wire [31:0] sample_delay;
+    assign sample_delay = 32'd10;
+
 	drv_dac128s085 iDRV(
 		.clk(S_AXI_ACLK),
 		.rst_n(S_AXI_ARESETN),
-		.dac1(slv_reg0[11:0]),
-		.dac2(slv_reg1[11:0]),
-		.dac3(slv_reg2[11:0]),
-		.dac4(slv_reg3[11:0]),
-		.dac5(slv_reg4[11:0]),
-		.dac6(slv_reg5[11:0]),
-		.dac7(slv_reg6[11:0]),
-		.dac8(slv_reg7[11:0]),
+		.dac1(slv_reg3[11:0]),
+		.dac2(slv_reg2[11:0]),
+		.dac3(slv_reg1[11:0]),
+		.dac4(slv_reg0[11:0]),
+		.dac5(slv_reg7[11:0]),
+		.dac6(slv_reg6[11:0]),
+		.dac7(slv_reg5[11:0]),
+		.dac8(slv_reg4[11:0]),
+		.sclk_div(sclk_div),
+		.sample_delay(sample_delay),
 		.SYNC(SYNC),
 		.SCLK(SCLK),
 		.DIN(DIN)

@@ -61,6 +61,8 @@ drv_dac128s085 iDUT(
 	.dac6(dac6),
 	.dac7(dac7),
 	.dac8(dac8),
+	.sclk_div(32'd8),
+	.sample_delay(32'd100),
 	.SYNC(SYNC),
 	.SCLK(SCLK),
 	.DIN(DIN)

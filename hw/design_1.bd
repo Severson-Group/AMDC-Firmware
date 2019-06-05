@@ -1518,18 +1518,18 @@
         </spirit:configurableElementValues>
       </spirit:componentInstance>
       <spirit:componentInstance>
-        <spirit:instanceName>amdc_dac_0</spirit:instanceName>
-        <spirit:componentRef spirit:library="user" spirit:name="amdc_dac" spirit:vendor="wisc.edu" spirit:version="1.0"/>
-        <spirit:configurableElementValues>
-          <spirit:configurableElementValue spirit:referenceId="bd:xciName">design_1_amdc_dac_0_0</spirit:configurableElementValue>
-        </spirit:configurableElementValues>
-      </spirit:componentInstance>
-      <spirit:componentInstance>
         <spirit:instanceName>xlconcat_1</spirit:instanceName>
         <spirit:componentRef spirit:library="ip" spirit:name="xlconcat" spirit:vendor="xilinx.com" spirit:version="2.1"/>
         <spirit:configurableElementValues>
           <spirit:configurableElementValue spirit:referenceId="bd:xciName">design_1_xlconcat_1_0</spirit:configurableElementValue>
           <spirit:configurableElementValue spirit:referenceId="NUM_PORTS">12</spirit:configurableElementValue>
+        </spirit:configurableElementValues>
+      </spirit:componentInstance>
+      <spirit:componentInstance>
+        <spirit:instanceName>amdc_dac_0</spirit:instanceName>
+        <spirit:componentRef spirit:library="user" spirit:name="amdc_dac" spirit:vendor="wisc.edu" spirit:version="1.0"/>
+        <spirit:configurableElementValues>
+          <spirit:configurableElementValue spirit:referenceId="bd:xciName">design_1_amdc_dac_0_0</spirit:configurableElementValue>
         </spirit:configurableElementValues>
       </spirit:componentInstance>
     </spirit:componentInstances>
@@ -1786,6 +1786,46 @@
         <spirit:externalPortReference spirit:portRef="gpiob"/>
       </spirit:adHocConnection>
       <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led7</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led7"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In5"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led8</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led8"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In6"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led6</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led6"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In10"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led5</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led5"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In9"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led4</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led4"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In7"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led3</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led3"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In4"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led2</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led2"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In3"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
+        <spirit:name>amdc_dac_0_led1</spirit:name>
+        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led1"/>
+        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In8"/>
+      </spirit:adHocConnection>
+      <spirit:adHocConnection>
         <spirit:name>amdc_dac_0_SYNC</spirit:name>
         <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="SYNC"/>
         <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In0"/>
@@ -1799,46 +1839,6 @@
         <spirit:name>amdc_dac_0_DIN</spirit:name>
         <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="DIN"/>
         <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In2"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led2</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led2"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In3"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led3</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led3"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In4"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led7</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led7"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In5"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led8</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led8"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In6"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led4</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led4"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In7"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led1</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led1"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In8"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led5</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led5"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In9"/>
-      </spirit:adHocConnection>
-      <spirit:adHocConnection>
-        <spirit:name>amdc_dac_0_led6</spirit:name>
-        <spirit:internalPortReference spirit:componentRef="amdc_dac_0" spirit:portRef="led6"/>
-        <spirit:internalPortReference spirit:componentRef="xlconcat_1" spirit:portRef="In10"/>
       </spirit:adHocConnection>
     </spirit:adHocConnections>
     <spirit:hierConnections>
