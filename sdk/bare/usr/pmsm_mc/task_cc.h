@@ -2,6 +2,7 @@
 #define TASK_CC_H
 
 #include <stdint.h>
+#include "../../drv/analog.h"
 #include "../../sys/defines.h"
 #include "../../sys/scheduler.h"
 
@@ -14,9 +15,9 @@
 
 // Current = GAIN * ADC_Voltage + Offset
 
-#define ADC_TO_AMPS_PHASE_A_GAIN	(-0.50343077)
-#define ADC_TO_AMPS_PHASE_B_GAIN	(-0.50375471)
-#define ADC_TO_AMPS_PHASE_C_GAIN	(-0.50425522)
+#define ADC_TO_AMPS_PHASE_A_GAIN	(0.50343077)
+#define ADC_TO_AMPS_PHASE_B_GAIN	(0.50375471)
+#define ADC_TO_AMPS_PHASE_C_GAIN	(0.50425522)
 
 #define ADC_TO_AMPS_PHASE_A_OFFSET	(0.022818905)
 #define ADC_TO_AMPS_PHASE_B_OFFSET	(0.025518978)
