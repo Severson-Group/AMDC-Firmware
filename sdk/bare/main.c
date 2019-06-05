@@ -15,8 +15,9 @@
 //
 // NOTE: UART uses 115200 baud
 
-#define APP_PMSM_MC
-#define APP_DAC_TEST
+//#define APP_PMSM_MC
+//#define APP_DAC_TEST
+#define APP_DEADTIME_COMP
 
 #include <stdio.h>
 #include "drv/bsp.h"
@@ -33,6 +34,10 @@
 
 #ifdef APP_DAC_TEST
 #include "usr/dac_test/app_dac_test.h"
+#endif
+
+#ifdef APP_DEADTIME_COMP
+#include "usr/deadtime_comp/app_deadtime_comp.h"
 #endif
 
 int main()
@@ -55,6 +60,10 @@ int main()
 
 #ifdef APP_DAC_TEST
 	app_dac_test_init();
+#endif
+
+#ifdef APP_DEADTIME_COMP
+	app_deadtime_comp_init();
 #endif
 
 	// Show start message to user, asking for cmds
