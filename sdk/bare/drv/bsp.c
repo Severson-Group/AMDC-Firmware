@@ -5,6 +5,7 @@
 #include "io.h"
 #include "pwm.h"
 #include "timer.h"
+#include "dac.h"
 #include "uart.h"
 #include <stdio.h>
 
@@ -19,4 +20,5 @@ void bsp_init(void)
 	pwm_init();
 	io_init();
 	gpio_init();
+	dac_init();
 }

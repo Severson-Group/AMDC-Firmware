@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER amdc_dac
+	OPTION supported_peripherals = (amdc_dac);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = amdc_dac;
+END DRIVER
