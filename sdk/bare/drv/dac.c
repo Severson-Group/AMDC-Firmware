@@ -21,7 +21,7 @@ void dac_init(void)
 
 	// Start with all LEDs off and 0V output
 	for (int i = 0; i < 8; i++) {
-		dac_set_voltage(i, 0);
+		dac_set_voltage_raw(i, 0);
 		dac_set_led(i, 0);
 	}
 }
@@ -47,7 +47,24 @@ void dac_set_sclk_div(uint32_t div)
 	Xil_Out32(DAC_BASE_ADDR + (9 * sizeof(uint32_t)), div);
 }
 
-void dac_set_voltage(uint8_t idx, uint16_t value)
+void dac_set_output(uint8_t idx, double value, double min, double max)
+{
+	// Want:
+	//
+	// min => 0
+	// ...
+	// value => 0..DAC_FULL_SCALE
+	// ....
+	// max => DAC_FULL_SCALE
+
+	double range = max - min;
+	double v = (value - min) / range;
+
+	uint16_t dac_out = v * DAC_FULL_SCALE;
+	dac_set_voltage_raw(idx, dac_out);
+}
+
+void dac_set_voltage_raw(uint8_t idx, uint16_t value)
 {
 	// Make sure we are trying to write a valid value
 	// 0 .. 4095

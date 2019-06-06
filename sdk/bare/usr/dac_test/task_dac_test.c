@@ -36,7 +36,7 @@ void task_dac_test_callback(void *arg)
 	uint16_t dac_value2 = DAC_HALF_FULL_SCALE + DAC_HALF_FULL_SCALE * value2;
 	uint16_t dac_value3 = DAC_HALF_FULL_SCALE + DAC_HALF_FULL_SCALE * value3;
 
-	dac_set_voltage(0, dac_value1);
-	dac_set_voltage(1, dac_value2);
-	dac_set_voltage(2, dac_value3);
+	dac_set_voltage_raw(0, dac_value1);
+	dac_set_voltage_raw(1, dac_value2);
+	dac_set_voltage_raw(2, dac_value3);
 }
