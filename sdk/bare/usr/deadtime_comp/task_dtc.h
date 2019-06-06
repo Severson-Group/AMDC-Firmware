@@ -3,6 +3,7 @@
 
 #include "../../sys/defines.h"
 #include "../../drv/analog.h"
+#include <stdint.h>
 
 #define TASK_DTC_UPDATES_PER_SEC		(10000)
 #define TASK_DTC_INTERVAL_USEC			(USEC_IN_SEC / TASK_DTC_UPDATES_PER_SEC)
@@ -29,7 +30,13 @@
 #define CC_PHASE_B_PWM_LEG_IDX		(1)
 #define CC_PHASE_C_PWM_LEG_IDX		(2)
 
+uint8_t task_dtc_is_inited(void);
+
 void task_dtc_init(void);
+void task_dtc_deinit(void);
 void task_dtc_callback(void *arg);
+
+void task_dtc_set_I_star(double A, double Hz);
+void task_dtc_clear(void);
 
 #endif // TASK_DTC_H

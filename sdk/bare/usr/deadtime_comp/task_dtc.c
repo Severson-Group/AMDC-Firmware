@@ -6,17 +6,26 @@
 #include "../../drv/pwm.h"
 #include "../../drv/dac.h"
 #include "machine.h"
+#include <math.h>
 
 #define Wb				(DTC_BANDWIDTH * PI2) // rad/s
 #define Ts				(1.0 / TASK_DTC_UPDATES_PER_SEC)
 #define Kp				(Wb * Ld_HAT)
 #define Ki				((Rs_HAT / Ld_HAT) * Kp)
 
-static double Ia_star =  1.0;
-static double Ib_star =  -1.0;
+// Global variables for logging
+double LOG_Iab        = 0.0;
+double LOG_Vab        = 0.0;
+double LOG_Vab_star   = 0.0;
 
-static double Ia_err_acc = 0.0;
-static double Ib_err_acc = 0.0;
+// Set by command
+static double I_mag_star  = 0.0;
+static double I_freq_star = 0.0;
+
+// Used by controller
+static double I_star      = 0.0;
+static double I_err_acc   = 0.0;
+static double theta = 0.0;
 
 static task_control_block_t tcb;
 
@@ -35,12 +44,20 @@ inline static int saturate(double min, double max, double *value) {
 	}
 }
 
+uint8_t task_dtc_is_inited(void)
+{
+	return scheduler_tcb_is_registered(&tcb);
+}
+
 void task_dtc_init(void)
 {
-	printf("DTC:\tInitializing DTC task...\n");
-
 	scheduler_tcb_init(&tcb, task_dtc_callback, NULL, "dtc", TASK_DTC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
+}
+
+void task_dtc_deinit(void)
+{
+	scheduler_tcb_unregister(&tcb);
 }
 
 static void _get_Iabc(double *Iabc)
@@ -62,37 +79,30 @@ void task_dtc_callback(void *arg)
 	// Get currents
 	double Iabc[3];
 	_get_Iabc(Iabc);
-
-	// PI stationary frame current regulator
-	// on Ia, Ib
-
 	double Ia = Iabc[0];
-	double Ib = Iabc[1];
 
-	// Ia
-	double Ia_err;
-	double Va_star;
-	Ia_err = Ia_star - Ia;
-	Ia_err_acc += Ia_err;
-	Va_star = (Kp * Ia_err) + (Ki * Ts * Ia_err_acc);
+	// Calculate I_star based on commanded
+	// I_mag and I_freq
+	theta += (PI2 * I_freq_star * Ts);
+	I_star = I_mag_star * cos(theta);
 
-	// q-axis
-	double Ib_err;
-	double Vb_star;
-	Ib_err = Ib_star - Ib;
-	Ib_err_acc += Ib_err;
-	Vb_star = (Kp * Ib_err) + (Ki * Ts * Ib_err_acc);
+	// PI stationary frame current regulator Ia
+	double I_err;
+	double Va_star, Vb_star;
+	I_err = I_star - Ia;
+	I_err_acc += I_err;
+	Va_star = (Kp * I_err) + (Ki * Ts * I_err_acc);
+	Vb_star = -Va_star;
 
+#if 0
+		// ------------------------------------
+		// Output to DAC
+		// ------------------------------------
+		dac_set_output(0, Iabc[0], -1.5*I_mag_star, 1.5*I_mag_star);
+		dac_set_output(1, Iabc[1], -1.5*I_mag_star, 1.5*I_mag_star);
+#endif
 
-//	// ------------------------------------
-//	// Output to DAC
-//	// ------------------------------------
-//	double dac1 = (Va_star / DTC_BUS_VOLTAGE);
-//	double dac2 = (Vb_star / DTC_BUS_VOLTAGE);
-//	dac_set_voltage(0, 100*dac1 * DAC_FULL_SCALE);
-//	dac_set_voltage(1, 100*dac2 * DAC_FULL_SCALE);
-
-#if 1
+#if 0
 
 	static int counter = 0;
 	const static int SAMPLES_PER_SEC = 5;
@@ -126,6 +136,28 @@ void task_dtc_callback(void *arg)
 	// Vabc =    0V => d = 0.5
 	// Vabc = +Vbus => d = 1.0
 
-	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, (((Va_star / DTC_BUS_VOLTAGE) + 1.0) / 2.0));
-	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, (((Vb_star / DTC_BUS_VOLTAGE) + 1.0) / 2.0));
+	double duty_a = 0.5 + (Va_star / (2.0 * DTC_BUS_VOLTAGE));
+	double duty_b = 0.5 + (Vb_star / (2.0 * DTC_BUS_VOLTAGE));
+
+	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, duty_a);
+	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, duty_b);
+
+	// Update log variables
+	LOG_Iab      = Iabc[0];
+	LOG_Vab      = 2.0 * Rs_HAT * LOG_Iab;
+	LOG_Vab_star = Va_star - Vb_star;
+}
+
+void task_dtc_set_I_star(double A, double Hz)
+{
+	I_mag_star = A;
+	I_freq_star = Hz;
+}
+
+void task_dtc_clear(void)
+{
+	task_dtc_set_I_star(0.0, 0.0);
+
+	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, 0.0);
+	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, 0.0);
 }
