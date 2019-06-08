@@ -321,7 +321,9 @@ int _command_handler(char **argv, int argc)
 // ****************
 
 typedef enum sm_states_e {
-	TITLE = 1,
+	TITLE1 = 1,
+	TITLE2,
+	TITLE3,
 	CMD_HEADER,
 	SUB_CMD,
 	REMOVE_TASK
@@ -342,12 +344,20 @@ void help_state_machine_callback(void *arg)
 	sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
 	switch (ctx->state) {
-	case TITLE:
+	case TITLE1:
 		debug_printf("\r\n");
-		debug_printf("Available commands:\r\n");
-		debug_printf("-------------------\r\n");
 
 		ctx->curr = cmds;
+		ctx->state = TITLE2;
+		break;
+
+	case TITLE2:
+		debug_printf("Available commands:\r\n");
+		ctx->state = TITLE3;
+		break;
+
+	case TITLE3:
+		debug_printf("-------------------\r\n");
 		ctx->state = CMD_HEADER;
 		break;
 
@@ -389,7 +399,7 @@ static sm_ctx_t ctx;
 void commands_display_help(void)
 {
 	// Initialize the state machine context
-	ctx.state = TITLE;
+	ctx.state = TITLE1;
 	ctx.curr = cmds;
 	ctx.sub_cmd_idx = 0;
 
