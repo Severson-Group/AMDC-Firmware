@@ -7,6 +7,7 @@
 #include "timer.h"
 #include "dac.h"
 #include "uart.h"
+#include "../sys/cmd/cmd_hw.h"
 #include <stdio.h>
 
 void bsp_init(void)
@@ -21,4 +22,6 @@ void bsp_init(void)
 	io_init();
 	gpio_init();
 	dac_init();
+
+	cmd_hw_register();
 }
