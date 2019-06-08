@@ -8,8 +8,8 @@
 #define TASK_DTC_UPDATES_PER_SEC		(10000)
 #define TASK_DTC_INTERVAL_USEC			(USEC_IN_SEC / TASK_DTC_UPDATES_PER_SEC)
 
-#define DTC_BANDWIDTH				(10.0) // Hz
-#define DTC_BUS_VOLTAGE				(20.0) // V
+#define DTC_BANDWIDTH				(200.0) // Hz
+#define DTC_BUS_VOLTAGE				(50.0) // V
 
 // Current = GAIN * ADC_Voltage + Offset
 

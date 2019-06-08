@@ -4,14 +4,13 @@
 #include "../../sys/debug.h"
 #include "../../drv/io.h"
 #include "../../drv/pwm.h"
-#include "../../drv/dac.h"
 #include "machine.h"
 #include <math.h>
 
-#define Wb				(DTC_BANDWIDTH * PI2) // rad/s
-#define Ts				(1.0 / TASK_DTC_UPDATES_PER_SEC)
-#define Kp				(Wb * Ld_HAT)
-#define Ki				((Rs_HAT / Ld_HAT) * Kp)
+#define Wb	(DTC_BANDWIDTH * PI2) // rad/s
+#define Ts	(1.0 / TASK_DTC_UPDATES_PER_SEC)
+#define Kp	(Wb * Ld_HAT)
+#define Ki	((Rs_HAT / Ld_HAT) * Kp)
 
 // Global variables for logging
 double LOG_Iab        = 0.0;
@@ -76,17 +75,26 @@ static void _get_Iabc(double *Iabc)
 
 void task_dtc_callback(void *arg)
 {
+	// ------------------------------------
 	// Get currents
+	// ------------------------------------
+
 	double Iabc[3];
 	_get_Iabc(Iabc);
 	double Ia = Iabc[0];
 
-	// Calculate I_star based on commanded
-	// I_mag and I_freq
+
+	// ------------------------------------
+	// Calculate I_star based on commanded I_mag and I_freq
+	// ------------------------------------
 	theta += (PI2 * I_freq_star * Ts);
 	I_star = I_mag_star * cos(theta);
 
+
+	// ------------------------------------
 	// PI stationary frame current regulator Ia
+	// ------------------------------------
+
 	double I_err;
 	double Va_star, Vb_star;
 	I_err = I_star - Ia;
@@ -94,43 +102,20 @@ void task_dtc_callback(void *arg)
 	Va_star = (Kp * I_err) + (Ki * Ts * I_err_acc);
 	Vb_star = -Va_star;
 
-#if 0
-		// ------------------------------------
-		// Output to DAC
-		// ------------------------------------
-		dac_set_output(0, Iabc[0], -1.5*I_mag_star, 1.5*I_mag_star);
-		dac_set_output(1, Iabc[1], -1.5*I_mag_star, 1.5*I_mag_star);
-#endif
-
-#if 0
-
-	static int counter = 0;
-	const static int SAMPLES_PER_SEC = 5;
-
-	counter++;
-	if (counter >= TASK_DTC_UPDATES_PER_SEC / SAMPLES_PER_SEC) {
-		counter = 0;
-
-		char msg[256];
-		snprintf(msg, 256, "%f\t%f\r\n", Ia_err_acc, Ib_err_acc);
-
-		debug_print(msg);
-	}
-
-#endif
-
 
 	// ------------------------------------
 	// Saturate Vab to CC_BUS_VOLTAGE
 	// ------------------------------------
+
 	io_led_color_t color = {0, 0, 0};
 	if (saturate(-DTC_BUS_VOLTAGE, DTC_BUS_VOLTAGE, &Va_star) != 0) color.g = 255;
 	if (saturate(-DTC_BUS_VOLTAGE, DTC_BUS_VOLTAGE, &Vb_star) != 0) color.g = 255;
 	io_led_set_c(0, 1, 0, &color);
 
-	// --------------------------------------
-	// (5) Write voltages out to PWM hardware
-	// --------------------------------------
+
+	// ------------------------------------
+	// Write voltages out to PWM hardware
+	// ------------------------------------
 
 	// Vabc = -Vbus => d = 0.0
 	// Vabc =    0V => d = 0.5
@@ -142,7 +127,11 @@ void task_dtc_callback(void *arg)
 	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, duty_a);
 	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, duty_b);
 
+
+	// ------------------------------------
 	// Update log variables
+	// ------------------------------------
+
 	LOG_Iab      = Iabc[0];
 	LOG_Vab      = 2.0 * Rs_HAT * LOG_Iab;
 	LOG_Vab_star = Va_star - Vb_star;
