@@ -1,5 +1,4 @@
 #include "encoder.h"
-#include "../sys/cmd/cmd_enc.h"
 #include <stdio.h>
 #include "xil_io.h"
 
@@ -9,9 +8,6 @@ void encoder_init(void)
 {
 	printf("ENC:\tInitializing...\n");
 	encoder_set_pulses_per_rev_bits(ENCODER_PULSES_PER_REV_BITS);
-
-	// Register command
-	cmd_enc_register();
 }
 
 void encoder_set_pulses_per_rev_bits(uint32_t bits)
