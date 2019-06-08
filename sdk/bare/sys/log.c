@@ -188,7 +188,6 @@ void state_machine_callback(void *arg)
 
 	case HEADER:
 		debug_printf("-------START-------\r\n");
-		debug_printf("IDX\t\tTS\t\tVALUE\r\n");
 		ctx->state = VARIABLES;
 		break;
 
@@ -208,8 +207,7 @@ void state_machine_callback(void *arg)
 		break;
 
 	case FOOTER:
-		debug_printf("-------END-------\r\n");
-		debug_printf("\r\n");
+		debug_printf("-------END-------\r\n\r\n");
 
 		ctx->state = REMOVE_TASK;
 		break;
