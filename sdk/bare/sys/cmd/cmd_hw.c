@@ -39,8 +39,6 @@ void cmd_hw_register(void)
 //
 int cmd_hw(char **argv, int argc)
 {
-	char msg[128];
-
 	// Handle 'pwm' sub-command
 	if (strcmp("pwm", argv[1]) == 0) {
 		if (strcmp("sw", argv[2]) == 0) {
@@ -97,8 +95,7 @@ int cmd_hw(char **argv, int argc)
 			float value;
 			analog_getf(anlg_idx + 1, &value);
 
-			snprintf(msg, 128, "%fV\r\n", value);
-			debug_print(msg);
+			debug_printf("%fV\r\n", value);
 
 			return SUCCESS;
 		}
@@ -113,8 +110,7 @@ int cmd_hw(char **argv, int argc)
 			int32_t steps;
 			encoder_get_steps(&steps);
 
-			snprintf(msg, 128, "steps: %ld\r\n", steps);
-			debug_print(msg);
+			debug_printf("steps: %ld\r\n", steps);
 
 			return SUCCESS;
 		}
@@ -126,8 +122,7 @@ int cmd_hw(char **argv, int argc)
 			uint32_t position;
 			encoder_get_position(&position);
 
-			snprintf(msg, 128, "pos: %ld\r\n", position);
-			debug_print(msg);
+			debug_printf("pos: %ld\r\n", position);
 
 			return SUCCESS;
 		}

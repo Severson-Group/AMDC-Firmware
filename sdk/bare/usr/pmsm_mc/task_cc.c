@@ -149,10 +149,7 @@ void task_cc_callback(void *arg)
 		uint32_t position;
 		encoder_get_position(&position);
 
-		char msg[256];
-		snprintf(msg, 256, "%ld\r\n", position);
-
-		debug_print(msg);
+		debug_printf("%ld\r\n", position);
 	}
 #endif
 
@@ -196,10 +193,7 @@ void task_cc_callback(void *arg)
 
 		counter = 0;
 
-		char msg[256];
-		snprintf(msg, 256, "%f\t%f\r\n", Vd_avg, Vq_avg);
-
-		debug_print(msg);
+		debug_printf("%f\t%f\r\n", Vd_avg, Vq_avg);
 	}
 
 #endif

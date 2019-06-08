@@ -172,45 +172,33 @@ void state_machine_callback(void *arg)
 {
 	sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
-	char msg[MSG_LENGTH];
 	log_var_t *v = &vars[ctx->var_idx];
 	buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
 	switch (ctx->state) {
 	case TITLE:
-		memset(msg, 0, MSG_LENGTH);
-		snprintf(msg, MSG_LENGTH, "LOG OF VARIABLE: '%s'\r\n", v->name);
-		debug_print(msg);
-
+		debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
 		ctx->state = NUM_SAMPLES;
 		break;
 
 	case NUM_SAMPLES:
-		memset(msg, 0, MSG_LENGTH);
-		snprintf(msg, MSG_LENGTH, "NUM SAMPLES: %d\r\n", v->num_samples);
-		debug_print(msg);
-
+		debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
 		ctx->state = HEADER;
 		break;
 
 	case HEADER:
-		debug_print("-------START-------\r\n");
-		debug_print("IDX\t\tTS\t\tVALUE\r\n");
-
+		debug_printf("-------START-------\r\n");
+		debug_printf("IDX\t\tTS\t\tVALUE\r\n");
 		ctx->state = VARIABLES;
 		break;
 
 	case VARIABLES:
-		memset(msg, 0, MSG_LENGTH);
-
 		if (v->type == INT) {
-			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
+			debug_printf("> %d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
 		} else if (v->type == FLOAT || v->type == DOUBLE) {
 			float *f = (float *) &(e->value);
-			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
+			debug_printf("> %d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
 		}
-
-		debug_print(msg);
 
 		ctx->sample_idx++;
 
@@ -220,8 +208,8 @@ void state_machine_callback(void *arg)
 		break;
 
 	case FOOTER:
-		debug_print("-------END-------\r\n");
-		debug_print("\r\n");
+		debug_printf("-------END-------\r\n");
+		debug_printf("\r\n");
 
 		ctx->state = REMOVE_TASK;
 		break;
