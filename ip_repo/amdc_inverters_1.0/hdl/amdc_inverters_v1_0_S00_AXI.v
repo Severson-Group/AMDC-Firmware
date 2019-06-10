@@ -28,6 +28,8 @@
         output wire [5:0] inverter6_pwm,
         output wire [5:0] inverter7_pwm,
         output wire [5:0] inverter8_pwm,
+		output wire carrier_high,
+		output wire carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -942,9 +944,11 @@
 		.rst_n(S_AXI_ARESETN),
 		.divider(carrier_clk_div),
 		.carrier(carrier),
+		.carrier_high(carrier_high),
+		.carrier_low(carrier_low),
 		.carrier_max(carrier_max)
 	);
-	
+		
 	// PWM
 	pwm_gen_var pwmL0  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[0]), .So(sL[0]));
 	pwm_gen_var pwmL1  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[1]), .So(sL[1]));
