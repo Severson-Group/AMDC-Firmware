@@ -1,9 +1,8 @@
 #include "task_dtc.h"
+#include "inverter.h"
 #include "../../sys/scheduler.h"
 #include "../../sys/defines.h"
 #include "../../sys/debug.h"
-#include "../../drv/io.h"
-#include "../../drv/pwm.h"
 #include "machine.h"
 #include <math.h>
 
@@ -28,21 +27,6 @@ static double theta = 0.0;
 
 static task_control_block_t tcb;
 
-inline static int saturate(double min, double max, double *value) {
-	if (*value < min) {
-		// Lower bound saturation
-		*value = min;
-		return -1;
-	} else if (*value > max) {
-		// Upper bound saturation
-		*value = max;
-		return 1;
-	} else {
-		// No saturation
-		return 0;
-	}
-}
-
 uint8_t task_dtc_is_inited(void)
 {
 	return scheduler_tcb_is_registered(&tcb);
@@ -52,6 +36,8 @@ void task_dtc_init(void)
 {
 	scheduler_tcb_init(&tcb, task_dtc_callback, NULL, "dtc", TASK_DTC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
+
+	inverter_init();
 }
 
 void task_dtc_deinit(void)
@@ -104,28 +90,14 @@ void task_dtc_callback(void *arg)
 
 
 	// ------------------------------------
-	// Saturate Vab to CC_BUS_VOLTAGE
+	// Write commanded voltages to inverter
 	// ------------------------------------
 
-	io_led_color_t color = {0, 0, 0};
-	if (saturate(-DTC_BUS_VOLTAGE, DTC_BUS_VOLTAGE, &Va_star) != 0) color.g = 255;
-	if (saturate(-DTC_BUS_VOLTAGE, DTC_BUS_VOLTAGE, &Vb_star) != 0) color.g = 255;
-	io_led_set_c(0, 1, 0, &color);
+	inverter_saturate_to_Vdc(&Va_star);
+	inverter_saturate_to_Vdc(&Vb_star);
 
-
-	// ------------------------------------
-	// Write voltages out to PWM hardware
-	// ------------------------------------
-
-	// Vabc = -Vbus => d = 0.0
-	// Vabc =    0V => d = 0.5
-	// Vabc = +Vbus => d = 1.0
-
-	double duty_a = 0.5 + (Va_star / (2.0 * DTC_BUS_VOLTAGE));
-	double duty_b = 0.5 + (Vb_star / (2.0 * DTC_BUS_VOLTAGE));
-
-	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, duty_a);
-	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, duty_b);
+	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, Va_star, Iabc[0]);
+	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, Vb_star, Iabc[1]);
 
 
 	// ------------------------------------
@@ -147,6 +119,6 @@ void task_dtc_clear(void)
 {
 	task_dtc_set_I_star(0.0, 0.0);
 
-	pwm_set_duty(CC_PHASE_A_PWM_LEG_IDX, 0.0);
-	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, 0.0);
+	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, 0.0, 0.0);
+	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, 0.0, 0.0);
 }
