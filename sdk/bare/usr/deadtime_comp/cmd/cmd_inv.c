@@ -58,6 +58,3 @@ int cmd_inv(char **argv, int argc)
 
 	return INVALID_ARGUMENTS;
 }
-
-// best for 500ns deadtime, 50V bus:
-// inv dtc 15 500

@@ -22,8 +22,7 @@ inline static int saturate(double min, double max, double *value) {
 
 void inverter_init(void)
 {
-	pwm_set_switching_freq(100000.0);
-	pwm_set_deadtime_ns(500);
+
 }
 
 void inverter_saturate_to_Vdc(double *voltage)
