@@ -65,13 +65,13 @@ int cmd_dtc(char **argv, int argc)
 		if (argc != 4) return INVALID_ARGUMENTS;
 
 		// Pull out mA argument
-		// and saturate to +/- 5A
+		// and saturate to 0 .. 8A
 		double mA = (double) atoi(argv[2]);
-		if (mA >  5000.0) return INVALID_ARGUMENTS;
-		if (mA < -5000.0) return INVALID_ARGUMENTS;
+		if (mA > 8000.0) return INVALID_ARGUMENTS;
+		if (mA < 0.0) return INVALID_ARGUMENTS;
 
 		// Pull out mHz argument
-		// and saturate to 0..10Hz
+		// and saturate to 0 .. 10Hz
 		double mHz = (double) atoi(argv[3]);
 		if (mHz > 10000.0) return INVALID_ARGUMENTS;
 		if (mHz < 0.0) return INVALID_ARGUMENTS;

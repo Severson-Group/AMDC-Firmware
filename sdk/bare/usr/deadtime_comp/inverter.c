@@ -2,8 +2,11 @@
 #include "../../drv/io.h"
 #include "../../drv/pwm.h"
 
+double LOG_dcomp = 0.0;
+
 static double dtc_dcomp = 0.0;
 static double dtc_current = 0.0;
+static double dtc_dcompamp = 0.0;
 
 inline static int saturate(double min, double max, double *value) {
 	if (*value < min) {
@@ -50,6 +53,8 @@ void inverter_set_voltage(uint8_t pwm_idx, double voltage, double current)
 			dcomp = (dtc_dcomp / dtc_current) * current;
 		}
 	}
+
+	LOG_dcomp = duty;
 
 	pwm_set_duty(pwm_idx, duty + dcomp);
 }

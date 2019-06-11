@@ -8,11 +8,12 @@
 
 #define Wb	(DTC_BANDWIDTH * PI2) // rad/s
 #define Ts	(1.0 / TASK_DTC_UPDATES_PER_SEC)
-#define Kp	(Wb * Ld_HAT)
-#define Ki	((Rs_HAT / Ld_HAT) * Kp)
+#define Kp	(Wb * L_HAT)
+#define Ki	((R_HAT / L_HAT) * Kp)
 
 // Global variables for logging
-double LOG_Iab        = 0.0;
+double LOG_Ia         = 0.0;
+double LOG_Ia_b       = 0.0;
 double LOG_Vab        = 0.0;
 double LOG_Vab_star   = 0.0;
 
@@ -104,8 +105,9 @@ void task_dtc_callback(void *arg)
 	// Update log variables
 	// ------------------------------------
 
-	LOG_Iab      = Iabc[0];
-	LOG_Vab      = 2.0 * Rs_HAT * LOG_Iab;
+	LOG_Ia       = Iabc[0];
+	LOG_Ia_b     = Iabc[0] + Iabc[1];
+	LOG_Vab      = 2.0 * R_HAT * LOG_Ia;
 	LOG_Vab_star = Va_star - Vb_star;
 }
 

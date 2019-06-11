@@ -38,10 +38,10 @@ int cmd_inv(char **argv, int argc)
 		if (argc != 4) return INVALID_ARGUMENTS;
 
 		// Pull out mDcomp argument
-		// and saturate to 0 .. 0.2
+		// and saturate to -0.2 .. 0.2
 		double mDcomp = (double) atoi(argv[2]);
-		if (mDcomp > 200.0) return INVALID_ARGUMENTS;
-		if (mDcomp < 0.0) return INVALID_ARGUMENTS;
+		if (mDcomp >  200.0) return INVALID_ARGUMENTS;
+		if (mDcomp < -200.0) return INVALID_ARGUMENTS;
 
 		// Pull out mCurrent argument
 		// and saturate to 0 .. 2A
