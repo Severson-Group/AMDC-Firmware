@@ -32,11 +32,7 @@ void task_dac_test_callback(void *arg)
 	double value2 = cos(theta);
 	double value3 = cos(theta + PI23);
 
-	uint16_t dac_value1 = DAC_HALF_FULL_SCALE + DAC_HALF_FULL_SCALE * value1;
-	uint16_t dac_value2 = DAC_HALF_FULL_SCALE + DAC_HALF_FULL_SCALE * value2;
-	uint16_t dac_value3 = DAC_HALF_FULL_SCALE + DAC_HALF_FULL_SCALE * value3;
-
-	dac_set_voltage_raw(0, dac_value1);
-	dac_set_voltage_raw(1, dac_value2);
-	dac_set_voltage_raw(2, dac_value3);
+	dac_set_output(0, value1, -1.5, 1.5);
+	dac_set_output(1, value2, -1.5, 1.5);
+	dac_set_output(2, value3, -1.5, 1.5);
 }
