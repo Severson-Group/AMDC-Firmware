@@ -8,6 +8,7 @@
 #include "../../drv/analog.h"
 #include "../../drv/encoder.h"
 #include "../../drv/io.h"
+#include "../../drv/dac.h"
 #include "../../drv/pwm.h"
 #include <stdio.h>
 #include <math.h>
@@ -22,7 +23,7 @@
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
-static int32_t dq_offset = 9661;
+static int32_t dq_offset = 9550; // 9661 from beta-axis injection
 
 static double Id_err_acc = 0.0;
 static double Iq_err_acc = 0.0;
@@ -175,6 +176,11 @@ void task_cc_callback(void *arg)
 	Iq_err_acc += Iq_err;
 	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
 
+
+#if 0
+	dac_set_output(0, Vd_star, -10, 10);
+	dac_set_output(1, Vq_star, -10, 10);
+#endif
 
 #if 0
 
