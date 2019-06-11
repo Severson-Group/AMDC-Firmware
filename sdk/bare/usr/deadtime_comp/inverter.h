@@ -10,6 +10,6 @@ void inverter_init(void);
 void inverter_saturate_to_Vdc(double *voltage);
 void inverter_set_voltage(uint8_t pwm_idx, double voltage, double current);
 
-void inverter_set_dtc(double dcomp, double current);
+void inverter_set_dtc(double dcomp, double tau);
 
 #endif // INVERTER_H

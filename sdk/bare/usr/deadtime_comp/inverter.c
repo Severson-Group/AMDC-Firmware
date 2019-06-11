@@ -1,12 +1,12 @@
 #include "inverter.h"
 #include "../../drv/io.h"
 #include "../../drv/pwm.h"
+#include <math.h>
 
 double LOG_dcomp = 0.0;
 
 static double dtc_dcomp = 0.0;
-static double dtc_current = 0.0;
-static double dtc_dcompamp = 0.0;
+static double dtc_tau = 0.0;
 
 inline static int saturate(double min, double max, double *value) {
 	if (*value < min) {
@@ -21,6 +21,13 @@ inline static int saturate(double min, double max, double *value) {
 		// No saturation
 		return 0;
 	}
+}
+
+inline static double sign(double x)
+{
+	if (x > 0.0) return 1.0;
+	if (x < 0.0) return -1.0;
+	return 0.0;
 }
 
 void inverter_init(void)
@@ -44,23 +51,18 @@ void inverter_set_voltage(uint8_t pwm_idx, double voltage, double current)
 
 	// Calculate duty compensation
 	double dcomp = 0.0;
-	if (dtc_current != 0.0 && dtc_dcomp != 0.0) {
-		if (current < -dtc_current) {
-			dcomp = -dtc_dcomp;
-		} else if (current > dtc_current) {
-			dcomp = dtc_dcomp;
-		} else {
-			dcomp = (dtc_dcomp / dtc_current) * current;
-		}
+
+	if (dtc_dcomp != 0.0 || dtc_tau != 0.0) {
+		dcomp = sign(current) * dtc_dcomp * (1.0 - pow(M_E, -fabs(current) / dtc_tau));
 	}
 
-	LOG_dcomp = duty;
+	LOG_dcomp = dcomp;
 
 	pwm_set_duty(pwm_idx, duty + dcomp);
 }
 
-void inverter_set_dtc(double dcomp, double current)
+void inverter_set_dtc(double dcomp, double tau)
 {
-	dtc_current = current;
 	dtc_dcomp = dcomp;
+	dtc_tau = tau;
 }

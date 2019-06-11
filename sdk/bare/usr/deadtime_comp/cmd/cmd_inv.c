@@ -10,7 +10,7 @@ static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES	(1)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-		{"dtc <mDcomp> <mCurrent>", "Set deadtime compensation"}
+		{"dtc <mDcomp> <mTau>", "Set deadtime compensation"}
 };
 
 void cmd_inv_register(void)
@@ -38,21 +38,21 @@ int cmd_inv(char **argv, int argc)
 		if (argc != 4) return INVALID_ARGUMENTS;
 
 		// Pull out mDcomp argument
-		// and saturate to -0.2 .. 0.2
+		// and saturate to 0 .. 0.2
 		double mDcomp = (double) atoi(argv[2]);
-		if (mDcomp >  200.0) return INVALID_ARGUMENTS;
-		if (mDcomp < -200.0) return INVALID_ARGUMENTS;
+		if (mDcomp > 200.0) return INVALID_ARGUMENTS;
+		if (mDcomp < 0.0) return INVALID_ARGUMENTS;
 
-		// Pull out mCurrent argument
-		// and saturate to 0 .. 2A
-		double mCurrent = (double) atoi(argv[3]);
-		if (mCurrent > 2000.0) return INVALID_ARGUMENTS;
-		if (mCurrent < 0.0) return INVALID_ARGUMENTS;
+		// Pull out mTau argument
+		// and saturate to 100 .. 1000
+		double mTau = (double) atoi(argv[3]);
+		if (mTau > 1000.0) return INVALID_ARGUMENTS;
+		if (mTau <  100.0) return INVALID_ARGUMENTS;
 
 		double dcomp = mDcomp / 1000.0;
-		double current = mCurrent / 1000.0;
+		double tau = mTau / 1000.0;
 
-		inverter_set_dtc(dcomp, current);
+		inverter_set_dtc(dcomp, tau);
 		return SUCCESS;
 	}
 
