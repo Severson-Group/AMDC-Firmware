@@ -38,6 +38,7 @@ void task_cc_callback(void *arg);
 
 uint8_t task_cc_is_inited(void);
 
+void task_cc_clear(void);
 void task_cc_set_Id_star(double my_Id_star);
 void task_cc_set_Iq_star(double my_Iq_star);
 void task_cc_set_dq_offset(int32_t offset);

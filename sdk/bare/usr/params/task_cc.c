@@ -211,4 +211,14 @@ void task_cc_callback(void *arg)
 	}
 }
 
+void task_cc_clear(void)
+{
+	task_cc_set_Iq_star(0.0);
+	task_cc_set_Id_star(0.0);
+
+	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, 0.0, 0.0);
+	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, 0.0, 0.0);
+	inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, 0.0, 0.0);
+}
+
 #endif // APP_PARAMS

@@ -59,8 +59,7 @@ int cmd_cc(char **argv, int argc)
 		if (!task_cc_is_inited()) return FAILURE;
 
 		task_cc_deinit();
-		task_cc_set_Id_star(0.0);
-		task_cc_set_Iq_star(0.0);
+		task_cc_clear();
 		return SUCCESS;
 	}
 
