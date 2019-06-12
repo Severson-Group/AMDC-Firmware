@@ -4,10 +4,6 @@
 //
 // Uncomment the following defines to compile
 // each application into the executable
-//
-//#define APP_PMSM_MC
-//#define APP_DAC_TEST
-#define APP_DEADTIME_COMP
 
 #ifdef APP_PMSM_MC
 #include "pmsm_mc/app_pmsm_mc.h"

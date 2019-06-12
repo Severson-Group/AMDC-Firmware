@@ -1,3 +1,5 @@
+#ifdef APP_DEADTIME_COMP
+
 #include "task_dtc.h"
 #include "inverter.h"
 #include "../../sys/scheduler.h"
@@ -124,3 +126,5 @@ void task_dtc_clear(void)
 	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, 0.0, 0.0);
 	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, 0.0, 0.0);
 }
+
+#endif // APP_DEADTIME_COMP

@@ -1,3 +1,5 @@
+#ifdef APP_DEADTIME_COMP
+
 #include "cmd_inv.h"
 #include "../inverter.h"
 #include "../../../sys/defines.h"
@@ -58,3 +60,5 @@ int cmd_inv(char **argv, int argc)
 
 	return INVALID_ARGUMENTS;
 }
+
+#endif // APP_DEADTIME_COMP

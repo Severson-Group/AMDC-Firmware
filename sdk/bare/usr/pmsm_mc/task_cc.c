@@ -1,3 +1,5 @@
+#ifdef APP_PMSM_MC
+
 #include "task_cc.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
@@ -238,3 +240,5 @@ void task_cc_callback(void *arg)
 	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, (((Vabc_star[1] / CC_BUS_VOLTAGE) + 1.0) / 2.0));
 	pwm_set_duty(CC_PHASE_C_PWM_LEG_IDX, (((Vabc_star[2] / CC_BUS_VOLTAGE) + 1.0) / 2.0));
 }
+
+#endif // APP_PMSM_MC

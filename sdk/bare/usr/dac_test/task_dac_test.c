@@ -1,3 +1,5 @@
+#ifdef APP_DAC_TEST
+
 #include "task_dac_test.h"
 #include "../../sys/scheduler.h"
 #include "../../sys/defines.h"
@@ -65,3 +67,5 @@ void task_dac_test_callback(void *arg)
 
 
 }
+
+#endif // APP_DAC_TEST

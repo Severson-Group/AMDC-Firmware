@@ -1,3 +1,5 @@
+#ifdef APP_DEADTIME_COMP
+
 #include "cmd_dtc.h"
 #include "../task_dtc.h"
 #include "../../../sys/defines.h"
@@ -85,3 +87,5 @@ int cmd_dtc(char **argv, int argc)
 
 	return INVALID_ARGUMENTS;
 }
+
+#endif // APP_DEADTIME_COMP

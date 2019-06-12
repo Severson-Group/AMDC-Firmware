@@ -1,3 +1,5 @@
+#ifdef APP_PMSM_MC
+
 #include "task_test.h"
 #include "../../sys/defines.h"
 #include "../../sys/scheduler.h"
@@ -32,3 +34,5 @@ void task_test_callback(void *arg)
 
 	LOGGING_tri_d = (double)LOGGING_tri_i / (double) MAX_VALUE;
 }
+
+#endif // APP_PMSM_MC

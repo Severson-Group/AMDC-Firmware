@@ -1,3 +1,5 @@
+#ifdef APP_DEADTIME_COMP
+
 #include "inverter.h"
 #include "../../drv/io.h"
 #include "../../drv/pwm.h"
@@ -66,3 +68,5 @@ void inverter_set_dtc(double dcomp, double tau)
 	dtc_dcomp = dcomp;
 	dtc_tau = tau;
 }
+
+#endif // APP_DEADTIME_COMP

@@ -1,3 +1,5 @@
+#ifdef APP_PMSM_MC
+
 #include "cmd_cc.h"
 #include "../../../sys/defines.h"
 #include "../../../sys/commands.h"
@@ -102,3 +104,5 @@ int cmd_cc(char **argv, int argc)
 
 	return INVALID_ARGUMENTS;
 }
+
+#endif // APP_PMSM_MC
