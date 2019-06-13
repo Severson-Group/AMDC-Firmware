@@ -14,23 +14,31 @@
 #include "../../drv/dac.h"
 #include "../../drv/pwm.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-#define Wb					(CC_BANDWIDTH * PI2) // rad/s
-#define Ts					(1.0 / TASK_CC_UPDATES_PER_SEC)
-#define Kp_d				(Wb * Ld_HAT)
-#define Kp_q				(Wb * Lq_HAT)
-#define Ki_d				((Rs_HAT / Ld_HAT) * Kp_d)
-#define Ki_q				((Rs_HAT / Lq_HAT) * Kp_q)
+#define Wb		(controller_bw * PI2) // rad/s
+#define Ts		(1.0 / TASK_CC_UPDATES_PER_SEC)
+#define Kp_d	(Wb * Ld_HAT)
+#define Kp_q	(Wb * Lq_HAT)
+#define Ki_d	((Rs_HAT / Ld_HAT) * Kp_d)
+#define Ki_q	((Rs_HAT / Lq_HAT) * Kp_q)
 
 // Variables for logging
-double LOG_V_star = 0.0;
-double LOG_w_avg  = 0.0;
+double LOG_Id = 0.0;
+double LOG_Iq = 0.0;
+double LOG_Id_star = 0.0;
+double LOG_Iq_star = 0.0;
+double LOG_Vd_star = 0.0;
+double LOG_Vq_star = 0.0;
+double LOG_omega_e_avg  = 0.0;
 
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
 static int32_t dq_offset = 9550; // 9661 from beta-axis injection
+
+static double controller_bw = 1.0;
 
 static double Id_err_acc = 0.0;
 static double Iq_err_acc = 0.0;
@@ -72,10 +80,6 @@ void task_cc_deinit(void)
 	scheduler_tcb_unregister(&tcb);
 }
 
-void task_cc_set_Id_star(double my_Id_star) { Id_star = my_Id_star; }
-void task_cc_set_Iq_star(double my_Iq_star) { Iq_star = my_Iq_star; }
-void task_cc_set_dq_offset(int32_t offset) { dq_offset = offset; }
-
 static void _get_theta_da(double *theta_da)
 {
 	// Get raw encoder position
@@ -115,8 +119,117 @@ static void _get_Iabc(double *Iabc)
 	Iabc[2] = ((double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C_GAIN) + ADC_TO_AMPS_PHASE_C_OFFSET;
 }
 
+
+// Chirp function
+//
+// Generates the chirp signal value given:
+// - time: current time instant
+// - w1:   low freq (rad)
+// - w2:   high freq (rad)
+// - A:    amplitude
+// - M:    time period
+static inline double _chirp(double w1, double w2, double A, double M, double time)
+{
+	double out;
+	out = A * cos(w1 * time + (w2 - w1) * time * time / (2 * M));
+	return out;
+}
+
+typedef struct cc_inj_func_constant_t {
+	double gain;
+} cc_inj_func_constant_t;
+
+typedef struct cc_inj_func_noise_t {
+	double gain;
+} cc_inj_func_noise_t;
+
+typedef struct cc_inj_func_chirp_t {
+	double gain;
+	double freqMin;
+	double freqMax;
+	double period;
+} cc_inj_func_chirp_t;
+
+typedef struct cc_inj_ctx_t {
+	cc_inj_func_e inj_func;
+	cc_inj_op_e operation;
+
+	cc_inj_func_constant_t constant;
+	cc_inj_func_noise_t noise;
+	cc_inj_func_chirp_t chirp;
+
+	double curr_time;
+} cc_inj_ctx_t;
+
+// Injection contexts for system
+cc_inj_ctx_t cc_inj_ctx_Id;
+cc_inj_ctx_t cc_inj_ctx_Iq;
+cc_inj_ctx_t cc_inj_ctx_Vd;
+cc_inj_ctx_t cc_inj_ctx_Vq;
+
+static void _inject_signal(double *output, cc_inj_ctx_t *inj_ctx)
+{
+	double value = 0.0;
+
+	switch (inj_ctx->inj_func) {
+	case CONST:
+		value = inj_ctx->constant.gain;
+		break;
+
+	case NOISE:
+	{
+		// Generate random number between 0..1
+		double r = (double) rand() / (double) RAND_MAX;
+
+		// Make between -1.0 .. 1.0
+		r = (2.0  * r) - 1.0;
+
+		value = inj_ctx->noise.gain * r;
+		break;
+	}
+	case CHIRP:
+	{
+		inj_ctx->curr_time += Ts;
+		if (inj_ctx->curr_time >= inj_ctx->chirp.period) {
+			inj_ctx->curr_time = 0.0;
+		}
+
+		value = _chirp(
+				PI2 * inj_ctx->chirp.freqMin,
+				PI2 * inj_ctx->chirp.freqMax,
+				inj_ctx->chirp.gain,
+				inj_ctx->chirp.period,
+				inj_ctx->curr_time
+				);
+		break;
+	}
+
+	default:
+		// Injection function not set by user, so command 0A
+		value = 0.0;
+	}
+
+	// Perform operation to do injection
+	switch (inj_ctx->operation) {
+	case SET:
+		*output = value;
+		break;
+	case ADD:
+		*output += value;
+		break;
+	}
+}
+
 void task_cc_callback(void *arg)
 {
+	// -------------------
+	// Inject signals into Idq*
+	// (constants, chirps, noise, etc)
+	// -------------------
+	_inject_signal(&Id_star, &cc_inj_ctx_Id);
+	_inject_signal(&Iq_star, &cc_inj_ctx_Iq);
+
+
 	// -------------------
 	// Update theta_da
 	// -------------------
@@ -159,6 +272,14 @@ void task_cc_callback(void *arg)
 	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
 
 
+	// -------------------
+	// Inject signals into Vdq*
+	// (constants, chirps, noise, etc)
+	// -------------------
+	_inject_signal(&Vd_star, &cc_inj_ctx_Vd);
+	_inject_signal(&Vq_star, &cc_inj_ctx_Vq);
+
+
 	// --------------------------------
 	// Perform inverse DQ transform of Vdq_star
 	// --------------------------------
@@ -172,8 +293,9 @@ void task_cc_callback(void *arg)
 
 
 	// ------------------------------------
-	// Saturate Vabc_star to CC_BUS_VOLTAGE
+	// Saturate Vabc_star to inverter bus voltage
 	// ------------------------------------
+
 	inverter_saturate_to_Vdc(&Vabc_star[0]);
 	inverter_saturate_to_Vdc(&Vabc_star[1]);
 	inverter_saturate_to_Vdc(&Vabc_star[2]);
@@ -192,7 +314,6 @@ void task_cc_callback(void *arg)
 	// Get omega_avg in rads/sec
 	// --------------------------------------
 
-
 	static int32_t last_steps = 0;
 	static int count = 0;
 	if (++count > 10) {
@@ -206,19 +327,98 @@ void task_cc_callback(void *arg)
 		last_steps = steps;
 
 		// Update log variables
-		LOG_w_avg = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
-		LOG_V_star = Vq_star;
+		LOG_omega_e_avg = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
 	}
+
+	// -------------------
+	// Store LOG variables
+	// -------------------
+	LOG_Vd_star = Vd_star;
+	LOG_Vq_star = Vq_star;
+	LOG_Id_star = Id_star;
+	LOG_Iq_star = Iq_star;
+	LOG_Id = Id;
+	LOG_Iq = Iq;
 }
 
 void task_cc_clear(void)
 {
-	task_cc_set_Iq_star(0.0);
-	task_cc_set_Id_star(0.0);
+	Id_star = 0.0;
+	Iq_star = 0.0;
 
 	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, 0.0, 0.0);
 	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, 0.0, 0.0);
 	inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, 0.0, 0.0);
+}
+
+void task_cc_set_dq_offset(int32_t offset) {
+	dq_offset = offset;
+}
+
+void task_cc_set_bw(double bw)
+{
+	controller_bw = bw;
+}
+
+static void _find_inj_ctx(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_ctx_t **inj_ctx)
+{
+	switch (value) {
+	case CURRENT:
+		switch (axis) {
+		case D_AXIS:
+			*inj_ctx = &cc_inj_ctx_Id;
+			break;
+		case Q_AXIS:
+			*inj_ctx = &cc_inj_ctx_Iq;
+			break;
+		}
+		break;
+
+	case VOLTAGE:
+		switch (axis) {
+		case D_AXIS:
+			*inj_ctx = &cc_inj_ctx_Vd;
+			break;
+		case Q_AXIS:
+			*inj_ctx = &cc_inj_ctx_Vq;
+			break;
+		}
+		break;
+	}
+}
+
+void task_cc_cmd_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+{
+	cc_inj_ctx_t *inj_ctx;
+	_find_inj_ctx(value, axis, &inj_ctx);
+
+	inj_ctx->inj_func = CONST;
+	inj_ctx->operation = op;
+	inj_ctx->constant.gain = gain;
+}
+
+void task_cc_cmd_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+{
+	cc_inj_ctx_t *inj_ctx;
+	_find_inj_ctx(value, axis, &inj_ctx);
+
+	inj_ctx->inj_func = NOISE;
+	inj_ctx->operation = op;
+	inj_ctx->noise.gain = gain;
+}
+
+void task_cc_cmd_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
+		double gain, double freqMin, double freqMax, double period)
+{
+	cc_inj_ctx_t *inj_ctx;
+	_find_inj_ctx(value, axis, &inj_ctx);
+
+	inj_ctx->inj_func = CHIRP;
+	inj_ctx->operation = op;
+	inj_ctx->chirp.gain = gain;
+	inj_ctx->chirp.freqMin = freqMin;
+	inj_ctx->chirp.freqMax = freqMax;
+	inj_ctx->chirp.period = period;
 }
 
 #endif // APP_PARAMS

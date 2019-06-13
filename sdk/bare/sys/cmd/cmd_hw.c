@@ -11,13 +11,14 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(5)
+#define NUM_HELP_ENTRIES	(6)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics"},
 		{"pwm duty <pwm_idx> <percent>", "Set a duty ratio"},
 		{"anlg read <chnl_idx>", "Read voltage on ADC channel"},
 		{"enc steps", "Read encoder steps from power-up"},
-		{"enc pos", "Read encoder position"}
+		{"enc pos", "Read encoder position"},
+		{"enc init <rpm> <vPercent>", "Spin motor using V/F until Z pulse found"}
 };
 
 void cmd_hw_register(void)
@@ -123,6 +124,27 @@ int cmd_hw(char **argv, int argc)
 			encoder_get_position(&position);
 
 			debug_printf("pos: %ld\r\n", position);
+
+			return SUCCESS;
+		}
+
+		if (strcmp("init", argv[2]) == 0) {
+			// Check correct number of arguments
+			if (argc != 5) return INVALID_ARGUMENTS;
+
+			// Parse out rpm arg
+			// and saturate to 1 .. 30 RPMs
+			double rpm = (double) atoi(argv[3]);
+			if (rpm > 30.0) return INVALID_ARGUMENTS;
+			if (rpm < 1.0) return INVALID_ARGUMENTS;
+
+			// Parse out vPercent arg
+			// and saturate to 1..100%
+			double vPercent = (double) atoi(argv[4]);
+			if (vPercent > 100.0) return INVALID_ARGUMENTS;
+			if (vPercent < 1.0) return INVALID_ARGUMENTS;
+
+			encoder_find_z(rpm, vPercent / 100.0);
 
 			return SUCCESS;
 		}

@@ -7,7 +7,7 @@
 
 static double dtc_dcomp = 0.0;
 static double dtc_tau = 0.0;
-static double dtc_Vdc = 0.0;
+static double dtc_Vdc = 1.0; // Don't init to 0 since we divide by this! (User should override this value)
 
 inline static int saturate(double min, double max, double *value) {
 	if (*value < min) {
@@ -64,6 +64,11 @@ void inverter_set_dtc(double dcomp, double tau)
 void inverter_set_Vdc(double Vdc)
 {
 	dtc_Vdc = Vdc;
+}
+
+double inverter_get_Vdc(void)
+{
+	return dtc_Vdc;
 }
 
 #endif // APP_PARAMS
