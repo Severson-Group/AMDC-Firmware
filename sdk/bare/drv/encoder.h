@@ -13,5 +13,6 @@ void encoder_set_pulses_per_rev_bits(uint32_t bits);
 void encoder_get_steps(int32_t *steps);
 void encoder_get_position(uint32_t *position);
 
+void encoder_find_z(double rpm, double vPercent);
 
 #endif // ENCODER_H
