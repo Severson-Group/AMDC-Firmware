@@ -3,6 +3,9 @@
 This document outlines various helpful commands for debugging the firmware. These will mostly use the Xilinx System Debugger (`xsdb`).
 This is a command line tool which interacts with the hardware. One can program the FPGA, read memory and registers, etc.
 
+See the [official Xilinx documentation](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2014_3/SDK_Doc/concepts/sdk_c_xsd_xsdb_commands.htm) for more `xsdb` commands. Also, see this [helpful guide](https://github.com/imrickysu/ZYNQ-Custom-Board-Bring-Up-Guide) for debugging Zynq-based projects.
+
+
 ## Open `xsdb` prompt
 
 1. Run `C:\Xilinx\Vivado\2017.2\bin\xsdb.bat`
