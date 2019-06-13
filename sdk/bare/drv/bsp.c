@@ -8,13 +8,19 @@
 #include "dac.h"
 #include "uart.h"
 #include "../sys/cmd/cmd_hw.h"
+#include "../sys/defines.h"
 #include <stdio.h>
 
 void bsp_init(void)
 {
 	printf("BSP:\tInitializing...\n");
 
-	uart_init();
+	int err;
+
+	err = uart_init();
+	if (err != SUCCESS) {
+		HANG;
+	}
 
 	encoder_init();
 	analog_init();

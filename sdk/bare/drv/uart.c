@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "../sys/defines.h"
 #include "xuartps.h"
 #include "xparameters.h"
 #include <stdio.h>
@@ -48,18 +49,18 @@ int uart_init(void)
 	 */
 	Config = XUartPs_LookupConfig(DeviceId);
 	if (NULL == Config) {
-		return XST_FAILURE;
+		return FAILURE;
 	}
 
 	Status = XUartPs_CfgInitialize(UartInstPtr, Config, Config->BaseAddress);
 	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
+		return FAILURE;
 	}
 
 	/* Check hardware build */
 	Status = XUartPs_SelfTest(UartInstPtr);
 	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
+		return FAILURE;
 	}
 
 	/* Use local loopback mode. */
@@ -78,7 +79,7 @@ int uart_init(void)
 	/* Block sending the buffer. */
 	SentCount = XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
 	if (SentCount != TEST_BUFFER_SIZE) {
-		return XST_FAILURE;
+		return FAILURE;
 	}
 
 
@@ -105,14 +106,14 @@ int uart_init(void)
 	 */
 	for (Index = 0; Index < TEST_BUFFER_SIZE; Index++) {
 		if (SendBuffer[Index] != RecvBuffer[Index]) {
-			return XST_FAILURE;
+			return FAILURE;
 		}
 	}
 
 	/* Restore to normal mode. */
 	XUartPs_SetOperMode(UartInstPtr, XUARTPS_OPER_MODE_NORMAL);
 
-	return XST_SUCCESS;
+	return SUCCESS;
 }
 
 int uart_send(char *msg, int len)
