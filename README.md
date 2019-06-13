@@ -14,6 +14,12 @@ Following these instructions will get the AMDC firmware environment up and runni
 
 [Setting Up Development Environment](docs/Setting-Up-Development-Environment.md)
 
+### Debugging
+
+Problem with your firmware that you can't figure out?
+
+[Debugging](docs/Debugging.md)
+
 ### Flashing AMDC
 
 After development, the resulting firmware should be flashed to the AMDC so that the application will start immediately after power-up. Follow these instructions.
