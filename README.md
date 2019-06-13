@@ -8,11 +8,11 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 
 Documentation has been written to help ease the process of using the AMDC platform.
 
-### Getting Started
+### GitHub to AMDC Hardware: Getting Firmware Built and Running
 
-Following these instructions will get the AMDC firmware environment up and running on your local machine for development and testing purposes.
+Follow these instructions to get firmware downloaded from GitHub and loaded onto your AMDC hardware for development and testing purposes.
 
-[Setting Up Development Environment](docs/Setting-Up-Development-Environment.md)
+[Getting Started](docs/Getting-Started.md)
 
 ### Debugging
 
