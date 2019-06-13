@@ -33,6 +33,13 @@ In `xsdb`:
 2. `rrd` -- lists all possible peripherials to read from
 3. Example: `rrd uart0` -- read UART0 registers
 
+## Read memory address
+
+Ensure code if up and running. In `xsdb`:
+
+1. `targets 2` -- connect to the running ARM Cortex-A9 core
+2. `mrd <memory_address>` -- read from hex global memory address
+
 ## Determine why reboot occurs:
 
 Boot AMDC with your code prior to reboot. Make sure it is running fine.
