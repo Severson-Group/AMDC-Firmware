@@ -8,9 +8,9 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 
 Documentation has been written to help ease the process of using the AMDC platform.
 
-### [GitHub to AMDC Hardware: Getting Firmware Built and Running](docs/Getting-Started.md)
-
 ### [Firmware Architecture](docs/Architecture.md)
+
+### [GitHub to AMDC Hardware: Getting Firmware Built and Running](docs/Getting-Started.md)
 
 ### [Debugging](docs/Debugging.md)
 
