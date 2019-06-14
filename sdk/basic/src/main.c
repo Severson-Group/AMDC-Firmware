@@ -54,31 +54,31 @@
  * were created in the EDK XPS system.
  */
 
-#define GPIO_EXAMPLE_DEVICE_ID          XPAR_AXI_GPIO_0_DEVICE_ID
-#define LED_CHANNEL                     1
-#define BUTTON_CHANNEL                  2
+//#define GPIO_EXAMPLE_DEVICE_ID          XPAR_AXI_GPIO_0_DEVICE_ID
+//#define LED_CHANNEL                     1
+//#define BUTTON_CHANNEL                  2
 #define INTC_DEVICE_ID                  XPAR_PS7_SCUGIC_0_DEVICE_ID
-#define INTC_GPIO_INTERRUPT_ID          XPAR_FABRIC_AXI_GPIO_0_IP2INTC_IRPT_INTR
+//#define INTC_GPIO_INTERRUPT_ID          XPAR_FABRIC_AXI_GPIO_0_IP2INTC_IRPT_INTR
 #define INTC                            XScuGic
 #define INTC_HANDLER                    XScuGic_InterruptHandler
-#define BUTTON_INTERRUPT                XGPIO_IR_CH2_MASK
-#define INTENSITY_STEP                  110000
+//#define BUTTON_INTERRUPT                XGPIO_IR_CH2_MASK
+//#define INTENSITY_STEP                  110000
 
 //Internal functions
-int SetupGPIO_Interrupt(XScuGic *IntcInstancePtr);
+//int SetupGPIO_Interrupt(XScuGic *IntcInstancePtr);
 int SetupInterruptSystem(XScuGic *IntcInstancePtr);
-void GpioIsr(void *InstancePtr);
+//void GpioIsr(void *InstancePtr);
 void HandleTimer100usTick();
 //	/void CommandParser(const char * szCmd, char *szResponse);
 //void HandleCommands();
-void UpdateLEDs();
+//void UpdateLEDs();
 
 /* missing declaration in lwIP */
 void lwip_init();
 
-//GPIO
-XGpio Gpio; /* The Instance of the GPIO Driver */
-u32 count = 0;
+////GPIO
+//XGpio Gpio; /* The Instance of the GPIO Driver */
+//u32 count = 0;
 
 //Interrupts
 XScuGic IntcInstance; /* Interrupt Controller Instance */
@@ -140,6 +140,9 @@ int LeaveProtection(int State) {
 		int Status;
 
 		init_platform();
+
+		bsp_init();
+
 		InitPECB_IO();
 		InitLog();
 
@@ -163,19 +166,19 @@ int LeaveProtection(int State) {
 		print("Success!\n\r");
 		TimerDisabled = FALSE;
 
-//GPIO
-		print("Setting up the GPIO...");
-		Status = XGpio_Initialize(&Gpio, GPIO_EXAMPLE_DEVICE_ID);
-		if (Status != XST_SUCCESS)
-			return XST_FAILURE;
-		print("Success!\n\r");
+////GPIO
+//		print("Setting up the GPIO...");
+//		Status = XGpio_Initialize(&Gpio, GPIO_EXAMPLE_DEVICE_ID);
+//		if (Status != XST_SUCCESS)
+//			return XST_FAILURE;
+//		print("Success!\n\r");
 
-//GPIO ISR
-		print("Setting up the GPIO Interrupt...");
-		Status = SetupGPIO_Interrupt(&IntcInstance);
-		if (Status != XST_SUCCESS)
-			return XST_FAILURE;
-		print("Success!\n\r");
+////GPIO ISR
+//		print("Setting up the GPIO Interrupt...");
+//		Status = SetupGPIO_Interrupt(&IntcInstance);
+//		if (Status != XST_SUCCESS)
+//			return XST_FAILURE;
+//		print("Success!\n\r");
 
 //CONTROL
 		print("Setting up the controllers...");
@@ -287,85 +290,86 @@ int LeaveProtection(int State) {
 		//code every 10ms
 		if (++countTo10ms) {
 			countTo10ms = 0;
-			UpdateLEDs();
+//			UpdateLEDs();
 		}
 
 		HBA_100usTick();
+		VSI_100usTick();
 
 		if (bTimer100usTick)
 			Timing100usErrorCount++;
 	}
 
-	void UpdateLEDs()
-	{
-		u32 ec_to_dev, ec_from_dev;
-		ec_to_dev = PECB[ER_CNT] & 0xFFFF;
-		ec_from_dev = (PECB[ER_CNT] >> 16) & 0xFFFF;
-		WriteToZB_LEDs(ec_to_dev + ec_from_dev);
-	}
+//	void UpdateLEDs()
+//	{
+//		u32 ec_to_dev, ec_from_dev;
+//		ec_to_dev = PECB[ER_CNT] & 0xFFFF;
+//		ec_from_dev = (PECB[ER_CNT] >> 16) & 0xFFFF;
+//		WriteToZB_LEDs(ec_to_dev + ec_from_dev);
+//	}
 
 
 
 
-	void GpioIsr(void *InstancePtr) {
-		u32 Buttons;
-
-		XGpio *GpioPtr = (XGpio *) InstancePtr;
-
-		// Disable the interrupt
-		XGpio_InterruptDisable(GpioPtr, BUTTON_INTERRUPT);
-
-		// There should not be any other interrupts occuring other than the the button changes
-		if ((XGpio_InterruptGetStatus(GpioPtr) & BUTTON_INTERRUPT)
-				!= BUTTON_INTERRUPT) {
-			return;
-		}
-
-		// Read state of push buttons and determine which ones changed
-		// states from the previous interrupt. Save a copy of the buttons
-		// for the next interrupt
-
-		Buttons = XGpio_DiscreteRead(&Gpio, BUTTON_CHANNEL);
-
-		if (Buttons == 1 && (count < 0xFF)) {
-			u32 counter;
-			count++;
-			PECB[CONTROL] = 1;
-			fprintf(stdout, "Clearing the error count\n");
-			for (counter = 0; counter < 0xFFFF; counter++)
-				;
-			PECB[CONTROL] = 0;
-			fprintf(stdout, "Error count cleared, now reads: %d\n",
-					(int) PECB[ER_CNT]);
-		}
-
-		if (Buttons == 2 && (count < 0xFF)) {
-			count++;
-		}
-
-		if (Buttons == 4 && (count >= 1)) {
-			count--;
-		}
-
-		if (Buttons == 8 && (count >= 1)) {
-			count--;
-		}
-
-		if (Buttons == 16) {
-			count = 0;
-		}
-
-		//fprintf(stdout,"Count : %X\n",(int)count);
-
-		//XGpio_DiscreteWrite(&Gpio, LED_CHANNEL, count);
-
-		// Clear the interrupt such that it is no longer pending in the GPIO
-		(void) XGpio_InterruptClear(GpioPtr, BUTTON_INTERRUPT);
-
-		// Enable the interrupt
-		XGpio_InterruptEnable(GpioPtr, BUTTON_INTERRUPT);
-
-	}
+//	void GpioIsr(void *InstancePtr) {
+//		u32 Buttons;
+//
+//		XGpio *GpioPtr = (XGpio *) InstancePtr;
+//
+//		// Disable the interrupt
+//		XGpio_InterruptDisable(GpioPtr, BUTTON_INTERRUPT);
+//
+//		// There should not be any other interrupts occuring other than the the button changes
+//		if ((XGpio_InterruptGetStatus(GpioPtr) & BUTTON_INTERRUPT)
+//				!= BUTTON_INTERRUPT) {
+//			return;
+//		}
+//
+//		// Read state of push buttons and determine which ones changed
+//		// states from the previous interrupt. Save a copy of the buttons
+//		// for the next interrupt
+//
+//		Buttons = XGpio_DiscreteRead(&Gpio, BUTTON_CHANNEL);
+//
+//		if (Buttons == 1 && (count < 0xFF)) {
+//			u32 counter;
+//			count++;
+//			PECB[CONTROL] = 1;
+//			fprintf(stdout, "Clearing the error count\n");
+//			for (counter = 0; counter < 0xFFFF; counter++)
+//				;
+//			PECB[CONTROL] = 0;
+//			fprintf(stdout, "Error count cleared, now reads: %d\n",
+//					(int) PECB[ER_CNT]);
+//		}
+//
+//		if (Buttons == 2 && (count < 0xFF)) {
+//			count++;
+//		}
+//
+//		if (Buttons == 4 && (count >= 1)) {
+//			count--;
+//		}
+//
+//		if (Buttons == 8 && (count >= 1)) {
+//			count--;
+//		}
+//
+//		if (Buttons == 16) {
+//			count = 0;
+//		}
+//
+//		//fprintf(stdout,"Count : %X\n",(int)count);
+//
+//		//XGpio_DiscreteWrite(&Gpio, LED_CHANNEL, count);
+//
+//		// Clear the interrupt such that it is no longer pending in the GPIO
+//		(void) XGpio_InterruptClear(GpioPtr, BUTTON_INTERRUPT);
+//
+//		// Enable the interrupt
+//		XGpio_InterruptEnable(GpioPtr, BUTTON_INTERRUPT);
+//
+//	}
 
 	/*******************************************************************************/
 	/*              S E T U P   I N T E R R U P T   S Y S T E M                    */
@@ -403,30 +407,30 @@ int LeaveProtection(int State) {
 		return XST_SUCCESS;
 	}
 
-	int SetupGPIO_Interrupt(XScuGic *IntcInstancePtr) {
-		int Result;
-		XScuGic_SetPriorityTriggerType(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID,
-				0xA0, 0x3);
-
-		// Connect the interrupt handler that will be called when an
-		// interrupt occurs for the device.
-
-		Result = XScuGic_Connect(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID,
-				(Xil_ExceptionHandler) GpioIsr, &Gpio);
-		if (Result != XST_SUCCESS) {
-			return Result;
-		}
-
-		// Enable the interrupt for the GPIO device.
-
-		XScuGic_Enable(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID);
-
-		// Enable the GPIO channel interrupts so that push button can be
-		// detected and enable interrupts for the GPIO device
-
-		XGpio_InterruptEnable(&Gpio, BUTTON_INTERRUPT);
-		XGpio_InterruptGlobalEnable(&Gpio);
-
-		return XST_SUCCESS;
-	}
+//	int SetupGPIO_Interrupt(XScuGic *IntcInstancePtr) {
+//		int Result;
+//		XScuGic_SetPriorityTriggerType(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID,
+//				0xA0, 0x3);
+//
+//		// Connect the interrupt handler that will be called when an
+//		// interrupt occurs for the device.
+//
+//		Result = XScuGic_Connect(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID,
+//				(Xil_ExceptionHandler) GpioIsr, &Gpio);
+//		if (Result != XST_SUCCESS) {
+//			return Result;
+//		}
+//
+//		// Enable the interrupt for the GPIO device.
+//
+//		XScuGic_Enable(IntcInstancePtr, INTC_GPIO_INTERRUPT_ID);
+//
+//		// Enable the GPIO channel interrupts so that push button can be
+//		// detected and enable interrupts for the GPIO device
+//
+//		XGpio_InterruptEnable(&Gpio, BUTTON_INTERRUPT);
+//		XGpio_InterruptGlobalEnable(&Gpio);
+//
+//		return XST_SUCCESS;
+//	}
 

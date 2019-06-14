@@ -1,9 +1,28 @@
+##########################
+# Working Vivado Project #
+##########################
+#
+# Do not version control the generated Vivado project
+
+amdc/
+*.log
+*.jou
+
+#######
+# SRC #
+#######
+
+# Keep only base source files
+hw/*
+!hw/design_1.bd
+!hw/design_1_wrapper.v
+!hw/constraints_amdc_revc.xdc
+
+
 #######
 # SDK #
 #######
 
-*.log
-*.jou
 
 sdk/.metadata/
 sdk/.sdk/
@@ -20,3 +39,5 @@ sdk/**/*.bit
 sdk/**/*.a
 sdk/**/*.o
 sdk/**/*.d
+
+**/bootimage/

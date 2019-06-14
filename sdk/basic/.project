@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>basic</name>
-	<comment></comment>
+	<comment>Created by SDK v2017.2. amdc_bsp - ps7_cortexa9_0</comment>
 	<projects>
-		<project>standalone_bsp_1_lwip</project>
+		<project>amdc_bsp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -128,10 +128,10 @@ int ChangeDQ_ReferenceFrame(double *new_dq0, double new_theta_da, double *old_dq
 }
 
 #define OUTPUT_FREQ 120.0		//Hz
-#define THETA_DA  GetTheta_DA() /*0.0 //212 //*/ //((double) 2.0*PI*OUTPUT_FREQ*((double)MainTimerTimerTick)/((double)100000.0))
+//#define THETA_DA  GetTheta_DA() /*0.0 //212 //*/ //((double) 2.0*PI*OUTPUT_FREQ*((double)MainTimerTimerTick)/((double)100000.0))
 
 
-inline double GetTheta_DA()
+double GetTheta_DA()
 {
 	static double theta_da = 0;
 	double update_da = 0;
@@ -146,6 +146,7 @@ inline double GetTheta_DA()
 
 	return theta_da;
 }
+
 u32 vsi_theta_da;
 
 
@@ -636,7 +637,7 @@ static u8 ExampleVSI_NeedsInput(void *arg, void *VSIContext)
 	cnt->Iabc[0] = ReadADC(adc_num[0]);
 	cnt->Iabc[1] = ReadADC(adc_num[1]);
 	cnt->Iabc[2] = ReadADC(adc_num[2]);
-	cnt->theta_da = THETA_DA;
+	cnt->theta_da = GetTheta_DA();
 
 	return FALSE;
 }

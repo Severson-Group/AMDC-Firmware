@@ -14,6 +14,7 @@ extern u32 HandleCommandsUart(char *szRcvCmd, u32 state);
 extern u32 HandleCommandsGeneral(char *szOutData, char *szRcvCmd, char *szNewData, u32 NewDataLength, u32 *state, void *ComDevice);
 
 extern void HBA_100usTick();
+extern void VSI_100usTick(void);
 #endif //__COMMANDS_H
 
 

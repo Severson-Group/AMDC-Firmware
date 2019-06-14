@@ -15,6 +15,7 @@
 
 #include "project_include.h"
 
+#include "../bsp/bsp.h"
 
 /*****************************
  * MakeMostFullLFR()
@@ -118,6 +119,10 @@ static int CmdWD(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTRE(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTRT(const char * szCmd, char *szResponse, void *CommDevice);
 static int CmdTCE(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdFSW(const char * szCmd, char *szResponse, void *CommDevice);
+static int CmdDEA(const char * szCmd, char *szResponse, void *CommDevice);
 
 typedef struct command_table_entry {
 	char *szCmd;
@@ -125,8 +130,8 @@ typedef struct command_table_entry {
 	int (*cmd_function)(const char *, char *, void *);
 } command_table_entry;
 
-#define NUM_CMD 18
-command_table_entry command_table[] = {
+#define NUM_CMD 22
+command_table_entry command_table[NUM_CMD] = {
 		{"BMK", "Benchmark the PI controller logic", CmdBMK},
 		{"CFG", "CFG=d: Write setting d to configuration register (d = 0 to 255)", CmdCFG},
 		{"CNT", "CNT=n,cmd: Send the control application a message", CmdCNT},
@@ -144,7 +149,11 @@ command_table_entry command_table[] = {
 		{"TCE", "Clear timing errors", CmdTCE},
 		{"TRE", "Read timing errors", CmdTRE},
 		{"TRT", "Read timer ticks", CmdTRT},
-		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD}
+		{"WD", "WDn=d: Write d duty cycle register n (0 for off)", CmdWD},
+		{"VSL", "VSL=l1,l2,l3: Set output legs for VSI", CmdVSL},
+		{"VSI", "VSI=V,freq(,ramptime): Set V (percent output voltage, 0-100), with freq (Hz). Optional ramp time (ms)", CmdVSI},
+		{"FSW", "FSW=frequency: Set PWM switching frequency (100Hz to 4MHz)", CmdFSW},
+		{"DEA", "DEA=ns: Set PWM dead time in ns (25ns to ...)", CmdDEA}
 	};
 
 
@@ -524,8 +533,99 @@ void HBA_100usTick()
 		WriteDutyRatio(HBA_uiLeg1, duty1);
 		WriteDutyRatio(HBA_uiLeg2, duty2);
 	}
-
 }
+
+
+// Ramps between `current` and `setpoint` values assuming Fs = 10kHz
+// Updates `current` as it ramps.
+//
+// `ramprate` is in (units of `current`) / sec
+//     0 implies no ramp
+//
+//
+// Returns delta in Ts for theta update
+//
+double omega_ramp_fcn(double *current, double *setpoint, double ramprate)
+{
+	double ret;
+
+	if (ramprate != 0 && *current != *setpoint) {
+		// Ramping
+		double dir = (*setpoint > *current) ? 1 : -1;
+		double del = ramprate / 10000.0;
+
+		*current += (dir * del);
+		ret = *current / 10000.0;
+
+		// Check if done ramping
+		if ((dir == 1)  && (*current > *setpoint)) *current = *setpoint;
+		if ((dir == -1) && (*current < *setpoint)) *current = *setpoint;
+	} else {
+		// Not ramping
+		ret = *setpoint / 10000.0;
+	}
+
+	return ret;
+}
+
+uint8_t VSI_enabled = 0;
+uint8_t VSI_leg1;
+uint8_t VSI_leg2;
+uint8_t VSI_leg3;
+double VSI_Vpercent = 0;
+double VSI_omega = 0;
+double theta = 0;
+
+double VSI_omega_ramp = 0;
+double VSI_old_Vpercent = 0;
+double VSI_old_omega = 0;
+
+double VSI_R;
+double VSI_V0;
+
+/*****************************
+ * CmdVSI()
+ * Handle the 100uS tick for the VSI function.
+ */
+void VSI_100usTick(void)
+{
+	if (VSI_enabled) {
+//		uint8_t duty1, duty2, duty3;
+
+		// Calculate `da`
+		double update_da = omega_ramp_fcn(&VSI_old_omega, &VSI_omega, VSI_omega_ramp);
+
+		// Calculate dv
+		// ramp(&VSI_old_Vpercent, &VSI_Vpercent, 0.1);
+
+		theta += update_da;
+		if (theta > 6.283185307179586)
+			theta -= 6.283185307179586;
+
+		double v = (VSI_R * VSI_old_omega) + VSI_V0;
+
+		double percent1 = v*cos(theta);
+		double percent2 = v*cos(theta - PI23);
+		double percent3 = v*cos(theta + PI23);
+
+//		duty1 = (unsigned char) 127*(1 + percent1);
+//		duty2 = (unsigned char) 127*(1 + percent2);
+//		duty3 = (unsigned char) 127*(1 + percent3);
+
+		pwm_set_duty(VSI_leg1 - 1, (1 + percent1) / 2.0);
+		pwm_set_duty(VSI_leg2 - 1, (1 + percent2) / 2.0);
+		pwm_set_duty(VSI_leg3 - 1, (1 + percent3) / 2.0);
+
+//		WriteDutyRatio(VSI_leg1, duty1);
+//		WriteDutyRatio(VSI_leg2, duty2);
+//		WriteDutyRatio(VSI_leg3, duty3);
+	} else {
+		WriteDutyRatio(VSI_leg1, 0);
+		WriteDutyRatio(VSI_leg2, 0);
+		WriteDutyRatio(VSI_leg3, 0);
+	}
+}
+
 
 /*****************************
  * CmdHBA()
@@ -1001,6 +1101,299 @@ static int CmdCST(const char * szCmd, char *szResponse, void *CommDevice)
 
 	return strlen(szResponse);
 }
+
+/*****************************
+ * CmdVSL()
+ * Handle the VSL command.
+ *
+ * VSL=leg1,leg2,leg3
+ *
+ * leg1: number of leg 1 (1 to NUM_LEGS)
+ * leg2: number of leg 2 (1 to NUM_LEGS)
+ * leg3: number of leg 3 (1 to NUM_LEGS)
+ *
+ * Response: OK
+ *
+ *szCmd: the command
+ *szResponse: the response
+ */
+
+static char bufferVSL[128];
+static int CmdVSL(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferVSL, 0, 128);
+	strcpy(bufferVSL, szCmd);
+
+	// Parse out tokens
+	int iLeg1 = 0;
+	int iLeg2 = 0;
+	int iLeg3 = 0;
+
+	p = strtok(bufferVSL, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'VSL'
+			break;
+		case 1:
+			iLeg1 = atoi(p);
+			break;
+		case 2:
+			iLeg2 = atoi(p);
+			break;
+		case 3:
+			iLeg3 = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iLeg1 = 0;
+			iLeg2 = 1;
+			iLeg3 = 1;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check if all 0 => disable VSI
+	if (iLeg1 == 0 && iLeg2 == 0 && iLeg3 == 0) {
+		VSI_enabled = 0;
+		strcat(szResponse, "OK");
+		return strlen(szResponse);
+	}
+
+	// Check if errors in leg numbers
+	int bError = 0;
+	if (iLeg1 <= 0 || iLeg1 > NUM_LEGS) bError = 1;
+	if (iLeg2 <= 0 || iLeg2 > NUM_LEGS) bError = 1;
+	if (iLeg3 <= 0 || iLeg3 > NUM_LEGS) bError = 1;
+
+	if (bError) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// Set legs for VSI
+	VSI_leg1 = iLeg1;
+	VSI_leg2 = iLeg2;
+	VSI_leg3 = iLeg3;
+
+	// Enable VSI
+	VSI_enabled = 1;
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+/*****************************
+ * CmdVSI()
+ * Handle the VSI command.
+ *
+ * VSI=voltage,freq(,ramp)
+ *
+ * voltage: peak voltage output percent of Vbus (0 to 100)
+ * freq: frequency of output (Hz)
+ * ramptime: (optional) duration of ramping (ms)
+ *
+ * Response: OK
+ *
+ *szCmd: the command
+ *szResponse: the response
+ */
+
+static char bufferVSI[128];
+static int CmdVSI(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferVSI, 0, 128);
+	strcpy(bufferVSI, szCmd);
+
+	// Parse out tokens
+	int iVoltagePercent = 0;
+	int iHz = 0;
+	int iRamptime = 0;
+
+	p = strtok(bufferVSI, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'VSI'
+			break;
+		case 1:
+			iVoltagePercent = atoi(p);
+			break;
+		case 2:
+			iHz = atoi(p);
+			break;
+		case 3:
+			iRamptime = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iHz = 0;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check for errors while parsing
+//	if (iHz == 0 || iVoltagePercent == 0) {
+//		strcat(szResponse, "ERROR");
+//		return strlen(szResponse);
+//	}
+
+	// Convert voltage percent input to double percentage
+	VSI_old_Vpercent = VSI_Vpercent;
+	VSI_Vpercent = iVoltagePercent / 100.0;
+	if (VSI_Vpercent > 100) VSI_Vpercent = 100.0;
+	if (VSI_Vpercent < 0)   VSI_Vpercent = 0.0;
+
+
+	// Convert freq input to rad/sec
+	VSI_old_omega = VSI_omega;
+	VSI_omega = 2 * PI * iHz;
+
+	if (iRamptime > 0) {
+		VSI_omega_ramp = abs(VSI_old_omega - VSI_omega) / (iRamptime / 1000.0); // (rad/sec) / sec
+	} else {
+		VSI_omega_ramp = 0;
+	}
+
+
+	if (VSI_omega != VSI_old_omega) {
+		// There is delta freq requested
+		VSI_R = (VSI_Vpercent - VSI_old_Vpercent) / (VSI_omega - VSI_old_omega);
+		VSI_V0 = VSI_Vpercent - (VSI_R * VSI_omega);
+	} else {
+		// Instaneous voltage change
+		VSI_R = 0;
+		VSI_V0 = VSI_Vpercent;
+	}
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+static char bufferFSW[128];
+static int CmdFSW(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferFSW, 0, 128);
+	strcpy(bufferFSW, szCmd);
+
+	// Parse out tokens
+	int iHz = 0;
+
+	p = strtok(bufferFSW, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'FSW'
+			break;
+		case 1:
+			iHz = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iHz = 0;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check for errors while parsing
+	if (iHz < 100 || iHz > 4000000) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// do work
+	pwm_set_switching_freq((double) iHz);
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+
+static char bufferDEA[128];
+static int CmdDEA(const char * szCmd, char *szResponse, void *CommDevice)
+{
+	char *p;
+	int i = 0;
+
+	// Create copy of cmd for parsing
+	memset(bufferDEA, 0, 128);
+	strcpy(bufferDEA, szCmd);
+
+	// Parse out tokens
+	int iNs = 0;
+
+	p = strtok(bufferDEA, "=,");
+	while (p != NULL) {
+		// Use current token...
+		switch (i) {
+		case 0:
+			// Ignore 'DEA'
+			break;
+		case 1:
+			iNs = atoi(p);
+			break;
+		default:
+			// This is an error!
+			// Force error below
+			iNs = 0;
+			break;
+		}
+
+		// Get next token
+		p = strtok(NULL, "=,");
+		i++;
+	}
+
+	// Check for errors while parsing
+	if (iNs < 25 || iNs > 1e9) {
+		strcat(szResponse, "ERROR");
+		return strlen(szResponse);
+	}
+
+	// do work
+	pwm_set_deadtime_ns(iNs);
+
+	strcat(szResponse, "OK");
+	return strlen(szResponse);
+}
+
+
+
+
+
+
 
 //call this with the CR removed
 //load the response into szResponse

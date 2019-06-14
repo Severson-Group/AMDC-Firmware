@@ -22,8 +22,8 @@
 #define AXI_TIMER1_PRIORITY 0xA9		//0xF8 is lowest priority, 0 is highest: READ THIS: actually if the priority's upper nibble is F, it doesn't work at all!
 
 
-#define TMRCTR0_INTERRUPT_ID		62 //I don't know why, but it won't recognize these XPAR_FABRIC_AXI_TIMER_0_INTERRUPT_INTR
-#define TMRCTR1_INTERRUPT_ID		63 //XPAR_FABRIC_AXI_TIMER_1_INTERRUPT_INTR
+#define TMRCTR0_INTERRUPT_ID		61 //I don't know why, but it won't recognize these XPAR_FABRIC_AXI_TIMER_0_INTERRUPT_INTR
+#define TMRCTR1_INTERRUPT_ID		62 //XPAR_FABRIC_AXI_TIMER_1_INTERRUPT_INTR
 
 #define TMRCTR0_DEVICE_ID		XPAR_TMRCTR_0_DEVICE_ID
 #define TMRCTR1_DEVICE_ID		XPAR_TMRCTR_1_DEVICE_ID
