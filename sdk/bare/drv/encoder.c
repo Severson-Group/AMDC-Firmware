@@ -43,8 +43,7 @@ void encoder_get_position(uint32_t *position)
 // ****************
 
 typedef enum sm_states_e {
-	ALIGN_DQ_AXIS,
-	SPIN_UNTIL_Z,
+	WAIT_UNTIL_Z,
 	REMOVE_TASK
 } sm_states_e;
 
@@ -63,52 +62,19 @@ typedef struct sm_ctx_t {
 static void _find_z_callback(void *arg)
 {
 	sm_ctx_t *ctx = (sm_ctx_t *) arg;
-	double Va_star;
-	double Vb_star;
-	double Vc_star;
 
 	switch (ctx->state) {
-	case ALIGN_DQ_AXIS:
-		Va_star = 0.1 * inverter_get_Vdc() * cos(-PI23);
-		Vb_star = 0.1 * inverter_get_Vdc() * cos(0.0);
-		Vc_star = 0.1 * inverter_get_Vdc() * cos(PI23);
-
-		inverter_set_voltage(0, Va_star, 0.0);
-		inverter_set_voltage(1, Vb_star, 0.0);
-		inverter_set_voltage(2, Vc_star, 0.0);
-
-		ctx->counter++;
-		if (ctx->counter > SM_UPDATES_PER_SEC) {
-			ctx->state = SPIN_UNTIL_Z;
-		}
-
-		break;
-
-	case SPIN_UNTIL_Z:
-		ctx->theta += ctx->theta_delta;
-		while (ctx->theta > PI2) {
-			ctx->theta -= PI2;
-		}
-
-		Va_star = ctx->vPercent * inverter_get_Vdc() * cos(ctx->theta - PI23);
-		Vb_star = ctx->vPercent * inverter_get_Vdc() * cos(ctx->theta);
-		Vc_star = ctx->vPercent * inverter_get_Vdc() * cos(ctx->theta + PI23);
-
-		inverter_set_voltage(0, Va_star, 0.0);
-		inverter_set_voltage(1, Vb_star, 0.0);
-		inverter_set_voltage(2, Vc_star, 0.0);
-
+	case WAIT_UNTIL_Z:
+	{
 		uint32_t pos;
 		encoder_get_position(&pos);
 		if (pos != -1) ctx->state = REMOVE_TASK;
 		break;
+	}
 
 	case REMOVE_TASK:
+	{
 		scheduler_tcb_unregister(&ctx->tcb);
-
-		inverter_set_voltage(0, 0.0, 0.0);
-		inverter_set_voltage(1, 0.0, 0.0);
-		inverter_set_voltage(2, 0.0, 0.0);
 
 		io_led_color_t color;
 		color.b = 0;
@@ -116,18 +82,15 @@ static void _find_z_callback(void *arg)
 
 		break;
 	}
+	}
 }
 
 static sm_ctx_t ctx;
 
-void encoder_find_z(double rpm, double vPercent)
+void encoder_find_z()
 {
 	// Initialize the state machine context
-	ctx.state = ALIGN_DQ_AXIS;
-	ctx.vPercent = vPercent;
-	ctx.theta = 0.0;
-	ctx.counter = 0;
-	ctx.theta_delta = POLE_PAIRS * (rpm / 60.0) / (double) SM_UPDATES_PER_SEC;
+	ctx.state = WAIT_UNTIL_Z;
 
 	io_led_color_t color;
 	color.b = 255;

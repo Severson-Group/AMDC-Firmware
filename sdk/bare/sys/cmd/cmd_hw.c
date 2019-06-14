@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"anlg read <chnl_idx>", "Read voltage on ADC channel"},
 		{"enc steps", "Read encoder steps from power-up"},
 		{"enc pos", "Read encoder position"},
-		{"enc init <rpm> <vPercent>", "Spin motor using V/F until Z pulse found"}
+		{"enc init", "Turn on blue LED until Z pulse found"}
 };
 
 void cmd_hw_register(void)
@@ -130,21 +130,9 @@ int cmd_hw(char **argv, int argc)
 
 		if (strcmp("init", argv[2]) == 0) {
 			// Check correct number of arguments
-			if (argc != 5) return INVALID_ARGUMENTS;
+			if (argc != 3) return INVALID_ARGUMENTS;
 
-			// Parse out rpm arg
-			// and saturate to 1 .. 30 RPMs
-			double rpm = (double) atoi(argv[3]);
-			if (rpm > 30.0) return INVALID_ARGUMENTS;
-			if (rpm < 1.0) return INVALID_ARGUMENTS;
-
-			// Parse out vPercent arg
-			// and saturate to 1..100%
-			double vPercent = (double) atoi(argv[4]);
-			if (vPercent > 100.0) return INVALID_ARGUMENTS;
-			if (vPercent < 1.0) return INVALID_ARGUMENTS;
-
-			encoder_find_z(rpm, vPercent / 100.0);
+			encoder_find_z();
 
 			return SUCCESS;
 		}
