@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define LOG_MAX_NUM_VARS				(8)
-#define LOG_VARIABLE_SAMPLE_DEPTH		(1000)
+#define LOG_VARIABLE_SAMPLE_DEPTH		(10000)
 
 typedef enum var_type_e {
 	INT = 1,

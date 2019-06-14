@@ -165,7 +165,7 @@ typedef struct sm_ctx_t {
 
 #define MSG_LENGTH		(128)
 
-#define SM_UPDATES_PER_SEC		(10000)
+#define SM_UPDATES_PER_SEC		(200)
 #define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
 void state_machine_callback(void *arg)
