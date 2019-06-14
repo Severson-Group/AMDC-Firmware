@@ -204,9 +204,11 @@ static void _inject_signal(double *output, cc_inj_ctx_t *inj_ctx)
 		break;
 	}
 
+	case NONE:
 	default:
-		// Injection function not set by user, so command 0A
-		value = 0.0;
+		// Injection function not set by user,
+		// so don't do anything to the output signal
+		return;
 	}
 
 	// Perform operation to do injection
@@ -387,7 +389,15 @@ static void _find_inj_ctx(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_ctx_t
 	}
 }
 
-void task_cc_cmd_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+void task_cc_inj_clear(void)
+{
+	cc_inj_ctx_Id.inj_func = NONE;
+	cc_inj_ctx_Iq.inj_func = NONE;
+	cc_inj_ctx_Vd.inj_func = NONE;
+	cc_inj_ctx_Vq.inj_func = NONE;
+}
+
+void task_cc_inj_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
 {
 	cc_inj_ctx_t *inj_ctx;
 	_find_inj_ctx(value, axis, &inj_ctx);
@@ -397,7 +407,7 @@ void task_cc_cmd_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->constant.gain = gain;
 }
 
-void task_cc_cmd_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
 {
 	cc_inj_ctx_t *inj_ctx;
 	_find_inj_ctx(value, axis, &inj_ctx);
@@ -407,7 +417,7 @@ void task_cc_cmd_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->noise.gain = gain;
 }
 
-void task_cc_cmd_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
+void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 		double gain, double freqMin, double freqMax, double period)
 {
 	cc_inj_ctx_t *inj_ctx;

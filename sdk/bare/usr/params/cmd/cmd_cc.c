@@ -10,12 +10,13 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(7)
+#define NUM_HELP_ENTRIES	(8)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"init", "Start current controller"},
 		{"deinit", "Stop current controller"},
 		{"bw <mFreq>", "Set controller bandwidth"},
 		{"offset <enc_pulses>", "Set DQ frame offset"},
+		{"inj clear", "Clear all injections"},
 		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> const <mValue>", "Inject a constant into controller"},
 		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> noise <mGain>", "Inject noise into controller"},
 		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> chirp <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp into controller"},
@@ -92,6 +93,14 @@ int cmd_cc(char **argv, int argc)
 		return SUCCESS;
 	}
 
+	// Handle 'inj clear' sub-command
+	if (argc == 3 && strcmp("inj", argv[1]) == 0 && strcmp("clear", argv[2]) == 0) {
+		task_cc_inj_clear();
+
+		return SUCCESS;
+	}
+
+
 	// Handle 'inj' sub-command
 	if (strcmp("inj", argv[1]) == 0) {
 
@@ -133,12 +142,12 @@ int cmd_cc(char **argv, int argc)
 			if (argc != 6) return INVALID_ARGUMENTS;
 
 			// Pull out mAmp argument
-			// and saturate to -5A .. 5A
+			// and saturate to -10 .. 10
 			double mGain = (double) atoi(argv[5]);
-			if (mGain < -5000.0) return INVALID_ARGUMENTS;
-			if (mGain >  5000.0) return INVALID_ARGUMENTS;
+			if (mGain < -10000.0) return INVALID_ARGUMENTS;
+			if (mGain >  10000.0) return INVALID_ARGUMENTS;
 
-			task_cc_cmd_const(cmd_value, cmd_axis, cmd_op, mGain / 1000.0);
+			task_cc_inj_const(cmd_value, cmd_axis, cmd_op, mGain / 1000.0);
 
 			return SUCCESS;
 		}
@@ -149,12 +158,12 @@ int cmd_cc(char **argv, int argc)
 			if (argc != 6) return INVALID_ARGUMENTS;
 
 			// Pull out mGain argument
-			// and saturate to 0 .. 5A
+			// and saturate to 0 .. 10
 			double mGain = (double) atoi(argv[5]);
 			if (mGain < 0.0) return INVALID_ARGUMENTS;
-			if (mGain > 5000.0) return INVALID_ARGUMENTS;
+			if (mGain > 10000.0) return INVALID_ARGUMENTS;
 
-			task_cc_cmd_noise(cmd_value, cmd_axis, cmd_op, mGain / 1000.0);
+			task_cc_inj_noise(cmd_value, cmd_axis, cmd_op, mGain / 1000.0);
 
 			return SUCCESS;
 		}
@@ -165,22 +174,22 @@ int cmd_cc(char **argv, int argc)
 			if (argc != 9) return INVALID_ARGUMENTS;
 
 			// Pull out mGain argument
-			// and saturate to 0 .. 5A
+			// and saturate to 0 .. 10
 			double mGain = (double) atoi(argv[5]);
 			if (mGain < 0.0) return INVALID_ARGUMENTS;
-			if (mGain > 5000.0) return INVALID_ARGUMENTS;
+			if (mGain > 10000.0) return INVALID_ARGUMENTS;
 
 			// Pull out mFreqMin argument
-			// and saturate to 1 .. 1000Hz
+			// and saturate to 1 .. 10000Hz
 			double mFreqMin = (double) atoi(argv[6]);
 			if (mFreqMin < 1000.0) return INVALID_ARGUMENTS;
-			if (mFreqMin > 1000000.0) return INVALID_ARGUMENTS;
+			if (mFreqMin > 10000000.0) return INVALID_ARGUMENTS;
 
 			// Pull out mFreqMax argument
-			// and saturate to 1 .. 1000Hz
+			// and saturate to 1 .. 10000Hz
 			double mFreqMax = (double) atoi(argv[7]);
 			if (mFreqMax < 1000.0) return INVALID_ARGUMENTS;
-			if (mFreqMax > 1000000.0) return INVALID_ARGUMENTS;
+			if (mFreqMax > 10000000.0) return INVALID_ARGUMENTS;
 
 			// Pull out mPeriod argument
 			// and saturate to 1 .. 10 sec
@@ -188,7 +197,7 @@ int cmd_cc(char **argv, int argc)
 			if (mPeriod < 1000.0) return INVALID_ARGUMENTS;
 			if (mPeriod > 10000.0) return INVALID_ARGUMENTS;
 
-			task_cc_cmd_chirp(
+			task_cc_inj_chirp(
 					cmd_value,
 					cmd_axis,
 					cmd_op,
