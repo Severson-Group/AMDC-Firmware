@@ -41,7 +41,7 @@ void log_init(void)
 	// Register task which samples variables etc
 	// NOTE: this runs at the base scheduler time quantum,
 	//       or as fast as possible!
-	scheduler_tcb_init(&tcb, log_callback, NULL, "log", SYS_TICK_USEC);
+	scheduler_tcb_init(&tcb, log_callback, NULL, "log", LOG_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
 	// Initialize all the variables to NULL address,
@@ -151,7 +151,8 @@ typedef enum sm_states_e {
 	TITLE = 1,
 	NUM_SAMPLES,
 	HEADER,
-	VARIABLES,
+	VARIABLES_TS,
+	VARIABLES_VALUE,
 	FOOTER,
 	REMOVE_TASK
 } sm_states_e;
@@ -165,63 +166,59 @@ typedef struct sm_ctx_t {
 
 #define MSG_LENGTH		(128)
 
-#define SM_UPDATES_PER_SEC		(10000)
+#define SM_UPDATES_PER_SEC		(200)
 #define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
 void state_machine_callback(void *arg)
 {
 	sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
-	char msg[MSG_LENGTH];
 	log_var_t *v = &vars[ctx->var_idx];
 	buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
 	switch (ctx->state) {
 	case TITLE:
-		memset(msg, 0, MSG_LENGTH);
-		snprintf(msg, MSG_LENGTH, "LOG OF VARIABLE: '%s'\r\n", v->name);
-		debug_print(msg);
-
+		debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
 		ctx->state = NUM_SAMPLES;
 		break;
 
 	case NUM_SAMPLES:
-		memset(msg, 0, MSG_LENGTH);
-		snprintf(msg, MSG_LENGTH, "NUM SAMPLES: %d\r\n", v->num_samples);
-		debug_print(msg);
-
+		debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
 		ctx->state = HEADER;
 		break;
 
 	case HEADER:
-		debug_print("-------START-------\r\n");
-		debug_print("IDX\t\tTS\t\tVALUE\r\n");
-
-		ctx->state = VARIABLES;
+		debug_printf("-------START-------\r\n");
+		ctx->state = VARIABLES_TS;
 		break;
 
-	case VARIABLES:
-		memset(msg, 0, MSG_LENGTH);
+	case VARIABLES_TS:
+		// Print just the timestamp
+		debug_printf("> %ld\t\t", e->timestamp);
 
+		ctx->state = VARIABLES_VALUE;
+		break;
+
+	case VARIABLES_VALUE:
+		// Print just the value
 		if (v->type == INT) {
-			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
+			debug_printf("%ld\r\n", e->value);
 		} else if (v->type == FLOAT || v->type == DOUBLE) {
 			float *f = (float *) &(e->value);
-			snprintf(msg, MSG_LENGTH, "> %d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
+			debug_printf("%f\r\n", *f);
 		}
-
-		debug_print(msg);
 
 		ctx->sample_idx++;
 
 		if (ctx->sample_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
 			ctx->state = FOOTER;
+		} else {
+			ctx->state = VARIABLES_TS;
 		}
 		break;
 
 	case FOOTER:
-		debug_print("-------END-------\r\n");
-		debug_print("\r\n");
+		debug_printf("-------END-------\r\n\r\n");
 
 		ctx->state = REMOVE_TASK;
 		break;

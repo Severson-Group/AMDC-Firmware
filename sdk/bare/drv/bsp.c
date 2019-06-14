@@ -7,13 +7,20 @@
 #include "timer.h"
 #include "dac.h"
 #include "uart.h"
+#include "../sys/cmd/cmd_hw.h"
+#include "../sys/defines.h"
 #include <stdio.h>
 
 void bsp_init(void)
 {
 	printf("BSP:\tInitializing...\n");
 
-	uart_init();
+	int err;
+
+	err = uart_init();
+	if (err != SUCCESS) {
+		HANG;
+	}
 
 	encoder_init();
 	analog_init();
@@ -21,4 +28,6 @@ void bsp_init(void)
 	io_init();
 	gpio_init();
 	dac_init();
+
+	cmd_hw_register();
 }

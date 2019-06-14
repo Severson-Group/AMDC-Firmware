@@ -16,8 +16,8 @@ void pwm_init(void)
 {
 	printf("PWM:\tInitializing...\n");
 
-	pwm_set_switching_freq(60000.0);
-	pwm_set_deadtime_ns(500);
+	pwm_set_switching_freq(100000.0);
+	pwm_set_deadtime_ns(100);
 
 	// Turn off all PWM outputs
 	for (int i = 0; i < 24; i++) {
@@ -27,8 +27,6 @@ void pwm_init(void)
 
 void pwm_set_switching_freq(double freq_hz)
 {
-	printf("PWM:\tSetting switching freq to %f...\n", freq_hz);
-
 	// NOTE: freq_hz can be in range:
 	// 1526Hz ... 100MHz
 
@@ -38,8 +36,6 @@ void pwm_set_switching_freq(double freq_hz)
 	// Calculate what the carrier_max should be to achieve the right switching freq
 	carrier_max = (uint16_t) (((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
 	pwm_set_carrier_max(carrier_max);
-
-	printf("PWM:\tCarrier divisor: %d, carrier_max: %d\n", carrier_divisor, carrier_max);
 }
 
 void pwm_set_duty(uint8_t idx, double duty)
@@ -78,8 +74,6 @@ void pwm_set_carrier_max(uint16_t max)
 
 void pwm_set_deadtime_ns(uint16_t time_ns)
 {
-	printf("PWM:\tSetting deadtime to %d ns...\n", time_ns);
-
 	// Convert time in ns to FPGA clock cycles
 	deadtime = time_ns / 5;
 

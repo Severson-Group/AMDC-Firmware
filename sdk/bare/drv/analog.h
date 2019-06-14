@@ -30,11 +30,8 @@ typedef enum {
 } analog_clkdiv_e;
 
 #define ANALOG_NUM_CHANNELS				(16)
-#define ANALOG_CALIBRATE_NUM_SAMPLES	(256)
 
 void analog_init(void);
-
-void analog_calibrate(uint32_t num);
 
 void analog_set_clkdiv(analog_clkdiv_e div);
 void analog_get_clkdiv(analog_clkdiv_e *div);
@@ -43,5 +40,6 @@ void analog_getf(analog_channel_e channel, float *value);
 void analog_geti(analog_channel_e channel, int16_t *value);
 
 // void analog_set_filter(analog_channel_e channel, ...);
+void analog_set_pwm_sync(uint8_t carrier_high, uint8_t carrier_low);
 
 #endif // ANALOG_H

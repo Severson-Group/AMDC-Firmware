@@ -15,9 +15,6 @@
 //
 // NOTE: UART uses 115200 baud
 
-#define APP_PMSM_MC
-#define APP_DAC_TEST
-
 #include <stdio.h>
 #include "drv/bsp.h"
 #include "sys/commands.h"
@@ -26,14 +23,7 @@
 #include "sys/log.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
-
-#ifdef APP_PMSM_MC
-#include "usr/pmsm_mc/app_pmsm_mc.h"
-#endif
-
-#ifdef APP_DAC_TEST
-#include "usr/dac_test/app_dac_test.h"
-#endif
+#include "usr/user_apps.h"
 
 int main()
 {
@@ -48,14 +38,8 @@ int main()
 	commands_init();
 	log_init();
 
-	// User tasks initialization
-#ifdef APP_PMSM_MC
-	app_pmsm_mc_init();
-#endif
-
-#ifdef APP_DAC_TEST
-	app_dac_test_init();
-#endif
+	// Initialize user applications
+	user_apps_init();
 
 	// Show start message to user, asking for cmds
 	commands_start_msg();

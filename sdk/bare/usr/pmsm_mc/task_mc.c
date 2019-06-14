@@ -1,3 +1,5 @@
+#ifdef APP_PMSM_MC
+
 #include "task_mc.h"
 #include "task_cc.h"
 #include "machine.h"
@@ -104,3 +106,5 @@ void task_mc_callback(void *arg)
 
 	task_cc_set_Iq_star(Iq_star);
 }
+
+#endif // APP_PMSM_MC

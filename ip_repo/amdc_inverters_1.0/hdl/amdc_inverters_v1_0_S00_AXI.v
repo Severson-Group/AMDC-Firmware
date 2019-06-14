@@ -28,6 +28,8 @@
         output wire [5:0] inverter6_pwm,
         output wire [5:0] inverter7_pwm,
         output wire [5:0] inverter8_pwm,
+		output wire carrier_high,
+		output wire carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -906,46 +908,84 @@
 	wire [15:0] deadtime;
 	assign deadtime[15:0] = (slv_reg26[15:0] < 16'd5) ? 16'd5 : slv_reg26[15:0];
 	
-	// PWM and switching logic
-	wire [15:0] D_L[23:0];
-	wire sL[23:0];
+	// PWM duty ratio regs
+	reg [15:0] D_L[23:0];
 	
 	// Assign duty ratios from regs received
-	assign D_L[0] = slv_reg0;
-	assign D_L[1] = slv_reg1;
-	assign D_L[2] = slv_reg2;
-	assign D_L[3] = slv_reg3;
-	assign D_L[4] = slv_reg4;
-	assign D_L[5] = slv_reg5;
-	assign D_L[6] = slv_reg6;
-	assign D_L[7] = slv_reg7;
-	assign D_L[8] = slv_reg8;
-	assign D_L[9] = slv_reg9;
-	assign D_L[10] = slv_reg10;
-	assign D_L[11] = slv_reg11;
-	assign D_L[12] = slv_reg12;
-	assign D_L[13] = slv_reg13;
-	assign D_L[14] = slv_reg14;
-	assign D_L[15] = slv_reg15;
-	assign D_L[16] = slv_reg16;
-	assign D_L[17] = slv_reg17;
-	assign D_L[18] = slv_reg18;
-	assign D_L[19] = slv_reg19;
-	assign D_L[20] = slv_reg20;
-	assign D_L[21] = slv_reg21;
-	assign D_L[22] = slv_reg22;
-	assign D_L[23] = slv_reg23;
+	always @(posedge S_AXI_ACLK) begin
+		if (S_AXI_ARESETN == 1'b0) begin
+			D_L[0] = 16'b0;
+			D_L[1] = 16'b0;
+			D_L[2] = 16'b0;
+			D_L[3] = 16'b0;
+			D_L[4] = 16'b0;
+			D_L[5] = 16'b0;
+			D_L[6] = 16'b0;
+			D_L[7] = 16'b0;
+			D_L[8] = 16'b0;
+			D_L[9] = 16'b0;
+			D_L[10] = 16'b0;
+			D_L[11] = 16'b0;
+			D_L[12] = 16'b0;
+			D_L[13] = 16'b0;
+			D_L[14] = 16'b0;
+			D_L[15] = 16'b0;
+			D_L[16] = 16'b0;
+			D_L[17] = 16'b0;
+			D_L[18] = 16'b0;
+			D_L[19] = 16'b0;
+			D_L[20] = 16'b0;
+			D_L[21] = 16'b0;
+			D_L[22] = 16'b0;
+			D_L[23] = 16'b0;
+		end
+		
+		else begin
+			// Only latch in the requested duty ratios
+			// when the carrier is low
+			if (carrier_low) begin
+				D_L[0] = slv_reg0[15:0];
+				D_L[1] = slv_reg1[15:0];
+				D_L[2] = slv_reg2[15:0];
+				D_L[3] = slv_reg3[15:0];
+				D_L[4] = slv_reg4[15:0];
+				D_L[5] = slv_reg5[15:0];
+				D_L[6] = slv_reg6[15:0];
+				D_L[7] = slv_reg7[15:0];
+				D_L[8] = slv_reg8[15:0];
+				D_L[9] = slv_reg9[15:0];
+				D_L[10] = slv_reg10[15:0];
+				D_L[11] = slv_reg11[15:0];
+				D_L[12] = slv_reg12[15:0];
+				D_L[13] = slv_reg13[15:0];
+				D_L[14] = slv_reg14[15:0];
+				D_L[15] = slv_reg15[15:0];
+				D_L[16] = slv_reg16[15:0];
+				D_L[17] = slv_reg17[15:0];
+				D_L[18] = slv_reg18[15:0];
+				D_L[19] = slv_reg19[15:0];
+				D_L[20] = slv_reg20[15:0];
+				D_L[21] = slv_reg21[15:0];
+				D_L[22] = slv_reg22[15:0];
+				D_L[23] = slv_reg23[15:0];
+			end
+		end
+	end
 	
-	// Carrier	
+	// Carrier
 	triangle_carrier iCarrier (
 		.clk(CLK_PWM),
 		.rst_n(S_AXI_ARESETN),
 		.divider(carrier_clk_div),
 		.carrier(carrier),
+		.carrier_high(carrier_high),
+		.carrier_low(carrier_low),
 		.carrier_max(carrier_max)
 	);
 	
 	// PWM
+	wire sL[23:0];
+	
 	pwm_gen_var pwmL0  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[0]), .So(sL[0]));
 	pwm_gen_var pwmL1  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[1]), .So(sL[1]));
 	pwm_gen_var pwmL2  (.clk(CLK_PWM), .rst_n(S_AXI_ARESETN), .carrier(carrier), .carrier_max(carrier_max), .D(D_L[2]), .So(sL[2]));

@@ -15,15 +15,16 @@
 	)
 	(
 		// Users to add ports here
-        input  wire [7:0] adc1_sdo,
-        output wire adc1_sck,
-        output wire adc1_cnv,
-        input  wire adc1_clkout,
-        
-        output wire adc2_sck,
-        output wire adc2_cnv,
-        input  wire [7:0] adc2_sdo,
-        input  wire adc2_clkout,
+		input  wire [7:0] adc1_sdo,
+		output wire adc1_sck,
+		output wire adc1_cnv,
+		input  wire adc1_clkout,
+		output wire adc2_sck,
+		output wire adc2_cnv,
+		input  wire [7:0] adc2_sdo,
+		input  wire adc2_clkout,
+		input  wire pwm_carrier_high,
+		input  wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -609,6 +610,11 @@
 	wire [1:0] clkdiv;
 	assign clkdiv = slv_reg16[1:0];
 	
+	wire pwm_sync_high;
+	wire pwm_sync_low;
+	assign pwm_sync_high = slv_reg16[2];
+	assign pwm_sync_low  = slv_reg16[3];
+	
     drv_ltc2320 iADC1(
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
@@ -667,24 +673,66 @@
             anlg16_out <= 32'b0;
         end
 
-        else if (adc1_data_valid & adc2_data_valid) begin 
-            anlg1_out <= {{17{adc1_data8[14]}}, adc1_data8};
-            anlg2_out <= {{17{adc1_data7[14]}}, adc1_data7};
-            anlg3_out <= {{17{adc1_data4[14]}}, adc1_data4};
-            anlg4_out <= {{17{adc1_data3[14]}}, adc1_data3};
-            anlg5_out <= {{17{adc1_data1[14]}}, adc1_data1};
-            anlg6_out <= {{17{adc1_data2[14]}}, adc1_data2};
-            anlg7_out <= {{17{adc1_data5[14]}}, adc1_data5};
-            anlg8_out <= {{17{adc1_data6[14]}}, adc1_data6};
-            
-            anlg9_out <= {{17{adc2_data8[14]}}, adc2_data8};
-            anlg10_out <= {{17{adc2_data7[14]}}, adc2_data7};
-            anlg11_out <= {{17{adc2_data4[14]}}, adc2_data4};
-            anlg12_out <= {{17{adc2_data3[14]}}, adc2_data3};
-            anlg13_out <= {{17{adc2_data1[14]}}, adc2_data1};
-            anlg14_out <= {{17{adc2_data2[14]}}, adc2_data2};
-            anlg15_out <= {{17{adc2_data5[14]}}, adc2_data5};
-            anlg16_out <= {{17{adc2_data6[14]}}, adc2_data6};
+        else if (adc1_data_valid & adc2_data_valid) begin
+			if (pwm_sync_low & pwm_carrier_low) begin
+				anlg1_out <= {{17{adc1_data8[14]}}, adc1_data8};
+				anlg2_out <= {{17{adc1_data7[14]}}, adc1_data7};
+				anlg3_out <= {{17{adc1_data4[14]}}, adc1_data4};
+				anlg4_out <= {{17{adc1_data3[14]}}, adc1_data3};
+				anlg5_out <= {{17{adc1_data1[14]}}, adc1_data1};
+				anlg6_out <= {{17{adc1_data2[14]}}, adc1_data2};
+				anlg7_out <= {{17{adc1_data5[14]}}, adc1_data5};
+				anlg8_out <= {{17{adc1_data6[14]}}, adc1_data6};
+				
+				anlg9_out <= {{17{adc2_data8[14]}}, adc2_data8};
+				anlg10_out <= {{17{adc2_data7[14]}}, adc2_data7};
+				anlg11_out <= {{17{adc2_data4[14]}}, adc2_data4};
+				anlg12_out <= {{17{adc2_data3[14]}}, adc2_data3};
+				anlg13_out <= {{17{adc2_data1[14]}}, adc2_data1};
+				anlg14_out <= {{17{adc2_data2[14]}}, adc2_data2};
+				anlg15_out <= {{17{adc2_data5[14]}}, adc2_data5};
+				anlg16_out <= {{17{adc2_data6[14]}}, adc2_data6};
+			end
+			
+			else if (pwm_sync_high & pwm_carrier_high) begin
+				anlg1_out <= {{17{adc1_data8[14]}}, adc1_data8};
+				anlg2_out <= {{17{adc1_data7[14]}}, adc1_data7};
+				anlg3_out <= {{17{adc1_data4[14]}}, adc1_data4};
+				anlg4_out <= {{17{adc1_data3[14]}}, adc1_data3};
+				anlg5_out <= {{17{adc1_data1[14]}}, adc1_data1};
+				anlg6_out <= {{17{adc1_data2[14]}}, adc1_data2};
+				anlg7_out <= {{17{adc1_data5[14]}}, adc1_data5};
+				anlg8_out <= {{17{adc1_data6[14]}}, adc1_data6};
+				
+				anlg9_out <= {{17{adc2_data8[14]}}, adc2_data8};
+				anlg10_out <= {{17{adc2_data7[14]}}, adc2_data7};
+				anlg11_out <= {{17{adc2_data4[14]}}, adc2_data4};
+				anlg12_out <= {{17{adc2_data3[14]}}, adc2_data3};
+				anlg13_out <= {{17{adc2_data1[14]}}, adc2_data1};
+				anlg14_out <= {{17{adc2_data2[14]}}, adc2_data2};
+				anlg15_out <= {{17{adc2_data5[14]}}, adc2_data5};
+				anlg16_out <= {{17{adc2_data6[14]}}, adc2_data6};
+			end
+			
+			else if (~pwm_sync_high & ~pwm_sync_low) begin
+				anlg1_out <= {{17{adc1_data8[14]}}, adc1_data8};
+				anlg2_out <= {{17{adc1_data7[14]}}, adc1_data7};
+				anlg3_out <= {{17{adc1_data4[14]}}, adc1_data4};
+				anlg4_out <= {{17{adc1_data3[14]}}, adc1_data3};
+				anlg5_out <= {{17{adc1_data1[14]}}, adc1_data1};
+				anlg6_out <= {{17{adc1_data2[14]}}, adc1_data2};
+				anlg7_out <= {{17{adc1_data5[14]}}, adc1_data5};
+				anlg8_out <= {{17{adc1_data6[14]}}, adc1_data6};
+				
+				anlg9_out <= {{17{adc2_data8[14]}}, adc2_data8};
+				anlg10_out <= {{17{adc2_data7[14]}}, adc2_data7};
+				anlg11_out <= {{17{adc2_data4[14]}}, adc2_data4};
+				anlg12_out <= {{17{adc2_data3[14]}}, adc2_data3};
+				anlg13_out <= {{17{adc2_data1[14]}}, adc2_data1};
+				anlg14_out <= {{17{adc2_data2[14]}}, adc2_data2};
+				anlg15_out <= {{17{adc2_data5[14]}}, adc2_data5};
+				anlg16_out <= {{17{adc2_data6[14]}}, adc2_data6};
+			end
         end
     end
 	// User logic ends

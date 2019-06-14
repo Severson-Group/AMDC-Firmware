@@ -28,6 +28,8 @@
         output wire [5:0] inverter6_pwm,
         output wire [5:0] inverter7_pwm,
         output wire [5:0] inverter8_pwm,
+		output wire carrier_high,
+		output wire carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -93,7 +95,9 @@
         .inverter5_pwm(inverter5_pwm),
         .inverter6_pwm(inverter6_pwm),
         .inverter7_pwm(inverter7_pwm),
-        .inverter8_pwm(inverter8_pwm)
+        .inverter8_pwm(inverter8_pwm),
+		.carrier_high(carrier_high),
+		.carrier_low(carrier_low)
 	);
 
 	// Add user logic here

@@ -12,7 +12,7 @@
 // At 666.6 MHz DSP clock, we have 66.6k cycles per time slice,
 // meaning all tasks combined have to consume <= 66.6k cycles
 //
-#define SYS_TICK_FREQ	(10000) // Hz
+#define SYS_TICK_FREQ	(40000) // Hz
 #define SYS_TICK_USEC	(SEC_TO_USEC(1) / SYS_TICK_FREQ)
 
 //

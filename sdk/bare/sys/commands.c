@@ -16,7 +16,7 @@ static char recv_buffer[RECV_BUFFER_LENGTH] = {0};
 static int recv_buffer_idx = 0;
 
 #define CMD_MAX_ARGC			(16) // # of args accepted
-#define CMD_MAX_ARG_LENGTH		(12) // max chars of any arg
+#define CMD_MAX_ARG_LENGTH		(16) // max chars of any arg
 typedef struct pending_cmd_t {
 	int argc;
 	char *argv[CMD_MAX_ARGC];
@@ -97,7 +97,7 @@ void _create_pending_cmds(char *buffer, int length)
 			buffer[i] = 0;
 
 			// Make console go to beginning of next line
-			debug_print("\r\n");
+			debug_printf("\r\n");
 
 			p->ready = 1;
 
@@ -222,27 +222,27 @@ void commands_callback_exec(void *arg)
 			break;
 
 		case SUCCESS:
-			debug_print("SUCCESS\r\n\n");
+			debug_printf("SUCCESS\r\n\n");
 			break;
 
 		case FAILURE:
-			debug_print("FAILURE\r\n\n");
+			debug_printf("FAILURE\r\n\n");
 			break;
 
 		case INVALID_ARGUMENTS:
-			debug_print("INVALID ARGUMENTS\r\n\n");
+			debug_printf("INVALID ARGUMENTS\r\n\n");
 			break;
 
 		case INPUT_TOO_LONG:
-			debug_print("INPUT TOO LONG\r\n\n");
+			debug_printf("INPUT TOO LONG\r\n\n");
 			break;
 
 		case UNKNOWN_CMD:
-			debug_print("UNKNOWN CMD\r\n\n");
+			debug_printf("UNKNOWN CMD\r\n\n");
 			break;
 
 		default:
-			debug_print("UNKNOWN ERROR\r\n\n");
+			debug_printf("UNKNOWN ERROR\r\n\n");
 			break;
 		}
 
@@ -289,7 +289,7 @@ void commands_cmd_register(command_entry_t *cmd_entry)
 
 void commands_start_msg(void)
 {
-	debug_print("\r\n");
+	debug_printf("\r\n");
 	commands_display_help();
 }
 
@@ -321,7 +321,9 @@ int _command_handler(char **argv, int argc)
 // ****************
 
 typedef enum sm_states_e {
-	TITLE = 1,
+	TITLE1 = 1,
+	TITLE2,
+	TITLE3,
 	CMD_HEADER,
 	SUB_CMD,
 	REMOVE_TASK
@@ -334,8 +336,6 @@ typedef struct sm_ctx_t {
 	task_control_block_t tcb;
 } sm_ctx_t;
 
-#define MSG_LENGTH	(128)
-
 #define SM_UPDATES_PER_SEC		(10000)
 #define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
@@ -343,26 +343,31 @@ void help_state_machine_callback(void *arg)
 {
 	sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
-	char msg[MSG_LENGTH];
-
 	switch (ctx->state) {
-	case TITLE:
-		debug_print("\r\n");
-		debug_print("Available commands:\r\n");
-		debug_print("-------------------\r\n");
+	case TITLE1:
+		debug_printf("\r\n");
 
 		ctx->curr = cmds;
+		ctx->state = TITLE2;
+		break;
+
+	case TITLE2:
+		debug_printf("Available commands:\r\n");
+		ctx->state = TITLE3;
+		break;
+
+	case TITLE3:
+		debug_printf("-------------------\r\n");
 		ctx->state = CMD_HEADER;
 		break;
 
 	case CMD_HEADER:
 		if (ctx->curr == NULL) {
 			// DONE!
-			debug_print("\r\n");
+			debug_printf("\r\n");
 			ctx->state = REMOVE_TASK;
 		} else {
-			snprintf(msg, 128, "%s -- %s\r\n", ctx->curr->cmd, ctx->curr->desc);
-			debug_print(msg);
+			debug_printf("%s -- %s\r\n", ctx->curr->cmd, ctx->curr->desc);
 			ctx->sub_cmd_idx = 0;
 			ctx->state = SUB_CMD;
 		}
@@ -374,8 +379,7 @@ void help_state_machine_callback(void *arg)
 			ctx->state = CMD_HEADER;
 		} else {
 			command_help_t *h = &ctx->curr->help[ctx->sub_cmd_idx++];
-			snprintf(msg, 128, "\t%s -- %s\r\n", h->subcmd, h->desc);
-			debug_print(msg);
+			debug_printf("\t%s -- %s\r\n", h->subcmd, h->desc);
 		}
 		break;
 
@@ -395,7 +399,7 @@ static sm_ctx_t ctx;
 void commands_display_help(void)
 {
 	// Initialize the state machine context
-	ctx.state = TITLE;
+	ctx.state = TITLE1;
 	ctx.curr = cmds;
 	ctx.sub_cmd_idx = 0;
 

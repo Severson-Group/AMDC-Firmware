@@ -1,3 +1,5 @@
+#ifdef APP_PMSM_MC
+
 #include "task_cc.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
@@ -8,6 +10,7 @@
 #include "../../drv/analog.h"
 #include "../../drv/encoder.h"
 #include "../../drv/io.h"
+#include "../../drv/dac.h"
 #include "../../drv/pwm.h"
 #include <stdio.h>
 #include <math.h>
@@ -22,7 +25,7 @@
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
-static int32_t dq_offset = 9234;
+static int32_t dq_offset = 9550; // 9661 from beta-axis injection
 
 static double Id_err_acc = 0.0;
 static double Iq_err_acc = 0.0;
@@ -68,16 +71,14 @@ void task_cc_set_Id_star(double my_Id_star) { Id_star = my_Id_star; }
 void task_cc_set_Iq_star(double my_Iq_star) { Iq_star = my_Iq_star; }
 void task_cc_set_dq_offset(int32_t offset) { dq_offset = offset; }
 
-void _get_theta_da(double *theta_da)
+static void _get_theta_da(double *theta_da)
 {
-#if 1
 	// Get raw encoder position
 	uint32_t position;
 	encoder_get_position(&position);
 
 	// Add offset (align to DQ frame)
-	position += ENCODER_PULSES_PER_REV;
-	position -= dq_offset;
+	position += dq_offset;
 
 	while (position >= ENCODER_PULSES_PER_REV) {
 		position -= ENCODER_PULSES_PER_REV;
@@ -93,16 +94,9 @@ void _get_theta_da(double *theta_da)
 	while (*theta_da > PI2) {
 		*theta_da -= PI2;
 	}
-
-#else
-	*theta_da += (60.0 * PI2 / TASK_CC_UPDATES_PER_SEC); // 60 Hz
-	while (*theta_da > PI2) {
-		*theta_da -= PI2;
-	}
-#endif
 }
 
-void _get_Iabc(double *Iabc)
+static void _get_Iabc(double *Iabc)
 {
 	// Read from ADCs
 	float Iabc_f[3];
@@ -148,9 +142,18 @@ void task_cc_callback(void *arg)
 	transform_park(theta_da, Ixyz, Idq0);
 
 	// Get raw encoder position
-	uint32_t position;
-	encoder_get_position(&position);
-	printf("%ld\n", position);
+	static int counter = 0;
+	const static int SAMPLES_PER_SEC = 5;
+
+	counter++;
+	if (counter >= TASK_CC_UPDATES_PER_SEC / SAMPLES_PER_SEC) {
+		counter = 0;
+
+		uint32_t position;
+		encoder_get_position(&position);
+
+		debug_printf("%ld\r\n", position);
+	}
 #endif
 
 	// -----------------------------
@@ -166,15 +169,20 @@ void task_cc_callback(void *arg)
 	double Vd_star;
 	Id_err = Id_star - Id;
 	Id_err_acc += Id_err;
-	Vd_star = (Kp_d * Id_err) - (Ki_d * Ts * Id_err_acc);
+	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc);
 
 	// q-axis
 	double Iq_err;
 	double Vq_star;
 	Iq_err = Iq_star - Iq;
 	Iq_err_acc += Iq_err;
-	Vq_star = (Kp_q * Iq_err) - (Ki_q * Ts * Iq_err_acc);
+	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
 
+
+#if 0
+	dac_set_output(0, Vd_star, -10, 10);
+	dac_set_output(1, Vq_star, -10, 10);
+#endif
 
 #if 0
 
@@ -193,10 +201,7 @@ void task_cc_callback(void *arg)
 
 		counter = 0;
 
-		char msg[256];
-		snprintf(msg, 256, "%f\t%f\r\n", Vd_avg, Vq_avg);
-
-		debug_print(msg);
+		debug_printf("%f\t%f\r\n", Vd_avg, Vq_avg);
 	}
 
 #endif
@@ -235,3 +240,5 @@ void task_cc_callback(void *arg)
 	pwm_set_duty(CC_PHASE_B_PWM_LEG_IDX, (((Vabc_star[1] / CC_BUS_VOLTAGE) + 1.0) / 2.0));
 	pwm_set_duty(CC_PHASE_C_PWM_LEG_IDX, (((Vabc_star[2] / CC_BUS_VOLTAGE) + 1.0) / 2.0));
 }
+
+#endif // APP_PMSM_MC

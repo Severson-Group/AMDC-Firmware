@@ -18,11 +18,12 @@
         output wire adc1_sck,
         output wire adc1_cnv,
         input  wire adc1_clkout,
-        
         output wire adc2_sck,
         output wire adc2_cnv,
         input  wire [7:0] adc2_sdo,
         input  wire adc2_clkout,
+		input  wire pwm_carrier_high,
+		input  wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -83,7 +84,9 @@
         .adc2_sck(adc2_sck),
         .adc2_cnv(adc2_cnv),
         .adc2_sdo(adc2_sdo),
-        .adc2_clkout(adc2_clkout)
+        .adc2_clkout(adc2_clkout),
+		.pwm_carrier_high(pwm_carrier_high),
+		.pwm_carrier_low(pwm_carrier_low)
 	);
 
 	// Add user logic here

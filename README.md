@@ -8,17 +8,13 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 
 Documentation has been written to help ease the process of using the AMDC platform.
 
-### Getting Started
+### [Firmware Architecture](docs/Firmware-Architecture.md)
 
-Following these instructions will get the AMDC firmware environment up and running on your local machine for development and testing purposes.
+### [GitHub to AMDC Hardware: Getting Firmware Built and Running](docs/Getting-Started.md)
 
-[Setting Up Development Environment](docs/Setting-Up-Development-Environment.md)
+### [Debugging](docs/Debugging.md)
 
-### Flashing AMDC
-
-After development, the resulting firmware should be flashed to the AMDC so that the application will start immediately after power-up. Follow these instructions.
-
-[Flashing AMDC With New Image](docs/Flashing-AMDC-With-New-Image.md)
+### [Flashing AMDC](docs/Flashing-AMDC-With-New-Image.md)
 
 ## License
 
