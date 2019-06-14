@@ -41,7 +41,7 @@ void log_init(void)
 	// Register task which samples variables etc
 	// NOTE: this runs at the base scheduler time quantum,
 	//       or as fast as possible!
-	scheduler_tcb_init(&tcb, log_callback, NULL, "log", SYS_TICK_USEC);
+	scheduler_tcb_init(&tcb, log_callback, NULL, "log", LOG_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
 	// Initialize all the variables to NULL address,

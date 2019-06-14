@@ -2,9 +2,13 @@
 #define LOG_H
 
 #include <stdint.h>
+#include "scheduler.h"
 
 #define LOG_MAX_NUM_VARS				(8)
 #define LOG_VARIABLE_SAMPLE_DEPTH		(10000)
+
+#define LOG_UPDATES_PER_SEC				SYS_TICK_FREQ
+#define LOG_INTERVAL_USEC				(USEC_IN_SEC / LOG_UPDATES_PER_SEC)
 
 typedef enum var_type_e {
 	INT = 1,
