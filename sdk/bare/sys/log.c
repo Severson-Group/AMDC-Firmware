@@ -151,7 +151,8 @@ typedef enum sm_states_e {
 	TITLE = 1,
 	NUM_SAMPLES,
 	HEADER,
-	VARIABLES,
+	VARIABLES_TS,
+	VARIABLES_VALUE,
 	FOOTER,
 	REMOVE_TASK
 } sm_states_e;
@@ -188,21 +189,31 @@ void state_machine_callback(void *arg)
 
 	case HEADER:
 		debug_printf("-------START-------\r\n");
-		ctx->state = VARIABLES;
+		ctx->state = VARIABLES_TS;
 		break;
 
-	case VARIABLES:
+	case VARIABLES_TS:
+		// Print just the timestamp
+		debug_printf("> %ld\t\t", e->timestamp);
+
+		ctx->state = VARIABLES_VALUE;
+		break;
+
+	case VARIABLES_VALUE:
+		// Print just the value
 		if (v->type == INT) {
-			debug_printf("> %d\t\t%ld\t\t%ld\r\n", ctx->sample_idx, e->timestamp, e->value);
+			debug_printf("%ld\r\n", e->value);
 		} else if (v->type == FLOAT || v->type == DOUBLE) {
 			float *f = (float *) &(e->value);
-			debug_printf("> %d\t\t%ld\t\t%f\r\n", ctx->sample_idx, e->timestamp, *f);
+			debug_printf("%f\r\n", *f);
 		}
 
 		ctx->sample_idx++;
 
 		if (ctx->sample_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
 			ctx->state = FOOTER;
+		} else {
+			ctx->state = VARIABLES_TS;
 		}
 		break;
 

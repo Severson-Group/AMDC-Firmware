@@ -10,6 +10,10 @@ static int next_tcb_id = 0;
 // Linked list of all registered tasks
 static task_control_block_t *tasks = NULL;
 
+// For debugging, this variable is set to point
+// at the currently running task
+static task_control_block_t *running_task = NULL;
+
 // Incremented every SysTick interrupt to track time
 static uint64_t elapsed_usec = 0;
 
@@ -62,6 +66,11 @@ void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
 
 void scheduler_tcb_register(task_control_block_t *tcb)
 {
+	// Don't let clients re-register their tcb
+	if (tcb->registered) {
+		HANG;
+	}
+
 	// Mark as registered
 	tcb->registered = 1;
 
@@ -83,6 +92,11 @@ void scheduler_tcb_register(task_control_block_t *tcb)
 
 void scheduler_tcb_unregister(task_control_block_t *tcb)
 {
+	// Don't let clients unregister their already unregistered tcb
+	if (!tcb->registered) {
+		HANG;
+	}
+
 	// Mark as unregistered
 	tcb->registered = 0;
 
@@ -131,7 +145,10 @@ void scheduler_run(void)
 
 			if (usec_since_last_run >= t->interval_usec) {
 				// Time to run this task!
+				running_task = t;
 				t->callback(t->callback_arg);
+				running_task = NULL;
+
 				t->last_run_usec = elapsed_usec;
 			}
 
