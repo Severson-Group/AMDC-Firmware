@@ -320,13 +320,13 @@ void task_cc_callback(void *arg)
 
 	static int32_t last_steps = 0;
 	static int count = 0;
-	if (++count > 10) {
+	if (++count > 50) {
 		count = 0;
 		int32_t steps;
 		encoder_get_steps(&steps);
 		int32_t delta = steps - last_steps;
 		double rads = PI2 * ((double) delta / (double) (1 << ENCODER_PULSES_PER_REV_BITS));
-		rads /= 10.0;
+		rads /= 50.0;
 
 		last_steps = steps;
 
