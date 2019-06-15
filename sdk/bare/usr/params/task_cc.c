@@ -141,6 +141,7 @@ typedef struct cc_inj_func_constant_t {
 
 typedef struct cc_inj_func_noise_t {
 	double gain;
+	double offset;
 } cc_inj_func_noise_t;
 
 typedef struct cc_inj_func_chirp_t {
@@ -185,6 +186,7 @@ static void _inject_signal(double *output, cc_inj_ctx_t *inj_ctx)
 		r = (2.0  * r) - 1.0;
 
 		value = inj_ctx->noise.gain * r;
+		value += inj_ctx->noise.offset;
 		break;
 	}
 	case CHIRP:
@@ -407,7 +409,7 @@ void task_cc_inj_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->constant.gain = gain;
 }
 
-void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain, double offset)
 {
 	cc_inj_ctx_t *inj_ctx;
 	_find_inj_ctx(value, axis, &inj_ctx);
@@ -415,6 +417,7 @@ void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->inj_func = NOISE;
 	inj_ctx->operation = op;
 	inj_ctx->noise.gain = gain;
+	inj_ctx->noise.offset = offset;
 }
 
 void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,

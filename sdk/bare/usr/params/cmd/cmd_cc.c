@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"offset <enc_pulses>", "Set DQ frame offset"},
 		{"inj clear", "Clear all injections"},
 		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> const <mValue>", "Inject a constant into controller"},
-		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> noise <mGain>", "Inject noise into controller"},
+		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> noise <mGain> <mOffset>", "Inject noise into controller"},
 		{"inj <Id*|Iq*|Vd*|Vq*> <add|set> chirp <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp into controller"},
 };
 
@@ -155,7 +155,7 @@ int cmd_cc(char **argv, int argc)
 		// Handle 'noise' cmd
 		if (strcmp("noise", argv[4]) == 0) {
 			// Check correct number of arguments
-			if (argc != 6) return INVALID_ARGUMENTS;
+			if (argc != 7) return INVALID_ARGUMENTS;
 
 			// Pull out mGain argument
 			// and saturate to 0 .. 10
@@ -163,7 +163,13 @@ int cmd_cc(char **argv, int argc)
 			if (mGain < 0.0) return INVALID_ARGUMENTS;
 			if (mGain > 10000.0) return INVALID_ARGUMENTS;
 
-			task_cc_inj_noise(cmd_value, cmd_axis, cmd_op, mGain / 1000.0);
+			// Pull out mOffset argument
+			// and saturate to 0 .. 10
+			double mOffset = (double) atoi(argv[6]);
+			if (mOffset < 0.0) return INVALID_ARGUMENTS;
+			if (mOffset > 10000.0) return INVALID_ARGUMENTS;
+
+			task_cc_inj_noise(cmd_value, cmd_axis, cmd_op, mGain / 1000.0, mOffset / 1000.0);
 
 			return SUCCESS;
 		}

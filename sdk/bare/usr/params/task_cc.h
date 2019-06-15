@@ -64,7 +64,7 @@ void task_cc_set_bw(double bw);
 
 void task_cc_inj_clear(void);
 void task_cc_inj_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain);
-void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain);
+void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain, double offset);
 void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 		double gain, double freqMin, double freqMax, double period);
 
