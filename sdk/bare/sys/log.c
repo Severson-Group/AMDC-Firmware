@@ -133,73 +133,136 @@ void log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec,
 	vars[idx].last_logged_usec = 0;
 }
 
+
+// ***************************
+// Code for running the state machine to
+// clear and empty a log buffer
+// ***************************
+
+typedef enum sm_states_empty_e {
+	EMPTY_CLEARING = 1,
+	EMPTY_REMOVE_TASK
+} sm_states_empty_e;
+
+typedef struct sm_ctx_empty_t {
+	sm_states_empty_e state;
+	int var_idx;
+	int cleared_up_to_idx;
+	task_control_block_t tcb;
+} sm_ctx_empty_t;
+
+#define MAX_CLEAR_PER_SLICE		(100)
+
+#define SM_EMPTY_UPDATES_PER_SEC	SYS_TICK_FREQ
+#define SM_EMPTY_INTERVAL_USEC		(USEC_IN_SEC / SM_EMPTY_UPDATES_PER_SEC)
+
+void state_machine_empty_callback(void *arg)
+{
+	sm_ctx_empty_t *ctx = (sm_ctx_empty_t *) arg;
+
+	switch (ctx->state) {
+	case EMPTY_CLEARING:
+	{
+		int from_idx = ctx->cleared_up_to_idx;
+		int num_to_clear = MIN(MAX_CLEAR_PER_SLICE, LOG_BUFFER_LENGTH - from_idx);
+
+		memset(vars[ctx->var_idx].buffer, from_idx, num_to_clear);
+
+		ctx->cleared_up_to_idx = from_idx + num_to_clear;
+
+		if (ctx->cleared_up_to_idx >= LOG_BUFFER_LENGTH) {
+			ctx->state = EMPTY_REMOVE_TASK;
+		}
+		break;
+	}
+
+	case EMPTY_REMOVE_TASK:
+		scheduler_tcb_unregister(&ctx->tcb);
+		break;
+
+	default:
+		// Can't happen
+		HANG;
+		break;
+	}
+}
+
+static sm_ctx_empty_t ctx_empty;
+
 void log_var_empty(int idx)
 {
 	vars[idx].buffer_idx = 0;
 	vars[idx].last_logged_usec = 0;
 	vars[idx].num_samples = 0;
-	memset(vars[idx].buffer, 0, LOG_BUFFER_LENGTH);
+
+	// Initialize the state machine context
+	ctx_empty.state = EMPTY_CLEARING;
+	ctx_empty.var_idx = idx;
+	ctx_empty.cleared_up_to_idx = 0;
+
+	// Initialize the state machine callback tcb
+	scheduler_tcb_init(&ctx_empty.tcb, state_machine_empty_callback, &ctx_empty, "logempty", SM_EMPTY_INTERVAL_USEC);
+	scheduler_tcb_register(&ctx_empty.tcb);
 }
 
 
+// ***************************
+// Code for running the state machine to
+// dump the log buffers to the UART
+// ***************************
 
+typedef enum sm_states_dump_e {
+	DUMP_TITLE = 1,
+	DUMP_NUM_SAMPLES,
+	DUMP_HEADER,
+	DUMP_VARIABLES_TS,
+	DUMP_VARIABLES_VALUE,
+	DUMP_FOOTER,
+	DUMP_REMOVE_TASK
+} sm_states_dump_e;
 
-
-
-
-typedef enum sm_states_e {
-	TITLE = 1,
-	NUM_SAMPLES,
-	HEADER,
-	VARIABLES_TS,
-	VARIABLES_VALUE,
-	FOOTER,
-	REMOVE_TASK
-} sm_states_e;
-
-typedef struct sm_ctx_t {
-	sm_states_e state;
+typedef struct sm_ctx_dump_t {
+	sm_states_dump_e state;
 	int var_idx;
 	int sample_idx;
 	task_control_block_t tcb;
-} sm_ctx_t;
+} sm_ctx_dump_t;
 
-#define MSG_LENGTH		(128)
 
-#define SM_UPDATES_PER_SEC		(200)
-#define SM_INTERVAL_USEC		(USEC_IN_SEC / SM_UPDATES_PER_SEC)
+#define SM_DUMP_UPDATES_PER_SEC		(200)
+#define SM_DUMP_INTERVAL_USEC		(USEC_IN_SEC / SM_DUMP_UPDATES_PER_SEC)
 
-void state_machine_callback(void *arg)
+void state_machine_dump_callback(void *arg)
 {
-	sm_ctx_t *ctx = (sm_ctx_t *) arg;
+	sm_ctx_dump_t *ctx = (sm_ctx_dump_t *) arg;
 
 	log_var_t *v = &vars[ctx->var_idx];
 	buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
 	switch (ctx->state) {
-	case TITLE:
+	case DUMP_TITLE:
 		debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
-		ctx->state = NUM_SAMPLES;
+		ctx->state = DUMP_NUM_SAMPLES;
 		break;
 
-	case NUM_SAMPLES:
+	case DUMP_NUM_SAMPLES:
 		debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
-		ctx->state = HEADER;
+		ctx->state = DUMP_HEADER;
 		break;
 
-	case HEADER:
+	case DUMP_HEADER:
 		debug_printf("-------START-------\r\n");
-		ctx->state = VARIABLES_TS;
+		ctx->state = DUMP_VARIABLES_TS;
 		break;
 
-	case VARIABLES_TS:
+	case DUMP_VARIABLES_TS:
 		// Print just the timestamp
 		debug_printf("> %ld\t\t", e->timestamp);
 
-		ctx->state = VARIABLES_VALUE;
+		ctx->state = DUMP_VARIABLES_VALUE;
 		break;
 
-	case VARIABLES_VALUE:
+	case DUMP_VARIABLES_VALUE:
 		// Print just the value
 		if (v->type == INT) {
 			debug_printf("%ld\r\n", e->value);
@@ -211,19 +274,19 @@ void state_machine_callback(void *arg)
 		ctx->sample_idx++;
 
 		if (ctx->sample_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
-			ctx->state = FOOTER;
+			ctx->state = DUMP_FOOTER;
 		} else {
-			ctx->state = VARIABLES_TS;
+			ctx->state = DUMP_VARIABLES_TS;
 		}
 		break;
 
-	case FOOTER:
+	case DUMP_FOOTER:
 		debug_printf("-------END-------\r\n\r\n");
 
-		ctx->state = REMOVE_TASK;
+		ctx->state = DUMP_REMOVE_TASK;
 		break;
 
-	case REMOVE_TASK:
+	case DUMP_REMOVE_TASK:
 		scheduler_tcb_unregister(&ctx->tcb);
 		break;
 
@@ -234,16 +297,16 @@ void state_machine_callback(void *arg)
 	}
 }
 
-static sm_ctx_t ctx;
+static sm_ctx_dump_t ctx_dump;
 
 void log_var_dump_uart(int log_var_idx)
 {
 	// Initialize the state machine context
-	ctx.state = TITLE;
-	ctx.var_idx = log_var_idx;
-	ctx.sample_idx = 0;
+	ctx_dump.state = DUMP_TITLE;
+	ctx_dump.var_idx = log_var_idx;
+	ctx_dump.sample_idx = 0;
 
 	// Initialize the state machine callback tcb
-	scheduler_tcb_init(&ctx.tcb, state_machine_callback, &ctx, "logdump", SM_INTERVAL_USEC);
-	scheduler_tcb_register(&ctx.tcb);
+	scheduler_tcb_init(&ctx_dump.tcb, state_machine_dump_callback, &ctx_dump, "logdump", SM_DUMP_INTERVAL_USEC);
+	scheduler_tcb_register(&ctx_dump.tcb);
 }
