@@ -15,7 +15,6 @@
 
 // Global variables for logging
 double LOG_Ia         = 0.0;
-double LOG_Ia_b       = 0.0;
 double LOG_Vab        = 0.0;
 double LOG_Vab_star   = 0.0;
 
@@ -39,8 +38,6 @@ void task_dtc_init(void)
 {
 	scheduler_tcb_init(&tcb, task_dtc_callback, NULL, "dtc", TASK_DTC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
-
-	inverter_init();
 }
 
 void task_dtc_deinit(void)
@@ -108,7 +105,6 @@ void task_dtc_callback(void *arg)
 	// ------------------------------------
 
 	LOG_Ia       = Iabc[0];
-	LOG_Ia_b     = Iabc[0] + Iabc[1];
 	LOG_Vab      = 2.0 * R_HAT * LOG_Ia;
 	LOG_Vab_star = Va_star - Vb_star;
 }
