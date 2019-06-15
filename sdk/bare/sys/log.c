@@ -166,7 +166,7 @@ void state_machine_empty_callback(void *arg)
 		int from_idx = ctx->cleared_up_to_idx;
 		int num_to_clear = MIN(MAX_CLEAR_PER_SLICE, LOG_BUFFER_LENGTH - from_idx);
 
-		memset(vars[ctx->var_idx].buffer, from_idx, num_to_clear);
+		memset(&vars[ctx->var_idx].buffer[from_idx], 0, num_to_clear);
 
 		ctx->cleared_up_to_idx = from_idx + num_to_clear;
 
