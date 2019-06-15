@@ -8,8 +8,10 @@
 
 // SysTick
 //
-// The basic time quantum is defined to be SYS_TICK_FREQ (10kHz)
-// At 666.6 MHz DSP clock, we have 66.6k cycles per time slice,
+// The basic time quantum is defined to be SYS_TICK_FREQ.
+//
+// Example: If we define this to be 10kHz, at 666.6 MHz DSP clock,
+// we have 66.6k cycles per time slice,
 // meaning all tasks combined have to consume <= 66.6k cycles
 //
 #define SYS_TICK_FREQ	(40000) // Hz
