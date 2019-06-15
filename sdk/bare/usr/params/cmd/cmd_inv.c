@@ -12,7 +12,7 @@ static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES	(2)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-		{"dtc <mDcomp> <mTau>", "Set deadtime compensation"},
+		{"dtc <mDcomp> <mCurrLimit>", "Set dead time compensation"},
 		{"Vdc <mVdc>", "Set Vdc"}
 };
 
@@ -46,16 +46,13 @@ int cmd_inv(char **argv, int argc)
 		if (mDcomp > 200.0) return INVALID_ARGUMENTS;
 		if (mDcomp < 0.0) return INVALID_ARGUMENTS;
 
-		// Pull out mTau argument
-		// and saturate to 100 .. 1000
-		double mTau = (double) atoi(argv[3]);
-		if (mTau > 1000.0) return INVALID_ARGUMENTS;
-		if (mTau <  100.0) return INVALID_ARGUMENTS;
+		// Pull out mCurrLimit argument
+		// and saturate to 0 ... 2A
+		double mCurrLimit = (double) atoi(argv[3]);
+		if (mCurrLimit > 2000.0) return INVALID_ARGUMENTS;
+		if (mCurrLimit < 0.0) return INVALID_ARGUMENTS;
 
-		double dcomp = mDcomp / 1000.0;
-		double tau = mTau / 1000.0;
-
-		inverter_set_dtc(dcomp, tau);
+		inverter_set_dtc(mDcomp / 1000.0, mCurrLimit / 1000.0);
 		return SUCCESS;
 	}
 
