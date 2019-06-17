@@ -9,6 +9,9 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 Documentation has been written to help ease the process of using the AMDC platform.
 
 ### [Firmware Architecture](docs/Firmware-Architecture.md)
+- [Drivers](docs/Firmware-Arch-Drivers.md)
+- [System](docs/Firmware-Arch-System.md)
+- [User Apps](docs/Firmware-Arch-UserApps.md)
 
 ### [GitHub to AMDC Hardware: Getting Firmware Built and Running](docs/Getting-Started.md)
 
