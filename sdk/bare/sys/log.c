@@ -273,7 +273,7 @@ void state_machine_dump_callback(void *arg)
 
 		ctx->sample_idx++;
 
-		if (ctx->sample_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
+		if (ctx->sample_idx >= v->num_samples) {
 			ctx->state = DUMP_FOOTER;
 		} else {
 			ctx->state = DUMP_VARIABLES_TS;
