@@ -3,12 +3,16 @@
 
 #include "../../sys/defines.h"
 
+// Parameters for TG motor from Beta
+//
+// Started as datasheet values, but since
+// have been updated to more accurate estimates
 
-// TG motor from Beta
-#define Ld_HAT			(11.5 / 1000000.0)	// H
-#define Lq_HAT			(20.5 / 1000000.0)	// H
-#define Rs_HAT			(550.0 / 1000.0)	// Ohms
-#define Lambda_PM_HAT	(216.0 / 1000.0)	// Wb
+#define Ld_HAT			(36.58 / 1000000.0)	// H
+#define Lq_HAT			(39.63 / 1000000.0)	// H
+#define Rs_HAT			(558.0 / 1000.0)	// Ohms
+#define Lambda_pm_HAT	(14.8  / 1000.0)	// Wb
+
 #define Kt_HAT			(0.196)				// Nm / Arms
 #define Km_HAT			(0.330)				// Nm / sqrt(W)
 #define Ke_HAT			(0.160)				// Vpkll / (rads/s)
