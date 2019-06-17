@@ -9,8 +9,6 @@
 #define TASK_CC_UPDATES_PER_SEC		(40000)
 #define TASK_CC_INTERVAL_USEC		(USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
 
-#define CC_BANDWIDTH				(5.0) // Hz
-
 // Current = GAIN * ADC_Voltage + Offset
 
 #define ADC_TO_AMPS_PHASE_A_GAIN	(1.0100499)
