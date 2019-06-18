@@ -26,13 +26,6 @@ inline static int saturate(double min, double max, double *value) {
 	}
 }
 
-inline static double sign(double x)
-{
-	if (x > 0.0) return 1.0;
-	if (x < 0.0) return -1.0;
-	return 0.0;
-}
-
 void inverter_saturate_to_Vdc(double *voltage)
 {
 	io_led_color_t color = {0, 0, 0};
