@@ -145,7 +145,7 @@ static void _get_omega_e_avg(double *output) {
 	// we will have a real estimate of speed...
 	//
 	// For now, we are doing testing at 0 speed, so just assume that.
-	*output = 0.0;
+//	*output = 0.0;
 }
 
 
@@ -302,14 +302,16 @@ void task_cc_callback(void *arg)
 	double Vd_star;
 	Id_err = Id_star - Id;
 	Id_err_acc += Id_err;
-	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc) - (omega_e_avg * Kp_q * Ts * Iq_err_acc);
+//	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc) - (omega_e_avg * Kp_q * Ts * Iq_err_acc);
+	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc);
 
 	// q-axis
 	double Iq_err;
 	double Vq_star;
 	Iq_err = Iq_star - Iq;
 	Iq_err_acc += Iq_err;
-	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
+//	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
+	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
 
 
 	// -------------------
