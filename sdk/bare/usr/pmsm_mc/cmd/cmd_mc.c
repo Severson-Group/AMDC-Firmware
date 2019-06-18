@@ -35,7 +35,7 @@ void cmd_mc_register(void)
 // Handles the 'mc' command
 // and all sub-commands
 //
-int cmd_mc(char **argv, int argc)
+int cmd_mc(int argc, char **argv)
 {
 	// Handle 'init' sub-command
 	if (strcmp("init", argv[1]) == 0) {
