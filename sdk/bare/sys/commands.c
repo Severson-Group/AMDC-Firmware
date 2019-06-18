@@ -44,7 +44,7 @@ static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = {0};
 static int pending_cmd_write_idx = 0;
 static int pending_cmd_read_idx = 0;
 
-static int _command_handler(char **argv, int argc);
+static int _command_handler(int argc, char **argv);
 
 // Head of linked list of commands
 command_entry_t *cmds = NULL;
@@ -212,7 +212,7 @@ void commands_callback_exec(void *arg)
 		// Don't run a cmd that has errors
 		err = p->err;
 		if (err == SUCCESS) {
-			err = _command_handler(p->argv, p->argc);
+			err = _command_handler(p->argc, p->argv);
 		}
 
 		// Display command status to user
@@ -258,7 +258,7 @@ void commands_callback_exec(void *arg)
 void commands_cmd_init(command_entry_t *cmd_entry,
 		const char *cmd, const char *desc,
 		command_help_t *help, int num_help_cmds,
-		int (*cmd_function)(char**, int)
+		int (*cmd_function)(int, char**)
 )
 {
 	cmd_entry->cmd = cmd;
@@ -295,17 +295,17 @@ void commands_start_msg(void)
 
 // _command_handler
 //
-// Takes `argv` and `argc` and finds
+// Takes `argc` and `argv` and finds
 // the command function to call.
 //
-int _command_handler(char **argv, int argc)
+int _command_handler(int argc, char **argv)
 {
 	command_entry_t *c = cmds;
 
 	while (c != NULL) {
 		if (strcmp(argv[0], c->cmd) == 0) {
 			// Found command to run!
-			return c->cmd_function(argv, argc);
+			return c->cmd_function(argc, argv);
 		}
 
 		c = c->next;
