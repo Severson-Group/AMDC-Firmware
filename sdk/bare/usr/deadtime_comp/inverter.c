@@ -42,10 +42,7 @@ void inverter_saturate_to_Vdc(double *voltage)
 
 void inverter_set_voltage(uint8_t pwm_idx, double voltage, double current)
 {
-	// voltage = -Vbus => d = 0.0
-	// voltage =    0V => d = 0.5
-	// voltage = +Vbus => d = 1.0
-	double duty = 0.5 + (voltage / (2.0 * inverter_Vdc));
+	double duty = 0.5 + (voltage / inverter_Vdc);
 
 	// Calculate duty compensation
 	double dcomp = 0.0;
