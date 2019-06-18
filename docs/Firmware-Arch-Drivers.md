@@ -14,7 +14,7 @@ Looking at examples is helpful -- here are some common drivers that the user wil
 
 ### Reading Analog Values from ADC
 
-There are 16 ADC channels which provide analog input into the AMDC. Each channel supports +/- 10V inputs. To read the analog voltage on these inputs, the `analog.c` driver is used. The user code simply calls a driver function which returns the voltage value. You might expect it to work like the following: Imagine I have 5V applied to the ADC on channel 1. Then,
+There are 16 ADC channels which provide analog input into the AMDC. Each channel supports +/- 10V inputs. To read the analog voltage on these inputs, the `drv/analog.c` driver is used. The user code simply calls a driver function which returns the voltage value. You might expect it to work like the following: Imagine I have 5V applied to the ADC on channel 1. Then,
 
 ``` C
 float voltage = analog_read(channel_1); // voltage should now equal 5.0
@@ -35,7 +35,9 @@ err = analog_read(channel_1, &voltage);
 // - 'voltage' should equal 5.0
 ```
 
-We are almost to the final code which you will use in your applications. However, you will find that the function `analog_read(...)` does not exist. Instead, there are two functions: `analog_geti(...)` and `analog_getf(...)`. The first gets the ADC voltage value as an `int` while the second retreives it as a `float`. The `analog_geti(...)` variant is lower-level; it outputs the actual value returned by the ADC. The `analog_getf(...)` variant should be used most of the time; it returns the actual voltage on the ADC input.
+We are almost to the final code which you will use in your applications. However, you will find that the function `analog_read(...)` does not exist. Instead, there are two functions: `analog_geti(...)` and `analog_getf(...)`. The first gets the ADC voltage value as an `int` while the second retreives it as a `float`. The `analog_geti(...)` variant is lower-level; it outputs the actual value returned by the ADC. **The `analog_getf(...)` variant should be used most of the time; it returns the actual voltage on the ADC input.**
+
+Also, you will find that `channel_1` does not exist. Instead, you should use the [enumeration](https://www.geeksforgeeks.org/enumeration-enum-c/) provided in `drv/analog.h`. The mapping between enumeration and ADC channel is nearly 1:1 -- use `ANLG_CHNL1` for channel 1, `ANLG_CHNL2` for channel 2, etc.
 
 So, the final version of the code you will use is as follows:
 ``` C
@@ -44,7 +46,7 @@ int err;
 float voltage;
 
 // Call driver function
-err = analog_getf(channel_1, &voltage);
+err = analog_getf(ANLG_CHNL1, &voltage);
 
 // Now, you have your output
 ```
