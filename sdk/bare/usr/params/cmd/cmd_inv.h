@@ -3,6 +3,6 @@
 
 void cmd_inv_register(void);
 
-int cmd_inv(char **argv, int argc);
+int cmd_inv(int argc, char **argv);
 
 #endif // CMD_INV_H
