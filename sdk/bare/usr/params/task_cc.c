@@ -120,6 +120,8 @@ static void _get_Iabc(double *Iabc)
 }
 
 static void _get_omega_e_avg(double *output) {
+	static double latched_output = 0.0;
+
 	static int32_t last_steps = 0;
 	static int count = 0;
 	if (++count > 50) {
@@ -134,6 +136,9 @@ static void _get_omega_e_avg(double *output) {
 
 		// Update log variables
 		*output = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
+		latched_output = *output;
+	} else {
+		*output = latched_output;
 	}
 
 	// TODO: when we implement the motion controller,
