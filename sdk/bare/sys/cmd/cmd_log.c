@@ -34,7 +34,7 @@ void cmd_log_register(void)
 // Handles the 'log' command
 // and all sub-commands
 //
-int cmd_log(char **argv, int argc)
+int cmd_log(int argc, char **argv)
 {
 	// Handle 'reg' sub-command
 	if (strcmp("reg", argv[1]) == 0) {

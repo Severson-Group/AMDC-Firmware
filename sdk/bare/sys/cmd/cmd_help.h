@@ -3,6 +3,6 @@
 
 void cmd_help_register(void);
 
-int cmd_help(char **argv, int argc);
+int cmd_help(int argc, char **argv);
 
 #endif // CMD_HELP_H

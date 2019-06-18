@@ -3,6 +3,6 @@
 
 void cmd_hw_register(void);
 
-int cmd_hw(char **argv, int argc);
+int cmd_hw(int argc, char **argv);
 
 #endif // CMD_HW_H
