@@ -32,7 +32,7 @@ void cmd_inv_register(void)
 // Handles the 'inv' command
 // and all sub-commands
 //
-int cmd_inv(char **argv, int argc)
+int cmd_inv(int argc, char **argv)
 {
 	// Handle 'dtc' sub-command
 	if (strcmp("dtc", argv[1]) == 0) {
