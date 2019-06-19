@@ -5,22 +5,22 @@ from Mapfile import Mapfile
 
 class AMDC:
 	def __init__(self, mapfile,
-                            port, baudrate = '115200',
-                            cmdDelay = 0.5, cmdDelayChar = 0.001,
-                            cmdEcho = True, cmdEchoPrepend = "\t> "):
-                # Serial port configuration
-                self.ser = serial.Serial(timeout = 0)
+							port, baudrate = '115200',
+							cmdDelay = 0.5, cmdDelayChar = 0.001,
+							cmdEcho = True, cmdEchoPrepend = "\t> "):
+		# Serial port configuration
+		self.ser = serial.Serial(timeout = 0)
 		self.ser.baudrate = baudrate
 		self.ser.port = port
 
-                # Mapfile config
+		# Mapfile config
 		self.mapfile = Mapfile(filepath = mapfile)
 
-                # Command config
-                self.cmdDelay = cmdDelay
-                self.cmdDelayChar = cmdDelayChar
-                self.cmdEcho = cmdEcho
-                self.cmdEchoPrepend = cmdEchoPrepend
+		# Command config
+		self.cmdDelay = cmdDelay
+		self.cmdDelayChar = cmdDelayChar
+		self.cmdEcho = cmdEcho
+		self.cmdEchoPrepend = cmdEchoPrepend
 
 	def connect(self):
 		self.ser.open()
@@ -43,8 +43,8 @@ class AMDC:
 		time.sleep(self.cmdDelay)
 		
 		# Print log for user
-                if self.cmdEcho:
-        		print("{0}{1}".format(self.cmdEchoPrepend, cmd_str))
+		if self.cmdEcho:
+			print("{0}{1}".format(self.cmdEchoPrepend, cmd_str))
 
 
 	def log_reg(self, log_var_idx, name, sps, var_type):
