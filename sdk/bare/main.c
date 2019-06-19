@@ -21,6 +21,7 @@
 #include "sys/serial.h"
 #include "sys/defines.h"
 #include "sys/log.h"
+#include "sys/injection.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "usr/user_apps.h"
@@ -37,6 +38,7 @@ int main()
 	serial_init();
 	commands_init();
 	log_init();
+	injection_init();
 
 	// Initialize user applications
 	user_apps_init();
