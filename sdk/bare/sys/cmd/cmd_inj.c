@@ -22,7 +22,7 @@ void cmd_inj_register(void)
 	commands_cmd_register(&cmd_entry);
 }
 
-int cmd_inj(char **argv, int argc)
+int cmd_inj(int argc, char **argv)
 {
 	return SUCCESS;
 }
