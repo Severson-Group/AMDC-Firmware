@@ -2,8 +2,6 @@
 #include "io.h"
 #include "../sys/defines.h"
 #include "../sys/scheduler.h"
-#include "../usr/params/inverter.h"
-#include "../usr/params/machine.h"
 #include <stdio.h>
 #include "xil_io.h"
 #include <math.h>
@@ -32,11 +30,6 @@ void encoder_get_position(uint32_t *position)
 {
 	*position = Xil_In32(ENCODER_BASE_ADDR + 1*sizeof(uint32_t));
 }
-
-
-
-
-
 
 // ****************
 // State Machine which finds z pulse

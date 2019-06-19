@@ -1,4 +1,4 @@
-#ifdef APP_PARAMS
+#ifdef APP_BETA_LABS
 
 #include "task_cc.h"
 #include "inverter.h"
@@ -119,6 +119,35 @@ static void _get_Iabc(double *Iabc)
 	Iabc[2] = ((double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C_GAIN) + ADC_TO_AMPS_PHASE_C_OFFSET;
 }
 
+static void _get_omega_e_avg(double *output) {
+	static double latched_output = 0.0;
+
+	static int32_t last_steps = 0;
+	static int count = 0;
+	if (++count > 50) {
+		count = 0;
+		int32_t steps;
+		encoder_get_steps(&steps);
+		int32_t delta = steps - last_steps;
+		double rads = PI2 * ((double) delta / (double) (1 << ENCODER_PULSES_PER_REV_BITS));
+		rads /= 50.0;
+
+		last_steps = steps;
+
+		// Update log variables
+		*output = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
+		latched_output = *output;
+	} else {
+		*output = latched_output;
+	}
+
+	// TODO: when we implement the motion controller,
+	// we will have a real estimate of speed...
+	//
+	// For now, we are doing testing at 0 speed, so just assume that.
+//	*output = 0.0;
+}
+
 
 // Chirp function
 //
@@ -141,6 +170,7 @@ typedef struct cc_inj_func_constant_t {
 
 typedef struct cc_inj_func_noise_t {
 	double gain;
+	double offset;
 } cc_inj_func_noise_t;
 
 typedef struct cc_inj_func_chirp_t {
@@ -185,6 +215,7 @@ static void _inject_signal(double *output, cc_inj_ctx_t *inj_ctx)
 		r = (2.0  * r) - 1.0;
 
 		value = inj_ctx->noise.gain * r;
+		value += inj_ctx->noise.offset;
 		break;
 	}
 	case CHIRP:
@@ -238,6 +269,13 @@ void task_cc_callback(void *arg)
 	_get_theta_da(&theta_da);
 
 
+	// ------------------------------
+	// Update omega_e_avg in rads/sec
+	// ------------------------------
+	double omega_e_avg;
+	_get_omega_e_avg(&omega_e_avg);
+
+
 	// ----------------------
 	// Get current values
 	// ----------------------
@@ -253,7 +291,7 @@ void task_cc_callback(void *arg)
 
 
 	// -----------------------------
-	// Run through block diagram to get Vdq_star
+	// Run through block diagram of CVCR to get Vdq_star
 	// -----------------------------
 
 	double Id = Idq0[0];
@@ -264,6 +302,7 @@ void task_cc_callback(void *arg)
 	double Vd_star;
 	Id_err = Id_star - Id;
 	Id_err_acc += Id_err;
+//	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc) - (omega_e_avg * Kp_q * Ts * Iq_err_acc);
 	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc);
 
 	// q-axis
@@ -271,6 +310,7 @@ void task_cc_callback(void *arg)
 	double Vq_star;
 	Iq_err = Iq_star - Iq;
 	Iq_err_acc += Iq_err;
+//	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
 	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
 
 
@@ -312,29 +352,10 @@ void task_cc_callback(void *arg)
 	inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, Vabc_star[2], Iabc[2]);
 
 
-	// --------------------------------------
-	// Get omega_avg in rads/sec
-	// --------------------------------------
-
-	static int32_t last_steps = 0;
-	static int count = 0;
-	if (++count > 10) {
-		count = 0;
-		int32_t steps;
-		encoder_get_steps(&steps);
-		int32_t delta = steps - last_steps;
-		double rads = PI2 * ((double) delta / (double) (1 << ENCODER_PULSES_PER_REV_BITS));
-		rads /= 10.0;
-
-		last_steps = steps;
-
-		// Update log variables
-		LOG_omega_e_avg = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
-	}
-
 	// -------------------
 	// Store LOG variables
 	// -------------------
+	LOG_omega_e_avg = omega_e_avg;
 	LOG_Vd_star = Vd_star;
 	LOG_Vq_star = Vq_star;
 	LOG_Id_star = Id_star;
@@ -407,7 +428,7 @@ void task_cc_inj_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->constant.gain = gain;
 }
 
-void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
+void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain, double offset)
 {
 	cc_inj_ctx_t *inj_ctx;
 	_find_inj_ctx(value, axis, &inj_ctx);
@@ -415,6 +436,7 @@ void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->inj_func = NOISE;
 	inj_ctx->operation = op;
 	inj_ctx->noise.gain = gain;
+	inj_ctx->noise.offset = offset;
 }
 
 void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
@@ -431,4 +453,4 @@ void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->chirp.period = period;
 }
 
-#endif // APP_PARAMS
+#endif // APP_BETA_LABS

@@ -1,4 +1,4 @@
-#ifdef APP_PARAMS
+#ifdef APP_BETA_LABS
 
 #include "cmd_inv.h"
 #include "../inverter.h"
@@ -12,7 +12,7 @@ static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES	(2)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-		{"dtc <mDcomp> <mTau>", "Set deadtime compensation"},
+		{"dtc <uDcomp> <mCurrLimit>", "Set deadtime compensation"},
 		{"Vdc <mVdc>", "Set Vdc"}
 };
 
@@ -40,22 +40,19 @@ int cmd_inv(int argc, char **argv)
 		// Check correct number of arguments
 		if (argc != 4) return INVALID_ARGUMENTS;
 
-		// Pull out mDcomp argument
+		// Pull out uDcomp argument
 		// and saturate to 0 .. 0.2
-		double mDcomp = (double) atoi(argv[2]);
-		if (mDcomp > 200.0) return INVALID_ARGUMENTS;
-		if (mDcomp < 0.0) return INVALID_ARGUMENTS;
+		double uDcomp = (double) atoi(argv[2]);
+		if (uDcomp > 200000.0) return INVALID_ARGUMENTS;
+		if (uDcomp < 0.0) return INVALID_ARGUMENTS;
 
-		// Pull out mTau argument
-		// and saturate to 100 .. 1000
-		double mTau = (double) atoi(argv[3]);
-		if (mTau > 1000.0) return INVALID_ARGUMENTS;
-		if (mTau <  100.0) return INVALID_ARGUMENTS;
+		// Pull out mCurrLimit argument
+		// and saturate to 0 ... 4A
+		double mCurrLimit = (double) atoi(argv[3]);
+		if (mCurrLimit > 4000.0) return INVALID_ARGUMENTS;
+		if (mCurrLimit < 0.0) return INVALID_ARGUMENTS;
 
-		double dcomp = mDcomp / 1000.0;
-		double tau = mTau / 1000.0;
-
-		inverter_set_dtc(dcomp, tau);
+		inverter_set_dtc(uDcomp / 1000000.0, mCurrLimit / 1000.0);
 		return SUCCESS;
 	}
 
@@ -77,4 +74,4 @@ int cmd_inv(int argc, char **argv)
 	return INVALID_ARGUMENTS;
 }
 
-#endif // APP_PARAMS
+#endif // APP_BETA_LABS
