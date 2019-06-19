@@ -3,6 +3,6 @@
 
 void cmd_cc_register(void);
 
-int cmd_cc(char **argv, int argc);
+int cmd_cc(int argc, char **argv);
 
 #endif // CMD_CC_H

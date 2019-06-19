@@ -21,7 +21,7 @@ void cmd_help_register(void)
 //
 // Handles the 'help' command
 //
-int cmd_help(char **argv, int argc)
+int cmd_help(int argc, char **argv)
 {
 	if (argc > 1) {
 		return INVALID_ARGUMENTS;

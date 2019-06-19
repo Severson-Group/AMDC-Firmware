@@ -38,7 +38,7 @@ void cmd_hw_register(void)
 // Handles the 'hw' command
 // and all sub-commands
 //
-int cmd_hw(char **argv, int argc)
+int cmd_hw(int argc, char **argv)
 {
 	// Handle 'pwm' sub-command
 	if (strcmp("pwm", argv[1]) == 0) {

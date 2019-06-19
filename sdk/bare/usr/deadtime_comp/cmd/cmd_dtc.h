@@ -3,6 +3,6 @@
 
 void cmd_dtc_register(void);
 
-int cmd_dtc(char **argv, int argc);
+int cmd_dtc(int argc, char **argv);
 
 #endif // CMD_DTC_H

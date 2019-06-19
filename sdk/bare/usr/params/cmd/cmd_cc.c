@@ -39,7 +39,7 @@ void cmd_cc_register(void)
 // Handles the 'cc' command
 // and all sub-commands
 //
-int cmd_cc(char **argv, int argc)
+int cmd_cc(int argc, char **argv)
 {
 	// Handle 'init' sub-command
 	if (strcmp("init", argv[1]) == 0) {

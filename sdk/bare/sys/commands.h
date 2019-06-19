@@ -15,7 +15,7 @@ typedef struct command_entry_t {
 	const char *desc;
 	command_help_t *help;
 	int num_help_cmds;
-	int (*cmd_function)(char**, int);
+	int (*cmd_function)(int, char**);
 
 	// Pointer to next cmd; set this to NULL in user code.
 	// When cmd is registered, this will form a linked list.
@@ -34,7 +34,7 @@ void commands_callback_exec(void *arg);
 void commands_cmd_init(command_entry_t *cmd_entry,
 		const char *cmd, const char *desc,
 		command_help_t *help, int num_help_cmds,
-		int (*cmd_function)(char**, int)
+		int (*cmd_function)(int, char**)
 );
 void commands_cmd_register(command_entry_t *cmd_entry);
 

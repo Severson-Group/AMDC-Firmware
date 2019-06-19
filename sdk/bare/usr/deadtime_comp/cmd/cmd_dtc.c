@@ -34,7 +34,7 @@ void cmd_dtc_register(void)
 // Handles the 'dtc' command
 // and all sub-commands
 //
-int cmd_dtc(char **argv, int argc)
+int cmd_dtc(int argc, char **argv)
 {
 	// Handle 'init' sub-command
 	if (strcmp("init", argv[1]) == 0) {
