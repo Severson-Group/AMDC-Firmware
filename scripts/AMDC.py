@@ -4,11 +4,23 @@ import numpy as np
 from Mapfile import Mapfile
 
 class AMDC:
-	def __init__(self, mapfile, port = 'COM10', baudrate = '115200'):
-		self.ser = serial.Serial(timeout = 0)
-		self.ser.baudrate = 115200
+	def __init__(self, mapfile,
+                            port, baudrate = '115200',
+                            cmdDelay = 0.5, cmdDelayChar = 0.001,
+                            cmdEcho = True, cmdEchoPrepend = "\t> "):
+                # Serial port configuration
+                self.ser = serial.Serial(timeout = 0)
+		self.ser.baudrate = baudrate
 		self.ser.port = port
+
+                # Mapfile config
 		self.mapfile = Mapfile(filepath = mapfile)
+
+                # Command config
+                self.cmdDelay = cmdDelay
+                self.cmdDelayChar = cmdDelayChar
+                self.cmdEcho = cmdEcho
+                self.cmdEchoPrepend = cmdEchoPrepend
 
 	def connect(self):
 		self.ser.open()
@@ -25,13 +37,14 @@ class AMDC:
 			self.ser.write(bytes([b]))
 			
 			# Pause between letters so we don't send data too fast
-			time.sleep(0.001)
+			time.sleep(self.cmdDelayChar)
 		
 		# Wait for cmd to execute on AMDC
-		time.sleep(0.5)
+		time.sleep(self.cmdDelay)
 		
 		# Print log for user
-		print("\t> {0}".format(cmd_str))
+                if self.cmdEcho:
+        		print("{0}{1}".format(self.cmdEchoPrepend, cmd_str))
 
 
 	def log_reg(self, log_var_idx, name, sps, var_type):
