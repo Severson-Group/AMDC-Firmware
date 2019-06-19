@@ -25,6 +25,7 @@
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "usr/user_apps.h"
+#include "usr/user_defines.h"
 
 int main()
 {
@@ -37,7 +38,9 @@ int main()
 	// Initialize system tasks
 	serial_init();
 	commands_init();
+#ifndef DISABLE_LOGGING
 	log_init();
+#endif
 	injection_init();
 
 	// Initialize user applications

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "../sys/defines.h"
+#include "../usr/user_defines.h"
 
 
 // SysTick
@@ -13,18 +14,15 @@
 // As an example, say we set this to 10kHz. At 666.6 MHz DSP clock,
 // we will have 66.6k cycles per time slice, meaning all tasks
 // combined have to consume <= 66.6k cycles
-//
+#ifndef SYS_TICK_FREQ
 #define SYS_TICK_FREQ	(10000) // Hz
+#endif
 #define SYS_TICK_USEC	(SEC_TO_USEC(1) / SYS_TICK_FREQ)
 
-//
 // Callback into application when task is run:
-//
 typedef void (*task_callback_t)(void *);
 
-//
 // TCB of each task
-//
 typedef struct task_control_block_t {
 	int id;
 	const char *name;

@@ -1,3 +1,8 @@
+#include "../../usr/user_defines.h"
+
+#ifndef DISABLE_LOGGING
+
+
 #include "cmd_log.h"
 #include "../commands.h"
 #include "../defines.h"
@@ -140,3 +145,5 @@ int cmd_log(int argc, char **argv)
 
 	return INVALID_ARGUMENTS;
 }
+
+#endif // DISABLE_LOGGING

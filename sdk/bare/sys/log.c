@@ -1,3 +1,7 @@
+#include "../usr/user_defines.h"
+
+#ifndef DISABLE_LOGGING
+
 #include "log.h"
 #include "debug.h"
 #include "defines.h"
@@ -310,3 +314,5 @@ void log_var_dump_uart(int log_var_idx)
 	scheduler_tcb_init(&ctx_dump.tcb, state_machine_dump_callback, &ctx_dump, "logdump", SM_DUMP_INTERVAL_USEC);
 	scheduler_tcb_register(&ctx_dump.tcb);
 }
+
+#endif // DISABLE_LOGGING
