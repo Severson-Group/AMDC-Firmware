@@ -1,4 +1,4 @@
-#ifdef APP_PARAMS
+#ifdef APP_BETA_LABS
 
 #include "cmd_inv.h"
 #include "../inverter.h"
@@ -74,4 +74,4 @@ int cmd_inv(char **argv, int argc)
 	return INVALID_ARGUMENTS;
 }
 
-#endif // APP_PARAMS
+#endif // APP_BETA_LABS

@@ -1,4 +1,4 @@
-#ifdef APP_PARAMS
+#ifdef APP_BETA_LABS
 
 #include "task_cc.h"
 #include "inverter.h"
@@ -453,4 +453,4 @@ void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
 	inj_ctx->chirp.period = period;
 }
 
-#endif // APP_PARAMS
+#endif // APP_BETA_LABS

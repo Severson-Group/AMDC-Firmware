@@ -1,4 +1,4 @@
-#ifdef APP_DEADTIME_COMP
+#ifdef APP_BETA_LABS
 
 #include "inverter.h"
 #include "../../drv/io.h"
@@ -69,4 +69,4 @@ double inverter_get_Vdc(void)
 	return inverter_Vdc;
 }
 
-#endif // APP_DEADTIME_COMP
+#endif // APP_BETA_LABS

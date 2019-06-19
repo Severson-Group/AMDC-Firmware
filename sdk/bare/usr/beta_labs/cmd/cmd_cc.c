@@ -1,4 +1,4 @@
-#ifdef APP_PARAMS
+#ifdef APP_BETA_LABS
 
 #include "cmd_cc.h"
 #include "../../../sys/defines.h"
@@ -221,4 +221,4 @@ int cmd_cc(char **argv, int argc)
 	return INVALID_ARGUMENTS;
 }
 
-#endif // APP_PARAMS
+#endif // APP_BETA_LABS

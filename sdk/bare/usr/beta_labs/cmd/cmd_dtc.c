@@ -1,4 +1,4 @@
-#ifdef APP_DEADTIME_COMP
+#ifdef APP_BETA_LABS
 
 #include "cmd_dtc.h"
 #include "../task_dtc.h"
@@ -88,4 +88,4 @@ int cmd_dtc(char **argv, int argc)
 	return INVALID_ARGUMENTS;
 }
 
-#endif // APP_DEADTIME_COMP
+#endif // APP_BETA_LABS

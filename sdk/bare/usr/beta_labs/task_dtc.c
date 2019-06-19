@@ -1,4 +1,4 @@
-#ifdef APP_DEADTIME_COMP
+#ifdef APP_BETA_LABS
 
 #include "task_dtc.h"
 #include "inverter.h"
@@ -7,6 +7,9 @@
 #include "../../sys/debug.h"
 #include "machine.h"
 #include <math.h>
+
+#define L_HAT ((Ld_HAT + Lq_HAT) / 2.0)
+#define R_HAT (Rs_HAT)
 
 #define Wb	(DTC_BANDWIDTH * PI2) // rad/s
 #define Ts	(1.0 / TASK_DTC_UPDATES_PER_SEC)
@@ -123,4 +126,4 @@ void task_dtc_clear(void)
 	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, 0.0, 0.0);
 }
 
-#endif // APP_DEADTIME_COMP
+#endif // APP_BETA_LABS
