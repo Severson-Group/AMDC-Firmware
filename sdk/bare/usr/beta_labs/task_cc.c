@@ -287,7 +287,8 @@ void task_cc_callback(void *arg)
 	// Convert ABC to DQ
 	// ---------------------
 	double Idq0[3];
-	transform_dqz(theta_da, Iabc, Idq0);
+	transform_dqz(TRANS_DQZ_C_INVARIANT_POWER,
+					theta_da, Iabc, Idq0);
 
 
 	// -----------------------------
@@ -331,7 +332,8 @@ void task_cc_callback(void *arg)
 	Vdq0[0] = Vd_star;
 	Vdq0[1] = Vq_star;
 	Vdq0[2] = 0.0;
-	transform_dqz_inverse(theta_da, Vabc_star, Vdq0);
+	transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER,
+							theta_da, Vabc_star, Vdq0);
 
 
 	// ------------------------------------
