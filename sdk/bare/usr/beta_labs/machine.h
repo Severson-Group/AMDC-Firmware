@@ -10,7 +10,7 @@
 
 #define Ld_HAT			(18.709  / 1000000.0)	// H
 #define Lq_HAT			(19.667  / 1000000.0)	// H
-#define Rs_HAT			(280.0   / 1000.0)		// Ohms
+#define Rs_HAT			(260.0   / 1000.0)		// Ohms
 #define Lambda_pm_HAT	(7407.0  / 1000000.0)	// Wb
 
 #define Kt_HAT			(0.196)				// Nm / Arms
