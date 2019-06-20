@@ -42,7 +42,7 @@ int cmd_cc(int argc, char **argv)
 		// Check correct number of arguments
 		if (argc != 2) return INVALID_ARGUMENTS;
 
-		// Make sure mc task was not already inited
+		// Make sure cc task was not already inited
 		if (task_cc_is_inited()) return FAILURE;
 
 		task_cc_init();
@@ -54,7 +54,7 @@ int cmd_cc(int argc, char **argv)
 		// Check correct number of arguments
 		if (argc != 2) return INVALID_ARGUMENTS;
 
-		// Make sure mc task was already inited
+		// Make sure cc task was already inited
 		if (!task_cc_is_inited()) return FAILURE;
 
 		task_cc_deinit();
