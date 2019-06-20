@@ -41,3 +41,9 @@ sdk/**/*.o
 sdk/**/*.d
 
 **/bootimage/
+
+
+##########
+# Python #
+##########
+scripts/__pycache__/
