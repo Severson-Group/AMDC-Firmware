@@ -7,6 +7,7 @@
 #include "../../sys/debug.h"
 #include "../../sys/defines.h"
 #include "../../sys/scheduler.h"
+#include "../../sys/injection.h"
 #include "../../sys/transform.h"
 #include "../../drv/analog.h"
 #include "../../drv/encoder.h"
@@ -45,6 +46,13 @@ static double Iq_err_acc = 0.0;
 
 static double theta_da = 0.0;
 
+// Injection contexts for
+// current controller
+inj_ctx_t cc_inj_ctx_Id_star;
+inj_ctx_t cc_inj_ctx_Iq_star;
+inj_ctx_t cc_inj_ctx_Vd_star;
+inj_ctx_t cc_inj_ctx_Vq_star;
+
 inline static int saturate(double min, double max, double *value) {
 	if (*value < min) {
 		// Lower bound saturation
@@ -73,11 +81,30 @@ void task_cc_init(void)
 	// Register task with scheduler
 	scheduler_tcb_init(&tcb, task_cc_callback, NULL, "cc", TASK_CC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
+
+	// Initialize all cc signal injection points
+	injection_ctx_init(&cc_inj_ctx_Id_star, "Id*");
+	injection_ctx_init(&cc_inj_ctx_Iq_star, "Iq*");
+	injection_ctx_init(&cc_inj_ctx_Vd_star, "Vd*");
+	injection_ctx_init(&cc_inj_ctx_Vq_star, "Vq*");
+
+	// Register all cc signal injection points
+	injection_ctx_register(&cc_inj_ctx_Id_star);
+	injection_ctx_register(&cc_inj_ctx_Iq_star);
+	injection_ctx_register(&cc_inj_ctx_Vd_star);
+	injection_ctx_register(&cc_inj_ctx_Vq_star);
 }
 
 void task_cc_deinit(void)
 {
+	// Unregister task with scheduler
 	scheduler_tcb_unregister(&tcb);
+
+	// Unregister all cc signal injection points
+	injection_ctx_unregister(&cc_inj_ctx_Id_star);
+	injection_ctx_unregister(&cc_inj_ctx_Iq_star);
+	injection_ctx_unregister(&cc_inj_ctx_Vd_star);
+	injection_ctx_unregister(&cc_inj_ctx_Vq_star);
 }
 
 static void _get_theta_da(double *theta_da)
@@ -148,119 +175,14 @@ static void _get_omega_e_avg(double *output) {
 //	*output = 0.0;
 }
 
-
-// Chirp function
-//
-// Generates the chirp signal value given:
-// - time: current time instant
-// - w1:   low freq (rad)
-// - w2:   high freq (rad)
-// - A:    amplitude
-// - M:    time period
-static inline double _chirp(double w1, double w2, double A, double M, double time)
-{
-	double out;
-	out = A * cos(w1 * time + (w2 - w1) * time * time / (2 * M));
-	return out;
-}
-
-typedef struct cc_inj_func_constant_t {
-	double gain;
-} cc_inj_func_constant_t;
-
-typedef struct cc_inj_func_noise_t {
-	double gain;
-	double offset;
-} cc_inj_func_noise_t;
-
-typedef struct cc_inj_func_chirp_t {
-	double gain;
-	double freqMin;
-	double freqMax;
-	double period;
-} cc_inj_func_chirp_t;
-
-typedef struct cc_inj_ctx_t {
-	cc_inj_func_e inj_func;
-	cc_inj_op_e operation;
-
-	cc_inj_func_constant_t constant;
-	cc_inj_func_noise_t noise;
-	cc_inj_func_chirp_t chirp;
-
-	double curr_time;
-} cc_inj_ctx_t;
-
-// Injection contexts for system
-cc_inj_ctx_t cc_inj_ctx_Id;
-cc_inj_ctx_t cc_inj_ctx_Iq;
-cc_inj_ctx_t cc_inj_ctx_Vd;
-cc_inj_ctx_t cc_inj_ctx_Vq;
-
-static void _inject_signal(double *output, cc_inj_ctx_t *inj_ctx)
-{
-	double value = 0.0;
-
-	switch (inj_ctx->inj_func) {
-	case CONST:
-		value = inj_ctx->constant.gain;
-		break;
-
-	case NOISE:
-	{
-		// Generate random number between 0..1
-		double r = (double) rand() / (double) RAND_MAX;
-
-		// Make between -1.0 .. 1.0
-		r = (2.0  * r) - 1.0;
-
-		value = inj_ctx->noise.gain * r;
-		value += inj_ctx->noise.offset;
-		break;
-	}
-	case CHIRP:
-	{
-		inj_ctx->curr_time += Ts;
-		if (inj_ctx->curr_time >= inj_ctx->chirp.period) {
-			inj_ctx->curr_time = 0.0;
-		}
-
-		value = _chirp(
-				PI2 * inj_ctx->chirp.freqMin,
-				PI2 * inj_ctx->chirp.freqMax,
-				inj_ctx->chirp.gain,
-				inj_ctx->chirp.period,
-				inj_ctx->curr_time
-				);
-		break;
-	}
-
-	case NONE:
-	default:
-		// Injection function not set by user,
-		// so don't do anything to the output signal
-		return;
-	}
-
-	// Perform operation to do injection
-	switch (inj_ctx->operation) {
-	case SET:
-		*output = value;
-		break;
-	case ADD:
-		*output += value;
-		break;
-	}
-}
-
 void task_cc_callback(void *arg)
 {
 	// -------------------
 	// Inject signals into Idq*
 	// (constants, chirps, noise, etc)
 	// -------------------
-	_inject_signal(&Id_star, &cc_inj_ctx_Id);
-	_inject_signal(&Iq_star, &cc_inj_ctx_Iq);
+	injection_inj(&Id_star, &cc_inj_ctx_Id_star, Ts);
+	injection_inj(&Iq_star, &cc_inj_ctx_Iq_star, Ts);
 
 
 	// -------------------
@@ -319,8 +241,8 @@ void task_cc_callback(void *arg)
 	// Inject signals into Vdq*
 	// (constants, chirps, noise, etc)
 	// -------------------
-	_inject_signal(&Vd_star, &cc_inj_ctx_Vd);
-	_inject_signal(&Vq_star, &cc_inj_ctx_Vq);
+	injection_inj(&Vd_star, &cc_inj_ctx_Vd_star, Ts);
+	injection_inj(&Vq_star, &cc_inj_ctx_Vq_star, Ts);
 
 
 	// --------------------------------
@@ -383,76 +305,6 @@ void task_cc_set_dq_offset(int32_t offset) {
 void task_cc_set_bw(double bw)
 {
 	controller_bw = bw;
-}
-
-static void _find_inj_ctx(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_ctx_t **inj_ctx)
-{
-	switch (value) {
-	case CURRENT:
-		switch (axis) {
-		case D_AXIS:
-			*inj_ctx = &cc_inj_ctx_Id;
-			break;
-		case Q_AXIS:
-			*inj_ctx = &cc_inj_ctx_Iq;
-			break;
-		}
-		break;
-
-	case VOLTAGE:
-		switch (axis) {
-		case D_AXIS:
-			*inj_ctx = &cc_inj_ctx_Vd;
-			break;
-		case Q_AXIS:
-			*inj_ctx = &cc_inj_ctx_Vq;
-			break;
-		}
-		break;
-	}
-}
-
-void task_cc_inj_clear(void)
-{
-	cc_inj_ctx_Id.inj_func = NONE;
-	cc_inj_ctx_Iq.inj_func = NONE;
-	cc_inj_ctx_Vd.inj_func = NONE;
-	cc_inj_ctx_Vq.inj_func = NONE;
-}
-
-void task_cc_inj_const(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain)
-{
-	cc_inj_ctx_t *inj_ctx;
-	_find_inj_ctx(value, axis, &inj_ctx);
-
-	inj_ctx->inj_func = CONST;
-	inj_ctx->operation = op;
-	inj_ctx->constant.gain = gain;
-}
-
-void task_cc_inj_noise(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op, double gain, double offset)
-{
-	cc_inj_ctx_t *inj_ctx;
-	_find_inj_ctx(value, axis, &inj_ctx);
-
-	inj_ctx->inj_func = NOISE;
-	inj_ctx->operation = op;
-	inj_ctx->noise.gain = gain;
-	inj_ctx->noise.offset = offset;
-}
-
-void task_cc_inj_chirp(cc_inj_value_e value, cc_inj_axis_e axis, cc_inj_op_e op,
-		double gain, double freqMin, double freqMax, double period)
-{
-	cc_inj_ctx_t *inj_ctx;
-	_find_inj_ctx(value, axis, &inj_ctx);
-
-	inj_ctx->inj_func = CHIRP;
-	inj_ctx->operation = op;
-	inj_ctx->chirp.gain = gain;
-	inj_ctx->chirp.freqMin = freqMin;
-	inj_ctx->chirp.freqMax = freqMax;
-	inj_ctx->chirp.period = period;
 }
 
 #endif // APP_BETA_LABS

@@ -1,12 +1,19 @@
 #include "cmd_inj.h"
 #include "../defines.h"
 #include "../commands.h"
+#include "../injection.h"
+#include <string.h>
+#include <stdlib.h>
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(1)
+#define NUM_HELP_ENTRIES (5)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-		{"foo" , "bar"}
+		{"clear", "Clear all injections"},
+		{"list", "List all available injection points"},
+		{"const <name> <set|add|sub> <mValue>", "Inject a constant"},
+		{"noise <name> <set|add|sub> <mGain> <mOffset>", "Inject noise"},
+		{"chirp <name> <set|add|sub> <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp"}
 };
 
 void cmd_inj_register(void)
@@ -22,7 +29,122 @@ void cmd_inj_register(void)
 	commands_cmd_register(&cmd_entry);
 }
 
+static int _parse_op(char *op_str, inj_op_e *inj_op)
+{
+	if (strcmp("set", op_str) == 0) {
+		*inj_op = SET;
+		return 0;
+	} else if (strcmp("add", op_str) == 0) {
+		*inj_op = ADD;
+		return 0;
+	} else if (strcmp("sub", op_str) == 0) {
+		*inj_op = SUB;
+		return 0;
+	}
+
+	return -1;
+}
+
 int cmd_inj(int argc, char **argv)
 {
-	return SUCCESS;
+	// Handle 'inj clear' command
+	if (argc == 2 && strcmp("clear", argv[1]) == 0) {
+		injection_clear();
+		return SUCCESS;
+	}
+
+	// Handle 'inj list' command
+	if (argc == 2 && strcmp("list", argv[1]) == 0) {
+		injection_list();
+		return SUCCESS;
+	}
+
+	// Handle 'inj const ...' command
+	if (argc == 5 && strcmp("const", argv[1]) == 0) {
+		// Parse out name and convert to injection context
+		inj_ctx_t *ctx = injection_find_ctx_by_name(argv[2]);
+		if (ctx == NULL) return INVALID_ARGUMENTS;
+
+		// Parse out operation
+		inj_op_e op;
+		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
+
+		// Pull out mValue argument
+		// and saturate to -10 .. 10
+		double mValue = (double) atoi(argv[5]);
+		if (mValue < -10000.0) return INVALID_ARGUMENTS;
+		if (mValue >  10000.0) return INVALID_ARGUMENTS;
+
+		injection_const(ctx, op, mValue / 1000.0);
+
+		return SUCCESS;
+	}
+
+	// Handle 'inj noise ...' command
+	if (argc == 6 && strcmp("noise", argv[1]) == 0) {
+		// Parse out name and convert to injection context
+		inj_ctx_t *ctx = injection_find_ctx_by_name(argv[2]);
+		if (ctx == NULL) return INVALID_ARGUMENTS;
+
+		// Parse out operation
+		inj_op_e op;
+		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
+
+		// Pull out mGain argument
+		// and saturate to 0 .. 10
+		double mGain = (double) atoi(argv[4]);
+		if (mGain < 0.0) return INVALID_ARGUMENTS;
+		if (mGain > 10000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mOffset argument
+		// and saturate to 0 .. 10
+		double mOffset = (double) atoi(argv[5]);
+		if (mOffset < 0.0) return INVALID_ARGUMENTS;
+		if (mOffset > 10000.0) return INVALID_ARGUMENTS;
+
+		injection_noise(ctx, op, mGain / 1000.0, mOffset / 1000.0);
+
+		return SUCCESS;
+	}
+
+	// Handle 'inj chirp ...' command
+	if (argc == 8 && strcmp("chirp", argv[1]) == 0) {
+		// Parse out name and convert to injection context
+		inj_ctx_t *ctx = injection_find_ctx_by_name(argv[2]);
+		if (ctx == NULL) return INVALID_ARGUMENTS;
+
+		// Parse out operation
+		inj_op_e op;
+		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
+
+		// Pull out mGain argument
+		// and saturate to 0 .. 10
+		double mGain = (double) atoi(argv[4]);
+		if (mGain < 0.0) return INVALID_ARGUMENTS;
+		if (mGain > 10000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mFreqMin argument
+		// and saturate to 1 .. 10000Hz
+		double mFreqMin = (double) atoi(argv[5]);
+		if (mFreqMin < 1000.0) return INVALID_ARGUMENTS;
+		if (mFreqMin > 10000000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mFreqMax argument
+		// and saturate to 1 .. 10000Hz
+		double mFreqMax = (double) atoi(argv[6]);
+		if (mFreqMax < 1000.0) return INVALID_ARGUMENTS;
+		if (mFreqMax > 10000000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mPeriod argument
+		// and saturate to 1 .. 10 sec
+		double mPeriod = (double) atoi(argv[7]);
+		if (mPeriod < 1000.0) return INVALID_ARGUMENTS;
+		if (mPeriod > 10000.0) return INVALID_ARGUMENTS;
+
+		injection_chirp(ctx, op, mGain / 1000.0, mFreqMin / 1000.0, mFreqMax / 1000.0, mPeriod / 1000.0);
+
+		return SUCCESS;
+	}
+
+	return INVALID_ARGUMENTS;
 }
