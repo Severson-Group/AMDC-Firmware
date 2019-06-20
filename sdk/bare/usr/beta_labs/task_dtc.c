@@ -18,7 +18,6 @@
 
 // Global variables for logging
 double LOG_Ia         = 0.0;
-double LOG_Vab        = 0.0;
 double LOG_Vab_star   = 0.0;
 
 // Set by command
@@ -108,7 +107,6 @@ void task_dtc_callback(void *arg)
 	// ------------------------------------
 
 	LOG_Ia       = Iabc[0];
-	LOG_Vab      = 2.0 * R_HAT * LOG_Ia;
 	LOG_Vab_star = Va_star - Vb_star;
 }
 
