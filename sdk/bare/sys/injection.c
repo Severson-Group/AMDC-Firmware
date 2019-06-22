@@ -33,19 +33,19 @@ static inline double _chirp(double w1, double w2, double A, double M, double tim
 }
 
 
-static inline double _ramp(double min, double max, double period, double time)
+static inline double _triangle(double min, double max, double period, double time)
 {
 	double out;
 
 	if (time <= period / 2.0) {
-		// Ramp function is rising
+		// Triangle function is rising
 		double t = time;
 
 		double m = (max - min) / (period / 2.0);
 		double b = min;
 		out = m * t + b;
 	} else {
-		// Ramp function is falling
+		// Triangle function is falling
 		double t = time - (period / 2.0);
 
 		double m = (min - max) / (period / 2.0);
@@ -175,17 +175,17 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
 		break;
 	}
 
-	case RAMP:
+	case TRIANGLE:
 	{
 		ctx->curr_time += Ts;
-		if (ctx->curr_time >= ctx->ramp.period) {
+		if (ctx->curr_time >= ctx->triangle.period) {
 			ctx->curr_time = 0.0;
 		}
 
-		value = _ramp(
-				ctx->ramp.valueMin,
-				ctx->ramp.valueMax,
-				ctx->ramp.period,
+		value = _triangle(
+				ctx->triangle.valueMin,
+				ctx->triangle.valueMax,
+				ctx->triangle.period,
 				ctx->curr_time
 				);
 		break;
@@ -268,14 +268,14 @@ void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, d
 	ctx->chirp.period = period;
 }
 
-void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
+void injection_triangle(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
 {
-	ctx->inj_func = RAMP;
+	ctx->inj_func = TRIANGLE;
 	ctx->operation = op;
 	ctx->curr_time = 0.0;
-	ctx->ramp.valueMin = valueMin;
-	ctx->ramp.valueMax = valueMax;
-	ctx->ramp.period = period;
+	ctx->triangle.valueMin = valueMin;
+	ctx->triangle.valueMax = valueMax;
+	ctx->triangle.period = period;
 }
 
 
