@@ -4,6 +4,7 @@
 #include "task_cc.h"
 #include "task_mo.h"
 #include "../../sys/scheduler.h"
+#include "../../sys/injection.h"
 #include "../../drv/encoder.h"
 #include "../../drv/io.h"
 #include "../../drv/dac.h"
@@ -27,6 +28,9 @@ inline static int saturate(double min, double max, double *value);
 static double delta_theta_error_acc;
 static double delta_theta_error_acc_acc;
 
+// Injection contexts for motion controller
+inj_ctx_t task_mc_inj_del_theta_star;
+
 // Command for controller
 static double delta_theta_star = 0.0;
 
@@ -39,8 +43,13 @@ uint8_t task_mc_is_inited(void)
 
 void task_mc_init(void)
 {
+	// Register scheduler task
 	scheduler_tcb_init(&tcb, task_mc_callback, NULL, "mc", TASK_MC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
+
+	// Initialize and register injection contexts
+	injection_ctx_init(&task_mc_inj_del_theta_star, "del_theta*");
+	injection_ctx_register(&task_mc_inj_del_theta_star);
 
 	// Clear static variables for controller
 	delta_theta_error_acc = 0.0;
@@ -49,11 +58,20 @@ void task_mc_init(void)
 
 void task_mc_deinit(void)
 {
+	// Unregister scheduler task
 	scheduler_tcb_unregister(&tcb);
+
+	// Clear current command
 	task_cc_set_Iq_star(0.0);
+
+	// Unregister injection context
+	injection_ctx_unregister(&task_mc_inj_del_theta_star);
 }
 
 void task_mc_callback(void *arg) {
+	// Inject signal into delta_theta_star
+	injection_inj(&delta_theta_star, &task_mc_inj_del_theta_star, Ts);
+
 	double omega_m;
 	task_mo_get_omega_m(&omega_m);
 
