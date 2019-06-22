@@ -36,6 +36,10 @@ static double delta_theta_star = 0.0;
 
 static task_control_block_t tcb;
 
+// Logging variables
+double LOG_omega_m = 0.0;
+double LOG_T_sfb   = 0.0;
+
 uint8_t task_mc_is_inited(void)
 {
 	return scheduler_tcb_is_registered(&tcb);
@@ -98,6 +102,10 @@ void task_mc_callback(void *arg) {
 
 	// Set value in current controller
 	task_cc_set_Iq_star(Iq_star);
+
+	// Update logging variables
+	LOG_omega_m = omega_m;
+	LOG_T_sfb   = Tem_SFB_star;
 }
 
 void task_mc_set_delta_theta_star(double omega_m)
