@@ -41,7 +41,10 @@ int main()
 #ifndef DISABLE_LOGGING
 	log_init();
 #endif
+
+#ifndef DISABLE_INJECTION
 	injection_init();
+#endif
 
 	// Initialize user applications
 	user_apps_init();

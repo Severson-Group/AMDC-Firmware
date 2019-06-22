@@ -16,4 +16,9 @@
 //#define DISABLE_LOGGING
 
 
+// Disable injection functionality
+// by defining DISABLE_INJECTION here:
+//#define DISABLE_INJECTION
+
+
 #endif // USER_DEFINES_H

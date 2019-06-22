@@ -1,3 +1,7 @@
+#include "../usr/user_defines.h"
+
+#ifndef DISABLE_INJECTION
+
 #include "injection.h"
 #include "debug.h"
 #include "scheduler.h"
@@ -286,3 +290,5 @@ void injection_list(void)
 	scheduler_tcb_init(&ctx_list.tcb, state_machine_list_callback, &ctx_list, "inj_list", SM_LIST_INTERVAL_USEC);
 	scheduler_tcb_register(&ctx_list.tcb);
 }
+
+#endif // DISABLE_INJECTION

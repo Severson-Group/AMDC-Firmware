@@ -1,3 +1,7 @@
+#include "../../usr/user_defines.h"
+
+#ifndef DISABLE_INJECTION
+
 #include "cmd_inj.h"
 #include "../defines.h"
 #include "../commands.h"
@@ -148,3 +152,5 @@ int cmd_inj(int argc, char **argv)
 
 	return INVALID_ARGUMENTS;
 }
+
+#endif // DISABLE_INJECTION
