@@ -7,6 +7,7 @@ typedef enum inj_func_e {
 	CONST = 1,
 	NOISE,
 	CHIRP,
+	RAMP,
 	NONE
 } inj_func_e;
 
@@ -32,6 +33,12 @@ typedef struct inj_func_chirp_t {
 	double period;
 } inj_func_chirp_t;
 
+typedef struct inj_func_ramp_t {
+	double valueMin;
+	double valueMax;
+	double period;
+} inj_func_ramp_t;
+
 #define INJ_MAX_NAME_LENGTH (16)
 
 typedef struct inj_ctx_t {
@@ -46,6 +53,7 @@ typedef struct inj_ctx_t {
 	inj_func_constant_t constant;
 	inj_func_noise_t noise;
 	inj_func_chirp_t chirp;
+	inj_func_ramp_t ramp;
 
 	double curr_time;
 } inj_ctx_t;
@@ -64,6 +72,7 @@ void injection_list(void);
 void injection_const(inj_ctx_t *ctx, inj_op_e op, double value);
 void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset);
 void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, double freqMax, double period);
+void injection_ramp (inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period);
 
 inj_ctx_t *injection_find_ctx_by_name(char *name);
 

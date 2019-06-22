@@ -11,13 +11,14 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (5)
+#define NUM_HELP_ENTRIES (6)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"clear", "Clear all injections"},
 		{"list", "List all available injection points"},
 		{"const <name> <set|add|sub> <mValue>", "Inject a constant"},
 		{"noise <name> <set|add|sub> <mGain> <mOffset>", "Inject noise"},
-		{"chirp <name> <set|add|sub> <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp"}
+		{"chirp <name> <set|add|sub> <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp"},
+		{"ramp  <name> <set|add|sub> <mValueMin> <mValueMax> <mPeriod>", "Inject ramp"}
 };
 
 void cmd_inj_register(void)
@@ -149,6 +150,41 @@ int cmd_inj(int argc, char **argv)
 
 		return SUCCESS;
 	}
+
+	// Handle 'inj ramp ...' command
+	if (argc == 7 && strcmp("ramp", argv[1]) == 0) {
+		// Parse out name and convert to injection context
+		inj_ctx_t *ctx = injection_find_ctx_by_name(argv[2]);
+		if (ctx == NULL) return INVALID_ARGUMENTS;
+
+		// Parse out operation
+		inj_op_e op;
+		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
+
+		// Pull out mValueMin argument
+		// and saturate to -10 .. 10
+		double mValueMin = (double) atoi(argv[4]);
+		if (mValueMin < -10000.0) return INVALID_ARGUMENTS;
+		if (mValueMin >  10000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mValueMax argument
+		// and saturate to -10 .. 10
+		double mValueMax = (double) atoi(argv[5]);
+		if (mValueMax < -10000.0) return INVALID_ARGUMENTS;
+		if (mValueMax >  10000.0) return INVALID_ARGUMENTS;
+
+		// Pull out mPeriod argument
+		// and saturate to 1 .. 10 sec
+		double mPeriod = (double) atoi(argv[6]);
+		if (mPeriod < 1000.0) return INVALID_ARGUMENTS;
+		if (mPeriod > 10000.0) return INVALID_ARGUMENTS;
+
+		injection_ramp(ctx, op, mValueMin / 1000.0, mValueMax / 1000.0, mPeriod / 1000.0);
+
+		return SUCCESS;
+	}
+
+
 
 	return INVALID_ARGUMENTS;
 }

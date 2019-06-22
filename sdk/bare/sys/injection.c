@@ -32,6 +32,30 @@ static inline double _chirp(double w1, double w2, double A, double M, double tim
 	return out;
 }
 
+
+static inline double _ramp(double min, double max, double period, double time)
+{
+	double out;
+
+	if (time <= period / 2.0) {
+		// Ramp function is rising
+		double t = time;
+
+		double m = (max - min) / (period / 2.0);
+		double b = min;
+		out = m * t + b;
+	} else {
+		// Ramp function is falling
+		double t = time - (period / 2.0);
+
+		double m = (min - max) / (period / 2.0);
+		double b = max;
+		out = m * t + b;
+	}
+
+	return out;
+}
+
 void injection_init(void)
 {
 	cmd_inj_register();
@@ -151,6 +175,22 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
 		break;
 	}
 
+	case RAMP:
+	{
+		ctx->curr_time += Ts;
+		if (ctx->curr_time >= ctx->ramp.period) {
+			ctx->curr_time = 0.0;
+		}
+
+		value = _ramp(
+				ctx->ramp.valueMin,
+				ctx->ramp.valueMax,
+				ctx->ramp.period,
+				ctx->curr_time
+				);
+		break;
+	}
+
 	case NONE:
 	default:
 		// Injection function not set by user,
@@ -224,6 +264,16 @@ void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, d
 	ctx->chirp.freqMax = freqMax;
 	ctx->chirp.period = period;
 }
+
+void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
+{
+	ctx->inj_func = RAMP;
+	ctx->operation = op;
+	ctx->ramp.valueMin = valueMin;
+	ctx->ramp.valueMax = valueMax;
+	ctx->ramp.period = period;
+}
+
 
 
 // ***************************
