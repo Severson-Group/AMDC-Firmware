@@ -2,6 +2,7 @@
 
 #include "task_cc.h"
 #include "inverter.h"
+#include "task_mo.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
 #include "../../sys/debug.h"
@@ -34,17 +35,19 @@ double LOG_Vd_star = 0.0;
 double LOG_Vq_star = 0.0;
 double LOG_omega_e_avg  = 0.0;
 
+// Commands for Id and Iq -- Idq*
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
 static int32_t dq_offset = 9550; // 9661 from beta-axis injection
 
+// Note: user should override this initial value
 static double controller_bw = 1.0;
 
-static double Id_err_acc = 0.0;
-static double Iq_err_acc = 0.0;
-
-static double theta_da = 0.0;
+// Static variables for controller
+static double Id_err_acc;
+static double Iq_err_acc;
+static double theta_da;
 
 // Injection contexts for
 // current controller
@@ -93,6 +96,11 @@ void task_cc_init(void)
 	injection_ctx_register(&cc_inj_ctx_Iq_star);
 	injection_ctx_register(&cc_inj_ctx_Vd_star);
 	injection_ctx_register(&cc_inj_ctx_Vq_star);
+
+	// Clear controller static variables
+	Id_err_acc = 0.0;
+	Iq_err_acc = 0.0;
+	theta_da = 0.0;
 }
 
 void task_cc_deinit(void)
@@ -146,35 +154,6 @@ static void _get_Iabc(double *Iabc)
 	Iabc[2] = ((double) Iabc_f[2] * ADC_TO_AMPS_PHASE_C_GAIN) + ADC_TO_AMPS_PHASE_C_OFFSET;
 }
 
-static void _get_omega_e_avg(double *output) {
-	static double latched_output = 0.0;
-
-	static int32_t last_steps = 0;
-	static int count = 0;
-	if (++count > 50) {
-		count = 0;
-		int32_t steps;
-		encoder_get_steps(&steps);
-		int32_t delta = steps - last_steps;
-		double rads = PI2 * ((double) delta / (double) (1 << ENCODER_PULSES_PER_REV_BITS));
-		rads /= 50.0;
-
-		last_steps = steps;
-
-		// Update log variables
-		*output = rads * (double) TASK_CC_UPDATES_PER_SEC * POLE_PAIRS;
-		latched_output = *output;
-	} else {
-		*output = latched_output;
-	}
-
-	// TODO: when we implement the motion controller,
-	// we will have a real estimate of speed...
-	//
-	// For now, we are doing testing at 0 speed, so just assume that.
-//	*output = 0.0;
-}
-
 void task_cc_callback(void *arg)
 {
 	// -------------------
@@ -195,7 +174,7 @@ void task_cc_callback(void *arg)
 	// Update omega_e_avg in rads/sec
 	// ------------------------------
 	double omega_e_avg;
-	_get_omega_e_avg(&omega_e_avg);
+	task_mo_get_omega_e(&omega_e_avg);
 
 
 	// ----------------------
@@ -225,16 +204,14 @@ void task_cc_callback(void *arg)
 	double Vd_star;
 	Id_err = Id_star - Id;
 	Id_err_acc += Id_err;
-//	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc) - (omega_e_avg * Kp_q * Ts * Iq_err_acc);
-	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc);
+	Vd_star = (Kp_d * Id_err) + (Ki_d * Ts * Id_err_acc) - (omega_e_avg * Kp_q * Ts * Iq_err_acc);
 
 	// q-axis
 	double Iq_err;
 	double Vq_star;
 	Iq_err = Iq_star - Iq;
 	Iq_err_acc += Iq_err;
-//	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
-	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc);
+	Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
 
 
 	// -------------------
@@ -305,6 +282,14 @@ void task_cc_set_dq_offset(int32_t offset) {
 void task_cc_set_bw(double bw)
 {
 	controller_bw = bw;
+}
+
+void task_cc_set_Iq_star(double value) {
+	Iq_star = value;
+}
+
+void task_cc_set_Id_star(double value) {
+	Id_star = value;
 }
 
 #endif // APP_BETA_LABS

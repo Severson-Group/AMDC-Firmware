@@ -38,4 +38,7 @@ void task_cc_clear(void);
 void task_cc_set_dq_offset(int32_t offset);
 void task_cc_set_bw(double bw);
 
+void task_cc_set_Iq_star(double value);
+void task_cc_set_Id_star(double value);
+
 #endif // TASK_CC_H
