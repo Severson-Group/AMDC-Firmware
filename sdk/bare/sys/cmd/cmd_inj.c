@@ -129,15 +129,15 @@ int cmd_inj(int argc, char **argv)
 		if (mGain > 10000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mFreqMin argument
-		// and saturate to 1 .. 10000Hz
+		// and saturate to 0 .. 10000Hz
 		double mFreqMin = (double) atoi(argv[5]);
-		if (mFreqMin < 1000.0) return INVALID_ARGUMENTS;
+		if (mFreqMin < 0.0) return INVALID_ARGUMENTS;
 		if (mFreqMin > 10000000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mFreqMax argument
-		// and saturate to 1 .. 10000Hz
+		// and saturate to 0 .. 10000Hz
 		double mFreqMax = (double) atoi(argv[6]);
-		if (mFreqMax < 1000.0) return INVALID_ARGUMENTS;
+		if (mFreqMax < 0.0) return INVALID_ARGUMENTS;
 		if (mFreqMax > 10000000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mPeriod argument

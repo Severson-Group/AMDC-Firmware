@@ -313,6 +313,7 @@ void state_machine_list_callback(void *arg)
 		break;
 
 	case REMOVE_TASK:
+		debug_printf("\r\n");
 		scheduler_tcb_unregister(&ctx->tcb);
 		break;
 
