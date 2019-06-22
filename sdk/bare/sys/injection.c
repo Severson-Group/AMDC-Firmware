@@ -246,12 +246,14 @@ void injection_clear(void) {
 void injection_const(inj_ctx_t *ctx, inj_op_e op, double value) {
 	ctx->inj_func = CONST;
 	ctx->operation = op;
+	ctx->curr_time = 0.0;
 	ctx->constant.value = value;
 }
 
 void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset) {
 	ctx->inj_func = NOISE;
 	ctx->operation = op;
+	ctx->curr_time = 0.0;
 	ctx->noise.gain = gain;
 	ctx->noise.offset = offset;
 }
@@ -259,6 +261,7 @@ void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset) {
 void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, double freqMax, double period) {
 	ctx->inj_func = CHIRP;
 	ctx->operation = op;
+	ctx->curr_time = 0.0;
 	ctx->chirp.gain = gain;
 	ctx->chirp.freqMin = freqMin;
 	ctx->chirp.freqMax = freqMax;
@@ -269,6 +272,7 @@ void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMa
 {
 	ctx->inj_func = RAMP;
 	ctx->operation = op;
+	ctx->curr_time = 0.0;
 	ctx->ramp.valueMin = valueMin;
 	ctx->ramp.valueMax = valueMax;
 	ctx->ramp.period = period;
