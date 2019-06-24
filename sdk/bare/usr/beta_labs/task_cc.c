@@ -113,6 +113,17 @@ void task_cc_deinit(void)
 	injection_ctx_unregister(&cc_inj_ctx_Iq_star);
 	injection_ctx_unregister(&cc_inj_ctx_Vd_star);
 	injection_ctx_unregister(&cc_inj_ctx_Vq_star);
+
+	// Clear all injection points
+	injection_ctx_clear(&cc_inj_ctx_Id_star);
+	injection_ctx_clear(&cc_inj_ctx_Iq_star);
+	injection_ctx_clear(&cc_inj_ctx_Vd_star);
+	injection_ctx_clear(&cc_inj_ctx_Vq_star);
+
+	// Clear controller static variables
+	Id_err_acc = 0.0;
+	Iq_err_acc = 0.0;
+	theta_da = 0.0;
 }
 
 static void _get_theta_da(double *theta_da)

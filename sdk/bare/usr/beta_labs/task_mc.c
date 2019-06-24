@@ -58,6 +58,9 @@ void task_mc_init(void)
 	// Clear static variables for controller
 	delta_theta_error_acc = 0.0;
 	delta_theta_error_acc_acc = 0.0;
+
+	// Clear commanded speed
+	delta_theta_star = 0.0;
 }
 
 void task_mc_deinit(void)
@@ -68,8 +71,16 @@ void task_mc_deinit(void)
 	// Clear current command
 	task_cc_set_Iq_star(0.0);
 
-	// Unregister injection context
+	// Unregister and clear injection context
 	injection_ctx_unregister(&task_mc_inj_del_theta_star);
+	injection_ctx_clear(&task_mc_inj_del_theta_star);
+
+	// Clear static variables for controller
+	delta_theta_error_acc = 0.0;
+	delta_theta_error_acc_acc = 0.0;
+
+	// Clear commanded speed
+	delta_theta_star = 0.0;
 }
 
 void task_mc_callback(void *arg) {

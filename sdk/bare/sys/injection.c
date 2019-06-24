@@ -257,6 +257,11 @@ inj_ctx_t *injection_find_ctx_by_name(char *name)
 	return NULL;
 }
 
+void injection_ctx_clear(inj_ctx_t *inj_ctx)
+{
+	inj_ctx->inj_func = NONE;
+}
+
 void injection_clear(void) {
 	inj_ctx_t *curr = inj_ctxs;
 
