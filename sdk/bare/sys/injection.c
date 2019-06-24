@@ -35,22 +35,49 @@ static inline double _chirp(double w1, double w2, double A, double M, double tim
 
 static inline double _triangle(double min, double max, double period, double time)
 {
-	double out;
+	// NOTE: Assumes the user set min = -max. Therefore, the mid value is 0.
+	//       Function starts at mid value at t = 0
+	//
+	// Let mid = min + ((max - min) / 2)
+	//
+	// Triangle waveform output:
+	//        starts at mid at t = 0,
+	// S1: increases to max at t = T/4,
+	// S2: decreases to mid at t = T/2
+	// S3: decreases to min at t = 3T/4
+	// S4: increases to mid at t = T
 
-	if (time <= period / 2.0) {
-		// Triangle function is rising
-		double t = time;
+	double out = 0.0;
+	double mid = min + ((max - min) / 2.0);
 
-		double m = (max - min) / (period / 2.0);
-		double b = min;
-		out = m * t + b;
+	// Calculate slopes
+	double m_pos = (max - min) / (period / 2.0);
+	double m_neg = -m_pos;
+
+	// y-intercept
+	double x1, y1;
+
+	if (0.0 <= time && time < period / 4.0) {
+		// State S1
+		out = m_pos * time + mid;
+	} else if (period / 4.0 <= time && time < period / 2.0) {
+		// State S2
+		// y = m(x - x1) + y1
+		x1 = period / 4.0;
+		y1 = max;
+		out = m_neg * (time - x1) + y1;
+	} else if (period / 2.0 <= time && time < 3.0 * period / 4.0) {
+		// State S3
+		// y = m(x - x1) + y1
+		x1 = period / 2.0;
+		y1 = mid;
+		out = m_neg * (time - x1) + y1;
 	} else {
-		// Triangle function is falling
-		double t = time - (period / 2.0);
-
-		double m = (min - max) / (period / 2.0);
-		double b = max;
-		out = m * t + b;
+		// State S4
+		// y = m(x - x1) + y1
+		x1 = 3.0 * period / 4.0;
+		y1 = min;
+		out = m_pos * (time - x1) + y1;
 	}
 
 	return out;
