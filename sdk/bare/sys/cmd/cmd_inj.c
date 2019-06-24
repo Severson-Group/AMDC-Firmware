@@ -141,10 +141,10 @@ int cmd_inj(int argc, char **argv)
 		if (mFreqMax > 10000000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mPeriod argument
-		// and saturate to 1 .. 30 sec
+		// and saturate to 1 .. 60 sec
 		double mPeriod = (double) atoi(argv[7]);
 		if (mPeriod < 1000.0) return INVALID_ARGUMENTS;
-		if (mPeriod > 30000.0) return INVALID_ARGUMENTS;
+		if (mPeriod > 60000.0) return INVALID_ARGUMENTS;
 
 		injection_chirp(ctx, op, mGain / 1000.0, mFreqMin / 1000.0, mFreqMax / 1000.0, mPeriod / 1000.0);
 
@@ -174,10 +174,10 @@ int cmd_inj(int argc, char **argv)
 		if (mValueMax >  10000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mPeriod argument
-		// and saturate to 1 .. 30 sec
+		// and saturate to 1 .. 60 sec
 		double mPeriod = (double) atoi(argv[6]);
 		if (mPeriod < 1000.0) return INVALID_ARGUMENTS;
-		if (mPeriod > 30000.0) return INVALID_ARGUMENTS;
+		if (mPeriod > 60000.0) return INVALID_ARGUMENTS;
 
 		injection_triangle(ctx, op, mValueMin / 1000.0, mValueMax / 1000.0, mPeriod / 1000.0);
 
