@@ -11,9 +11,9 @@
 #include "machine.h"
 
 // Tuning for motion controller
-#define Ba		(0.3789345489605353)
-#define Ksa		(1.9521469077445932)
-#define Kisa	(1.6224059561087412)
+#define Ba		(0.12631151632017845)
+#define Ksa		(0.6507156359149366)
+#define Kisa	(0.5408019847913392)
 
 #define Ts		(1.0 / TASK_MC_UPDATES_PER_SEC)
 
@@ -23,6 +23,7 @@
 
 // Forward declarations
 inline static int saturate(double min, double max, double *value);
+inline static double filter(double input);
 
 // Static variables for controller
 static double delta_theta_error_acc;
@@ -103,8 +104,11 @@ void task_mc_callback(void *arg) {
 	double term3 = (Kisa * Ts * delta_theta_error_acc_acc);
 	double Tem_SFB_star = term1 + term2 + term3;
 
+	// Filter torque command
+	double Tem_SFB_star_filtered = filter(Tem_SFB_star);
+
 	// Convert to commanded current, Iq*
-	double Iq_star = Tem_SFB_star / Kt_HAT;
+	double Iq_star = Tem_SFB_star_filtered / Kt_HAT;
 
 	// Saturate Iq_star to limit
 	io_led_color_t color = {0, 0, 0};
@@ -116,7 +120,7 @@ void task_mc_callback(void *arg) {
 
 	// Update logging variables
 	LOG_omega_m = omega_m;
-	LOG_T_sfb   = Tem_SFB_star;
+	LOG_T_sfb   = Tem_SFB_star_filtered;
 }
 
 void task_mc_set_delta_theta_star(double omega_m)
@@ -137,6 +141,27 @@ inline static int saturate(double min, double max, double *value) {
 		// No saturation
 		return 0;
 	}
+}
+
+//Tuning for LPF based on Ts = 0.00025
+#define A_1Hz		(0.9984304367280448)
+#define A_5Hz		(0.9921767802925615)
+#define A_10Hz		(0.9844147633517137)
+#define A_50Hz		(0.9244652503762558)
+#define A_100Hz		(0.8546359991532334)
+#define A_500Hz		(0.45593812776599624)
+
+#define A (A_50Hz)
+
+inline static double filter(double input)
+{
+	static double z1 = 0.0;
+
+	double output = (input * (1 - A)) + z1;
+
+	z1 = output * A;
+
+	return output;
 }
 
 #endif // APP_BETA_LABS

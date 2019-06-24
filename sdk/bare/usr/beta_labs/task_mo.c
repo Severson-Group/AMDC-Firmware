@@ -4,38 +4,22 @@
 #include "machine.h"
 #include "../../sys/scheduler.h"
 #include "../../drv/encoder.h"
+#include "../../drv/dac.h"
 
 static task_control_block_t tcb;
 
 static double task_mo_omega_m = 0.0;
 
-// Tunings for LPF on omega_m
-#define A_1Hz	(0.9993718788200349)
-#define A_5Hz	(0.9968633369849541)
-#define A_10Hz	(0.9937365126247782)
-#define A_50Hz	(0.9690724263048106)
-#define A_100Hz	(0.9391013674242926)
-#define A_500Hz	(0.7304026910486456)
-
-#define A (A_100Hz)
-
-static double filter(double input)
-{
-	static double z1 = 0.0;
-
-	double output = (input * (1 - A)) + z1;
-
-	z1 = output * A;
-
-	return output;
-}
-
+// Forward declarations
+inline static double filter(double input);
 
 void task_mo_init(void)
 {
 	scheduler_tcb_init(&tcb, task_mo_callback, NULL, "mo", TASK_MO_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 }
+
+double LOG_enc_pos = 0.0;
 
 void task_mo_callback(void *arg)
 {
@@ -54,6 +38,16 @@ void task_mo_callback(void *arg)
 	double omega_m = rads * (double) TASK_MO_UPDATES_PER_SEC;
 
 	task_mo_omega_m = filter(omega_m);
+
+
+	// Update log variables
+	uint32_t pos;
+	encoder_get_position(&pos);
+	LOG_enc_pos = pos;
+
+	double p = (double) pos / (double) ENCODER_PULSES_PER_REV;
+
+	dac_set_output(0, p, 0.0, 1.0);
 }
 
 void task_mo_get_omega_e(double *omega_e)
@@ -66,6 +60,26 @@ void task_mo_get_omega_m(double *omega_m)
 	*omega_m = task_mo_omega_m;
 }
 
+//Tuning for LPF based on Ts = 0.0001
+#define A_1Hz		(0.9993718788200349)
+#define A_5Hz		(0.9968633369849541)
+#define A_10Hz		(0.9937365126247782)
+#define A_50Hz		(0.9690724263048106)
+#define A_100Hz		(0.9391013674242926)
+#define A_500Hz		(0.7304026910486456)
+
+#define A (A_100Hz)
+
+inline static double filter(double input)
+{
+	static double z1 = 0.0;
+
+	double output = (input * (1 - A)) + z1;
+
+	z1 = output * A;
+
+	return output;
+}
 
 #endif // APP_BETA_LABS
 
