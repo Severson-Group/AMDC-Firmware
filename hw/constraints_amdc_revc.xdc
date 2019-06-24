@@ -292,37 +292,38 @@ set_property PACKAGE_PIN N5 [get_ports inverter8_pwm[3]]; # JX2-84
 set_property PACKAGE_PIN J6 [get_ports inverter8_pwm[4]]; # JX2-75
 set_property PACKAGE_PIN J7 [get_ports inverter8_pwm[5]]; # JX2-73
 
-set_property PACKAGE_PIN G2 [get_ports inverter_rst[0]]; # JX1-19
-set_property PACKAGE_PIN E4 [get_ports inverter_rst[1]]; # JX1-24
-set_property PACKAGE_PIN W15 [get_ports inverter_rst[2]]; # JX3-99
-set_property PACKAGE_PIN H5 [get_ports inverter_rst[3]]; # JX1-10
-set_property PACKAGE_PIN T17 [get_ports inverter_rst[4]]; # JX3-94
-set_property PACKAGE_PIN W12 [get_ports inverter_rst[5]]; # JX3-91
-set_property PACKAGE_PIN Y13 [get_ports inverter_rst[6]]; # JX3-82
+set_property PACKAGE_PIN G2   [get_ports inverter_rst[0]]; # JX1-19
+set_property PACKAGE_PIN E4   [get_ports inverter_rst[1]]; # JX1-24
+set_property PACKAGE_PIN W15  [get_ports inverter_rst[2]]; # JX3-99
+set_property PACKAGE_PIN H5   [get_ports inverter_rst[3]]; # JX1-10
+set_property PACKAGE_PIN T17  [get_ports inverter_rst[4]]; # JX3-94
+set_property PACKAGE_PIN W12  [get_ports inverter_rst[5]]; # JX3-91
+set_property PACKAGE_PIN Y13  [get_ports inverter_rst[6]]; # JX3-82
 set_property PACKAGE_PIN AA11 [get_ports inverter_rst[7]]; # JX3-79
 
-set_property PACKAGE_PIN H6 [get_ports inverter_rdy[0]]; # JX1-9
-set_property PACKAGE_PIN H4 [get_ports inverter_rdy[1]]; # JX1-11
-set_property PACKAGE_PIN W13 [get_ports inverter_rdy[2]]; # JX3-93
-set_property PACKAGE_PIN V16 [get_ports inverter_rdy[3]]; # JX3-98
+set_property PACKAGE_PIN H6   [get_ports inverter_rdy[0]]; # JX1-9
+set_property PACKAGE_PIN H4   [get_ports inverter_rdy[1]]; # JX1-11
+set_property PACKAGE_PIN W13  [get_ports inverter_rdy[2]]; # JX3-93
+set_property PACKAGE_PIN V16  [get_ports inverter_rdy[3]]; # JX3-98
 set_property PACKAGE_PIN AB11 [get_ports inverter_rdy[4]]; # JX3-81
-set_property PACKAGE_PIN V13 [get_ports inverter_rdy[5]]; # JX3-86
+set_property PACKAGE_PIN V13  [get_ports inverter_rdy[5]]; # JX3-86
+set_property PACKAGE_PIN V19  [get_ports inverter_rdy[6]]; # BUG: this net is connected to GND :( JX1-93 is unused pin, map it there for now
 set_property PACKAGE_PIN AA16 [get_ports inverter_rdy[7]]; # JX3-74
 
-set_property PACKAGE_PIN H3 [get_ports inverter_flt_desat[0]]; # JX1-13
-set_property PACKAGE_PIN F2 [get_ports inverter_flt_desat[1]]; # JX1-18
-set_property PACKAGE_PIN W16 [get_ports inverter_flt_desat[2]]; # JX3-100
-set_property PACKAGE_PIN V15 [get_ports inverter_flt_desat[3]]; # JX3-97
-set_property PACKAGE_PIN V14 [get_ports inverter_flt_desat[4]]; # JX3-88
-set_property PACKAGE_PIN V11 [get_ports inverter_flt_desat[5]]; # JX3-85
+set_property PACKAGE_PIN H3   [get_ports inverter_flt_desat[0]]; # JX1-13
+set_property PACKAGE_PIN F2   [get_ports inverter_flt_desat[1]]; # JX1-18
+set_property PACKAGE_PIN W16  [get_ports inverter_flt_desat[2]]; # JX3-100
+set_property PACKAGE_PIN V15  [get_ports inverter_flt_desat[3]]; # JX3-97
+set_property PACKAGE_PIN V14  [get_ports inverter_flt_desat[4]]; # JX3-88
+set_property PACKAGE_PIN V11  [get_ports inverter_flt_desat[5]]; # JX3-85
 set_property PACKAGE_PIN AA17 [get_ports inverter_flt_desat[6]]; # JX3-76
-set_property PACKAGE_PIN Y18 [get_ports inverter_flt_desat[7]]; # JX3-73
+set_property PACKAGE_PIN Y18  [get_ports inverter_flt_desat[7]]; # JX3-73
 
-set_property PACKAGE_PIN F1 [get_ports inverter_flt_temp[0]]; # JX1-20
-set_property PACKAGE_PIN G3 [get_ports inverter_flt_temp[1]]; # JX1-17
-set_property PACKAGE_PIN F5 [get_ports inverter_flt_temp[2]]; # JX1-12
-set_property PACKAGE_PIN E5 [get_ports inverter_flt_temp[3]]; # JX1-14
-set_property PACKAGE_PIN W11 [get_ports inverter_flt_temp[4]]; # JX3-87
-set_property PACKAGE_PIN R17 [get_ports inverter_flt_temp[5]]; # JX3-92
-set_property PACKAGE_PIN Y19 [get_ports inverter_flt_temp[6]]; # JX3-75
-set_property PACKAGE_PIN Y12 [get_ports inverter_flt_temp[7]]; # JX3-80
+set_property PACKAGE_PIN F1   [get_ports inverter_flt_temp[0]]; # JX1-20
+set_property PACKAGE_PIN G3   [get_ports inverter_flt_temp[1]]; # JX1-17
+set_property PACKAGE_PIN F5   [get_ports inverter_flt_temp[2]]; # JX1-12
+set_property PACKAGE_PIN E5   [get_ports inverter_flt_temp[3]]; # JX1-14
+set_property PACKAGE_PIN W11  [get_ports inverter_flt_temp[4]]; # JX3-87
+set_property PACKAGE_PIN R17  [get_ports inverter_flt_temp[5]]; # JX3-92
+set_property PACKAGE_PIN Y19  [get_ports inverter_flt_temp[6]]; # JX3-75
+set_property PACKAGE_PIN Y12  [get_ports inverter_flt_temp[7]]; # JX3-80

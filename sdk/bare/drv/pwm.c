@@ -84,7 +84,66 @@ void pwm_set_deadtime_ns(uint16_t time_ns)
 	Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
 }
 
-//void inverter_get_status(uint8_t idx, inverter_status_t *status)
-//{
-//
-//}
+
+void pwm_get_all_flt_temp(uint8_t *flt_temp)
+{
+	uint32_t value;
+
+	// Offset 28 is flt_temp
+	value = Xil_In32(PWM_BASE_ADDR + (28 * sizeof(uint32_t)));
+
+	// Only look at bottom 8 bits
+	value &= 0x000000FF;
+
+	*flt_temp = (uint8_t) value;
+}
+
+void pwm_get_all_flt_desat(uint8_t *flt_desat)
+{
+	uint32_t value;
+
+	// Offset 29 is flt_desat
+	value = Xil_In32(PWM_BASE_ADDR + (29 * sizeof(uint32_t)));
+
+	// Only look at bottom 8 bits
+	value &= 0x000000FF;
+
+	*flt_desat = (uint8_t) value;
+}
+
+void pwm_get_all_rdy(uint8_t *rdy)
+{
+	uint32_t value;
+
+	// Offset 30 is rdy
+	value = Xil_In32(PWM_BASE_ADDR + (30 * sizeof(uint32_t)));
+
+	// Only look at bottom 8 bits
+	value &= 0x000000FF;
+
+	*rdy = (uint8_t) value;
+}
+
+void pwm_set_all_rst(uint8_t rst)
+{
+	uint32_t value = 0;
+	value |= (uint32_t) rst;
+
+	// Offset 27 is rst output reg
+	Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
+}
+
+void pwm_get_status(uint8_t idx, pwm_status_t *status)
+{
+	// Read status signals from hardware
+	uint8_t flt_temp, flt_desat, rdy;
+	pwm_get_all_flt_temp(&flt_temp);
+	pwm_get_all_flt_desat(&flt_desat);
+	pwm_get_all_rdy(&rdy);
+
+	uint8_t bit_mask = (1 << idx);
+
+	status->fault_temp  = (flt_temp  & bit_mask) ? 1 : 0;
+	status->fault_desat = (flt_desat & bit_mask) ? 1 : 0;
+	status->ready       = (rdy       & bit_mask) ? 1 : 0;
+}
