@@ -3,9 +3,10 @@
 #include "msf.h"
 
 // Motion state filter gains with Ts = 0.00025
-#define Ts (0.00025)
-#define Ksf2Ts (1.226383390687582)
-#define Ksf1 (841.3256566809094)
+// Bandwidth tuned to 200.0 Hz
+#define Ts		(0.00025)
+#define Ksf2Ts	(1.226383390687582)
+#define Ksf1	(841.3256566809094)
 
 //Output States
 static double msf_omega_m_dot;

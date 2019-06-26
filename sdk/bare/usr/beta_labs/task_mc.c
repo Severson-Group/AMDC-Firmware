@@ -12,10 +12,11 @@
 #include "../../drv/dac.h"
 #include "machine.h"
 
-// Tuning for motion controller
-#define Ba		(0.12631151632017845)
-#define Ksa		(0.6507156359149366)
-#define Kisa	(0.5408019847913392)
+// Tuning for motion controller with Ts = 0.00025
+// Bandwidth is tuned to 20 Hz
+#define Ba		(0.4700369723815065)
+#define Ksa		(4.842871125235442)
+#define Kisa	(4.496284614595447)
 
 #define Ts		(1.0 / TASK_MC_UPDATES_PER_SEC)
 

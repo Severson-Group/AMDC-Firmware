@@ -15,7 +15,7 @@
 #define Lambda_pm_HAT	(7407.0  / 1000000.0)	// Wb
 
 // Mechanical
-#define Jp_HAT			(0.00716)	// kg-m^2
+#define Jp_HAT			(0.0041685)	// kg-m^2
 #define Bp_HAT			(0.00025)	// kg-m^2/s
 #define Tu_HAT			(0.0025)	// kg-m/s^2
 
@@ -28,7 +28,7 @@
 #define POLE_PAIRS		(16.0)
 
 // NOTE: use this to artificially limit current
-#define I_rated_rms			(8.0)	// Arms
+#define I_rated_rms			(10.0)	// Arms
 
 //#define I_rated_rms			(24.2)	// Arms
 #define I_rated_pk			(I_rated_rms * SQRT2)	// Apk
