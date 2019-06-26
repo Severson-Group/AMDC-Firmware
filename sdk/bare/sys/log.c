@@ -13,7 +13,7 @@
 
 #define LOG_BUFFER_LENGTH	(LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 
-#define LOG_VAR_NAME_MAX_CHARS	(16)
+#define LOG_VAR_NAME_MAX_CHARS	(20)
 
 typedef struct buffer_entry_t {
 	uint32_t timestamp;
