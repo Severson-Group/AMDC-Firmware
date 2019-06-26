@@ -33,6 +33,7 @@ static double delta_theta_m_error_acc_acc;
 
 // Injection contexts for motion controller
 inj_ctx_t task_mc_inj_omega_m_star;
+inj_ctx_t task_mc_inj_Td_star;
 
 // Command for controller
 static double omega_m_star = 0.0;
@@ -40,9 +41,11 @@ static double omega_m_star = 0.0;
 static task_control_block_t tcb;
 
 // Logging variables
+double LOG_omega_m_star = 0.0;
 double LOG_omega_m = 0.0;
 double LOG_T_sfb   = 0.0;
 double LOG_T_cff   = 0.0;
+double LOG_T_d     = 0.0;
 double LOG_msf_w_m = 0.0;
 double LOG_msf_w_m_dot = 0.0;
 
@@ -57,9 +60,13 @@ void task_mc_init(void)
 	scheduler_tcb_init(&tcb, task_mc_callback, NULL, "mc", TASK_MC_INTERVAL_USEC);
 	scheduler_tcb_register(&tcb);
 
-	// Initialize and register injection contexts
+	// Initialize injection contexts
 	injection_ctx_init(&task_mc_inj_omega_m_star, "omega_m*");
+	injection_ctx_init(&task_mc_inj_Td_star, "Td*");
+
+	// Register injection contexts
 	injection_ctx_register(&task_mc_inj_omega_m_star);
+	injection_ctx_register(&task_mc_inj_Td_star);
 
 	// Clear static variables for controller
 	delta_theta_m_error_acc = 0.0;
@@ -80,9 +87,13 @@ void task_mc_deinit(void)
 	// Clear current command
 	task_cc_set_Iq_star(0.0);
 
-	// Unregister and clear injection context
+	// Unregister injection context
 	injection_ctx_unregister(&task_mc_inj_omega_m_star);
+	injection_ctx_unregister(&task_mc_inj_Td_star);
+
+	// Clear injection context
 	injection_ctx_clear(&task_mc_inj_omega_m_star);
+	injection_ctx_clear(&task_mc_inj_Td_star);
 
 	// Clear static variables for controller
 	delta_theta_m_error_acc = 0.0;
@@ -123,7 +134,12 @@ void task_mc_callback(void *arg) {
 	// Filter torque command
 	double Tem_SFB_star_filtered = filter(Tem_SFB_star);
 
-	double Tem_star_total = Tem_SFB_star_filtered + Tem_cff;
+	// Create torque disturbance and inject signal into it
+	double Td_star = 0.0;
+	injection_inj(&Td_star, &task_mc_inj_Td_star, Ts);
+
+	// Sum up Tem*
+	double Tem_star_total = Tem_SFB_star_filtered + Tem_cff + Td_star;
 
 	// Convert to commanded current, Iq*
 	double Iq_star = Tem_star_total / Kt_HAT;
@@ -137,9 +153,11 @@ void task_mc_callback(void *arg) {
 	task_cc_set_Iq_star(Iq_star);
 
 	// Update logging variables
+	LOG_omega_m_star = omega_m_star;
 	LOG_omega_m = omega_m;
 	LOG_T_sfb   = Tem_SFB_star_filtered;
 	LOG_T_cff   = Tem_cff;
+	LOG_T_d     = Td_star;
 }
 
 void task_mc_set_omega_m_star(double omega_m)
