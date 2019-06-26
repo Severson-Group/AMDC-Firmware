@@ -16,6 +16,8 @@ void pwm_init(void)
 {
 	printf("PWM:\tInitializing...\n");
 
+	pwm_toggle_reset();
+
 	pwm_set_switching_freq(100000.0);
 	pwm_set_deadtime_ns(100);
 
@@ -23,6 +25,16 @@ void pwm_init(void)
 	for (int i = 0; i < 24; i++) {
 		pwm_set_duty_raw(i, 0);
 	}
+}
+
+void pwm_toggle_reset(void)
+{
+	// Toggles RST on all inverter outputs for 1 ms
+	pwm_set_all_rst(0xFF);
+	for (int i = 0; i < 83250; i++) asm("nop");
+	pwm_set_all_rst(0x00);
+	for (int i = 0; i < 83250; i++) asm("nop");
+	pwm_set_all_rst(0xFF);
 }
 
 void pwm_set_switching_freq(double freq_hz)

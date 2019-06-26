@@ -22,6 +22,8 @@ typedef struct pwm_status_t {
 
 void pwm_init(void);
 
+void pwm_toggle_reset(void);
+
 void pwm_set_switching_freq(double freq_hz);
 
 void pwm_set_duty_raw(uint8_t idx, uint16_t value);
