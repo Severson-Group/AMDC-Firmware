@@ -15,9 +15,9 @@
 #define Lambda_pm_HAT	(7407.0  / 1000000.0)	// Wb
 
 // Mechanical
-#define Jp_HAT			(3.97e-3)	// kg-m^2
-#define Bp_HAT			(1234)		// kg-m^2/s
-#define Tu_HAT			(1234)		// kg-m/s^2
+#define Jp_HAT			(0.00716)	// kg-m^2
+#define Bp_HAT			(0.00025)	// kg-m^2/s
+#define Tu_HAT			(0.0025)	// kg-m/s^2
 
 
 #define Kt_HAT			(0.196)		// Nm / Arms

@@ -39,7 +39,7 @@ double LOG_omega_e_avg  = 0.0;
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
-static int32_t dq_offset = 9550; // 9661 from beta-axis injection
+static int32_t dq_offset = 9980;
 
 // Note: user should override this initial value
 static double controller_bw = 1.0;
