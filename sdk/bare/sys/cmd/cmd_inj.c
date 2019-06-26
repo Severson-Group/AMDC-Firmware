@@ -96,16 +96,16 @@ int cmd_inj(int argc, char **argv)
 		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
 
 		// Pull out mGain argument
-		// and saturate to 0 .. 10
+		// and saturate to 0 .. 50
 		double mGain = (double) atoi(argv[4]);
 		if (mGain < 0.0) return INVALID_ARGUMENTS;
-		if (mGain > 10000.0) return INVALID_ARGUMENTS;
+		if (mGain > 50000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mOffset argument
-		// and saturate to 0 .. 10
+		// and saturate to -100 .. 100
 		double mOffset = (double) atoi(argv[5]);
-		if (mOffset < 0.0) return INVALID_ARGUMENTS;
-		if (mOffset > 10000.0) return INVALID_ARGUMENTS;
+		if (mOffset < -100000.0) return INVALID_ARGUMENTS;
+		if (mOffset >  100000.0) return INVALID_ARGUMENTS;
 
 		injection_noise(ctx, op, mGain / 1000.0, mOffset / 1000.0);
 
