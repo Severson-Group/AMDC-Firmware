@@ -162,16 +162,16 @@ int cmd_inj(int argc, char **argv)
 		if (_parse_op(argv[3], &op) != 0) return INVALID_ARGUMENTS;
 
 		// Pull out mValueMin argument
-		// and saturate to -10 .. 10
+		// and saturate to -100 .. 100
 		double mValueMin = (double) atoi(argv[4]);
-		if (mValueMin < -10000.0) return INVALID_ARGUMENTS;
-		if (mValueMin >  10000.0) return INVALID_ARGUMENTS;
+		if (mValueMin < -100000.0) return INVALID_ARGUMENTS;
+		if (mValueMin >  100000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mValueMax argument
-		// and saturate to -10 .. 10
+		// and saturate to -100 .. 100
 		double mValueMax = (double) atoi(argv[5]);
-		if (mValueMax < -10000.0) return INVALID_ARGUMENTS;
-		if (mValueMax >  10000.0) return INVALID_ARGUMENTS;
+		if (mValueMax < -100000.0) return INVALID_ARGUMENTS;
+		if (mValueMax >  100000.0) return INVALID_ARGUMENTS;
 
 		// Pull out mPeriod argument
 		// and saturate to 1 .. 60 sec
