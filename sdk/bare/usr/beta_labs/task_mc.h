@@ -12,6 +12,6 @@ void task_mc_init(void);
 void task_mc_deinit(void);
 void task_mc_callback(void *arg);
 
-void task_mc_set_delta_theta_star(double omega_m);
+void task_mc_set_omega_m_star(double omega_m);
 
 #endif // TASK_MC_H

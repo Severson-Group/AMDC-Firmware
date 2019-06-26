@@ -3,6 +3,8 @@
 #include "task_mc.h"
 #include "task_cc.h"
 #include "task_mo.h"
+#include "msf.h"
+#include "mcff.h"
 #include "../../sys/scheduler.h"
 #include "../../sys/injection.h"
 #include "../../drv/encoder.h"
@@ -26,20 +28,23 @@ inline static int saturate(double min, double max, double *value);
 inline static double filter(double input);
 
 // Static variables for controller
-static double delta_theta_error_acc;
-static double delta_theta_error_acc_acc;
+static double delta_theta_m_error_acc;
+static double delta_theta_m_error_acc_acc;
 
 // Injection contexts for motion controller
-inj_ctx_t task_mc_inj_del_theta_star;
+inj_ctx_t task_mc_inj_omega_m_star;
 
 // Command for controller
-static double delta_theta_star = 0.0;
+static double omega_m_star = 0.0;
 
 static task_control_block_t tcb;
 
 // Logging variables
 double LOG_omega_m = 0.0;
 double LOG_T_sfb   = 0.0;
+double LOG_T_cff   = 0.0;
+double LOG_msf_w_m = 0.0;
+double LOG_msf_w_m_dot = 0.0;
 
 uint8_t task_mc_is_inited(void)
 {
@@ -53,15 +58,18 @@ void task_mc_init(void)
 	scheduler_tcb_register(&tcb);
 
 	// Initialize and register injection contexts
-	injection_ctx_init(&task_mc_inj_del_theta_star, "del_theta*");
-	injection_ctx_register(&task_mc_inj_del_theta_star);
+	injection_ctx_init(&task_mc_inj_omega_m_star, "omega_m*");
+	injection_ctx_register(&task_mc_inj_omega_m_star);
 
 	// Clear static variables for controller
-	delta_theta_error_acc = 0.0;
-	delta_theta_error_acc_acc = 0.0;
+	delta_theta_m_error_acc = 0.0;
+	delta_theta_m_error_acc_acc = 0.0;
 
 	// Clear commanded speed
-	delta_theta_star = 0.0;
+	omega_m_star = 0.0;
+
+	// Initialize motion state filter
+	msf_init(Ts);
 }
 
 void task_mc_deinit(void)
@@ -73,42 +81,52 @@ void task_mc_deinit(void)
 	task_cc_set_Iq_star(0.0);
 
 	// Unregister and clear injection context
-	injection_ctx_unregister(&task_mc_inj_del_theta_star);
-	injection_ctx_clear(&task_mc_inj_del_theta_star);
+	injection_ctx_unregister(&task_mc_inj_omega_m_star);
+	injection_ctx_clear(&task_mc_inj_omega_m_star);
 
 	// Clear static variables for controller
-	delta_theta_error_acc = 0.0;
-	delta_theta_error_acc_acc = 0.0;
+	delta_theta_m_error_acc = 0.0;
+	delta_theta_m_error_acc_acc = 0.0;
 
 	// Clear commanded speed
-	delta_theta_star = 0.0;
+	omega_m_star = 0.0;
 }
 
 void task_mc_callback(void *arg) {
-	// Inject signal into delta_theta_star
-	injection_inj(&delta_theta_star, &task_mc_inj_del_theta_star, Ts);
+	// Inject signal into omega_m*
+	injection_inj(&omega_m_star, &task_mc_inj_omega_m_star, Ts);
 
+	// Get raw delta_theta_m
 	double omega_m;
 	task_mo_get_omega_m(&omega_m);
-
 	double delta_theta_m = omega_m * Ts;
 
+	// Calculate delta_theta* from omega_m* using MSF
+	double delta_theta_m_star = msf_update(omega_m_star);
+
+	// Motion Command Feed-Forward
+	double Tem_cff = mcff_update(msf_get_omega_m(), msf_get_omega_m_dot());
+	LOG_msf_w_m = msf_get_omega_m();
+	LOG_msf_w_m_dot = msf_get_omega_m_dot();
+
 	// Run through block diagram
-	double delta_theta_error = delta_theta_star - delta_theta_m;
-	delta_theta_error_acc += delta_theta_error;
-	delta_theta_error_acc_acc += delta_theta_error_acc;
+	double delta_theta_m_error = delta_theta_m_star - delta_theta_m;
+	delta_theta_m_error_acc += delta_theta_m_error;
+	delta_theta_m_error_acc_acc += delta_theta_m_error_acc;
 
 	// Calculate commanded torque
-	double term1 = (Ba / Ts * delta_theta_error);
-	double term2 = (Ksa * delta_theta_error_acc);
-	double term3 = (Kisa * Ts * delta_theta_error_acc_acc);
+	double term1 = (Ba / Ts * delta_theta_m_error);
+	double term2 = (Ksa * delta_theta_m_error_acc);
+	double term3 = (Kisa * Ts * delta_theta_m_error_acc_acc);
 	double Tem_SFB_star = term1 + term2 + term3;
 
 	// Filter torque command
 	double Tem_SFB_star_filtered = filter(Tem_SFB_star);
 
+	double Tem_star_total = Tem_SFB_star_filtered + Tem_cff;
+
 	// Convert to commanded current, Iq*
-	double Iq_star = Tem_SFB_star_filtered / Kt_HAT;
+	double Iq_star = Tem_star_total / Kt_HAT;
 
 	// Saturate Iq_star to limit
 	io_led_color_t color = {0, 0, 0};
@@ -121,11 +139,12 @@ void task_mc_callback(void *arg) {
 	// Update logging variables
 	LOG_omega_m = omega_m;
 	LOG_T_sfb   = Tem_SFB_star_filtered;
+	LOG_T_cff   = Tem_cff;
 }
 
-void task_mc_set_delta_theta_star(double omega_m)
+void task_mc_set_omega_m_star(double omega_m)
 {
-	delta_theta_star = omega_m * Ts;
+	omega_m_star = omega_m;
 }
 
 inline static int saturate(double min, double max, double *value) {

@@ -58,7 +58,7 @@ int cmd_mc(int argc, char **argv) {
 		if (rpms < -10000.0) return INVALID_ARGUMENTS;
 		if (rpms >  10000.0) return INVALID_ARGUMENTS;
 
-		task_mc_set_delta_theta_star(PI2 * rpms / 60.0);
+		task_mc_set_omega_m_star(PI2 * rpms / 60.0);
 
 		return SUCCESS;
 	}
