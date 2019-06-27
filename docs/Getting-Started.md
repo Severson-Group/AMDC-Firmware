@@ -101,12 +101,14 @@ Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
 
 1. Right-click on the project to are trying to run, e.g. `bare`
 2. `Run As` > `Run Configurations...`
-3. Ensure the `Target Setup` tab is open
-4. Select `Browse...` for `Bitstream File`
-5. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
-6. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
-7. Click `Apply`
-8. Click `Close`
+3. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
+4. A new panel should appear on the right half of popup
+5. Ensure the `Target Setup` tab is open
+6. Select `Browse...` for `Bitstream File`
+7. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+8. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
+8. Click `Apply`
+10. Click `Close`
 
 ### Running Project on AMDC
 
