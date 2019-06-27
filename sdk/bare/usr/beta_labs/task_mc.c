@@ -4,6 +4,7 @@
 #include "task_cc.h"
 #include "task_mo.h"
 #include "msf.h"
+#include "mc.h"
 #include "mcff.h"
 #include "../../sys/scheduler.h"
 #include "../../sys/injection.h"
@@ -11,12 +12,6 @@
 #include "../../drv/io.h"
 #include "../../drv/dac.h"
 #include "machine.h"
-
-// Tuning for motion controller with Ts = 0.00025
-// Bandwidth is tuned to 20 Hz
-#define Ba		(0.4700369723815065)
-#define Ksa		(4.842871125235442)
-#define Kisa	(4.496284614595447)
 
 #define Ts		(1.0 / TASK_MC_UPDATES_PER_SEC)
 
@@ -26,11 +21,6 @@
 
 // Forward declarations
 inline static int saturate(double min, double max, double *value);
-inline static double filter(double input);
-
-// Static variables for controller
-static double delta_theta_m_error_acc;
-static double delta_theta_m_error_acc_acc;
 
 // Injection contexts for motion controller
 inj_ctx_t task_mc_inj_omega_m_star;
@@ -70,9 +60,8 @@ void task_mc_init(void)
 	injection_ctx_register(&task_mc_inj_omega_m_star);
 	injection_ctx_register(&task_mc_inj_Td_star);
 
-	// Clear static variables for controller
-	delta_theta_m_error_acc = 0.0;
-	delta_theta_m_error_acc_acc = 0.0;
+	// Initialize motion controller
+	mc_init();
 
 	// Clear commanded speed
 	omega_m_star = 0.0;
@@ -97,9 +86,8 @@ void task_mc_deinit(void)
 	injection_ctx_clear(&task_mc_inj_omega_m_star);
 	injection_ctx_clear(&task_mc_inj_Td_star);
 
-	// Clear static variables for controller
-	delta_theta_m_error_acc = 0.0;
-	delta_theta_m_error_acc_acc = 0.0;
+	// Initialize motion controller
+	mc_init();
 
 	// Clear commanded speed
 	omega_m_star = 0.0;
@@ -109,46 +97,38 @@ void task_mc_callback(void *arg) {
 	// Inject signal into omega_m*
 	injection_inj(&omega_m_star, &task_mc_inj_omega_m_star, Ts);
 
-	// Get raw delta_theta_m
+	// Get speed from encoder
 	double omega_m;
 	task_mo_get_omega_m(&omega_m);
 	double delta_theta_m = omega_m * Ts;
 
-	// Calculate delta_theta* from omega_m* using MSF
+	// Motion State Filter
 	double delta_theta_m_star = msf_update(omega_m_star);
 
 	// Motion Command Feed-Forward
-	double Tem_cff = mcff_update(msf_get_omega_m(), msf_get_omega_m_dot());
-	LOG_msf_w_m = msf_get_omega_m();
-	LOG_msf_w_m_dot = msf_get_omega_m_dot();
+	mcff_update(msf_get_omega_m(), msf_get_omega_m_dot());
+	double Tem_cff = 0.0;
+	if (mcff_enabled) {
+		Tem_cff = mcff_get_Te_cff_total();
+	}
 
-	// Run through block diagram
-	double delta_theta_m_error = delta_theta_m_star - delta_theta_m;
-	delta_theta_m_error_acc += delta_theta_m_error;
-	delta_theta_m_error_acc_acc += delta_theta_m_error_acc;
+	// Motion Controller
+	double Tem_SFB_star = mc_update(delta_theta_m_star, delta_theta_m, Ts);
 
-	// Calculate commanded torque
-	double term1 = (Ba / Ts * delta_theta_m_error);
-	double term2 = (Ksa * delta_theta_m_error_acc);
-	double term3 = (Kisa * Ts * delta_theta_m_error_acc_acc);
-	double Tem_SFB_star = term1 + term2 + term3;
-
-	// Filter torque command
-	double Tem_SFB_star_filtered = filter(Tem_SFB_star);
-
-	// Create torque disturbance and inject signal into it
+	// Torque Disturbance
+	// Inject user defined signal into Td*
 	double Td_star = 0.0;
 	injection_inj(&Td_star, &task_mc_inj_Td_star, Ts);
 
 	// Sum up Tem*
-	double Tem_star_total = Tem_SFB_star_filtered + Tem_cff + Td_star;
+	double Tem_star_total = Tem_SFB_star + Tem_cff + Td_star;
 
 	// Convert to commanded current, Iq*
 	double Iq_star = Tem_star_total / Kt_HAT;
 
 	// Saturate Iq_star to limit
 	io_led_color_t color = {0, 0, 0};
-	if (saturate(MIN_CC_CURRENT, MAX_CC_CURRENT, &Iq_star) != 0) color.r = 255;
+	if (saturate(-I_rated_dq, +I_rated_dq, &Iq_star) != 0) color.r = 255;
 	io_led_set_c(1, 0, 0, &color);
 
 	// Set value in current controller
@@ -157,9 +137,16 @@ void task_mc_callback(void *arg) {
 	// Update logging variables
 	LOG_omega_m_star = omega_m_star;
 	LOG_omega_m = omega_m;
-	LOG_T_sfb   = Tem_SFB_star_filtered;
+	LOG_T_sfb   = Tem_SFB_star;
 	LOG_T_cff   = Tem_cff;
 	LOG_T_d     = Td_star;
+	LOG_msf_w_m = msf_get_omega_m();
+	LOG_msf_w_m_dot = msf_get_omega_m_dot();
+
+	// Output to DAC
+	dac_set_output(0, LOG_omega_m, -50, 50);
+	dac_set_output(1, LOG_T_sfb, -1, 1);
+	dac_set_output(2, LOG_T_cff, -1, 1);
 }
 
 void task_mc_set_omega_m_star(double omega_m)
@@ -185,27 +172,6 @@ inline static int saturate(double min, double max, double *value) {
 		// No saturation
 		return 0;
 	}
-}
-
-//Tuning for LPF based on Ts = 0.00025
-#define A_1Hz		(0.9984304367280448)
-#define A_5Hz		(0.9921767802925615)
-#define A_10Hz		(0.9844147633517137)
-#define A_50Hz		(0.9244652503762558)
-#define A_100Hz		(0.8546359991532334)
-#define A_500Hz		(0.45593812776599624)
-
-#define A (A_50Hz)
-
-inline static double filter(double input)
-{
-	static double z1 = 0.0;
-
-	double output = (input * (1 - A)) + z1;
-
-	z1 = output * A;
-
-	return output;
 }
 
 #endif // APP_BETA_LABS
