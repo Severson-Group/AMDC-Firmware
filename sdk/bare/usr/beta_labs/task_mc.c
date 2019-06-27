@@ -38,6 +38,7 @@ inj_ctx_t task_mc_inj_Td_star;
 
 // Command for controller
 static double omega_m_star = 0.0;
+static uint8_t mcff_enabled = 0;
 
 static task_control_block_t tcb;
 
@@ -164,6 +165,11 @@ void task_mc_callback(void *arg) {
 void task_mc_set_omega_m_star(double omega_m)
 {
 	omega_m_star = omega_m;
+}
+
+void task_mc_enabled_cff(uint32_t enabled)
+{
+	mcff_enabled = enabled;
 }
 
 inline static int saturate(double min, double max, double *value) {

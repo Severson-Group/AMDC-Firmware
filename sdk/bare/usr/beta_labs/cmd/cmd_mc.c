@@ -10,11 +10,12 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(3)
+#define NUM_HELP_ENTRIES	(4)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"init", "Start motion controller"},
 		{"deinit", "Stop motion controller"},
-		{"rpm <rpms>", "Set commanded speed"}
+		{"rpm <rpms>", "Set commanded speed"},
+		{"cff <on|off>", "Enable / disable command feed-forward"}
 };
 
 void cmd_mc_register(void)
@@ -59,6 +60,24 @@ int cmd_mc(int argc, char **argv) {
 		if (rpms >  10000.0) return INVALID_ARGUMENTS;
 
 		task_mc_set_omega_m_star(PI2 * rpms / 60.0);
+
+		return SUCCESS;
+	}
+
+	// Handle 'cff ...' sub-command
+	if (argc == 3 && strcmp("cff", argv[1]) == 0) {
+		// Pull out onoff argument
+		uint8_t enabled;
+		if (strcmp("on", argv[2]) == 0) {
+			// On
+			enabled = 1;
+		} else if (strcmp("off", argv[2]) == 0) {
+			enabled = 0;
+		} else {
+			return INVALID_ARGUMENTS;
+		}
+
+		task_mc_enabled_cff(enabled);
 
 		return SUCCESS;
 	}
