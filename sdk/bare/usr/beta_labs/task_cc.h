@@ -6,7 +6,7 @@
 #include "../../sys/defines.h"
 #include "../../sys/scheduler.h"
 
-#define TASK_CC_UPDATES_PER_SEC		(40000)
+#define TASK_CC_UPDATES_PER_SEC		(20000)
 #define TASK_CC_INTERVAL_USEC		(USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
 
 // Current = GAIN * ADC_Voltage + Offset

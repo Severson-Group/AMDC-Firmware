@@ -8,7 +8,7 @@
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here:
-#define SYS_TICK_FREQ (40000) // Hz
+#define SYS_TICK_FREQ (20000) // Hz
 
 
 // Disable logging functionality
