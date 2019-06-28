@@ -30,7 +30,7 @@ class AMDC:
 		self.ser.close()
 
 
-	def cmd(self, cmd_str):
+	def cmd(self, cmd_str, delaySec = None):
 		to_send_str = "{0}\r\n".format(cmd_str)
 		to_send_bytes = str.encode(to_send_str)
 		for b in to_send_bytes:
@@ -40,7 +40,10 @@ class AMDC:
 			time.sleep(self.cmdDelayChar)
 		
 		# Wait for cmd to execute on AMDC
-		time.sleep(self.cmdDelay)
+		if delaySec:
+			time.sleep(delaySec)
+		else:
+			time.sleep(self.cmdDelay)
 		
 		# Print log for user
 		if self.cmdEcho:
