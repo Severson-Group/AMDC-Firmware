@@ -3,6 +3,7 @@
 #include "task_cc.h"
 #include "inverter.h"
 #include "task_mo.h"
+#include "co.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
 #include "../../sys/debug.h"
@@ -34,6 +35,12 @@ double LOG_Iq_star = 0.0;
 double LOG_Vd_star = 0.0;
 double LOG_Vq_star = 0.0;
 double LOG_omega_e_avg  = 0.0;
+double LOG_Id_hat_next = 0.0;
+double LOG_Iq_hat_next = 0.0;
+double LOG_theta_e_enc = 0.0;
+double LOG_theta_e_hat = 0.0;
+double LOG_Esal_d_hat = 0.0;
+double LOG_Esal_q_hat = 0.0;
 
 // Commands for Id and Iq -- Idq*
 static double Id_star = 0.0;
@@ -44,10 +51,13 @@ static int32_t dq_offset = 9980;
 // Note: user should override this initial value
 static double controller_bw = 1.0;
 
+static uint8_t theta_src_use_encoder = 1;
+
 // Static variables for controller
 static double Id_err_acc;
 static double Iq_err_acc;
-static double theta_da;
+static double theta_e_enc;
+static double theta_e_hat;
 
 // Injection contexts for
 // current controller
@@ -100,7 +110,7 @@ void task_cc_init(void)
 	// Clear controller static variables
 	Id_err_acc = 0.0;
 	Iq_err_acc = 0.0;
-	theta_da = 0.0;
+	theta_e_enc = 0.0;
 }
 
 void task_cc_deinit(void)
@@ -123,7 +133,7 @@ void task_cc_deinit(void)
 	// Clear controller static variables
 	Id_err_acc = 0.0;
 	Iq_err_acc = 0.0;
-	theta_da = 0.0;
+	theta_e_enc = 0.0;
 }
 
 static void _get_theta_da(double *theta_da)
@@ -176,9 +186,21 @@ void task_cc_callback(void *arg)
 
 
 	// -------------------
-	// Update theta_da
+	// Update theta_e from encoder
 	// -------------------
-	_get_theta_da(&theta_da);
+	_get_theta_da(&theta_e_enc);
+
+
+	// -------------------
+	// Pick theta_e source for rest of system
+	// -------------------
+	double theta_e = 0.0;
+	if (theta_src_use_encoder) {
+		theta_e = theta_e_enc;
+	} else {
+		theta_e = theta_e_hat;
+	}
+
 
 
 	// ------------------------------
@@ -186,7 +208,7 @@ void task_cc_callback(void *arg)
 	// ------------------------------
 	double omega_e_avg;
 	task_mo_get_omega_e(&omega_e_avg);
-
+	// TODO: update this to use theta_e_hat...
 
 	// ----------------------
 	// Get current values
@@ -198,9 +220,10 @@ void task_cc_callback(void *arg)
 	// ---------------------
 	// Convert ABC to DQ
 	// ---------------------
-	double Idq0[3];
-	transform_dqz(TRANS_DQZ_C_INVARIANT_POWER,
-					theta_da, Iabc, Idq0);
+	double Ixyz[3];  // alpha beta gamma currents
+	double Idq0[3]; // d q 0 currents
+	transform_clarke(TRANS_DQZ_C_INVARIANT_POWER, Iabc, Ixyz);
+	transform_park(theta_e, Ixyz, Idq0);
 
 
 	// -----------------------------
@@ -243,7 +266,7 @@ void task_cc_callback(void *arg)
 	Vdq0[1] = Vq_star;
 	Vdq0[2] = 0.0;
 	transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER,
-							theta_da, Vabc_star, Vdq0);
+			theta_e, Vabc_star, Vdq0);
 
 
 	// ------------------------------------
@@ -274,6 +297,53 @@ void task_cc_callback(void *arg)
 	LOG_Iq_star = Iq_star;
 	LOG_Id = Id;
 	LOG_Iq = Iq;
+
+
+
+	// -------------------
+	// Self-sensing stuff:
+	// -------------------
+
+	// Back EMF filter thing
+	co_update(Idq0, Vdq0, omega_e_avg);
+	double Id_fund_hat_next, Iq_fund_hat_next;
+	co_get_Idq_hat(&Id_fund_hat_next, &Iq_fund_hat_next);
+
+	LOG_Id_hat_next = Id_fund_hat_next;
+	LOG_Iq_hat_next = Iq_fund_hat_next;
+
+	// Pull out Esal (sync ref frame)
+	double Esal_d_hat, Esal_q_hat;
+	co_get_Esal_hat(&Esal_d_hat, &Esal_q_hat);
+
+	// TODO: show that Esal on q is there, not d
+	// TODO: Esal_q should be around (lambda_pm * omega_e)
+
+	// Convert Esal to alpha-beta ref frame
+	// (NOTE: this is hacking the transform_park(...) function,
+	//        since I didn't have an inverse one. Just rotate by -theta)
+	double Esal_dq0[3];
+	double Esal_xyz[3];
+	Esal_dq0[0] = Esal_d_hat;
+	Esal_dq0[1] = Esal_q_hat;
+	Esal_dq0[2] = 0.0;
+	transform_park(-theta_e, Esal_dq0, Esal_xyz);
+	double Esal_alpha = Esal_xyz[0];
+	double Esal_beta  = Esal_xyz[1];
+
+	LOG_Esal_d_hat = Esal_alpha;
+	LOG_Esal_q_hat = Esal_beta;
+
+	// TODO: take arctan of Esal and see if that is about theta_e
+	// Should work downish to 2-3Hz
+	theta_e_hat = -atan2(Esal_alpha, Esal_beta);
+	theta_e_hat += PI;
+
+	LOG_theta_e_hat = theta_e_hat;
+	LOG_theta_e_enc = theta_e_enc;
+
+	dac_set_output(0, theta_e_enc, 0.0, PI2);
+	dac_set_output(1, theta_e_hat, 0.0, PI2);
 }
 
 void task_cc_clear(void)
@@ -301,6 +371,11 @@ void task_cc_set_Iq_star(double value) {
 
 void task_cc_set_Id_star(double value) {
 	Id_star = value;
+}
+
+void task_cc_set_theta_src(uint8_t use_encoder)
+{
+	theta_src_use_encoder = use_encoder;
 }
 
 #endif // APP_BETA_LABS

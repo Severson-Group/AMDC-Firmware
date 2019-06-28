@@ -3,10 +3,10 @@
 #include "mc.h"
 
 // Tuning for motion controller with Ts = 0.00025
-// Bandwidth is tuned to 20 Hz
-#define Ba	(0.7171488891319134)
-#define Ksa	(7.388907366318899)
-#define Kisa	(6.860110384268592)
+// Bandwidth is tuned to 5 Hz
+#define Ba	(0.18121428301337322)
+#define Ksa	(0.4668134916780646)
+#define Kisa	(0.10834187149852403)
 
 // Static variables for controller
 static double delta_theta_m_error_acc;

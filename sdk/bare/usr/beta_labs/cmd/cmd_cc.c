@@ -10,12 +10,13 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(4)
+#define NUM_HELP_ENTRIES	(5)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"init", "Start current controller"},
 		{"deinit", "Stop current controller"},
 		{"bw <mFreq>", "Set controller bandwidth"},
-		{"offset <enc_pulses>", "Set DQ frame offset"}
+		{"offset <enc_pulses>", "Set DQ frame offset"},
+		{"theta_src <enc|est>", "Set theta source between encoder and estimation"}
 };
 
 void cmd_cc_register(void)
@@ -86,6 +87,22 @@ int cmd_cc(int argc, char **argv)
 		int32_t offset = atoi(argv[2]);
 
 		task_cc_set_dq_offset(offset);
+		return SUCCESS;
+	}
+
+	// Handle 'theta_src' sub-command
+	if (argc == 3 && strcmp("theta_src", argv[1]) == 0) {
+		uint8_t use_encoder = 1;
+		if (strcmp("enc", argv[2]) == 0) {
+			use_encoder = 1;
+		} else if (strcmp("est", argv[2]) == 0) {
+			use_encoder = 0;
+		} else {
+			return INVALID_ARGUMENTS;
+		}
+
+		task_cc_set_theta_src(use_encoder);
+
 		return SUCCESS;
 	}
 
