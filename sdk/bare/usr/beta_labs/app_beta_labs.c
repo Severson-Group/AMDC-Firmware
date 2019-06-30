@@ -6,6 +6,7 @@
 #include "cmd/cmd_dtc.h"
 #include "cmd/cmd_cc.h"
 #include "cmd/cmd_mc.h"
+#include "cmd/cmd_bemfo.h"
 
 void app_beta_labs_init(void)
 {
@@ -15,6 +16,7 @@ void app_beta_labs_init(void)
 	cmd_dtc_register();
 	cmd_cc_register();
 	cmd_mc_register();
+	cmd_bemfo_register();
 }
 
 #endif // APP_BETA_LABS

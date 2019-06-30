@@ -4,6 +4,7 @@
 #include "inverter.h"
 #include "task_mo.h"
 #include "co.h"
+#include "bemfo.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
 #include "../../sys/debug.h"
@@ -35,10 +36,12 @@ double LOG_Iq_star = 0.0;
 double LOG_Vd_star = 0.0;
 double LOG_Vq_star = 0.0;
 double LOG_omega_e_avg  = 0.0;
+
 double LOG_Id_hat_next = 0.0;
 double LOG_Iq_hat_next = 0.0;
 double LOG_theta_e_enc = 0.0;
 double LOG_theta_e_hat = 0.0;
+double LOG_omega_m_hat = 0.0;
 double LOG_Esal_d_hat = 0.0;
 double LOG_Esal_q_hat = 0.0;
 
@@ -66,20 +69,8 @@ inj_ctx_t cc_inj_ctx_Iq_star;
 inj_ctx_t cc_inj_ctx_Vd_star;
 inj_ctx_t cc_inj_ctx_Vq_star;
 
-inline static int saturate(double min, double max, double *value) {
-	if (*value < min) {
-		// Lower bound saturation
-		*value = min;
-		return -1;
-	} else if (*value > max) {
-		// Upper bound saturation
-		*value = max;
-		return 1;
-	} else {
-		// No saturation
-		return 0;
-	}
-}
+// Forward declarations
+inline static int saturate(double min, double max, double *value);
 
 static task_control_block_t tcb;
 
@@ -87,6 +78,17 @@ static task_control_block_t tcb;
 uint8_t task_cc_is_inited(void)
 {
 	return scheduler_tcb_is_registered(&tcb);
+}
+
+static void _clear_state(void)
+{
+	// Clear controller static variables
+	Id_err_acc = 0.0;
+	Iq_err_acc = 0.0;
+	theta_e_enc = 0.0;
+	theta_e_hat = 0.0;
+
+	bemfo_init();
 }
 
 void task_cc_init(void)
@@ -107,10 +109,8 @@ void task_cc_init(void)
 	injection_ctx_register(&cc_inj_ctx_Vd_star);
 	injection_ctx_register(&cc_inj_ctx_Vq_star);
 
-	// Clear controller static variables
-	Id_err_acc = 0.0;
-	Iq_err_acc = 0.0;
-	theta_e_enc = 0.0;
+	// Clear controller state
+	_clear_state();
 }
 
 void task_cc_deinit(void)
@@ -130,13 +130,11 @@ void task_cc_deinit(void)
 	injection_ctx_clear(&cc_inj_ctx_Vd_star);
 	injection_ctx_clear(&cc_inj_ctx_Vq_star);
 
-	// Clear controller static variables
-	Id_err_acc = 0.0;
-	Iq_err_acc = 0.0;
-	theta_e_enc = 0.0;
+	// Clear controller state
+	_clear_state();
 }
 
-static void _get_theta_da(double *theta_da)
+double task_cc_get_theta_e_enc(void)
 {
 	// Get raw encoder position
 	uint32_t position;
@@ -149,16 +147,20 @@ static void _get_theta_da(double *theta_da)
 		position -= ENCODER_PULSES_PER_REV;
 	}
 
+	double theta_e_enc = 0.0;
+
 	// Convert to radians
-	*theta_da = (double)PI2 * ((double)position / (double)ENCODER_PULSES_PER_REV);
+	theta_e_enc = (double)PI2 * ((double)position / (double)ENCODER_PULSES_PER_REV);
 
 	// Multiple by pole pairs to convert mechanical to electrical degrees
-	*theta_da *= POLE_PAIRS;
+	theta_e_enc *= POLE_PAIRS;
 
 	// Mod by 2 pi
-	while (*theta_da > PI2) {
-		*theta_da -= PI2;
+	while (theta_e_enc > PI2) {
+		theta_e_enc -= PI2;
 	}
+
+	return theta_e_enc;
 }
 
 static void _get_Iabc(double *Iabc)
@@ -188,7 +190,7 @@ void task_cc_callback(void *arg)
 	// -------------------
 	// Update theta_e from encoder
 	// -------------------
-	_get_theta_da(&theta_e_enc);
+	theta_e_enc = task_cc_get_theta_e_enc();
 
 
 	// -------------------
@@ -202,13 +204,13 @@ void task_cc_callback(void *arg)
 	}
 
 
-
 	// ------------------------------
 	// Update omega_e_avg in rads/sec
 	// ------------------------------
 	double omega_e_avg;
 	task_mo_get_omega_e(&omega_e_avg);
 	// TODO: update this to use theta_e_hat...
+
 
 	// ----------------------
 	// Get current values
@@ -229,7 +231,6 @@ void task_cc_callback(void *arg)
 	// -----------------------------
 	// Run through block diagram of CVCR to get Vdq_star
 	// -----------------------------
-
 	double Id = Idq0[0];
 	double Iq = Idq0[1];
 
@@ -259,7 +260,6 @@ void task_cc_callback(void *arg)
 	// --------------------------------
 	// Perform inverse DQ transform of Vdq_star
 	// --------------------------------
-
 	double Vabc_star[3];
 	double Vdq0[3];
 	Vdq0[0] = Vd_star;
@@ -272,7 +272,6 @@ void task_cc_callback(void *arg)
 	// ------------------------------------
 	// Saturate Vabc_star to inverter bus voltage
 	// ------------------------------------
-
 	inverter_saturate_to_Vdc(&Vabc_star[0]);
 	inverter_saturate_to_Vdc(&Vabc_star[1]);
 	inverter_saturate_to_Vdc(&Vabc_star[2]);
@@ -281,7 +280,6 @@ void task_cc_callback(void *arg)
 	// --------------------------------------
 	// Write voltages out to PWM hardware
 	// --------------------------------------
-
 	inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, Vabc_star[0], Iabc[0]);
 	inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, Vabc_star[1], Iabc[1]);
 	inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, Vabc_star[2], Iabc[2]);
@@ -297,7 +295,6 @@ void task_cc_callback(void *arg)
 	LOG_Iq_star = Iq_star;
 	LOG_Id = Id;
 	LOG_Iq = Iq;
-
 
 
 	// -------------------
@@ -336,14 +333,19 @@ void task_cc_callback(void *arg)
 
 	// TODO: take arctan of Esal and see if that is about theta_e
 	// Should work downish to 2-3Hz
-	theta_e_hat = -atan2(Esal_alpha, Esal_beta);
-	theta_e_hat += PI;
+	//theta_e_hat = -atan2(Esal_alpha, Esal_beta);
+	//theta_e_hat += PI;
 
-	LOG_theta_e_hat = theta_e_hat;
-	LOG_theta_e_enc = theta_e_enc;
+	// Back EMF Observer
+	bemfo_update(Esal_alpha, Esal_beta, 0.0, theta_e_enc);
+	theta_e_hat = bemfo_get_theta_e_hat();
+	LOG_omega_m_hat = bemfo_get_omega_m_hat();
 
+	// Update logging outputs / DAC
 	dac_set_output(0, theta_e_enc, 0.0, PI2);
 	dac_set_output(1, theta_e_hat, 0.0, PI2);
+	LOG_theta_e_hat = theta_e_hat;
+	LOG_theta_e_enc = theta_e_enc;
 }
 
 void task_cc_clear(void)
@@ -376,6 +378,22 @@ void task_cc_set_Id_star(double value) {
 void task_cc_set_theta_src(uint8_t use_encoder)
 {
 	theta_src_use_encoder = use_encoder;
+}
+
+inline static int saturate(double min, double max, double *value)
+{
+	if (*value < min) {
+		// Lower bound saturation
+		*value = min;
+		return -1;
+	} else if (*value > max) {
+		// Upper bound saturation
+		*value = max;
+		return 1;
+	} else {
+		// No saturation
+		return 0;
+	}
 }
 
 #endif // APP_BETA_LABS

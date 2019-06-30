@@ -33,6 +33,8 @@ void task_cc_callback(void *arg);
 
 uint8_t task_cc_is_inited(void);
 
+double task_cc_get_theta_e_enc(void);
+
 void task_cc_clear(void);
 void task_cc_set_dq_offset(int32_t offset);
 void task_cc_set_bw(double bw);
