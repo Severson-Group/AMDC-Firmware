@@ -6,6 +6,7 @@
 #include "msf.h"
 #include "mc.h"
 #include "mcff.h"
+#include "bemfo.h"
 #include "../../sys/scheduler.h"
 #include "../../sys/injection.h"
 #include "../../drv/encoder.h"
@@ -29,6 +30,7 @@ inj_ctx_t task_mc_inj_Td_star;
 // Command for controller
 static double omega_m_star = 0.0;
 static uint8_t mcff_enabled = 0;
+static uint8_t omega_m_src_use_encoder = 1;
 
 static task_control_block_t tcb;
 
@@ -67,7 +69,7 @@ void task_mc_init(void)
 	omega_m_star = 0.0;
 
 	// Initialize motion state filter
-	msf_init(Ts);
+	msf_init();
 }
 
 void task_mc_deinit(void)
@@ -98,8 +100,13 @@ void task_mc_callback(void *arg) {
 	injection_inj(&omega_m_star, &task_mc_inj_omega_m_star, Ts);
 
 	// Get speed from encoder
-	double omega_m;
-	task_mo_get_omega_m(&omega_m);
+	double omega_m = 0.0;
+	if (omega_m_src_use_encoder) {
+		omega_m = task_mo_get_omega_m();
+	} else {
+		omega_m = bemfo_get_omega_m_hat();
+	}
+
 	double delta_theta_m = omega_m * Ts;
 
 	// Motion State Filter
@@ -154,9 +161,14 @@ void task_mc_set_omega_m_star(double omega_m)
 	omega_m_star = omega_m;
 }
 
-void task_mc_enabled_cff(uint32_t enabled)
+void task_mc_set_cff_enabled(uint32_t enabled)
 {
 	mcff_enabled = enabled;
+}
+
+void task_mc_set_omega_m_src(uint8_t use_encoder)
+{
+	omega_m_src_use_encoder = use_encoder;
 }
 
 inline static int saturate(double min, double max, double *value) {

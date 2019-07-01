@@ -5,14 +5,14 @@
 
 // Current observer gains assuming Ts = 5e-05
 // Tuned to 10 Hz
-#define Kpo_d		(0.0008127575979211963)
-#define Kio_dTs		(0.0008155323839119321)
-#define Kpo_q		(0.0008706077043813599)
-#define Kio_qTs		(0.0008155323839119323)
-#define A_d			(0.4991479447697602)
-#define A_q			(0.5163317748186554)
-#define B_d			(1.9263540585778451)
-#define B_q			(1.8602624045436327)
+#define Kpo_d	(0.0008127575979211963)
+#define Kio_dTs	(0.0008155323839119321)
+#define Kpo_q	(0.0008706077043813599)
+#define Kio_qTs	(0.0008155323839119323)
+#define A_d		(0.4991479447697602)
+#define A_q		(0.5163317748186554)
+#define B_d		(1.9263540585778451)
+#define B_q		(1.8602624045436327)
 
 typedef struct complex_t {
 	double d;
@@ -58,23 +58,23 @@ void co_update(double *Idq0, double *Vdq0, double omega_e)
 
 static void _update_from_err(complex_t Idq_err, complex_t Idq, complex_t Vdq, double omega_e)
 {
-	//Saving Last States
+	// Saving Last States
 	Idq_err_acc_last.d = Idq_err_acc.d;
 	Idq_err_acc_last.q = Idq_err_acc.q;
 	Idq_hat_last.d = Idq_hat.d;
 	Idq_hat_last.q = Idq_hat.q;
 
-	//Error and Accumulators
+	// Error and Accumulators
 	Idq_err_acc.d = Idq_err_acc.d + Idq_err.d;
 	Idq_err_acc.q = Idq_err_acc.q + Idq_err.q;
 
-	//Q-axis
+	// Q-axis
 	Vq_sfb = Kpo_q * Idq_err.q + Kio_qTs * Idq_err_acc.q;
 	Vq_tot = Vq_sfb - (Ld_HAT * Idq.d) * omega_e + Vdq.q;
 	Iq_1 = B_q *  Vq_tot;
 	Iq_hat = Iq_1 + Idq_hat_last.q * A_q;
 
-	//Q-axis
+	// D-axis
 	Vd_sfb = Kpo_d * Idq_err.d + Kio_dTs * Idq_err_acc.d;
 	Vd_tot = Vd_sfb + Lq_HAT * Idq.q * omega_e + Vdq.d;
 	Id_1 = B_d *  Vd_tot;

@@ -9,7 +9,7 @@
 void task_mo_init(void);
 void task_mo_callback(void *arg);
 
-void task_mo_get_omega_e(double *omega_e);
-void task_mo_get_omega_m(double *omega_m);
+double task_mo_get_omega_e(void);
+double task_mo_get_omega_m(void);
 
 #endif // TASK_MO_H

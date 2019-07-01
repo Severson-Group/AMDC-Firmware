@@ -10,12 +10,13 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(4)
+#define NUM_HELP_ENTRIES	(5)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 		{"init", "Start motion controller"},
 		{"deinit", "Stop motion controller"},
 		{"rpm <rpms>", "Set commanded speed"},
-		{"cff <on|off>", "Enable / disable command feed-forward"}
+		{"cff <on|off>", "Enable / disable command feed-forward"},
+		{"omega_m_src <enc|est>", "Set omega_m source between encoder and estimation"}
 };
 
 void cmd_mc_register(void)
@@ -65,6 +66,23 @@ int cmd_mc(int argc, char **argv) {
 	}
 
 	// Handle 'cff ...' sub-command
+	if (argc == 3 && strcmp("omega_m_src", argv[1]) == 0) {
+		// Pull out est/enc argument
+		uint8_t use_encoder;
+		if (strcmp("enc", argv[2]) == 0) {
+			use_encoder = 1;
+		} else if (strcmp("est", argv[2]) == 0) {
+			use_encoder = 0;
+		} else {
+			return INVALID_ARGUMENTS;
+		}
+
+		task_mc_set_omega_m_src(use_encoder);
+
+		return SUCCESS;
+	}
+
+	// Handle 'cff ...' sub-command
 	if (argc == 3 && strcmp("cff", argv[1]) == 0) {
 		// Pull out onoff argument
 		uint8_t enabled;
@@ -77,7 +95,7 @@ int cmd_mc(int argc, char **argv) {
 			return INVALID_ARGUMENTS;
 		}
 
-		task_mc_enabled_cff(enabled);
+		task_mc_set_cff_enabled(enabled);
 
 		return SUCCESS;
 	}

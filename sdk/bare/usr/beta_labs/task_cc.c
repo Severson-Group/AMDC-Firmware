@@ -35,15 +35,11 @@ double LOG_Id_star = 0.0;
 double LOG_Iq_star = 0.0;
 double LOG_Vd_star = 0.0;
 double LOG_Vq_star = 0.0;
-double LOG_omega_e_avg  = 0.0;
 
-double LOG_Id_hat_next = 0.0;
-double LOG_Iq_hat_next = 0.0;
 double LOG_theta_e_enc = 0.0;
 double LOG_theta_e_hat = 0.0;
 double LOG_omega_m_hat = 0.0;
-double LOG_Esal_d_hat = 0.0;
-double LOG_Esal_q_hat = 0.0;
+double LOG_omega_m_enc = 0.0;
 
 // Commands for Id and Iq -- Idq*
 static double Id_star = 0.0;
@@ -54,13 +50,12 @@ static int32_t dq_offset = 9980;
 // Note: user should override this initial value
 static double controller_bw = 1.0;
 
-static uint8_t theta_src_use_encoder = 1;
+static uint8_t theta_e_src_use_encoder = 1;
+static uint8_t omega_e_src_use_encoder = 1;
 
 // Static variables for controller
 static double Id_err_acc;
 static double Iq_err_acc;
-static double theta_e_enc;
-static double theta_e_hat;
 
 // Injection contexts for
 // current controller
@@ -85,8 +80,6 @@ static void _clear_state(void)
 	// Clear controller static variables
 	Id_err_acc = 0.0;
 	Iq_err_acc = 0.0;
-	theta_e_enc = 0.0;
-	theta_e_hat = 0.0;
 
 	bemfo_init();
 }
@@ -188,28 +181,32 @@ void task_cc_callback(void *arg)
 
 
 	// -------------------
-	// Update theta_e from encoder
-	// -------------------
-	theta_e_enc = task_cc_get_theta_e_enc();
-
-
-	// -------------------
-	// Pick theta_e source for rest of system
+	// Update theta_e using either encoder or estimation
 	// -------------------
 	double theta_e = 0.0;
-	if (theta_src_use_encoder) {
-		theta_e = theta_e_enc;
+	if (theta_e_src_use_encoder) {
+		theta_e = task_cc_get_theta_e_enc();
 	} else {
-		theta_e = theta_e_hat;
+		theta_e = bemfo_get_theta_e_hat();
 	}
+
+	LOG_theta_e_enc = task_cc_get_theta_e_enc();
+	LOG_theta_e_hat = bemfo_get_theta_e_hat();
+
+	LOG_omega_m_enc = task_mo_get_omega_m();
+	LOG_omega_m_hat = bemfo_get_omega_m_hat();
+
 
 
 	// ------------------------------
 	// Update omega_e_avg in rads/sec
 	// ------------------------------
-	double omega_e_avg;
-	task_mo_get_omega_e(&omega_e_avg);
-	// TODO: update this to use theta_e_hat...
+	double omega_e_avg = 0.0;
+	if (omega_e_src_use_encoder) {
+		omega_e_avg = task_mo_get_omega_e();
+	} else {
+		omega_e_avg = bemfo_get_omega_e_hat();
+	}
 
 
 	// ----------------------
@@ -288,7 +285,6 @@ void task_cc_callback(void *arg)
 	// -------------------
 	// Store LOG variables
 	// -------------------
-	LOG_omega_e_avg = omega_e_avg;
 	LOG_Vd_star = Vd_star;
 	LOG_Vq_star = Vq_star;
 	LOG_Id_star = Id_star;
@@ -303,11 +299,6 @@ void task_cc_callback(void *arg)
 
 	// Back EMF filter thing
 	co_update(Idq0, Vdq0, omega_e_avg);
-	double Id_fund_hat_next, Iq_fund_hat_next;
-	co_get_Idq_hat(&Id_fund_hat_next, &Iq_fund_hat_next);
-
-	LOG_Id_hat_next = Id_fund_hat_next;
-	LOG_Iq_hat_next = Iq_fund_hat_next;
 
 	// Pull out Esal (sync ref frame)
 	double Esal_d_hat, Esal_q_hat;
@@ -328,24 +319,8 @@ void task_cc_callback(void *arg)
 	double Esal_alpha = Esal_xyz[0];
 	double Esal_beta  = Esal_xyz[1];
 
-	LOG_Esal_d_hat = Esal_alpha;
-	LOG_Esal_q_hat = Esal_beta;
-
-	// TODO: take arctan of Esal and see if that is about theta_e
-	// Should work downish to 2-3Hz
-	//theta_e_hat = -atan2(Esal_alpha, Esal_beta);
-	//theta_e_hat += PI;
-
 	// Back EMF Observer
-	bemfo_update(Esal_alpha, Esal_beta, 0.0, theta_e_enc);
-	theta_e_hat = bemfo_get_theta_e_hat();
-	LOG_omega_m_hat = bemfo_get_omega_m_hat();
-
-	// Update logging outputs / DAC
-	dac_set_output(0, theta_e_enc, 0.0, PI2);
-	dac_set_output(1, theta_e_hat, 0.0, PI2);
-	LOG_theta_e_hat = theta_e_hat;
-	LOG_theta_e_enc = theta_e_enc;
+	bemfo_update(Esal_alpha, Esal_beta, 0.0);
 }
 
 void task_cc_clear(void)
@@ -375,9 +350,14 @@ void task_cc_set_Id_star(double value) {
 	Id_star = value;
 }
 
-void task_cc_set_theta_src(uint8_t use_encoder)
+void task_cc_set_theta_e_src(uint8_t use_encoder)
 {
-	theta_src_use_encoder = use_encoder;
+	theta_e_src_use_encoder = use_encoder;
+}
+
+void task_cc_set_omega_e_src(uint8_t use_encoder)
+{
+	omega_e_src_use_encoder = use_encoder;
 }
 
 inline static int saturate(double min, double max, double *value)

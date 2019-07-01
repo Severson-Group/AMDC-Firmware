@@ -50,14 +50,14 @@ void task_mo_callback(void *arg)
 	dac_set_output(0, p, 0.0, 1.0);
 }
 
-void task_mo_get_omega_e(double *omega_e)
+double task_mo_get_omega_e(void)
 {
-	*omega_e = task_mo_omega_m * POLE_PAIRS;
+	return task_mo_omega_m * POLE_PAIRS;
 }
 
-void task_mo_get_omega_m(double *omega_m)
+double task_mo_get_omega_m(void)
 {
-	*omega_m = task_mo_omega_m;
+	return task_mo_omega_m;
 }
 
 //Tuning for LPF based on Ts = 0.0001

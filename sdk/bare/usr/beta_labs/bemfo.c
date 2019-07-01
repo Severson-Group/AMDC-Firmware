@@ -6,12 +6,12 @@
 #include <math.h>
 
 // Tuning for Back EMF Observer with Ts = 1/20000 sec
-// Bandwidth is tuned to 100 Hz
+// Bandwidth is tuned to 20 Hz
 #define Ts	(5e-05)
 #define Jp	(0.00636)
-#define Bo	(3.585744445659567)
-#define Ko	(184.72268415797248)
-#define Kio	(857.5137980331504)
+#define Bo	(0.7253749394602439)
+#define Ko	(7.474395723324704)
+#define Kio	(6.938868479366282)
 
 typedef struct complex_t {
 	double d;
@@ -24,7 +24,6 @@ static inline double cross_product(complex_t *v1, complex_t *v2);
 
 static double theta_m_error_acc;
 static double Tem_hat;
-static double TL_hat;
 static double alpha_hat;
 
 static double omega_m_hat_l;
@@ -42,7 +41,6 @@ double LOG_Esal_vec_d = 0.0;
 double LOG_Esal_vec_q = 0.0;
 double LOG_unit_vec_d = 0.0;
 double LOG_unit_vec_q = 0.0;
-double LOG_theta_e_err = 0.0;
 
 complex_t unit_vec;
 complex_t Esal_vec;
@@ -64,11 +62,11 @@ void bemfo_start(void)
 	omega_m_hat_l = 0.0;
 	omega_m_hat_r = 0.0;
 
-	// Preload theta_m
+	// Pre-load theta_m_hat
 	theta_m_hat = task_cc_get_theta_e_enc() / POLE_PAIRS;
 }
 
-void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat, double theta_e_enc)
+void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat)
 {
 	// -------------------------
 	// Save 'last' values
@@ -78,18 +76,12 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat, double t
 	theta_m_hat_last = theta_m_hat;
 	theta_e_hat_last = theta_e_hat;
 
-
 	// -------------------------
 	// Heterodyning Demodulation
 	// -------------------------
 
 	theta_e_hat = theta_m_hat_last * POLE_PAIRS;
 	theta_e_hat = fmod(theta_e_hat, PI2);
-	//theta_e_hat = theta_e_enc;
-
-	// Wrap theta_e_hat
-//	while (theta_e_hat > PI2) theta_e_hat -= PI2;
-//	while (theta_e_hat < 0.0) theta_e_hat += PI2;
 
 	// NOTE: If theta_e_hat comes from encoder, then the unit vector and Esal should be in-phase.
 	// Because of our system setup, we must phase shift theta_e_hat by -90 degrees.
@@ -109,35 +101,13 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat, double t
 
 	// Generate error term (in mechanical degrees)
 	double theta_e_error = cross_product(&Esal_vec, &unit_vec);
-
-//	double theta_e_error = theta_e_enc - theta_e_hat;
-
-
-
-
-
-
-//	if (theta_e_error >  PI) theta_e_error -= PI2;
-//	if (theta_e_error < -PI) theta_e_error += PI2;
-
 	double theta_m_error = theta_e_error / POLE_PAIRS;
-
-	LOG_theta_e_err = theta_e_error;
 
 	theta_m_error_acc += theta_m_error;
 
 	// -------------------------
 	// Saliency Tracking Observer
 	// -------------------------
-
-
-//	theta_m_error = (POLE_PAIRS * theta_e_enc) - theta_m_hat;
-//	theta_m_error = fmod(theta_m_error, PI2);
-//
-//	if (theta_m_error >  PI) theta_m_error -= PI2;
-//	if (theta_m_error < -PI) theta_m_error += PI2;
-//
-//	theta_m_error_acc = theta_m_error_acc + theta_m_error;
 
 	Tem_hat = theta_m_error_acc * Kio * Ts + theta_m_error * Ko + 0;
 
@@ -150,71 +120,16 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat, double t
 	theta_m_hat = theta_m_hat + delta_theta_m_hat;
 
 	theta_m_hat = fmod(theta_m_hat, PI2);
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//	TL_hat = (theta_m_error_acc * Kio * Ts) + (theta_m_error * Ko);
-//	Tem_hat = TL_hat + Tcff_hat;
-//
-//	alpha_hat = Tem_hat * Ts / Jp; // note: alpha has Ts multiplied in
-//
-//	omega_m_hat_l = omega_m_hat_l_next;
-//	omega_m_hat_l_next += alpha_hat;
-//
-//	omega_m_hat_r = omega_m_hat_l + (theta_m_error * Bo / Jp);
-//	delta_theta_m_hat = (omega_m_hat_r + omega_m_hat_r_last) * Ts / 2.0;
-//	theta_m_hat = theta_m_hat_last + delta_theta_m_hat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// Wrap theta_m
-//	while (theta_m_hat > PI2) theta_m_hat -= PI2;
-//	while (theta_m_hat < 0.0) theta_m_hat += PI2;
-
-	// TODO: check if working:
-	// feed encoder theta_e into unit vector generation
-	// check that unit_vec.dq is in phase with Esal_vec.dq
-
-	// TODO: give "fake" error to this module ~5 degrees
-	// should see that same error on output
-
-	// TODO: compared theta_r_hat with theta_e_enc
-	// should be the "same"ish
-
-	// TODO: close the MC loop with est, but keep ref frame trans using encoder
-
-	// TODO: close loop with all est
 }
 
 double bemfo_get_omega_m_hat(void)
 {
 	return omega_m_hat_r_last;
+}
+
+double bemfo_get_omega_e_hat(void)
+{
+	return omega_m_hat_r_last * POLE_PAIRS;
 }
 
 double bemfo_get_theta_e_hat(void)

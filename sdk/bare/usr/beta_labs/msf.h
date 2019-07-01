@@ -1,7 +1,7 @@
 #ifndef MSF_H
 #define MSF_H
 
-void msf_init();
+void msf_init(void);
 
 double msf_update(double omega_m_star);
 

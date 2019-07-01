@@ -42,6 +42,7 @@ void task_cc_set_bw(double bw);
 void task_cc_set_Iq_star(double value);
 void task_cc_set_Id_star(double value);
 
-void task_cc_set_theta_src(uint8_t use_encoder);
+void task_cc_set_theta_e_src(uint8_t use_encoder);
+void task_cc_set_omega_e_src(uint8_t use_encoder);
 
 #endif // TASK_CC_H

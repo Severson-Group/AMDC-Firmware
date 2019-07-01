@@ -13,6 +13,7 @@ void task_mc_deinit(void);
 void task_mc_callback(void *arg);
 
 void task_mc_set_omega_m_star(double omega_m);
-void task_mc_enabled_cff(uint32_t enabled);
+void task_mc_set_cff_enabled(uint32_t enabled);
+void task_mc_set_omega_m_src(uint8_t use_encoder);
 
 #endif // TASK_MC_H
