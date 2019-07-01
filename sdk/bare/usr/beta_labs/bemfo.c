@@ -6,12 +6,12 @@
 #include <math.h>
 
 // Tuning for Back EMF Observer with Ts = 1/20000 sec
-// Bandwidth is tuned to 150 Hz
+// Bandwidth is tuned to 100 Hz
 #define Ts	(5e-05)
 #define Jp	(0.00636)
-#define Bo	(5.340531115146804)
-#define Ko	(412.6561969071234)
-#define Kio	(2873.5941356473886)
+#define Bo	(3.585744445659567)
+#define Ko	(184.72268415797248)
+#define Kio	(857.5137980331504)
 
 typedef struct complex_t {
 	double d;
@@ -94,25 +94,31 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat, double t
 	// NOTE: If theta_e_hat comes from encoder, then the unit vector and Esal should be in-phase.
 	// Because of our system setup, we must phase shift theta_e_hat by -90 degrees.
 	// (This is because of the way we define our DQ transformation.)
-//	unit_vec.d = sign(omega_m_hat_r_last) * cos(theta_e_hat - (PI / 2.0));
-//	unit_vec.q = sign(omega_m_hat_r_last) * sin(theta_e_hat - (PI / 2.0));
-//
-//	// Normalize Esal vector to -1..1 in magnitude
-//	double Esal_mag = sqrt((Esal_alpha*Esal_alpha) + (Esal_beta*Esal_beta));
-//	Esal_vec.d = Esal_alpha / Esal_mag;
-//	Esal_vec.q = Esal_beta  / Esal_mag;
-//
-//	LOG_Esal_vec_d = Esal_vec.d;
-//	LOG_Esal_vec_q = Esal_vec.q;
-//	LOG_unit_vec_d = unit_vec.d;
-//	LOG_unit_vec_q = unit_vec.q;
-//
-//	// Generate error term (in mechanical degrees)
-//	double theta_e_error = cross_product(&Esal_vec, &unit_vec);
+	unit_vec.d = sign(omega_m_hat_r_last) * cos(theta_e_hat + (PI / 2.0));
+	unit_vec.q = sign(omega_m_hat_r_last) * sin(theta_e_hat + (PI / 2.0));
 
-	double theta_e_error = theta_e_enc - theta_e_hat;
-	if (theta_e_error >  PI) theta_e_error -= PI2;
-	if (theta_e_error < -PI) theta_e_error += PI2;
+	// Normalize Esal vector to -1..1 in magnitude
+	double Esal_mag = sqrt((Esal_alpha*Esal_alpha) + (Esal_beta*Esal_beta));
+	Esal_vec.d = Esal_alpha / Esal_mag;
+	Esal_vec.q = Esal_beta  / Esal_mag;
+
+	LOG_Esal_vec_d = Esal_vec.d;
+	LOG_Esal_vec_q = Esal_vec.q;
+	LOG_unit_vec_d = unit_vec.d;
+	LOG_unit_vec_q = unit_vec.q;
+
+	// Generate error term (in mechanical degrees)
+	double theta_e_error = cross_product(&Esal_vec, &unit_vec);
+
+//	double theta_e_error = theta_e_enc - theta_e_hat;
+
+
+
+
+
+
+//	if (theta_e_error >  PI) theta_e_error -= PI2;
+//	if (theta_e_error < -PI) theta_e_error += PI2;
 
 	double theta_m_error = theta_e_error / POLE_PAIRS;
 
@@ -224,7 +230,7 @@ static inline double sign(double x)
 
 static inline double cross_product(complex_t *v1, complex_t *v2)
 {
-	return (v1->d * v2->q) - (v1->q * v2->d);
+	return (v1->q * v2->d) - (v1->d * v2->q);
 }
 
 #endif // APP_BETA_LABS
