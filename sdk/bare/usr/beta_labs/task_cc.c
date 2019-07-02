@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+// Controller tuning
 #define Wb		(controller_bw * PI2) // rad/s
 #define Ts		(1.0 / TASK_CC_UPDATES_PER_SEC)
 #define Kp_d	(Wb * Ld_HAT)
@@ -35,7 +36,6 @@ double LOG_Id_star = 0.0;
 double LOG_Iq_star = 0.0;
 double LOG_Vd_star = 0.0;
 double LOG_Vq_star = 0.0;
-
 double LOG_theta_e_enc = 0.0;
 double LOG_theta_e_hat = 0.0;
 double LOG_omega_m_hat = 0.0;
@@ -50,6 +50,7 @@ static int32_t dq_offset = 9980;
 // Note: user should override this initial value
 static double controller_bw = 1.0;
 
+// Used to switch controller to use estimated position / speed
 static uint8_t theta_e_src_use_encoder = 1;
 static uint8_t omega_e_src_use_encoder = 1;
 
@@ -57,16 +58,13 @@ static uint8_t omega_e_src_use_encoder = 1;
 static double Id_err_acc;
 static double Iq_err_acc;
 
-// Injection contexts for
-// current controller
+// Injection contexts for current controller
 inj_ctx_t cc_inj_ctx_Id_star;
 inj_ctx_t cc_inj_ctx_Iq_star;
 inj_ctx_t cc_inj_ctx_Vd_star;
 inj_ctx_t cc_inj_ctx_Vq_star;
 
-// Forward declarations
-inline static int saturate(double min, double max, double *value);
-
+// Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
 
 
@@ -356,22 +354,6 @@ void task_cc_set_theta_e_src(uint8_t use_encoder)
 void task_cc_set_omega_e_src(uint8_t use_encoder)
 {
 	omega_e_src_use_encoder = use_encoder;
-}
-
-inline static int saturate(double min, double max, double *value)
-{
-	if (*value < min) {
-		// Lower bound saturation
-		*value = min;
-		return -1;
-	} else if (*value > max) {
-		// Upper bound saturation
-		*value = max;
-		return 1;
-	} else {
-		// No saturation
-		return 0;
-	}
 }
 
 #endif // APP_BETA_LABS
