@@ -294,20 +294,18 @@ void task_cc_callback(void *arg)
 
 
 	// -------------------
-	// Self-sensing stuff:
+	// Self-sensing:
 	// -------------------
 
-	// Back EMF filter thing
+	// Back-EMF State Filter
 	co_update(Idq0, Vdq0, omega_e_avg);
 
 	// Pull out Esal (sync ref frame)
 	double Esal_d_hat, Esal_q_hat;
 	co_get_Esal_hat(&Esal_d_hat, &Esal_q_hat);
 
-	// TODO: show that Esal on q is there, not d
-	// TODO: Esal_q should be around (lambda_pm * omega_e)
-
-	// Convert Esal to alpha-beta ref frame
+	// Convert Esal to stationary ref frame (alpha-beta)
+	//
 	// (NOTE: this is hacking the transform_park(...) function,
 	//        since I didn't have an inverse one. Just rotate by -theta)
 	double Esal_dq0[3];
@@ -319,7 +317,7 @@ void task_cc_callback(void *arg)
 	double Esal_alpha = Esal_xyz[0];
 	double Esal_beta  = Esal_xyz[1];
 
-	// Back EMF Observer
+	// Back-EMF Tracking Position State Filter
 	bemfo_update(Esal_alpha, Esal_beta, 0.0);
 }
 
