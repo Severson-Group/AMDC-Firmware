@@ -29,6 +29,8 @@ sdk/.sdk/
 
 sdk/webtalk/
 sdk/system.hdf_expanded/
+sdk/RemoteSystemsTempFiles/
+
 sdk/amdc_bsp/
 sdk/fsbl/
 
