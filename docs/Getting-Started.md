@@ -84,11 +84,18 @@ The SDK workspace will initially be empty. You need to import the projects from 
 
 SDK will attempt to build the projects you just imported. There will be lots of errors. Fix them as follows.
 
-1. Right-click on the BSP project, e.g. `amdc_bsp`
-2. `Re-generate BSP Sources`
-3. `Yes`
-
-SDK will now successfully compile the new BSP sources, then compile the rest of the projects successfully.
+1. Create BSP project
+    1. `File` > `New...` > `Board Support Package`
+    2. Project name: "amdc_bsp"
+    3. Leave all other settings the same
+    4. `Finish`
+2. Select libraries to include in BSP
+    1. `lwip***`
+    2. `xilffs`
+    3. `OK`
+3. Projects will now build. View status on `Console` tab in SDK view
+4. Wait until all projects are done compiling... Could take a few minutes...
+5. Ensure there are no errors for `amdc_bsp` and your desired application project (i.e. `bare`)
 
 All done! Ready to program AMDC!
 
