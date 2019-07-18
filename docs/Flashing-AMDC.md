@@ -1,4 +1,4 @@
-# Flashing AMDC With New Images
+# Flashing AMDC
 
 During development, JTAG will be the primary interface for programming and debugging the AMDC firmware. Once code is stable, an image can be programed into the AMDC non-volatile memory (NVM). This allows board to boot itself when powered up.
 

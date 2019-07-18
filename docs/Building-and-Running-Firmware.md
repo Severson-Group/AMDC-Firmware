@@ -1,5 +1,5 @@
 
-# Getting Started
+# Building and Running Firmware
 
 Following these instructions will get the AMDC firmware environment up and running on your local machine for development and testing purposes.
 
@@ -11,7 +11,12 @@ Firmware development environment needs a few things:
 - Xilinx Vivado (tested on 2017.2)
 - Xilinx SDK (comes with Vivado)
 - `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition from online
-
+    1. Go here: http://zedboard.org/support/documentation/1519
+    2. Scroll down to `Board Definition Files`
+    3. Download `MicroZed Board Definition Install for Vivado 2015.3 through 2017.4`
+    4. Unzip downloaded file
+    5. Unzip `Avnet Zed Board Definitions.zip`
+    6. Copy all the resulting folders (`microzed_*`, `picozed_*`, etc) to `C:\Xilinx\Vivado\YYYY.V\data\boards\board_files`
 
 ## Cloning from GitHub
 
@@ -84,11 +89,18 @@ The SDK workspace will initially be empty. You need to import the projects from 
 
 SDK will attempt to build the projects you just imported. There will be lots of errors. Fix them as follows.
 
-1. Right-click on the BSP project, e.g. `amdc_bsp`
-2. `Re-generate BSP Sources`
-3. `Yes`
-
-SDK will now successfully compile the new BSP sources, then compile the rest of the projects successfully.
+1. Create BSP project
+    1. `File` > `New...` > `Board Support Package`
+    2. Project name: "amdc_bsp"
+    3. Leave all other settings the same
+    4. `Finish`
+2. Select libraries to include in BSP
+    1. `lwip***`
+    2. `xilffs`
+    3. `OK`
+3. Projects will now build. View status on `Console` tab in SDK view
+4. Wait until all projects are done compiling... Could take a few minutes...
+5. Ensure there are no errors for `amdc_bsp` and your desired application project (i.e. `bare`)
 
 All done! Ready to program AMDC!
 
@@ -101,12 +113,16 @@ Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
 
 1. Right-click on the project to are trying to run, e.g. `bare`
 2. `Run As` > `Run Configurations...`
-3. Ensure the `Target Setup` tab is open
-4. Select `Browse...` for `Bitstream File`
-5. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
-6. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
-7. Click `Apply`
-8. Click `Close`
+3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
+    1. If not: 
+    2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
+    3. A new panel should appear on the right half of popup
+4. Ensure the `Target Setup` tab is open
+5. Select `Browse...` for `Bitstream File`
+6. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+7. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
+8. Click `Apply`
+9. Click `Close`
 
 ### Running Project on AMDC
 
@@ -122,6 +138,8 @@ Now, you are ready to start the code on AMDC!
 
 ## Issues
 
-Getting AMDC is start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
+Getting AMDC to start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
+
+NOTE: Pushing `RESET` button on PCB != power cycle of board. The `RESET` button performs a different type of reset (keeps around debug configurations, etc). During developement, you may need to perform a full power cycle, while other times, a simple `RESET` button push will work. 
 
 Xilinx tools also have **many** quirks. Good luck getting everything working!
