@@ -6,7 +6,9 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 
 ## Documentation
 
-Documentation has been written to help ease the process of using the AMDC platform.
+Documentation has been written to help ease the process of using the AMDC platform. To get started, recommendation is given to read the docs in the order listed below. Once you understand the general [firmware architecture](docs/00-Firmware-Architecture.md), try [downloading the code, building it, and running](docs/01-Building-and-Running-Firmware.md) an example application on the AMDC hardware. After your application is stable, try [flashing](docs/02-Flashing-AMDC.md) it to the AMDC hardware for permanent usage.
+
+If you run into low-level issues, consider using the Xilinx [debugging tools](docs/03-Low-Level-Debugging.md) to investigate register state, etc.
 
 ### [Firmware Architecture](docs/00-Firmware-Architecture.md)
 - [Drivers](docs/00a-Firmware-Arch-Drivers.md)
