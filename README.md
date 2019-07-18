@@ -17,7 +17,7 @@ Documentation has been written to help ease the process of using the AMDC platfo
 
 ### [Debugging](docs/Debugging.md)
 
-### [Flashing AMDC](docs/Flashing-AMDC-With-New-Image.md)
+### [Flashing AMDC](docs/Flashing-AMDC.md)
 
 ## License
 
