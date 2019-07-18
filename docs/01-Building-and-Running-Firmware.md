@@ -109,17 +109,17 @@ All done! Ready to program AMDC!
 
 Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
 
-### Setup SDK Project Run Configuration
+### Setup SDK Project Debug Configuration
 
-1. Right-click on the project to are trying to run, e.g. `bare`
-2. `Run As` > `Run Configurations...`
+1. Right-click on the project to are trying to debug, e.g. `bare`
+2. `Run As` > `Debug Configurations...`
 3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
     1. If not: 
     2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
     3. A new panel should appear on the right half of popup
 4. Ensure the `Target Setup` tab is open
 5. Select `Browse...` for `Bitstream File`
-6. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+    1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
 7. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
 8. Click `Apply`
 9. Click `Close`
@@ -129,11 +129,12 @@ Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
 Now, you are ready to start the code on AMDC!
 
 1. Right-click on application, e.g. `bare`
-2. `Run As` > `Launch on Hardware (System Debugger)`
+2. `Debug As` > `Launch on Hardware (System Debugger)`
 3. `SDK Log` panel in the GUI will show stream of message as AMDC is programmed
     1. System reset will occur
     2. FPGA will be programmed
     3. Processor will start running your code
+4. NOTE: You only have to do the right-click and debug from the menu the first time -- next time, just click the debug icon from the icon ribbon in the GUI (located to left of play button).
 
 
 ## Issues
