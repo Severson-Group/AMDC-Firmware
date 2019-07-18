@@ -15,7 +15,7 @@ Documentation has been written to help ease the process of using the AMDC platfo
 
 ### [GitHub to AMDC Hardware: Building and Running Firmware](docs/Building-and-Running-Firmware.md)
 
-### [Debugging](docs/Debugging.md)
+### [Low-Level Debugging](docs/Low-Level-Debugging.md)
 
 ### [Flashing AMDC](docs/Flashing-AMDC.md)
 
