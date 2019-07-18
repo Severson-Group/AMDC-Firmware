@@ -13,7 +13,7 @@ Documentation has been written to help ease the process of using the AMDC platfo
 - [System](docs/Firmware-Arch-System.md)
 - [User Apps](docs/Firmware-Arch-UserApps.md)
 
-### [GitHub to AMDC Hardware: Getting Firmware Built and Running](docs/Getting-Started.md)
+### [GitHub to AMDC Hardware: Building and Running Firmware](docs/Building-and-Running-Firmware.md)
 
 ### [Debugging](docs/Debugging.md)
 
