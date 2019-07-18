@@ -11,7 +11,12 @@ Firmware development environment needs a few things:
 - Xilinx Vivado (tested on 2017.2)
 - Xilinx SDK (comes with Vivado)
 - `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition from online
-
+    1. Go here: http://zedboard.org/support/documentation/1519
+    2. Scroll down to `Board Definition Files`
+    3. Download `MicroZed Board Definition Install for Vivado 2015.3 through 2017.4`
+    4. Unzip downloaded file
+    5. Unzip `Avnet Zed Board Definitions.zip`
+    6. Copy all the resulting folders (`microzed_*`, `picozed_*`, etc) to `C:\Xilinx\Vivado\YYYY.V\data\boards\board_files`
 
 ## Cloning from GitHub
 
