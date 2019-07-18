@@ -113,14 +113,16 @@ Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
 
 1. Right-click on the project to are trying to run, e.g. `bare`
 2. `Run As` > `Run Configurations...`
-3. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
-4. A new panel should appear on the right half of popup
-5. Ensure the `Target Setup` tab is open
-6. Select `Browse...` for `Bitstream File`
-7. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
-8. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
+3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
+    1. If not: 
+    2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
+    3. A new panel should appear on the right half of popup
+4. Ensure the `Target Setup` tab is open
+5. Select `Browse...` for `Bitstream File`
+6. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+7. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
 8. Click `Apply`
-10. Click `Close`
+9. Click `Close`
 
 ### Running Project on AMDC
 
@@ -136,6 +138,8 @@ Now, you are ready to start the code on AMDC!
 
 ## Issues
 
-Getting AMDC is start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
+Getting AMDC to start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
+
+NOTE: Pushing `RESET` button on PCB != power cycle of board. The `RESET` button performs a different type of reset (keeps around debug configurations, etc). During developement, you may need to perform a full power cycle, while other times, a simple `RESET` button push will work. 
 
 Xilinx tools also have **many** quirks. Good luck getting everything working!
