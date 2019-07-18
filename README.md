@@ -8,16 +8,16 @@ AMDC design includes both hardware and firmware. This repository contains the lo
 
 Documentation has been written to help ease the process of using the AMDC platform.
 
-### [Firmware Architecture](docs/Firmware-Architecture.md)
-- [Drivers](docs/Firmware-Arch-Drivers.md)
-- [System](docs/Firmware-Arch-System.md)
-- [User Apps](docs/Firmware-Arch-UserApps.md)
+### [Firmware Architecture](docs/00-Firmware-Architecture.md)
+- [Drivers](docs/00a-Firmware-Arch-Drivers.md)
+- [System](docs/00b-Firmware-Arch-System.md)
+- [User Apps](docs/00c-Firmware-Arch-UserApps.md)
 
-### [GitHub to AMDC Hardware: Building and Running Firmware](docs/Building-and-Running-Firmware.md)
+### [GitHub to AMDC Hardware: Building and Running Firmware](docs/01-Building-and-Running-Firmware.md)
 
-### [Low-Level Debugging](docs/Low-Level-Debugging.md)
+### [Flashing AMDC](docs/02-Flashing-AMDC.md)
 
-### [Flashing AMDC](docs/Flashing-AMDC.md)
+### [Low-Level Debugging](docs/03-Low-Level-Debugging.md)
 
 ## License
 
