@@ -1,5 +1,5 @@
 
-# Getting Started
+# Building and Running Firmware
 
 Following these instructions will get the AMDC firmware environment up and running on your local machine for development and testing purposes.
 
