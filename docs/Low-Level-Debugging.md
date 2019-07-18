@@ -1,4 +1,4 @@
-# Debugging
+# Low-Level Debugging
 
 This document outlines various helpful commands for debugging the firmware. These will mostly use the Xilinx System Debugger (`xsdb`).
 This is a command line tool which interacts with the hardware. One can program the FPGA, read memory and registers, etc.
