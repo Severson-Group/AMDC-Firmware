@@ -53,8 +53,8 @@ err = analog_getf(ANLG_CHNL1, &voltage);
 
 ### Writing PWM Duty Ratios
 
-asdf
+Similar to steps for reading voltages, but with `drv/pwm.c` driver.
 
 ### Reading Encoder Values
 
-asdf
+Similar to steps for reading voltages, but with `drv/encoder.c` driver.
