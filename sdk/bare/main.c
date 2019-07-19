@@ -29,36 +29,36 @@
 
 int main()
 {
-	// Required system initialization
-	init_platform();
+    // Required system initialization
+    init_platform();
 
-	// User BSP library initialization
-	bsp_init();
+    // User BSP library initialization
+    bsp_init();
 
-	// Initialize system tasks
-	serial_init();
-	commands_init();
+    // Initialize system tasks
+    serial_init();
+    commands_init();
 #ifndef DISABLE_LOGGING
-	log_init();
+    log_init();
 #endif
 
 #ifndef DISABLE_INJECTION
-	injection_init();
+    injection_init();
 #endif
 
-	// Initialize user applications
-	user_apps_init();
+    // Initialize user applications
+    user_apps_init();
 
-	// Show start message to user, asking for cmds
-	commands_start_msg();
+    // Show start message to user, asking for cmds
+    commands_start_msg();
 
-	// Initialize scheduler (sets up h/w timer, interrupt, etc)
-	scheduler_init();
+    // Initialize scheduler (sets up h/w timer, interrupt, etc)
+    scheduler_init();
 
-	// Run scheduler => this takes over the system and never returns!
-	scheduler_run();
+    // Run scheduler => this takes over the system and never returns!
+    scheduler_run();
 
-	cleanup_platform();
-	return 0;
+    cleanup_platform();
+    return 0;
 }
 

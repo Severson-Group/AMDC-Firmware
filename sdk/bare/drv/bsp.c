@@ -13,21 +13,21 @@
 
 void bsp_init(void)
 {
-	printf("BSP:\tInitializing...\n");
+    printf("BSP:\tInitializing...\n");
 
-	int err;
+    int err;
 
-	err = uart_init();
-	if (err != SUCCESS) {
-		HANG;
-	}
+    err = uart_init();
+    if (err != SUCCESS) {
+        HANG;
+    }
 
-	encoder_init();
-	analog_init();
-	pwm_init();
-	io_init();
-	gpio_init();
-	dac_init();
+    encoder_init();
+    analog_init();
+    pwm_init();
+    io_init();
+    gpio_init();
+    dac_init();
 
-	cmd_hw_register();
+    cmd_hw_register();
 }

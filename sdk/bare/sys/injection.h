@@ -4,58 +4,58 @@
 #include <stdint.h>
 
 typedef enum inj_func_e {
-	CONST = 1,
-	NOISE,
-	CHIRP,
-	TRIANGLE,
-	NONE
+    CONST = 1,
+    NOISE,
+    CHIRP,
+    TRIANGLE,
+    NONE
 } inj_func_e;
 
 typedef enum inj_op_e {
-	ADD = 1,
-	SUB,
-	SET
+    ADD = 1,
+    SUB,
+    SET
 } inj_op_e;
 
 typedef struct inj_func_constant_t {
-	double value;
+    double value;
 } inj_func_constant_t;
 
 typedef struct inj_func_noise_t {
-	double gain;
-	double offset;
+    double gain;
+    double offset;
 } inj_func_noise_t;
 
 typedef struct inj_func_chirp_t {
-	double gain;
-	double freqMin;
-	double freqMax;
-	double period;
+    double gain;
+    double freqMin;
+    double freqMax;
+    double period;
 } inj_func_chirp_t;
 
 typedef struct inj_func_triangle_t {
-	double valueMin;
-	double valueMax;
-	double period;
+    double valueMin;
+    double valueMax;
+    double period;
 } inj_func_triangle_t;
 
 #define INJ_MAX_NAME_LENGTH (16)
 
 typedef struct inj_ctx_t {
-	int id;
-	uint8_t registered;
-	char name[INJ_MAX_NAME_LENGTH];
-	struct inj_ctx_t *next;
+    int id;
+    uint8_t registered;
+    char name[INJ_MAX_NAME_LENGTH];
+    struct inj_ctx_t *next;
 
-	inj_func_e inj_func;
-	inj_op_e operation;
+    inj_func_e inj_func;
+    inj_op_e operation;
 
-	inj_func_constant_t constant;
-	inj_func_noise_t noise;
-	inj_func_chirp_t chirp;
-	inj_func_triangle_t triangle;
+    inj_func_constant_t constant;
+    inj_func_noise_t noise;
+    inj_func_chirp_t chirp;
+    inj_func_triangle_t triangle;
 
-	double curr_time;
+    double curr_time;
 } inj_ctx_t;
 
 

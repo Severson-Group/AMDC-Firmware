@@ -11,14 +11,14 @@
 
 void app_beta_labs_init(void)
 {
-	task_mo_init();
+    task_mo_init();
 
-	cmd_inv_register();
-	cmd_dtc_register();
-	cmd_vsi_register();
-	cmd_cc_register();
-	cmd_mc_register();
-	cmd_bemfo_register();
+    cmd_inv_register();
+    cmd_dtc_register();
+    cmd_vsi_register();
+    cmd_cc_register();
+    cmd_mc_register();
+    cmd_bemfo_register();
 }
 
 #endif // APP_BETA_LABS

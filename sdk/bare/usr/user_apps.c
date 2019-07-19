@@ -19,10 +19,10 @@
 void user_apps_init(void)
 {
 #ifdef APP_BLINK
-	app_blink_init();
+    app_blink_init();
 #endif
 
 #ifdef APP_BETA_LABS
-	app_beta_labs_init();
+    app_beta_labs_init();
 #endif
 }

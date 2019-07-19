@@ -3,8 +3,8 @@
 
 #include "../../sys/defines.h"
 
-#define TASK_MO_UPDATES_PER_SEC			(10000)
-#define TASK_MO_INTERVAL_USEC			(USEC_IN_SEC / TASK_MO_UPDATES_PER_SEC)
+#define TASK_MO_UPDATES_PER_SEC     (10000)
+#define TASK_MO_INTERVAL_USEC       (USEC_IN_SEC / TASK_MO_UPDATES_PER_SEC)
 
 void task_mo_init(void);
 void task_mo_callback(void *arg);

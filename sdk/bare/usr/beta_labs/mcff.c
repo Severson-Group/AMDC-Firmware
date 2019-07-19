@@ -10,9 +10,9 @@ static double Te_cff_total = 0.0;
 
 void mcff_update(double omega_m_star, double omega_dot_m_star)
 {
-	Te_cff_jp = Jp_HAT * omega_dot_m_star;
-	Te_cff_bp = Bp_HAT * omega_m_star;
-	Te_cff_total = Te_cff_jp + Te_cff_bp;
+    Te_cff_jp = Jp_HAT * omega_dot_m_star;
+    Te_cff_bp = Bp_HAT * omega_m_star;
+    Te_cff_total = Te_cff_jp + Te_cff_bp;
 }
 
 double mcff_get_Te_cff_total(void) { return Te_cff_total; }

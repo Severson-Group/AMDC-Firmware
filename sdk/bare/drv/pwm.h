@@ -4,20 +4,20 @@
 #include <stdint.h>
 
 //typedef enum {
-//	INV_1 = 1,
-//	INV_2,
-//	INV_3,
-//	INV_4,
-//	INV_5,
-//	INV_6,
-//	INV_7,
-//	INV_8,
+//  INV_1 = 1,
+//  INV_2,
+//  INV_3,
+//  INV_4,
+//  INV_5,
+//  INV_6,
+//  INV_7,
+//  INV_8,
 //} inverter_e;
 
 typedef struct pwm_status_t {
-	uint8_t ready;
-	uint8_t fault_desat;
-	uint8_t fault_temp;
+    uint8_t ready;
+    uint8_t fault_desat;
+    uint8_t fault_temp;
 } pwm_status_t;
 
 void pwm_init(void);
