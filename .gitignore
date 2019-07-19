@@ -25,17 +25,17 @@ hw/*
 
 Packages/
 
-sdk/design_1_wrapper_hw_platform_*/
-
 sdk/.metadata/
 sdk/.sdk/
 
 sdk/webtalk/
+sdk/RemoteSystemsTempFiles/
 sdk/system.hdf_expanded/
 sdk/RemoteSystemsTempFiles/
 
 sdk/amdc_bsp/
 sdk/fsbl/
+sdk/design_1_wrapper_hw_platform_*/
 
 sdk/**/Debug/
 sdk/**/Release/
