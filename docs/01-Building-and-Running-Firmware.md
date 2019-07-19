@@ -62,7 +62,17 @@ You now need to export the hardware from Vivado to the SDK environment.
 3. Set location to export to: `$REPO_DIR\sdk`
 4. `OK`
 
-You may now close Vivado if you do not plan on changing the FPGA HDL.
+### Open SDK from Vivado
+
+This is an important step. The first time you generate the FPGA hardware configuration files, etc, you must launch the Xilinx SDK *directly from Vivado*. This sets up a hardware wrapper project which is needed for the firmware.
+
+1. `File` > `Launch SDK`
+2. Select `$REPO_DIR\sdk` for both "Exported location" and "Workspace"
+3. `OK`
+4. SDK will open
+5. Ensure the project `design_1_wrapper_hw_platform_0` is in `Project Explorer`
+
+You may now close Vivado if you do not plan on changing the FPGA HDL. Also, you may now close the SDK. You will need to open it in the next section, but practice opening it directly -- not from Vivado.
 
 
 ## Xilinx SDK
@@ -77,7 +87,7 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 
 ### Import Projects into SDK
 
-The SDK workspace will initially be empty. You need to import the projects from the `sdk` directory.
+The SDK workspace will initially be empty (except for `design_1_wrapper...` from above). You need to import the projects from the `sdk` directory.
 
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
