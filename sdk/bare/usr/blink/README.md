@@ -25,17 +25,17 @@ blink/
 |-- task_blink.h
 ```
 
-### [`app_blink.c`](sdk/bare/usr/blink/app_blink.c)
+### [`app_blink.c`](app_blink.c)
 
 - Every application needs a top-level app file.
 - This is called for app initialization during start-up.
 - Users define what this app init function does.
 
-### [`task_blink.c`](sdk/bare/usr/blink/task_blink.c)
+### [`task_blink.c`](task_blink.c)
 
 - This task cycles through the red, green, and blue LED colors at 1Hz.
 
-### [`cmd/cmd_blink.c`](sdk/bare/usr/blink/cmd/cmd_blink.c)
+### [`cmd/cmd_blink.c`](cmd/cmd_blink.c)
 
 - This command echos the user-supplied name back to the terminal.
 - Be careful, not all names are welcome!
