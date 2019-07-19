@@ -23,6 +23,8 @@ hw/*
 # SDK #
 #######
 
+Packages/
+
 sdk/.metadata/
 sdk/.sdk/
 
