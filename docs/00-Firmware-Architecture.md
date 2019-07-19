@@ -58,4 +58,4 @@ However, each user application will most likely require its own commands in addi
 
 ## Examples
 
-To fully grasp the AMDC firmware architecture, examples are provided which concretely show the ideas presented above. See the example application in the project.
+To fully grasp the AMDC firmware architecture, examples are provided which concretely show the ideas presented above. See the example application: [`blink`](../sdk/bare/usr/blink/).
