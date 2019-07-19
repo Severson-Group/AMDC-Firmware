@@ -25,6 +25,8 @@ hw/*
 
 Packages/
 
+sdk/design_1_wrapper_hw_platform_1/
+
 sdk/.metadata/
 sdk/.sdk/
 
