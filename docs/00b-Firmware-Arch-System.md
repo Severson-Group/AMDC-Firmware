@@ -24,7 +24,9 @@ Example tasks could be:
 - `task2` runs at 10kHz and regulates current through an RL load
 - `task3` runs at 1kHz and handles serial communciation with UART interface
 
-Each example task includes a frequency of operation as well as a "high-level" goal. Usually, the task has *state* that is updated each time the task is run. In `task1`, the state might be the current LED status (on/off). Each time `task1` is run, the LED state toggles and the LED is refreshed. Notice how each task is independent -- they all run at different frequencies and do different things -- but together, they perform complex actions as a complete system. This is the crux of designing firmware to use a RTOS: splitting code into tasks which work together to solve a complex goal. You will need to do this when building user applications with AMDC.
+Each example task includes a frequency of operation as well as a "high-level" goal. Usually, the task has *state* that is updated each time the task is run. In `task1`, the state might be the current LED status (on/off). Each time `task1` is run, the LED state toggles and the LED is refreshed.
+
+Notice how each task is independent -- they all run at different frequencies and do different things -- but together, they perform complex actions as a complete system. This is the crux of designing firmware to use a RTOS: splitting code into tasks which work together to solve a complex goal. You will need to do this when building user applications with AMDC.
 
 #### Cooperation Between Tasks
 
