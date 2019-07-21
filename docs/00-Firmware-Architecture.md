@@ -1,5 +1,12 @@
 # Firmware Architecture
 
+**Firmware Architecture**
+- [Drivers](00a-Firmware-Arch-Drivers.md)
+- [System](00b-Firmware-Arch-System.md)
+- [User Applications](00c-Firmware-Arch-UserApps.md)
+
+## Motivation
+
 This document outlines the AMDC firmware architecture. By understanding the high-level concepts, it will make reading the code and writing custom applications much easier. Care has been taken to ensure that users will not need to "reinvent the wheel" -- common systems like command processing, task management, and logging have been built into the architecture.
 
 
