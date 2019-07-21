@@ -17,12 +17,16 @@ The AMDC *system* layer sits between the *driver* layer and the *user applicatio
 
 ### Tasks
 
-As described in previous documentation, a task is simply a block of code that runs periodically. Example tasks could be:
+Tasks are the foundation upon which all system services are built. As described in previous documentation, a task is simply a block of code that runs periodically. Tasks can exist in the user space (used in user applications) or in the system space.
+
+Example tasks could be:
 - `task1` runs at 1Hz and blinks an LED
 - `task2` runs at 10kHz and regulates current through an RL load
 - `task3` runs at 1kHz and handles serial communciation with UART interface
 
 Each example task includes a frequency of operation as well as a "high-level" goal. Usually, the task has *state* that is updated each time the task is run. In `task1`, the state might be the current LED status (on/off). Each time `task1` is run, the LED state toggles and the LED is refreshed. Notice how each task is independent -- they all run at different frequencies and do different things -- but together, they perform complex actions as a complete system. This is the crux of designing firmware to use a RTOS: splitting code into tasks which work together to solve a complex goal. You will need to do this when building user applications with AMDC.
+
+#### Cooperation Between Tasks
 
 The system scheduler (`sys/scheduler.c`) is responsible for running the registered tasks of the system. Tasks are **non-preemptable** by design. This means that once a task starts, it runs until it *yields* the processor -- it cannot be interrupted by the system. Imagine a task which has a lot of work to do. It gets scheduled to run by the scheduler and starts execution. **It then has complete control of the entire system.** It can choose to run as long as it wants. Only when it stops doing work and *yields* the processor does the scheduler regain control. At this point, the scheduler chooses another task to run and the cycle repeats.
 
