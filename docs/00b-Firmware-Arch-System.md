@@ -50,4 +50,17 @@ Read more about cooperative scheduling of tasks [on Wikipedia](https://en.wikipe
 
 ### Commands
 
-TODO: write this.
+Commands provide interactive operation of AMDC with the outside world. While the hardware I/O allows AMDC to change state based on the physical world, commands are designed for higher-level actions (i.e., "turn off LED" or "spin motor to 100RPM"). Commands are completely optional in user applications and are triggered by user input on the serial terminal.
+
+Example commands:
+- `led toggle red` -- Toggle the red LED
+- `motion rpm 100` -- Command a rotational speed of 100 RPM to a motion controller
+- `motion bw 10` -- Set bandwidth of motion controller to 10 Hz
+- `hw anlg read 0` -- Read hardware analog channel 0 voltage and display to terminal
+- `hw pwm duty 2 50` -- Set PWM output 2 to duty ratio of 50%
+
+Notice how commands are created by characters seperated by white space. The first chunk of characters is defined as the *base command*. For the above examples, base commands are `led`, `motion`, and `hw`. Subsequent sequences of characters seperated by white space are called *arguments* or *subcommands*.
+
+#### Handling Commands
+
+The commands system module (`sys/commands.c`) is responsible for parsing the characters from the terminal and calling the appropriate *command handler*. A command handler processes a single base command -- this includes all subcommands and arguments. Each base command is registered with the system during initialization and start-up so that the system knows it exists. All commands have a *help* message which the system will display if the user types "help".
