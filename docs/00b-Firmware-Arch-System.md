@@ -64,3 +64,31 @@ Notice how commands are created by characters seperated by white space. The firs
 #### Handling Commands
 
 The commands system module (`sys/commands.c`) is responsible for parsing the characters from the terminal and calling the appropriate *command handler*. A command handler processes a single base command -- this includes all subcommands and arguments. Each base command is registered with the system during initialization and start-up so that the system knows it exists. All commands have a *help* message which the system will display if the user types "help".
+
+The command handler signature follows standard C convention for the main function of a program called from the command line:
+
+```C
+int main(int argc, char **argv);
+```
+
+`argc` contains the number of arguments passed to the command. For example, if the user typed `cmd arg1 arg2`, `argc` would contain 3.
+
+`argv` contains an array of character strings for each argument. For above example:
+- `argv[0]` => `"cmd"`
+- `argv[1]` => `"arg1"`
+- `argv[2]` => `"arg2"`
+
+#### Command Flow
+
+When the user types a command into the terminal, a complex set of operations is set in motion (see implementation in `sys/commands.c`). Below is a diagram of the flow of each character the user types. When developing user applications that include commands, the developer does not need to worry about the following information, as they simply implement the commmand handler (shown in green below). For completeness, the following discussion is presented as explanation for how the user-supplied command handler is (eventually) called.
+
+<img src="images/arch/cmd-flow.svg" />
+
+What happens when a character is entered into the terminal? The user terminal reads the input character and sends it to the driver on their PC which talks with the USB-UART device on AMDC. The character is then sent over the physical medium to the AMDC hardware. The UART hardware peripherial buffers incoming characters in a small FIFO (first-in, first-out) structure (referred to as simply FIFO).
+
+At this point, the system firmware begins. The UART FIFO is drained and the incoming characters are copied into a much larger queue structure in system memory (shown in orange above). A task then runs periodically to parse these characters and form pending commands which get placed in another system level FIFO. Yet another task then runs each pending command in its own scheduler time slice, which calls the user defined command handler. The `argv` argument of the command handler now points to characters which reside in the orange incoming characters FIFO.
+
+These layers of communication, FIFOs, and queues are used to provide hard guarantees about system performance. They enforce the following:
+- A single valid command is run during each time slice
+- Commands have a limited number of arguments
+- Each argument has a limited length
