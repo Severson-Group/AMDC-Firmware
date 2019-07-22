@@ -40,15 +40,19 @@ Most of the system hardware peripherials are located in the FPGA and are custom 
 
 As an example, consider trying to use an FPGA timer. The timers can be configured to trigger interrupts from the FPGA. The `drv/timer.c` driver abstracts away the fairly complex task of initializing the FPGA hardware and setting up register values. Instead, the user can essentially command: "set up timer 1 to trigger interrupt at 10kHz" and it automagically happens. :)
 
+[Read more about the driver layer...](00a-Firmware-Arch-Drivers.md)
 
 ## System
 
 All firmware system code is located in the `sys` directory. These modules are responsible for "system" level subsystems. The AMDC firmware system code is designed to behave similar to a [Real-Time Operating System (RTOS)](https://en.wikipedia.org/wiki/Real-time_operating_system), but without the added complexity of a full RTOS.
 
+[Read more about the system layer...](00b-Firmware-Arch-System.md)
 
 ## User Apps
 
 All user apps are written in C and exist in the `usr` directory. These apps are built on top of all other system functionality (the system modules, drivers, and hardware). These user apps interact with the system code for various things: register tasks, register commands, etc. The user apps can also interact with the system drivers to interface with hardware resources (i.e., PWM outputs, analog inputs, etc).
+
+[Read more about the user application layer...](00c-Firmware-Arch-UserApps.md)
 
 To understand how to create an application for AMDC, you must fully grasp the following concepts: *tasks* and *commands*.
 
