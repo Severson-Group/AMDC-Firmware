@@ -11,6 +11,11 @@
 //#define SYS_TICK_FREQ (20000) // Hz
 
 
+// Enable the watchdog timer
+// by defining ENABLE_WATCHDOG here:
+//#define ENABLE_WATCHDOG
+
+
 // Disable logging functionality
 // by defining DISABLE_LOGGING here:
 #define DISABLE_LOGGING

@@ -1,8 +1,10 @@
 #include "scheduler.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "../usr/user_defines.h"
 #include "../drv/io.h"
 #include "../drv/timer.h"
+#include "../drv/watchdog.h"
 
 // Used to give each task a unique ID
 static int next_tcb_id = 0;
@@ -161,5 +163,10 @@ void scheduler_run(void)
         // Wait here until unpaused (i.e. when SysTick fires)
         scheduler_idle = true;
         while (scheduler_idle);
+
+        // Reset the watchdog timer after SysTick fires
+#ifdef ENABLE_WATCHDOG
+        watchdog_reset();
+#endif
     }
 }

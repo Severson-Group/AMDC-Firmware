@@ -7,8 +7,10 @@
 #include "timer.h"
 #include "dac.h"
 #include "uart.h"
+#include "watchdog.h"
 #include "../sys/cmd/cmd_hw.h"
 #include "../sys/defines.h"
+#include "../usr/user_defines.h"
 #include <stdio.h>
 
 void bsp_init(void)
@@ -28,6 +30,10 @@ void bsp_init(void)
     io_init();
     gpio_init();
     dac_init();
+
+#ifdef ENABLE_WATCHDOG
+    watchdog_init();
+#endif
 
     cmd_hw_register();
 }
