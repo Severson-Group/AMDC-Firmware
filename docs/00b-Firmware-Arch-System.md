@@ -28,6 +28,8 @@ Each example task includes a frequency of operation as well as a "high-level" go
 
 Notice how each task is independent -- they all run at different frequencies and do different things -- but together, they perform complex actions as a complete system. This is the crux of designing firmware to use a RTOS: splitting code into tasks which work together to solve a complex goal. You will need to do this when building user applications with AMDC.
 
+<img src="images/arch/tasks-example.svg" />
+
 #### Cooperation Between Tasks
 
 The system scheduler (`sys/scheduler.c`) is responsible for running the registered tasks of the system. Tasks are **non-preemptable** by design. This means that once a task starts, it runs until it *yields* the processor -- it cannot be interrupted by the system. Imagine a task which has a lot of work to do. It gets scheduled to run by the scheduler and starts execution. **It then has complete control of the entire system.** It can choose to run as long as it wants. Only when it stops doing work and *yields* the processor does the scheduler regain control. At this point, the scheduler chooses another task to run and the cycle repeats.
