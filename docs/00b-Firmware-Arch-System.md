@@ -32,7 +32,9 @@ Notice how each task is independent -- they all run at different frequencies and
 
 <img src="images/arch/tasks-example.svg" />
 
-In the above diagram, three tasks are shown operating over time. Task 3, shown in red, operates every time slice and consumes nearly half the quantum. Task 2, shown in green, operates at half the frequency of Task 3 and consumes less computation time. Finally, Task 1, shown in blue, runs at a third the rate of Task 3 and only for little bursts of time. Notice how the system is idle during the solid red regions on the top bar.
+In the above diagram, three tasks are shown operating over time (referred to as T1, T2, and T3). T3, shown in red, operates every time slice and consumes nearly half the quantum. T2, shown in green, operates at half the frequency of T3 and consumes less computation time. Finally, T1, shown in blue, runs at a third the rate of T3 and only for little bursts of time.
+
+Notice how the system is idle during the solid red regions on the top bar. Also, notice the inherit jitter in T1 -- the scheduler runs it during the correct time slices, but depending on T2, T1's periodicity changes slightly. During time slice 3, T1 occurs earlier in the time slice than in time slice 0 or 6. Jitter (or lack of) can be important in some applications and the developer must be aware of the system behavior.
 
 #### Cooperation Between Tasks
 
