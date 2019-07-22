@@ -28,7 +28,11 @@ Each example task includes a frequency of operation as well as a "high-level" go
 
 Notice how each task is independent -- they all run at different frequencies and do different things -- but together, they perform complex actions as a complete system. This is the crux of designing firmware to use a RTOS: splitting code into tasks which work together to solve a complex goal. You will need to do this when building user applications with AMDC.
 
+#### Example
+
 <img src="images/arch/tasks-example.svg" />
+
+In the above diagram, three tasks are shown operating over time. Task 3, shown in red, operates every time slice and consumes nearly half the quantum. Task 2, shown in green, operates at half the frequency of Task 3 and consumes less computation time. Finally, Task 1, shown in blue, runs at a third the rate of Task 3 and only for little bursts of time. Notice how the system is idle during the solid red regions on the top bar.
 
 #### Cooperation Between Tasks
 
