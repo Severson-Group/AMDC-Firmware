@@ -45,7 +45,7 @@ double LOG_omega_m_enc = 0.0;
 static double Id_star = 0.0;
 static double Iq_star = 0.0;
 
-static int32_t dq_offset = 9980;
+static int32_t dq_offset = 410;
 
 // Note: user should override this initial value
 static double controller_bw = 1.0;
@@ -125,6 +125,11 @@ void task_cc_deinit(void)
     _clear_state();
 }
 
+void task_cc_reset(void)
+{
+    _clear_state();
+}
+
 double task_cc_get_theta_e_enc(void)
 {
     // Get raw encoder position
@@ -181,30 +186,51 @@ void task_cc_callback(void *arg)
     // -------------------
     // Update theta_e using either encoder or estimation
     // -------------------
+    double theta_e_enc = task_cc_get_theta_e_enc();
+    double theta_e_hat = bemfo_get_theta_e_hat();
+
     double theta_e = 0.0;
     if (theta_e_src_use_encoder) {
-        theta_e = task_cc_get_theta_e_enc();
+        theta_e = theta_e_enc;
     } else {
-        theta_e = bemfo_get_theta_e_hat();
+        theta_e = theta_e_hat;
     }
 
-    LOG_theta_e_enc = task_cc_get_theta_e_enc();
-    LOG_theta_e_hat = bemfo_get_theta_e_hat();
+    LOG_theta_e_enc = theta_e_enc;
+    LOG_theta_e_hat = theta_e_hat;
 
     LOG_omega_m_enc = task_mo_get_omega_m();
     LOG_omega_m_hat = bemfo_get_omega_m_hat();
 
 
-
     // ------------------------------
     // Update omega_e_avg in rads/sec
     // ------------------------------
+    double omega_e_enc = task_mo_get_omega_e();
+    double omega_e_hat = bemfo_get_omega_e_hat();
+
     double omega_e_avg = 0.0;
     if (omega_e_src_use_encoder) {
-        omega_e_avg = task_mo_get_omega_e();
+        omega_e_avg = omega_e_enc;
     } else {
-        omega_e_avg = bemfo_get_omega_e_hat();
+        omega_e_avg = omega_e_hat;
     }
+
+
+    // ------------------------------
+    // LED status to indicate if sensorless is acquired
+    // ------------------------------
+    io_led_color_t rgb_led = {0, 0, 0};
+    if (abs(omega_e_enc - omega_e_hat) <= RPM_TO_RAD_PER_SEC(10)) {
+        // Acquired!
+        rgb_led.g = 255;
+    } else {
+        // Not acquired... :(
+        rgb_led.r = 255;
+    }
+    io_led_set(&rgb_led);
+
+
 
 
     // ----------------------
@@ -242,6 +268,14 @@ void task_cc_callback(void *arg)
     Iq_err = Iq_star - Iq;
     Iq_err_acc += Iq_err;
     Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
+
+
+//    static int counter = 0;
+//    if (++counter >= 1000) {
+//        counter = 0;
+//        debug_printf("Vd*=%f, Vq*=%f\r\n", Vd_star, Vq_star);
+//    }
+
 
 
     // -------------------

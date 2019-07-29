@@ -18,8 +18,8 @@ void pwm_init(void)
 
     pwm_toggle_reset();
 
-    pwm_set_switching_freq(100000.0);
-    pwm_set_deadtime_ns(100);
+    pwm_set_switching_freq(60000.0);
+    pwm_set_deadtime_ns(500);
 
     // Turn off all PWM outputs
     for (int i = 0; i < 24; i++) {

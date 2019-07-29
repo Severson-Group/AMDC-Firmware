@@ -8,7 +8,7 @@
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here:
-//#define SYS_TICK_FREQ (20000) // Hz
+#define SYS_TICK_FREQ (20000) // Hz
 
 
 // Enable the watchdog timer
@@ -18,12 +18,12 @@
 
 // Disable logging functionality
 // by defining DISABLE_LOGGING here:
-#define DISABLE_LOGGING
+//#define DISABLE_LOGGING
 
 
 // Disable injection functionality
 // by defining DISABLE_INJECTION here:
-#define DISABLE_INJECTION
+//#define DISABLE_INJECTION
 
 
 #endif // USER_DEFINES_H

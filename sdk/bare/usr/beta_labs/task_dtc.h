@@ -12,17 +12,17 @@
 
 // Current = GAIN * ADC_Voltage + Offset
 
-#define ADC_TO_AMPS_PHASE_A_GAIN    (1.0100499)
-#define ADC_TO_AMPS_PHASE_B_GAIN    (1.0088819)
-#define ADC_TO_AMPS_PHASE_C_GAIN    (1.0056083)
+#define ADC_TO_AMPS_PHASE_A_GAIN    (1.510383)
+#define ADC_TO_AMPS_PHASE_B_GAIN    (1.5083674)
+#define ADC_TO_AMPS_PHASE_C_GAIN    (1.5094108)
 
-#define ADC_TO_AMPS_PHASE_A_OFFSET  (-0.01765254)
-#define ADC_TO_AMPS_PHASE_B_OFFSET  (-0.048415325)
-#define ADC_TO_AMPS_PHASE_C_OFFSET  (-0.0477295)
+#define ADC_TO_AMPS_PHASE_A_OFFSET  (-0.068438501)
+#define ADC_TO_AMPS_PHASE_B_OFFSET  (-0.038327179)
+#define ADC_TO_AMPS_PHASE_C_OFFSET  ( 0.061666369)
 
-#define CC_PHASE_A_ADC              (ANLG_CHNL1)
-#define CC_PHASE_B_ADC              (ANLG_CHNL2)
-#define CC_PHASE_C_ADC              (ANLG_CHNL3)
+#define CC_PHASE_A_ADC              (ANLG_CHNL9)
+#define CC_PHASE_B_ADC              (ANLG_CHNL10)
+#define CC_PHASE_C_ADC              (ANLG_CHNL11)
 
 #define CC_PHASE_A_PWM_LEG_IDX      (0)
 #define CC_PHASE_B_PWM_LEG_IDX      (1)

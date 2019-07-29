@@ -10,10 +10,11 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(6)
+#define NUM_HELP_ENTRIES (7)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"init", "Start current controller"},
     {"deinit", "Stop current controller"},
+    {"reset", "Reset current controller"},
     {"bw <mFreq>", "Set controller bandwidth"},
     {"offset <enc_pulses>", "Set DQ frame offset"},
     {"theta_e_src <enc|est>", "Set theta_e source between encoder and estimation"},
@@ -61,6 +62,12 @@ int cmd_cc(int argc, char **argv)
 
         task_cc_deinit();
         task_cc_clear();
+        return SUCCESS;
+    }
+
+    // Handle 'reset' sub-command
+    if (argc == 2 && strcmp("reset", argv[1]) == 0) {
+        task_cc_reset();
         return SUCCESS;
     }
 

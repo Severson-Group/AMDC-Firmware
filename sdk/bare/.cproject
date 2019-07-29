@@ -18,7 +18,7 @@
 					<folderInfo id="xilinx.gnu.armv7.exe.debug.994846576." name="/" resourcePath="">
 						<toolChain id="xilinx.gnu.armv7.exe.debug.toolchain.675664127" name="Xilinx ARM v7 GNU Toolchain" superClass="xilinx.gnu.armv7.exe.debug.toolchain">
 							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.x32" id="xilinx.armv7.target.gnu.base.debug.722028308" isAbstract="false" name="Debug Platform" superClass="xilinx.armv7.target.gnu.base.debug"/>
-							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug"/>
+							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="false" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug"/>
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -31,7 +31,7 @@
 								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.390797143" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
 								<option id="xilinx.gnu.compiler.misc.other.1858768302" name="Other flags" superClass="xilinx.gnu.compiler.misc.other" value="-c -fmessage-length=0 -MT&quot;$@&quot; -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard" valueType="string"/>
 								<option id="xilinx.gnu.compiler.symbols.defined.1897050119" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="APP_BLINK"/>
+									<listOptionValue builtIn="false" value="APP_BETA_LABS"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1322043513" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
