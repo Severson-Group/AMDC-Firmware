@@ -146,6 +146,17 @@ Now, you are ready to start the code on AMDC!
     3. Processor will start running your code
 4. NOTE: You only have to do the right-click and debug from the menu the first time -- next time, just click the debug icon from the icon ribbon in the GUI (located to left of play button).
 
+### Connecting to AMDC over USB-UART
+
+To interface with the serial terminal on AMDC, you will need to install the required drivers on your PC:
+
+1. Open: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
+2. Download the right drivers for your platform and install them.
+
+Now, verify the drivers are installed:
+
+1. Connect a micro USB cable to the "UART" input on AMDC
+2. Check that a `Silicon Labs CP210x USB-UART Bridge` appears as a connected device.
 
 ## Issues
 
