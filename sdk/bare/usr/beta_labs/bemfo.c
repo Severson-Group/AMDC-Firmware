@@ -55,12 +55,26 @@ void bemfo_init(void)
     theta_e_hat = 0.0;
 }
 
-void bemfo_start(void)
+void bemfo_reset(void)
 {
-    // Reset the state
     theta_m_error_acc = 0.0;
+    Tem_hat = 0.0;
+    alpha_hat = 0.0;
     omega_m_hat_l = 0.0;
+    omega_m_hat_l_next = 0.0;
     omega_m_hat_r = 0.0;
+    omega_m_hat_r_last = 0.0;
+    theta_m_hat_last = 0.0;
+    theta_m_hat = 0.0;
+    theta_e_hat_last = 0.0;
+    theta_e_hat = 0.0;
+    delta_theta_m_hat = 0.0;
+
+    unit_vec.d = 0.0;
+    unit_vec.q = 0.0;
+
+    Esal_vec.d = 0.0;
+    Esal_vec.q = 0.0;
 
     // Pre-load theta_m_hat
     theta_m_hat = task_cc_get_theta_e_enc() / POLE_PAIRS;

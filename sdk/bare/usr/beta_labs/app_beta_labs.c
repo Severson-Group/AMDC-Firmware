@@ -7,6 +7,7 @@
 #include "cmd/cmd_vsi.h"
 #include "cmd/cmd_cc.h"
 #include "cmd/cmd_mc.h"
+#include "cmd/cmd_co.h"
 #include "cmd/cmd_bemfo.h"
 
 void app_beta_labs_init(void)
@@ -18,6 +19,7 @@ void app_beta_labs_init(void)
     cmd_vsi_register();
     cmd_cc_register();
     cmd_mc_register();
+    cmd_co_register();
     cmd_bemfo_register();
 }
 

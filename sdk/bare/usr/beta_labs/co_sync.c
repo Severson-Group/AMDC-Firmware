@@ -1,6 +1,6 @@
 #ifdef APP_BETA_LABS
 
-#include "co.h"
+#include "co_sync.h"
 #include "machine.h"
 
 // Current observer gains assuming Ts = 5e-05
@@ -23,30 +23,33 @@ typedef struct complex_t {
 static void _update_from_err(complex_t Idq_err, complex_t Idq, complex_t Vdq, double omega_e);
 
 // States
-static complex_t Idq_hat;
-static complex_t Idq_err_acc_last;
-static complex_t Idq_hat_last;
-static complex_t Idq_err;
-static complex_t Idq_err_acc;
-static double Vq_sfb;
-static double Vq_tot;
-static double Iq_1;
-static double Iq_hat;
-static double Vd_sfb;
-static double Vd_tot;
-static double Id_1;
-static double Id_hat;
+static complex_t Idq_hat = {0.0, 0.0};
+static complex_t Idq_err_acc_last = {0.0, 0.0};
+static complex_t Idq_hat_last = {0.0, 0.0};
+static complex_t Idq_err = {0.0, 0.0};
+static complex_t Idq_err_acc = {0.0, 0.0};
+static double Vq_sfb = 0.0;
+static double Vq_tot = 0.0;
+static double Iq_1 = 0.0;
+static double Iq_hat = 0.0;
+static double Vd_sfb = 0.0;
+static double Vd_tot = 0.0;
+static double Id_1 = 0.0;
+static double Id_hat = 0.0;
 
-void co_update(double *Idq0, double *Vdq0, double omega_e)
+void co_sync_update(
+        double Id, double Iq,
+        double Vd_star, double Vq_star,
+        double omega_e)
 {
     complex_t Idq;
     complex_t Vdq;
 
-    Idq.d = Idq0[0]; // direct
-    Idq.q = Idq0[1]; // quadrature
+    Idq.d = Id; // direct
+    Idq.q = Iq; // quadrature
 
-    Vdq.d = Vdq0[0]; // direct
-    Vdq.q = Vdq0[1]; // quadrature
+    Vdq.d = Vd_star; // direct
+    Vdq.q = Vq_star; // quadrature
 
     // Find current error
     Idq_err.d = Idq.d - Idq_hat.d;
@@ -84,13 +87,13 @@ static void _update_from_err(complex_t Idq_err, complex_t Idq, complex_t Vdq, do
     Idq_hat.q = Iq_hat;
 }
 
-void co_get_Idq_hat(double *Id_hat, double *Iq_hat)
+void co_sync_get_Idq_hat(double *Id_hat, double *Iq_hat)
 {
     *Id_hat = Idq_hat.d;
     *Iq_hat = Idq_hat.q;
 }
 
-void co_get_Esal_hat(double *Esal_d_hat, double *Esal_q_hat)
+void co_sync_get_Esal_hat(double *Esal_d_hat, double *Esal_q_hat)
 {
     *Esal_d_hat = -Vd_sfb;
     *Esal_q_hat = -Vq_sfb;

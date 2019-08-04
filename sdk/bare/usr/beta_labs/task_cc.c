@@ -3,7 +3,8 @@
 #include "task_cc.h"
 #include "inverter.h"
 #include "task_mo.h"
-#include "co.h"
+#include "co_sync.h"
+#include "co_stat.h"
 #include "bemfo.h"
 #include "machine.h"
 #include "cmd/cmd_cc.h"
@@ -64,8 +65,8 @@ inj_ctx_t cc_inj_ctx_Id_star;
 inj_ctx_t cc_inj_ctx_Iq_star;
 inj_ctx_t cc_inj_ctx_Vd_star;
 inj_ctx_t cc_inj_ctx_Vq_star;
-inj_ctx_t cc_inj_ctx_Valpha_star;
-inj_ctx_t cc_inj_ctx_Vbeta_star;
+inj_ctx_t cc_inj_ctx_Ialpha_star;
+inj_ctx_t cc_inj_ctx_Ibeta_star;
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
@@ -96,16 +97,16 @@ void task_cc_init(void)
     injection_ctx_init(&cc_inj_ctx_Iq_star, "Iq*");
     injection_ctx_init(&cc_inj_ctx_Vd_star, "Vd*");
     injection_ctx_init(&cc_inj_ctx_Vq_star, "Vq*");
-    injection_ctx_init(&cc_inj_ctx_Valpha_star, "Valpha*");
-    injection_ctx_init(&cc_inj_ctx_Vbeta_star, "Vbeta*");
+    injection_ctx_init(&cc_inj_ctx_Ialpha_star, "Ialpha*");
+    injection_ctx_init(&cc_inj_ctx_Ibeta_star,  "Ibeta*");
 
     // Register all cc signal injection points
     injection_ctx_register(&cc_inj_ctx_Id_star);
     injection_ctx_register(&cc_inj_ctx_Iq_star);
     injection_ctx_register(&cc_inj_ctx_Vd_star);
     injection_ctx_register(&cc_inj_ctx_Vq_star);
-    injection_ctx_register(&cc_inj_ctx_Valpha_star);
-    injection_ctx_register(&cc_inj_ctx_Vbeta_star);
+    injection_ctx_register(&cc_inj_ctx_Ialpha_star);
+    injection_ctx_register(&cc_inj_ctx_Ibeta_star);
 
     // Clear controller state
     _clear_state();
@@ -121,8 +122,8 @@ void task_cc_deinit(void)
     injection_ctx_unregister(&cc_inj_ctx_Iq_star);
     injection_ctx_unregister(&cc_inj_ctx_Vd_star);
     injection_ctx_unregister(&cc_inj_ctx_Vq_star);
-    injection_ctx_unregister(&cc_inj_ctx_Valpha_star);
-    injection_ctx_unregister(&cc_inj_ctx_Vbeta_star);
+    injection_ctx_unregister(&cc_inj_ctx_Ialpha_star);
+    injection_ctx_unregister(&cc_inj_ctx_Ibeta_star);
 
 
     // Clear all injection points
@@ -130,8 +131,8 @@ void task_cc_deinit(void)
     injection_ctx_clear(&cc_inj_ctx_Iq_star);
     injection_ctx_clear(&cc_inj_ctx_Vd_star);
     injection_ctx_clear(&cc_inj_ctx_Vq_star);
-    injection_ctx_clear(&cc_inj_ctx_Valpha_star);
-    injection_ctx_clear(&cc_inj_ctx_Vbeta_star);
+    injection_ctx_clear(&cc_inj_ctx_Ialpha_star);
+    injection_ctx_clear(&cc_inj_ctx_Ibeta_star);
 
     // Clear controller state
     _clear_state();
@@ -262,11 +263,11 @@ void task_cc_callback(void *arg)
     transform_clarke(TRANS_DQZ_C_INVARIANT_POWER, Iabc, Ixyz);
 
     // -------------------
-    // Inject signals into V_alpha,beta*
+    // Inject signals into I_alpha,beta*
     // (constants, chirps, noise, etc)
     // -------------------
-    injection_inj(&Ixyz[0], &cc_inj_ctx_Valpha_star, Ts);
-    injection_inj(&Ixyz[1], &cc_inj_ctx_Vbeta_star,  Ts);
+    injection_inj(&Ixyz[0], &cc_inj_ctx_Ialpha_star, Ts);
+    injection_inj(&Ixyz[1], &cc_inj_ctx_Ibeta_star,  Ts);
 
     transform_park(theta_e, Ixyz, Idq0);
 
@@ -311,14 +312,20 @@ void task_cc_callback(void *arg)
     // --------------------------------
     // Perform inverse DQ transform of Vdq_star
     // --------------------------------
-    double Vabc_star[3];
-    double Vdq0[3];
-    Vdq0[0] = Vd_star;
-    Vdq0[1] = Vq_star;
-    Vdq0[2] = 0.0;
-    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER,
-            theta_e, Vabc_star, Vdq0);
 
+    double Vabc_star[3];
+    double Vxyz_star[3];
+    double Vdq0_star[3];
+    Vdq0_star[0] = Vd_star;
+    Vdq0_star[1] = Vq_star;
+    Vdq0_star[2] = 0.0;
+
+    // DQZ to alpha beta gamma:
+    transform_park_inverse(theta_e, Vdq0_star, Vxyz_star);
+
+    // Full DQZ to ABC:
+    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER,
+                theta_e, Vdq0_star, Vabc_star);
 
     // ------------------------------------
     // Saturate Vabc_star to inverter bus voltage
@@ -351,28 +358,50 @@ void task_cc_callback(void *arg)
     // Self-sensing:
     // -------------------
 
+    // ********************************
+    // Sync ref frame current observer:
+    // ********************************
+
     // Back-EMF State Filter
-    co_update(Idq0, Vdq0, omega_e_avg);
+    co_sync_update(
+            Idq0[0], Idq0[1],
+            Vdq0_star[0], Vdq0_star[1],
+            omega_e_avg);
 
     // Pull out Esal (sync ref frame)
     double Esal_d_hat, Esal_q_hat;
-    co_get_Esal_hat(&Esal_d_hat, &Esal_q_hat);
+    co_sync_get_Esal_hat(&Esal_d_hat, &Esal_q_hat);
 
     // Convert Esal to stationary ref frame (alpha-beta)
-    //
-    // (NOTE: this is hacking the transform_park(...) function,
-    //        since I didn't have an inverse one. Just rotate by -theta)
     double Esal_dq0[3];
     double Esal_xyz[3];
     Esal_dq0[0] = Esal_d_hat;
     Esal_dq0[1] = Esal_q_hat;
     Esal_dq0[2] = 0.0;
-    transform_park(-theta_e, Esal_dq0, Esal_xyz);
-    double Esal_alpha = Esal_xyz[0];
-    double Esal_beta  = Esal_xyz[1];
+    transform_park_inverse(theta_e, Esal_dq0, Esal_xyz);
+    double Esal_alpha1 = Esal_xyz[0];
+    double Esal_beta1  = Esal_xyz[1];
 
+    // ********************************
+    // Stat ref frame current observer:
+    // ********************************
+
+    // Back-EMF State Filter
+    co_stat_update(
+            Ixyz[0], Ixyz[1],
+            Vxyz_star[0], Vxyz_star[1],
+            omega_e_avg);
+
+    // Pull out Esal
+    double Esal_alpha2, Esal_beta2;
+    co_stat_get_Esal_hat(&Esal_alpha2, &Esal_beta2);
+
+
+    // TODO: pick between Esal_*1 or 2:
+    //
     // Back-EMF Tracking Position State Filter
-    bemfo_update(Esal_alpha, Esal_beta, 0.0);
+//    bemfo_update(Esal_alpha1, Esal_beta1, 0.0);
+    bemfo_update(Esal_alpha2, Esal_beta2, 0.0);
 }
 
 void task_cc_clear(void)
