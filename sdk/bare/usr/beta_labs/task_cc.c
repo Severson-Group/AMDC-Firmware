@@ -40,6 +40,7 @@ double LOG_theta_e_enc = 0.0;
 double LOG_theta_e_hat = 0.0;
 double LOG_omega_m_hat = 0.0;
 double LOG_omega_m_enc = 0.0;
+double LOG_omega_e_avg = 0.0;
 
 // Commands for Id and Iq -- Idq*
 static double Id_star = 0.0;
@@ -63,6 +64,8 @@ inj_ctx_t cc_inj_ctx_Id_star;
 inj_ctx_t cc_inj_ctx_Iq_star;
 inj_ctx_t cc_inj_ctx_Vd_star;
 inj_ctx_t cc_inj_ctx_Vq_star;
+inj_ctx_t cc_inj_ctx_Valpha_star;
+inj_ctx_t cc_inj_ctx_Vbeta_star;
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
@@ -93,12 +96,16 @@ void task_cc_init(void)
     injection_ctx_init(&cc_inj_ctx_Iq_star, "Iq*");
     injection_ctx_init(&cc_inj_ctx_Vd_star, "Vd*");
     injection_ctx_init(&cc_inj_ctx_Vq_star, "Vq*");
+    injection_ctx_init(&cc_inj_ctx_Valpha_star, "Valpha*");
+    injection_ctx_init(&cc_inj_ctx_Vbeta_star, "Vbeta*");
 
     // Register all cc signal injection points
     injection_ctx_register(&cc_inj_ctx_Id_star);
     injection_ctx_register(&cc_inj_ctx_Iq_star);
     injection_ctx_register(&cc_inj_ctx_Vd_star);
     injection_ctx_register(&cc_inj_ctx_Vq_star);
+    injection_ctx_register(&cc_inj_ctx_Valpha_star);
+    injection_ctx_register(&cc_inj_ctx_Vbeta_star);
 
     // Clear controller state
     _clear_state();
@@ -114,12 +121,17 @@ void task_cc_deinit(void)
     injection_ctx_unregister(&cc_inj_ctx_Iq_star);
     injection_ctx_unregister(&cc_inj_ctx_Vd_star);
     injection_ctx_unregister(&cc_inj_ctx_Vq_star);
+    injection_ctx_unregister(&cc_inj_ctx_Valpha_star);
+    injection_ctx_unregister(&cc_inj_ctx_Vbeta_star);
+
 
     // Clear all injection points
     injection_ctx_clear(&cc_inj_ctx_Id_star);
     injection_ctx_clear(&cc_inj_ctx_Iq_star);
     injection_ctx_clear(&cc_inj_ctx_Vd_star);
     injection_ctx_clear(&cc_inj_ctx_Vq_star);
+    injection_ctx_clear(&cc_inj_ctx_Valpha_star);
+    injection_ctx_clear(&cc_inj_ctx_Vbeta_star);
 
     // Clear controller state
     _clear_state();
@@ -209,6 +221,8 @@ void task_cc_callback(void *arg)
     double omega_e_enc = task_mo_get_omega_e();
     double omega_e_hat = bemfo_get_omega_e_hat();
 
+    LOG_omega_e_avg = omega_e_enc;
+
     double omega_e_avg = 0.0;
     if (omega_e_src_use_encoder) {
         omega_e_avg = omega_e_enc;
@@ -246,6 +260,14 @@ void task_cc_callback(void *arg)
     double Ixyz[3];  // alpha beta gamma currents
     double Idq0[3]; // d q 0 currents
     transform_clarke(TRANS_DQZ_C_INVARIANT_POWER, Iabc, Ixyz);
+
+    // -------------------
+    // Inject signals into V_alpha,beta*
+    // (constants, chirps, noise, etc)
+    // -------------------
+    injection_inj(&Ixyz[0], &cc_inj_ctx_Valpha_star, Ts);
+    injection_inj(&Ixyz[1], &cc_inj_ctx_Vbeta_star,  Ts);
+
     transform_park(theta_e, Ixyz, Idq0);
 
 
