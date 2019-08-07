@@ -62,8 +62,8 @@ void task_vsi_callback(void *arg) {
     double update_da = omega_ramp_fcn(&VSI_old_omega, &VSI_omega, VSI_omega_ramp);
 
     theta += update_da;
-    if (theta > 6.283185307179586)
-        theta -= 6.283185307179586;
+    if (theta > PI2)
+        theta -= PI2;
 
     double v = (VSI_R * VSI_old_omega) + VSI_V0;
 
