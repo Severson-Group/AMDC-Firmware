@@ -358,50 +358,18 @@ void task_cc_callback(void *arg)
     // Self-sensing:
     // -------------------
 
-    // ********************************
-    // Sync ref frame current observer:
-    // ********************************
-
-    // Back-EMF State Filter
-    co_sync_update(
-            Idq0[0], Idq0[1],
-            Vdq0_star[0], Vdq0_star[1],
-            omega_e_avg);
-
-    // Pull out Esal (sync ref frame)
-    double Esal_d_hat, Esal_q_hat;
-    co_sync_get_Esal_hat(&Esal_d_hat, &Esal_q_hat);
-
-    // Convert Esal to stationary ref frame (alpha-beta)
-    double Esal_dq0[3];
-    double Esal_xyz[3];
-    Esal_dq0[0] = Esal_d_hat;
-    Esal_dq0[1] = Esal_q_hat;
-    Esal_dq0[2] = 0.0;
-    transform_park_inverse(theta_e, Esal_dq0, Esal_xyz);
-    double Esal_alpha1 = Esal_xyz[0];
-    double Esal_beta1  = Esal_xyz[1];
-
-    // ********************************
-    // Stat ref frame current observer:
-    // ********************************
-
-    // Back-EMF State Filter
+    // Back-EMF State Filter (stationary ref frame)
     co_stat_update(
             Ixyz[0], Ixyz[1],
             Vxyz_star[0], Vxyz_star[1],
             omega_e_avg);
 
     // Pull out Esal
-    double Esal_alpha2, Esal_beta2;
-    co_stat_get_Esal_hat(&Esal_alpha2, &Esal_beta2);
+    double Esal_alpha, Esal_beta;
+    co_stat_get_Esal_hat(&Esal_alpha, &Esal_beta);
 
-
-    // TODO: pick between Esal_*1 or 2:
-    //
     // Back-EMF Tracking Position State Filter
-//    bemfo_update(Esal_alpha1, Esal_beta1, 0.0);
-    bemfo_update(Esal_alpha2, Esal_beta2, 0.0);
+    bemfo_update(Esal_alpha, Esal_beta, 0.0);
 }
 
 void task_cc_clear(void)
