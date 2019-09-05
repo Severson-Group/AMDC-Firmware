@@ -29,7 +29,7 @@
         output wire [5:0] inverter7_pwm,
         output wire [5:0] inverter8_pwm,
 		output wire carrier_high,
-		output wire carrier_low,
+		output wire carrier_low,		
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -94,6 +94,11 @@
     		// accept the read data and response information.
 		input wire  S_AXI_RREADY
 	);
+	
+	// Signals from hardware to C firmware
+	reg [31:0] flt_desat_out;
+	reg [31:0] flt_temp_out;
+	reg [31:0] rdy_out;
 
 	// AXI4LITE signals
 	reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
@@ -852,9 +857,9 @@
 	        6'h19   : reg_data_out <= slv_reg25;
 	        6'h1A   : reg_data_out <= slv_reg26;
 	        6'h1B   : reg_data_out <= slv_reg27;
-	        6'h1C   : reg_data_out <= slv_reg28;
-	        6'h1D   : reg_data_out <= slv_reg29;
-	        6'h1E   : reg_data_out <= slv_reg30;
+	        6'h1C   : reg_data_out <= flt_temp_out; // slv_reg28
+	        6'h1D   : reg_data_out <= flt_desat_out; // slv_reg29
+	        6'h1E   : reg_data_out <= rdy_out; // slv_reg30
 	        6'h1F   : reg_data_out <= slv_reg31;
 	        6'h20   : reg_data_out <= slv_reg32;
 	        6'h21   : reg_data_out <= slv_reg33;
@@ -1045,6 +1050,22 @@
     single_leg_switch leg23 (CLK_PWM, sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
     single_leg_switch leg24 (CLK_PWM, sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
 
+    assign rst[7:0] = slv_reg27[7:0];
+    
+    always @(posedge S_AXI_ACLK) begin
+        if (S_AXI_ARESETN == 1'b0) begin
+            flt_desat_out[31:0] <= 32'b0;
+            flt_temp_out[31:0] <= 32'b0;
+            rdy_out[31:0] <= 32'b0;
+        end
+        
+        else begin
+            flt_desat_out[7:0] <=  flt_desat[7:0];
+            flt_temp_out[7:0] <=  flt_temp[7:0];
+            rdy_out[7:0] <=  rdy[7:0];
+        end
+    end
+    
 	// User logic ends
 
 	endmodule

@@ -3,8 +3,8 @@
 
 #include "../sys/defines.h"
 
-#define SERIAL_UPDATES_PER_SEC		(10000)
-#define SERIAL_INTERVAL_USEC		(USEC_IN_SEC / SERIAL_UPDATES_PER_SEC)
+#define SERIAL_UPDATES_PER_SEC      (10000)
+#define SERIAL_INTERVAL_USEC        (USEC_IN_SEC / SERIAL_UPDATES_PER_SEC)
 
 void serial_init(void);
 void serial_callback(void *arg);

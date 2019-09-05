@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define DAC_FULL_SCALE			(4095)
-#define DAC_HALF_FULL_SCALE		(2047)
+#define DAC_FULL_SCALE          (4095)
+#define DAC_HALF_FULL_SCALE     (2047)
 
 void dac_init(void);
 

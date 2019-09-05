@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define ENCODER_PULSES_PER_REV_BITS		(14)
-#define ENCODER_PULSES_PER_REV			(1 << ENCODER_PULSES_PER_REV_BITS)
+#define ENCODER_PULSES_PER_REV_BITS     (14)
+#define ENCODER_PULSES_PER_REV          (1 << ENCODER_PULSES_PER_REV_BITS)
 
 void encoder_init(void);
 

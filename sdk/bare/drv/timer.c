@@ -16,13 +16,13 @@ static XTmrCtr timer;
 
 void fatalError(char *str)
 {
-	printf("ERROR: %s\n", str);
-	while (1) {}
+    printf("ERROR: %s\n", str);
+    while (1) {}
 }
 
 void timer_init(XTmrCtr_Handler timer_isr, uint32_t timer_period_usec)
 {
-	int xStatus = XTmrCtr_Initialize(&timer, TMR_DEVICE_ID);
+    int xStatus = XTmrCtr_Initialize(&timer, TMR_DEVICE_ID);
     if (xStatus != XST_SUCCESS) {
         fatalError("Could not initialize timer");
     }

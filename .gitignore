@@ -23,12 +23,19 @@ hw/*
 # SDK #
 #######
 
+Packages/
 
 sdk/.metadata/
 sdk/.sdk/
 
 sdk/webtalk/
+sdk/RemoteSystemsTempFiles/
 sdk/system.hdf_expanded/
+sdk/RemoteSystemsTempFiles/
+
+sdk/amdc_bsp/
+sdk/fsbl/
+sdk/design_1_wrapper_hw_platform_*/
 
 sdk/**/Debug/
 sdk/**/Release/
@@ -41,3 +48,9 @@ sdk/**/*.o
 sdk/**/*.d
 
 **/bootimage/
+
+
+##########
+# Python #
+##########
+scripts/__pycache__/

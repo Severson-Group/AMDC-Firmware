@@ -1,41 +1,28 @@
 #include "user_apps.h"
 
-// ENABLED APPLICATIONS:
+// Adding applications:
 //
-// Uncomment the following defines to compile
-// each application into the executable
+// To add a new application, create a block
+// like the other example(s) below which
+// conditionally includes the app's header file.
+//
+// Also, conditionally call the app's init function.
 
-#ifdef APP_PMSM_MC
-#include "pmsm_mc/app_pmsm_mc.h"
+#ifdef APP_BLINK
+#include "blink/app_blink.h"
 #endif
 
-#ifdef APP_DAC_TEST
-#include "dac_test/app_dac_test.h"
-#endif
-
-#ifdef APP_DEADTIME_COMP
-#include "deadtime_comp/app_deadtime_comp.h"
-#endif
-
-#ifdef APP_PARAMS
-#include "params/app_params.h"
+#ifdef APP_BETA_LABS
+#include "beta_labs/app_beta_labs.h"
 #endif
 
 void user_apps_init(void)
 {
-#ifdef APP_PMSM_MC
-	app_pmsm_mc_init();
+#ifdef APP_BLINK
+    app_blink_init();
 #endif
 
-#ifdef APP_DAC_TEST
-	app_dac_test_init();
-#endif
-
-#ifdef APP_DEADTIME_COMP
-	app_deadtime_comp_init();
-#endif
-
-#ifdef APP_PARAMS
-	app_params_init();
+#ifdef APP_BETA_LABS
+    app_beta_labs_init();
 #endif
 }
