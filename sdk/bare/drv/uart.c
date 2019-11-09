@@ -1,5 +1,5 @@
-#include "uart.h"
-#include "../sys/defines.h"
+#include "drv/uart.h"
+#include "sys/defines.h"
 #include "xuartps.h"
 #include "xparameters.h"
 #include <stdio.h>

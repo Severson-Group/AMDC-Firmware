@@ -1,7 +1,7 @@
 #ifdef APP_BETA_LABS
 
-#include "co.h"
-#include "machine.h"
+#include "usr/beta_labs/co.h"
+#include "usr/beta_labs/machine.h"
 
 // Current observer gains assuming Ts = 5e-05
 // Tuned to 10 Hz

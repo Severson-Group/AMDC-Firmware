@@ -1,12 +1,12 @@
-#include "../usr/user_defines.h"
+#include "usr/user_defines.h"
 
 #ifndef DISABLE_INJECTION
 
-#include "injection.h"
-#include "debug.h"
-#include "scheduler.h"
-#include "defines.h"
-#include "cmd/cmd_inj.h"
+#include "sys/injection.h"
+#include "sys/debug.h"
+#include "sys/scheduler.h"
+#include "sys/defines.h"
+#include "sys/cmd/cmd_inj.h"
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>

@@ -3,9 +3,9 @@
 #ifndef DISABLE_INJECTION
 
 #include "cmd_inj.h"
-#include "../defines.h"
-#include "../commands.h"
-#include "../injection.h"
+#include "sys/defines.h"
+#include "sys/commands.h"
+#include "sys/injection.h"
 #include <string.h>
 #include <stdlib.h>
 

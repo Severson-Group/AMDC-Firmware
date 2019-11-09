@@ -2,7 +2,7 @@
 #define LOG_H
 
 #include <stdint.h>
-#include "scheduler.h"
+#include "sys/scheduler.h"
 
 #define LOG_MAX_NUM_VARS                (8)
 #define LOG_VARIABLE_SAMPLE_DEPTH       (200000)

@@ -1,10 +1,10 @@
 #include "cmd_hw.h"
-#include "../defines.h"
-#include "../commands.h"
-#include "../debug.h"
-#include "../../drv/pwm.h"
-#include "../../drv/encoder.h"
-#include "../../drv/analog.h"
+#include "sys/defines.h"
+#include "sys/commands.h"
+#include "sys/debug.h"
+#include "drv/pwm.h"
+#include "drv/encoder.h"
+#include "drv/analog.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>

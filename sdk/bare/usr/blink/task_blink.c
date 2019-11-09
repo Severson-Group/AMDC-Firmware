@@ -1,8 +1,8 @@
 #ifdef APP_BLINK
 
-#include "task_blink.h"
-#include "../../sys/scheduler.h"
-#include "../../drv/io.h"
+#include "usr/blink/task_blink.h"
+#include "sys/scheduler.h"
+#include "drv/io.h"
 #include <stdint.h>
 
 // Hold LED state (0: off, 1: red, 2: green, 3: blue)

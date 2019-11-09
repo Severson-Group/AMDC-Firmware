@@ -1,4 +1,4 @@
-#include "user_apps.h"
+#include "usr/user_apps.h"
 
 // Adding applications:
 //
@@ -9,11 +9,11 @@
 // Also, conditionally call the app's init function.
 
 #ifdef APP_BLINK
-#include "blink/app_blink.h"
+#include "usr/blink/app_blink.h"
 #endif
 
 #ifdef APP_BETA_LABS
-#include "beta_labs/app_beta_labs.h"
+#include "usr/beta_labs/app_beta_labs.h"
 #endif
 
 void user_apps_init(void)

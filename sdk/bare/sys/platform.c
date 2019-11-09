@@ -32,7 +32,7 @@
 
 #include "xparameters.h"
 #include "xil_cache.h"
-#include "platform_config.h"
+#include "sys/platform_config.h"
 
 /*
  * Uncomment one of the following two lines, depending on the target,

@@ -1,12 +1,12 @@
-#include "../usr/user_defines.h"
+#include "usr/user_defines.h"
 
 #ifndef DISABLE_LOGGING
 
-#include "log.h"
-#include "debug.h"
-#include "defines.h"
-#include "scheduler.h"
-#include "cmd/cmd_log.h"
+#include "sys/log.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/scheduler.h"
+#include "sys/cmd/cmd_log.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>

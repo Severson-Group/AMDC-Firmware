@@ -1,9 +1,9 @@
 #ifdef APP_BETA_LABS
 
-#include "cmd_dtc.h"
-#include "../task_dtc.h"
-#include "../../../sys/defines.h"
-#include "../../../sys/commands.h"
+#include "usr/beta_labs/cmd/cmd_dtc.h"
+#include "usr/beta_labs/task_dtc.h"
+#include "sys/defines.h"
+#include "sys/commands.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

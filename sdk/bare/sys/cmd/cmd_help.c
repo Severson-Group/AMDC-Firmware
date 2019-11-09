@@ -1,5 +1,5 @@
 #include "cmd_help.h"
-#include "../commands.h"
+#include "sys/commands.h"
 #include <stdint.h>
 #include <string.h>
 

@@ -1,8 +1,8 @@
 #ifdef APP_BETA_LABS
 
-#include "task_vsi.h"
-#include "../../sys/scheduler.h"
-#include "../../drv/pwm.h"
+#include "usr/beta_labs/task_vsi.h"
+#include "sys/scheduler.h"
+#include "drv/pwm.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>

@@ -1,7 +1,7 @@
 #ifndef TASK_MC_H
 #define TASK_MC_H
 
-#include "../../sys/defines.h"
+#include "sys/defines.h"
 #include <stdint.h>
 
 #define TASK_MC_UPDATES_PER_SEC     (4000)

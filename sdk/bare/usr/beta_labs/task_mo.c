@@ -1,10 +1,10 @@
 #ifdef APP_BETA_LABS
 
-#include "task_mo.h"
-#include "machine.h"
-#include "../../sys/scheduler.h"
-#include "../../drv/encoder.h"
-#include "../../drv/dac.h"
+#include "usr/beta_labs/task_mo.h"
+#include "usr/beta_labs/machine.h"
+#include "sys/scheduler.h"
+#include "drv/encoder.h"
+#include "drv/dac.h"
 
 static task_control_block_t tcb;
 

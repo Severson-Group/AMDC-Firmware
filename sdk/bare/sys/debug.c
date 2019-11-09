@@ -1,5 +1,5 @@
-#include "debug.h"
-#include "serial.h"
+#include "sys/debug.h"
+#include "sys/serial.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>

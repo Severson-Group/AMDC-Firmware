@@ -33,7 +33,7 @@
 #ifndef __PLATFORM_H_
 #define __PLATFORM_H_
 
-#include "../sys/platform_config.h"
+#include "sys/platform_config.h"
 
 void init_platform();
 void cleanup_platform();

@@ -1,6 +1,6 @@
 #ifdef APP_BETA_LABS
 
-#include "msf.h"
+#include "usr/beta_labs/msf.h"
 
 // Motion state filter gains with Ts = 0.00025
 // Bandwidth tuned to 200.0 Hz

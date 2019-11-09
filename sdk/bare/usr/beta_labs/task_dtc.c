@@ -1,11 +1,11 @@
 #ifdef APP_BETA_LABS
 
-#include "task_dtc.h"
-#include "inverter.h"
-#include "../../sys/scheduler.h"
-#include "../../sys/defines.h"
-#include "../../sys/debug.h"
-#include "machine.h"
+#include "usr/beta_labs/task_dtc.h"
+#include "usr/beta_labs/inverter.h"
+#include "usr/beta_labs/machine.h"
+#include "sys/scheduler.h"
+#include "sys/defines.h"
+#include "sys/debug.h"
 #include <math.h>
 
 #define L_HAT ((Ld_HAT + Lq_HAT) / 2.0)

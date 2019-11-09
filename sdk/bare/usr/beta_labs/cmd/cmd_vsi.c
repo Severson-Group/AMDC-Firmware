@@ -1,9 +1,9 @@
 #ifdef APP_BETA_LABS
 
-#include "cmd_vsi.h"
-#include "../task_vsi.h"
-#include "../../../sys/commands.h"
-#include "../../../sys/defines.h"
+#include "usr/beta_labs/cmd/cmd_vsi.h"
+#include "usr/beta_labs/task_vsi.h"
+#include "sys/commands.h"
+#include "sys/defines.h"
 #include <string.h>
 #include <stdlib.h>
 

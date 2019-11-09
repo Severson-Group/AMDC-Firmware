@@ -1,7 +1,7 @@
 #ifdef APP_BETA_LABS
 
-#include "mcff.h"
-#include "machine.h"
+#include "usr/beta_labs/mcff.h"
+#include "usr/beta_labs/machine.h"
 
 //Output States
 static double Te_cff_jp = 0.0;

@@ -1,8 +1,8 @@
 #ifdef APP_BETA_LABS
 
-#include "bemfo.h"
-#include "task_cc.h"
-#include "machine.h"
+#include "usr/beta_labs/bemfo.h"
+#include "usr/beta_labs/task_cc.h"
+#include "usr/beta_labs/machine.h"
 #include <math.h>
 
 // Tuning for Back EMF Observer with Ts = 1/20000 sec

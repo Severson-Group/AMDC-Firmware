@@ -1,7 +1,7 @@
 #ifndef TASK_BLINK_H
 #define TASK_BLINK_H
 
-#include "../../sys/defines.h"
+#include "sys/defines.h"
 
 // Frequency that this task is called (in Hz)
 //

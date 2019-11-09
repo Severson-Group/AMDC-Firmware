@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "../sys/defines.h"
-#include "../usr/user_defines.h"
+#include "sys/defines.h"
+#include "usr/user_defines.h"
 
 // SysTick
 //

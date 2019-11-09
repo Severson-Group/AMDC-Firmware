@@ -3,9 +3,9 @@
 #ifndef DISABLE_LOGGING
 
 #include "cmd_log.h"
-#include "../commands.h"
-#include "../defines.h"
-#include "../log.h"
+#include "sys/commands.h"
+#include "sys/defines.h"
+#include "sys/log.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

@@ -1,7 +1,7 @@
 #ifndef TASK_MO_H
 #define TASK_MO_H
 
-#include "../../sys/defines.h"
+#include "sys/defines.h"
 
 #define TASK_MO_UPDATES_PER_SEC     (10000)
 #define TASK_MO_INTERVAL_USEC       (USEC_IN_SEC / TASK_MO_UPDATES_PER_SEC)

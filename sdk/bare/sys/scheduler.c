@@ -1,10 +1,10 @@
-#include "scheduler.h"
+#include "sys/scheduler.h"
+#include "usr/user_defines.h"
+#include "drv/io.h"
+#include "drv/timer.h"
+#include "drv/watchdog.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include "../usr/user_defines.h"
-#include "../drv/io.h"
-#include "../drv/timer.h"
-#include "../drv/watchdog.h"
 
 // Used to give each task a unique ID
 static int next_tcb_id = 0;

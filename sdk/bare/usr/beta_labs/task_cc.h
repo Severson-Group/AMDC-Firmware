@@ -1,10 +1,10 @@
 #ifndef TASK_CC_H
 #define TASK_CC_H
 
+#include "drv/analog.h"
+#include "sys/defines.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
-#include "../../drv/analog.h"
-#include "../../sys/defines.h"
-#include "../../sys/scheduler.h"
 
 #define TASK_CC_UPDATES_PER_SEC     (20000)
 #define TASK_CC_INTERVAL_USEC       (USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)

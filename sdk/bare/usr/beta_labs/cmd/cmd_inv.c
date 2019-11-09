@@ -1,9 +1,9 @@
 #ifdef APP_BETA_LABS
 
-#include "cmd_inv.h"
-#include "../inverter.h"
-#include "../../../sys/defines.h"
-#include "../../../sys/commands.h"
+#include "usr/beta_labs/cmd/cmd_inv.h"
+#include "usr/beta_labs/inverter.h"
+#include "sys/defines.h"
+#include "sys/commands.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

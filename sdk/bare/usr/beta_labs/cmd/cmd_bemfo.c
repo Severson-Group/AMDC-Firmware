@@ -1,9 +1,9 @@
 #ifdef APP_BETA_LABS
 
-#include "cmd_bemfo.h"
-#include "../bemfo.h"
-#include "../../../sys/commands.h"
-#include "../../../sys/defines.h"
+#include "usr/beta_labs/cmd/cmd_bemfo.h"
+#include "usr/beta_labs/bemfo.h"
+#include "sys/commands.h"
+#include "sys/defines.h"
 #include <string.h>
 #include <stdlib.h>
 

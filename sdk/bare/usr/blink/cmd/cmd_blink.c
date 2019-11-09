@@ -1,9 +1,9 @@
 #ifdef APP_BLINK
 
-#include "cmd_blink.h"
-#include "../../../sys/commands.h"
-#include "../../../sys/debug.h"
-#include "../../../sys/defines.h"
+#include "usr/blink/cmd/cmd_blink.h"
+#include "sys/commands.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
 #include <string.h>
 #include <stdlib.h>
 

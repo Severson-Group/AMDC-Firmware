@@ -1,8 +1,8 @@
 #ifdef APP_BETA_LABS
 
-#include "inverter.h"
-#include "../../drv/io.h"
-#include "../../drv/pwm.h"
+#include "usr/beta_labs/inverter.h"
+#include "drv/io.h"
+#include "drv/pwm.h"
 #include <math.h>
 
 static double dtc_dcomp = 0.0;

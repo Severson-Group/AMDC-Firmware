@@ -1,9 +1,9 @@
 #ifdef APP_BETA_LABS
 
-#include "cmd_cc.h"
-#include "../../../sys/defines.h"
-#include "../../../sys/commands.h"
-#include "../task_cc.h"
+#include "usr/beta_labs/cmd/cmd_cc.h"
+#include "usr/beta_labs/task_cc.h"
+#include "sys/defines.h"
+#include "sys/commands.h"
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>

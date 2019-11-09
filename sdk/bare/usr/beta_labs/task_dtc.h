@@ -1,8 +1,8 @@
 #ifndef TASK_DTC_H
 #define TASK_DTC_H
 
-#include "../../sys/defines.h"
-#include "../../drv/analog.h"
+#include "sys/defines.h"
+#include "drv/analog.h"
 #include <stdint.h>
 
 #define TASK_DTC_UPDATES_PER_SEC    (10000)

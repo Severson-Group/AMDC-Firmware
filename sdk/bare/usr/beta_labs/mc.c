@@ -1,6 +1,6 @@
 #ifdef APP_BETA_LABS
 
-#include "mc.h"
+#include "usr/beta_labs/mc.h"
 
 // Tuning for motion controller with Ts = 0.00025
 // Bandwidth is tuned to 5 Hz
