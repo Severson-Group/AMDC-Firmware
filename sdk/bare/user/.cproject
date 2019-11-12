@@ -91,6 +91,18 @@
 							<tool id="xilinx.gnu.armv7.size.debug.1079631618" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="xilinx.gnu.armv7.exe.debug.994846576.1749237333" name="lscript.ld" rcbsApplicability="disable" resourcePath="lscript.ld" toolsToInvoke="xilinx.gnu.armv7.c.toolchain.linker.debug.387215090.302545298">
+						<tool id="xilinx.gnu.armv7.c.toolchain.linker.debug.387215090.302545298" name="ARM v7 gcc linker" superClass="xilinx.gnu.armv7.c.toolchain.linker.debug.387215090">
+							<option id="xilinx.gnu.c.link.option.ldflags.1506855243" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none" valueType="string"/>
+							<inputType id="xilinx.gnu.linker.input.1946566221" superClass="xilinx.gnu.linker.input">
+								<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+								<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+								<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+							</inputType>
+							<inputType id="xilinx.gnu.linker.input.lscript.1171201367" name="Linker Script" superClass="xilinx.gnu.linker.input.lscript"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="common" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="common"/>
