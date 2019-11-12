@@ -20,10 +20,29 @@ Firmware development environment needs a few things:
 
 ## Cloning from GitHub
 
-You must download the `AMDC-Firmware` git repo to your local machine. Make sure to put it in a permanent location (i.e., not `Downloads`), and ensure the path doesn't contain any spaces.
+There are two recomended options for cloning the `AMDC-Firmware` repo from GitHub and creating a local working space on your computer. To choose between them, you must first decide if your user application(s) will be private or open-source. Most likely, your code will be private. This means that you will not contribute it back to the `AMDC-Firmware` repo as an example application.
 
-NOTE: `$REPO_DIR` represents the file system path of this repository.
+### Open-Source Example Applications
 
+If you are _not_ creating private user applications, i.e. your code will be contributed back to the `AMDC-Firmware` repo as an example application:
+
+1. Download the `AMDC-Firmware` git repo to your local machine like normal:
+  a. `git clone https://github.com/Severson-Group/AMDC-Firmware`
+2. Ensure it is in a permanent location (i.e., not `Downloads`)
+3. Ensure the path doesn't contain any spaces.
+
+NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository.
+
+### Private User Applications
+
+For the majority of use cases, your user application(s) will be private and reside in a _different_ repo than the `AMDC-Firmware` repo (i.e. your own personal repo):
+
+1. Create your master repo (which will eventually contain your private code as well as a copy of `AMDC-Firmware`)
+2. In this repo:
+  a. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
+  b. Copy `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+
+NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
 
 ## Vivado
 
