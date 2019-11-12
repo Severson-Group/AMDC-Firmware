@@ -18,22 +18,33 @@
 					<folderInfo id="xilinx.gnu.armv7.exe.debug.994846576." name="/" resourcePath="">
 						<toolChain id="xilinx.gnu.armv7.exe.debug.toolchain.675664127" name="Xilinx ARM v7 GNU Toolchain" superClass="xilinx.gnu.armv7.exe.debug.toolchain">
 							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.x32" id="xilinx.armv7.target.gnu.base.debug.722028308" isAbstract="false" name="Debug Platform" superClass="xilinx.armv7.target.gnu.base.debug"/>
-							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug"/>
+							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug">
+								<outputEntries>
+									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
+									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
+								</outputEntries>
+							</builder>
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
+								<option id="xilinx.gnu.both.asm.option.include.paths.1649842689" name="Include Paths (-I)" superClass="xilinx.gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/bare}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/c_code"/>
+								</option>
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.172815694" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.1946302083" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="xilinx.gnu.compiler.option.debugging.level.1813210300" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.1012021837" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes" valueType="includePath"/>
+								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.1012021837" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes"/>
 								<option id="xilinx.gnu.compiler.inferred.swplatform.flags.390797143" name="Software Platform Inferred Flags" superClass="xilinx.gnu.compiler.inferred.swplatform.flags" value="  " valueType="string"/>
 								<option id="xilinx.gnu.compiler.misc.other.1858768302" name="Other flags" superClass="xilinx.gnu.compiler.misc.other" value="-c -fmessage-length=0 -MT&quot;$@&quot; -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard" valueType="string"/>
 								<option id="xilinx.gnu.compiler.symbols.defined.1897050119" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
 								</option>
 								<option id="xilinx.gnu.compiler.dircategory.includes.1596529872" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/common}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1322043513" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -47,13 +58,9 @@
 							</tool>
 							<tool id="xilinx.gnu.armv7.toolchain.archiver.357721109" name="ARM v7 archiver" superClass="xilinx.gnu.armv7.toolchain.archiver"/>
 							<tool id="xilinx.gnu.armv7.c.toolchain.linker.debug.387215090" name="ARM v7 gcc linker" superClass="xilinx.gnu.armv7.c.toolchain.linker.debug">
-								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1777577282" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath" valueType="libPaths">
-									<listOptionValue builtIn="false" value="../../amdc_bsp/ps7_cortexa9_0/lib"/>
-								</option>
+								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1777577282" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath"/>
 								<option id="xilinx.gnu.linker.inferred.swplatform.flags.1492846061" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
 								<option id="xilinx.gnu.c.linker.option.lscript.1654817451" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.1114643894" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>
@@ -62,6 +69,9 @@
 								</option>
 								<option id="xilinx.gnu.c.link.option.other.974485815" name="Other options (-XLinker [option])" superClass="xilinx.gnu.c.link.option.other" valueType="stringList">
 									<listOptionValue builtIn="false" value="-M &gt; mapfile.txt"/>
+								</option>
+								<option id="xilinx.gnu.c.link.option.paths.429308175" name="Library search path (-L)" superClass="xilinx.gnu.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/lib}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.linker.input.1470010392" superClass="xilinx.gnu.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -78,11 +88,15 @@
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
-								<option id="xilinx.gnu.c.linker.option.lscript.1894835848" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
+								<option id="xilinx.gnu.c.linker.option.lscript.1894835848" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/sdk/bare/common/lscript.ld" valueType="string"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.size.debug.1079631618" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry excluding="common|bare|sys|drv|c_code" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="common"/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -136,7 +150,7 @@
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
-								<option id="xilinx.gnu.c.linker.option.lscript.809833097" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
+								<option id="xilinx.gnu.c.linker.option.lscript.809833097" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/sdk/bare/common/lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.313599292" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>
 								<inputType id="xilinx.gnu.linker.input.956778036" superClass="xilinx.gnu.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -153,7 +167,7 @@
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
-								<option id="xilinx.gnu.c.linker.option.lscript.280969261" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
+								<option id="xilinx.gnu.c.linker.option.lscript.280969261" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/sdk/bare/common/lscript.ld" valueType="string"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.size.release.210820396" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.release"/>
 						</toolChain>
@@ -191,4 +205,5 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
