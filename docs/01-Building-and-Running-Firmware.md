@@ -27,7 +27,7 @@ There are two recomended options for cloning the `AMDC-Firmware` repo from GitHu
 If you are _not_ creating private user applications, i.e. your code will be contributed back to the `AMDC-Firmware` repo as an example application:
 
 1. Download the `AMDC-Firmware` git repo to your local machine like normal:
-  a. `git clone https://github.com/Severson-Group/AMDC-Firmware`
+    1. `git clone https://github.com/Severson-Group/AMDC-Firmware`
 2. Ensure it is in a permanent location (i.e., not `Downloads`)
 3. Ensure the path doesn't contain any spaces.
 
@@ -39,8 +39,8 @@ For the majority of use cases, your user application(s) will be private and resi
 
 1. Create your master repo (which will eventually contain your private code as well as a copy of `AMDC-Firmware`)
 2. In this repo:
-  a. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
-  b. Copy `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+    1. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
+    2. Copy `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
 
 NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
 
