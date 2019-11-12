@@ -27,8 +27,6 @@
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
 								<option id="xilinx.gnu.both.asm.option.include.paths.1649842689" name="Include Paths (-I)" superClass="xilinx.gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/bare}&quot;"/>
-									<listOptionValue builtIn="false" value="C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/c_code"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
