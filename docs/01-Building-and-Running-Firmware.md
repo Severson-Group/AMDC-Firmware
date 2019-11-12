@@ -38,9 +38,21 @@ NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` reposit
 For the majority of use cases, your user application(s) will be private and reside in a _different_ repo than the `AMDC-Firmware` repo (i.e. your own personal repo):
 
 1. Create your master repo (which will eventually contain your private code as well as a copy of `AMDC-Firmware`)
+    1. Ensure it is in a permanent location (i.e., not `Downloads`)
+    2. Ensure the path doesn't contain any spaces.
 2. In this repo:
     1. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
     2. Copy `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+
+You should now have a master repo with two subfolders:
+
+```
+my-AMDC-workspace/              <= master repo
+    AMDC-Firmware/              <= AMDC-Firmware as library
+        ...
+    my-AMDC-private-C-code/     <= Your private user C code
+        ...
+```
 
 NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
 
