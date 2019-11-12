@@ -23,4 +23,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>common</name>
+			<type>2</type>
+			<location>C:/Users/npetersen2/Documents/GitHub/my-AMDC-project/AMDC-Firmware/sdk/bare/common</location>
+		</link>
+	</linkedResources>
 </projectDescription>
