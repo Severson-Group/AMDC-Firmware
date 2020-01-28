@@ -36,7 +36,7 @@ class AMDC:
     def disconnect(self):
         self.ser.close()
 
-    def cmd(self, cmd_str, delaySec = None):
+    def cmd(self, cmd_str, delaySec = None, capture_output = True):
         to_send_str = "{0}\r\n".format(cmd_str)
         to_send_bytes = str.encode(to_send_str)
         for b in to_send_bytes:
@@ -54,16 +54,40 @@ class AMDC:
         # Print log for user
         if self.cmdEcho:
             print("{0}{1}".format(self.cmdEchoPrepend, cmd_str))
+            
+        if capture_output == True:
+            # Print out any feedback from command
+            
+            output = []
+            count_empty = 0
+            allowed_empty = 10
+            
+            while count_empty < allowed_empty:
+                # Read in line and decode
+                line = self.ser.readline().decode()
+                
+                if len(line) > 0 and line != '\n':
+                    # Remove newline and carriage returns
+                    line = line.strip('\n\r')
+                    
+                    # Append line to output list
+                    output.append(line)
+                    count_empty = 0
+                else:
+                    count_empty += 1
+            
+            print(output)
+            return output
 
     def log_reg(self, log_var_idx, name, sps, var_type):
         memory_addr = int(self.mapfile.address(name), 0)
         if memory_addr == 0:
             print("ERROR: couldn't find memory address for '{0}'".format(name))
         cmd = 'log reg {0} {1} {2} {3} {4}'.format(log_var_idx, name, memory_addr, sps, var_type)
-        self.cmd(cmd)
+        return self.cmd(cmd)
 
     def log_dump(self, log_var_idx):
-        self.cmd("log dump {0}".format(log_var_idx))
+        self.cmd("log dump {0}".format(log_var_idx), capture_output = False)
         
         samples = []
         
@@ -74,7 +98,7 @@ class AMDC:
             
             if ("\n" in c):
                 try:
-                    sample = self._process_line(line)
+                    sample = self.__process_line(line)
                     samples.append(sample)
                 except:
                     # Line was not a sample
@@ -93,7 +117,7 @@ class AMDC:
 
         return np.array(samples)
 
-    def _process_line(self, line):
+    def __process_line(self, line):
         colline = ' '.join(line.split())
         
         # Don't process empty lines
