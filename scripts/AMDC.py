@@ -4,8 +4,8 @@ import numpy as np
 from Mapfile import Mapfile
 
 class AMDC:
-    def __init__(self, mapfile,
-                            port, baudrate = '115200',
+    def __init__(self, port, mapfile,
+                            baudrate = '115200',
                             cmdDelay = 0.5, cmdDelayChar = 0.001,
                             cmdEcho = True, cmdEchoPrepend = "\t> "):
         # Serial port configuration
@@ -14,13 +14,21 @@ class AMDC:
         self.ser.port = port
 
         # Mapfile config
-        self.mapfile = Mapfile(filepath = mapfile)
+        if mapfile != None:
+            self.mapfile = Mapfile(filepath = mapfile)
 
         # Command config
         self.cmdDelay = cmdDelay
         self.cmdDelayChar = cmdDelayChar
         self.cmdEcho = cmdEcho
         self.cmdEchoPrepend = cmdEchoPrepend
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.disconnect()
 
     def connect(self):
         self.ser.open()
