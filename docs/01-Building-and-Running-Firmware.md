@@ -20,10 +20,41 @@ Firmware development environment needs a few things:
 
 ## Cloning from GitHub
 
-You must download the `AMDC-Firmware` git repo to your local machine. Make sure to put it in a permanent location (i.e., not `Downloads`), and ensure the path doesn't contain any spaces.
+There are two recomended options for cloning the `AMDC-Firmware` repo from GitHub and creating a local working space on your computer. To choose between them, you must first decide if your user application(s) will be private or open-source. Most likely, your code will be private. This means that you will not contribute it back to the `AMDC-Firmware` repo as an example application.
 
-NOTE: `$REPO_DIR` represents the file system path of this repository.
+### Open-Source Example Applications
 
+If you are _not_ creating private user applications, i.e. your code will be contributed back to the `AMDC-Firmware` repo as an example application:
+
+1. Download the `AMDC-Firmware` git repo to your local machine like normal:
+    1. `git clone https://github.com/Severson-Group/AMDC-Firmware`
+2. Ensure it is in a permanent location (i.e., not `Downloads`)
+3. Ensure the path doesn't contain any spaces.
+
+NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository.
+
+### Private User Applications
+
+For the majority of use cases, your user application(s) will be private and reside in a _different_ repo than the `AMDC-Firmware` repo (i.e. your own personal repo):
+
+1. Create your master repo (which will eventually contain your private code as well as a copy of `AMDC-Firmware`)
+    1. Ensure it is in a permanent location (i.e., not `Downloads`)
+    2. Ensure the path doesn't contain any spaces.
+2. In this repo:
+    1. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
+    2. **Copy** `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+
+You should now have a master repo with two subfolders:
+
+```
+my-AMDC-workspace/              <= master repo
+    AMDC-Firmware/              <= AMDC-Firmware as library
+        ...
+    my-AMDC-private-C-code/     <= Your private user C code
+        ...
+```
+
+NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
 
 ## Vivado
 
@@ -85,9 +116,22 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 2. Set workspace to: `$REPO_DIR\sdk`
 3. Once open, close the Welcome tab
 
+### Create BSP Project
+
+1. `File` > `New` > `Board Support Package`
+2. Set `Project name` to "amdc_bsp"
+3. `Finish`
+4. Pop-up will appear
+5. Select `lwip***`
+6. Select `xilffs`
+7. `OK`
+8. The BSP will build
+
 ### Import Projects into SDK
 
-The SDK workspace will initially be empty (except for `design_1_wrapper...` from above). You need to import the projects from the `sdk` directory.
+The SDK workspace will initially be empty (except for `design_1_wrapper...` from above and new `amdc_bsp`). You need to import the projects you want to use.
+
+#### Open-source example applications:
 
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
@@ -95,34 +139,70 @@ The SDK workspace will initially be empty (except for `design_1_wrapper...` from
 4. Ensure all projects are selected
 5. `Finish`
 
+#### Private user applications:
+
+1. `File` > `Open Projects from File System...`
+2. `Directory...`
+3. Select: `your master user repo` / `my-AMDC-private-C-code`
+5. `Finish`
+
+Building the private user application will fail. Fix this by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
+
+1. In the `Project Explorer`, delete `common` folder from `bare` project
+2. Open `bare` project properties
+3. `C/C++ General` > `Paths and Symbols` > `Source Location` > `Link Folder...`
+4. Check the `Link to folder in the file system` box
+5. Browse to `$REPO_DIR\sdk\bare\common`
+6. `OK`
+---
+7. Change to `Includes` tab
+8. `Edit...` on `/bare/common`
+9. Click `Workspace...` and select `bare` / `common`
+10. `OK`
+11. `OK`
+---
+12. `Edit...` on `/bare/bare`
+13. Change directory to `/bare`
+14. `OK`
+---
+15. `Edit...` on `/bare/amdc_bsp/ps7_cortexa9_0/include`
+16. Change directory to `/amdc_bsp/ps7_cortexa9_0/include`
+17. `OK`
+---
+18. Change to `Library Paths` tab
+19. `Add...` > `Workspace...` > `amdc_bsp` / `ps7_cortex9_0` / `lib`
+20. `OK`
+---
+21. Finally, click `OK` to exit properites dialog
+
+Just kidding, one more thing ;)
+
+1. Open back up project properties dialog
+2. `C/C++ Build` > `Settings`
+3. `Tool Settings` tab
+4. `ARM v7 gcc linker` > `Inferred Options` > `Software Platform`
+5. Add the following for `Inferred Flags`: `-Wl,--start-group,-lxil,-lgcc,-lc,--end-group`
+6. `ARM v7 gcc linker` > `Libraries`
+7. Add `m` under `Libraries`
+8. Click `OK` to exit properties dialog
+
 ### Build SDK Projects
 
-SDK will attempt to build the projects you just imported. There will be lots of errors. Fix them as follows.
+SDK will attempt to build the projects you just imported. Wait until all projects are done compiling... Could take a few minutes...
 
-1. Create BSP project
-    1. `File` > `New...` > `Board Support Package`
-    2. Project name: "amdc_bsp"
-    3. Leave all other settings the same
-    4. `Finish`
-2. Select libraries to include in BSP
-    1. `lwip***`
-    2. `xilffs`
-    3. `OK`
-3. Projects will now build. View status on `Console` tab in SDK view
-4. Wait until all projects are done compiling... Could take a few minutes...
-5. Ensure there are no errors for `amdc_bsp` and your desired application project (i.e. `bare`)
+There shouldn't be any errors. Ensure there are no errors for `amdc_bsp` and your desired application project (i.e. `bare`)
 
 All done! Ready to program AMDC!
 
 
 ## Programming AMDC
 
-Ensure the AMDC JTAG is plugged into your PC and AMDC main power is supplied.
+Ensure the AMDC JTAG / UART is plugged into your PC and AMDC main power is supplied.
 
 ### Setup SDK Project Debug Configuration
 
 1. Right-click on the project to are trying to debug, e.g. `bare`
-2. `Run As` > `Debug Configurations...`
+2. `Debug As` > `Debug Configurations...`
 3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
     1. If not: 
     2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
@@ -143,7 +223,7 @@ Now, you are ready to start the code on AMDC!
 3. `SDK Log` panel in the GUI will show stream of message as AMDC is programmed
     1. System reset will occur
     2. FPGA will be programmed
-    3. Processor will start running your code
+    3. Processor will start running your code (must click play button to start it running)
 4. NOTE: You only have to do the right-click and debug from the menu the first time -- next time, just click the debug icon from the icon ribbon in the GUI (located to left of play button).
 
 ### Connecting to AMDC over USB-UART
