@@ -47,9 +47,6 @@ static double cc_Id_star = 0.0;
 static double cc_Iq_star = 0.0;
 static double cc_omega_e = 0.0;
 
-// Default DC link voltage to 1V -- user will override this
-static double cc_vdc = 1.0;
-
 // Controller state
 static vec_dq_t Idq_err = {0};
 static vec_dq_t Idq_err_acc = {0};
@@ -57,13 +54,21 @@ static double theta_e = 0.0;
 
 void task_cc_init(void)
 {
-    scheduler_tcb_init(&tcb, task_cc_callback, NULL, "cc", TASK_CC_INTERVAL_USEC);
-    scheduler_tcb_register(&tcb);
+	if (!scheduler_tcb_is_registered(&tcb)) {
+		scheduler_tcb_init(&tcb, task_cc_callback, NULL, "cc", TASK_CC_INTERVAL_USEC);
+		scheduler_tcb_register(&tcb);
+	}
 }
 
 void task_cc_deinit(void)
 {
-    scheduler_tcb_unregister(&tcb);
+	if (scheduler_tcb_is_registered(&tcb)) {
+		scheduler_tcb_unregister(&tcb);
+	}
+
+    inverter_set_voltage(pwm_config[0].pwm_chnl, 0.0);
+    inverter_set_voltage(pwm_config[1].pwm_chnl, 0.0);
+    inverter_set_voltage(pwm_config[2].pwm_chnl, 0.0);
 }
 
 void task_cc_callback(void *arg)
@@ -159,7 +164,7 @@ void task_cc_callback(void *arg)
 
 void task_cc_vdc_set(double vdc)
 {
-	cc_vdc = vdc;
+	inverter_set_Vdc(vdc);
 }
 
 void task_cc_pwm(uint8_t phase, uint8_t pwm_chnl)

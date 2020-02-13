@@ -26,7 +26,7 @@ inline static int saturate(double min, double max, double *value) {
 void inverter_saturate_to_Vdc(double *phase_voltage)
 {
     io_led_color_t color = {0, 0, 0};
-    if (saturate(-inverter_Vdc, inverter_Vdc, phase_voltage) != 0) color.g = 255;
+    if (saturate(-inverter_Vdc / 2.0, inverter_Vdc / 2.0, phase_voltage) != 0) color.g = 255;
     io_led_set_c(0, 1, 0, &color);
 }
 

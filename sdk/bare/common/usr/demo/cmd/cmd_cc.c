@@ -11,12 +11,33 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+// To initialize this module:
+//
+// Configure I/O
+// > cc pwm a 2
+// > cc pwm b 1
+// > cc pwm c 0
+// > cc adc a 16 -2.5 0
+// > cc adc b 15 -2.5 0
+// > cc adc c 13 -2.5 0
+//
+// Configure tuning
+// > cc vdc 10
+// > cc tune 1 0.0015 0.0015 628
+//
+// Start current controller
+// > cc init
+//
+// Set operating point
+// > cc set 1 1 10
+
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (6)
+#define NUM_HELP_ENTRIES (8)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 	{"init", "Initialize current controller"},
 	{"deinit", "Deinitialize current controller"},
+	{"setup", "Set-up for Ashad bench"},
 	{"vdc <volts>", "Set DC link voltage"},
 	{"pwm <a|b|c> <pwm_chnl>", "Configure PWM outputs per phase"},
 	{"adc <a|b|c> <adc_chnl> <adc_gain> <adc_offset>", "Configure ADC input per phase"},
@@ -55,6 +76,24 @@ int cmd_cc(int argc, char **argv)
     	return SUCCESS;
     }
 
+    if (argc == 2 && STREQ("setup", argv[1])) {
+    	// Setup for Ashad bench
+
+    	task_cc_vdc_set(10.0);
+
+		task_cc_adc(0, 16, -2.5, 0.0); // A
+		task_cc_adc(1, 15, -2.5, 0.0); // B
+		task_cc_adc(2, 13, -2.5, 0.0); // C
+
+		task_cc_pwm(0, 2); // A
+    	task_cc_pwm(1, 1); // B
+    	task_cc_pwm(2, 0); // C
+
+    	task_cc_tune(1.0, 0.0015, 0.0015, 628.0);
+
+    	return SUCCESS;
+    }
+
     if (argc == 3 && STREQ("vdc", argv[1])) {
     	// Set DC link voltage
     	double vdc = strtod(argv[2], NULL);
@@ -80,7 +119,7 @@ int cmd_cc(int argc, char **argv)
     	}
 
     	uint8_t pwm_chnl = atoi(argv[3]);
-    	if (pwm_chnl <= 0 || pwm_chnl >= 24) {
+    	if (pwm_chnl >= 24) {
     		return INVALID_ARGUMENTS;
     	}
 
