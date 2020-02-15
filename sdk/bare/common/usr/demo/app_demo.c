@@ -8,9 +8,6 @@ void app_demo_init(void)
 {
     // Register "cc" command with system
     cmd_cc_register();
-
-    // Initialize current control task with system
-    //task_cc_init();
 }
 
 #endif // APP_DEMO
