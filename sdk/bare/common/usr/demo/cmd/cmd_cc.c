@@ -34,11 +34,13 @@
 // Stop current controller
 // > cc 0 deinit
 
+float value;
+
 static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES (8)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-    {"setup ashad", "Set-up for Ashad bench"},
+    {"setup [ashad|yusuke]", "Set-up specific bench configuration"},
     {"<cc_idx> init", "Initialize current controller"},
     {"<cc_idx> deinit", "Deinitialize current controller"},
     {"<cc_idx> vdc <volts>", "Set DC link voltage"},
@@ -82,18 +84,43 @@ int cmd_cc(int argc, char **argv)
     }
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("ashad", argv[2])) {
+		// Setup for Ashad bench
+		task_cc_vdc_set(0, 10.0);
+
+		task_cc_adc(0, 0, 16, -2.5, 0.0); // A
+		task_cc_adc(0, 1, 15, -2.5, 0.0); // B
+		task_cc_adc(0, 2, 13, -2.5, 0.0); // C
+
+		task_cc_pwm(0, 0, 2); // A
+		task_cc_pwm(0, 1, 1); // B
+		task_cc_pwm(0, 2, 0); // C
+
+		task_cc_tune(0, 1.0, 0.0015, 0.0015, 628.0);
+
+		return SUCCESS;
+	}
+
+    if (argc == 3 && STREQ("setup", argv[1]) && STREQ("yusuke", argv[2])) {
         // Setup for Ashad bench
         task_cc_vdc_set(0, 10.0);
+        task_cc_vdc_set(1, 10.0);
 
-        task_cc_adc(0, 0, 16, -2.5, 0.0); // A
-        task_cc_adc(0, 1, 15, -2.5, 0.0); // B
-        task_cc_adc(0, 2, 13, -2.5, 0.0); // C
+        task_cc_adc(0, 0, 3, 1.434, -0.01); // TA
+        task_cc_adc(0, 1, 2, 1.434, -0.08); // TB
+        task_cc_adc(0, 2, 1, 1.434, -0.00); // TC
+        task_cc_adc(1, 0, 6, 2.199, -0.01); // SA
+        task_cc_adc(1, 1, 5, 2.199, -0.04); // SB
+        task_cc_adc(1, 2, 4, 2.199, -0.07); // SC
 
-        task_cc_pwm(0, 0, 2); // A
-        task_cc_pwm(0, 1, 1); // B
-        task_cc_pwm(0, 2, 0); // C
+        task_cc_pwm(0, 0, 5); // TA
+        task_cc_pwm(0, 1, 4); // TB
+        task_cc_pwm(0, 2, 3); // TC
+        task_cc_pwm(1, 0, 1); // SA
+        task_cc_pwm(1, 1, 2); // SB
+        task_cc_pwm(1, 2, 0); // SC
 
-        task_cc_tune(0, 1.0, 0.0015, 0.0015, 628.0);
+        task_cc_tune(0, 0.6, 0.0025, 0.0025, 6283.0); //Torque
+        task_cc_tune(1, 2.4, 0.010, 0.010, 6283.0); //Suspension
 
         return SUCCESS;
     }
