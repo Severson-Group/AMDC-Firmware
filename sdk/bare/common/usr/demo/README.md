@@ -2,6 +2,21 @@
 
 This user application implements modular dq-axis current control. Eight instances of the current controller are supported. Note that an amplitude invariant transformation is used for all DQ quantities.
 
+## Supported Commands
+`cc <cc_idx> init` - *Initialize current controller*
+
+`cc <cc_idx> deinit` - *Deinitialize current controller*
+
+`cc <cc_idx> vdc <voltage>` - *Set DC link voltage*
+
+`cc <cc_idx> pwm <a|b|c> <pwm_chnl>` - *Configure PWM outputs per phase*
+
+`cc <cc_idx> adc <a|b|c> <adc_chnl> <adc_gain> <adc_offset>` - *Configure ADC input per phase*
+
+`cc <cc_idx> tune <Rs> <Ld> <Lq> <bw>` - *Tune with Rs [ohms], Ldq [H], and bandwidth [rad/s]*
+
+`cc <cc_idx> set <Id*> <Iq*> <omega_e>` - *Set operating point for Idq [Adq] at omega_e [rad/s]*
+    
 ## Usage
 
 The `cc` command is used to interact with this application. Users can think of a current control block (cc) as a generic dq-axis current regulator block that has 3x ADC inputs (from current sensors) and 3x PWM outputs (to half-bridges), as well as an internal PI controller. There are 8x of these cc blocks available for usage. Users must configure the cc block parameters before using the module.
