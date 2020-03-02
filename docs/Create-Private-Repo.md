@@ -14,6 +14,7 @@ This document explains the steps needed to set-up a private repo for AMDC firmwa
     2. `amdc_bsp/`
     3. `fsbl/`
     4. `design_1_wrapper.hdf`
+5. Create a local workspace folder. This can reside anywhere you want on your local user space (outside of your private AMDC firmware repo).
 
 Now, your private repo contains all needed files. Each time you clone it, you will need to follow the following steps to use it.
 
