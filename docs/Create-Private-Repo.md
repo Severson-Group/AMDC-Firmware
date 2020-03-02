@@ -15,3 +15,18 @@ This document explains the steps needed to set-up a private repo for AMDC firmwa
     3. `fsbl/`
     4. `design_1_wrapper.hdf`
     5. `.metadata/`
+
+Now, your private repo contains all needed files. Each time you clone it, you will need to follow the following steps to use it.
+
+## Cloning Private Repo / First-Time Set-Up
+
+1. Clone your repo from git
+2. Make sure the submodules are checked out (`git submodule update --init` etc)
+3. Open SDK
+4. Select workspace as `$REPO_ROOT/gen/sdk_gen/`
+5. Your projects will be imported, but you will need to fix their locations since you are on a new PC (this is how SDK works...)
+6. To fix, delete all projects from SDK and reimport them (open projects from file system, etc)
+7. Wait for them to compile...
+8. Redo the steps from the previous tutorial, [starting here](https://github.com/Severson-Group/AMDC-Firmware/blob/develop/docs/Building-and-Running-Firmware.md#private-user-applications-1). This links the `common` AMDC firmware code to your private project.
+
+You can now use your private repo!
