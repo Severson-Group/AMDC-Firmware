@@ -57,7 +57,7 @@ my-AMDC-workspace/              <= master repo
 
 NOTE: In the rest of this document, `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
 
-### Common `git submodule` commands
+#### Common `git submodule` commands
 
 Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source: from your top repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
 
@@ -229,6 +229,9 @@ Run `git status` in your private user repo. You should not see compiled output. 
 - `Debug/`
 - `Release/`
 
+## Making Private Repository Portable
+
+Please read [this document](docs/Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
 
 ## Programming AMDC
 
