@@ -96,7 +96,7 @@ You now need to export the hardware from Vivado to the SDK environment.
 
 ### Open SDK from Vivado
 
-This is an important step. The first time you generate the FPGA hardware configuration files, etc, you must launch the Xilinx SDK *directly from Vivado*. This sets up a hardware wrapper project which is needed for the firmware.
+This is an important step. The first time you generate the FPGA hardware configuration files, etc, you must launch the Xilinx SDK *directly from Vivado*. This sets up a hardware wrapper project which is needed for the firmware, and some environment variables.
 
 1. `File` > `Launch SDK`
 2. Select `$REPO_DIR\sdk` for both "Exported location" and "Workspace"
@@ -194,6 +194,13 @@ SDK will attempt to build the projects you just imported. Wait until all project
 There shouldn't be any errors. Ensure there are no errors for `amdc_bsp` and your desired application project (i.e. `bare`)
 
 All done! Ready to program AMDC!
+
+
+## Discard Changes to AMDC-Firmware
+
+At this point, your submodule `AMDC-Firmeware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
+
+Vivado probably updated the `*.bd` file... Simply run: `git restore ...` to put this file back to a clean state.
 
 
 ## Programming AMDC
