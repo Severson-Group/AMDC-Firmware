@@ -1,4 +1,4 @@
-# Demo DQ-axis Current Regulator
+# Demo DQ Current Regulator
 
 This user application implements modular dq-axis current control. Eight instances of the current controller are supported. Note that an amplitude invariant transformation is used for all DQ quantities.
 
