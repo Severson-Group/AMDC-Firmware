@@ -211,11 +211,23 @@ There shouldn't be any errors. Ensure there are no errors for `amdc_bsp` and you
 All done! Ready to program AMDC!
 
 
-## Discard Changes to AMDC-Firmware
+## Ensure `git` Synchronized 
 
-At this point, your submodule `AMDC-Firmeware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
+At this point, you are done generating code / importing / exporting / etc. Now we will ensure git sees the correct changes.
+
+### Discard changes to AMDC-Firmware
+
+Your submodule `AMDC-Firmeware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
 
 Vivado probably updated the `*.bd` file... Simply run: `git restore ...` to put this file back to a clean state.
+
+### Add `.gitignore` as needed (private user code only)
+
+Run `git status` in your private user repo. You should not see compiled output. If git sees changes to the following folders, create a gitignore file so that they are ignored. Note that if the above steps were perfectly followed, you shouldn't have to add any gitignores.
+
+- `.metadata/`
+- `Debug/`
+- `Release/`
 
 
 ## Programming AMDC
