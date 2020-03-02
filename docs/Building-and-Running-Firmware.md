@@ -42,7 +42,8 @@ For the majority of use cases, your user application(s) will be private and resi
     2. Ensure the path doesn't contain any spaces.
 2. In this repo:
     1. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
-    2. **Copy** `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+    2. Optional (and suggested): add `branch = develop` to `.gitmodules` so your submodule will track the develop branch by default
+    3. **Copy** `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
 
 You should now have a master repo with two subfolders:
 
@@ -54,7 +55,12 @@ my-AMDC-workspace/              <= master repo
         ...
 ```
 
-NOTE: `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
+NOTE: In the rest of this document, `$REPO_DIR` represents the file system path of the `AMDC-Firmware` repository, _not your master repo_.
+
+#### Common `git submodule` commands
+
+Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source: from your top repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
+
 
 ## Vivado
 
@@ -95,7 +101,7 @@ You now need to export the hardware from Vivado to the SDK environment.
 
 ### Open SDK from Vivado
 
-This is an important step. The first time you generate the FPGA hardware configuration files, etc, you must launch the Xilinx SDK *directly from Vivado*. This sets up a hardware wrapper project which is needed for the firmware.
+This is an important step. The first time you generate the FPGA hardware configuration files, etc, you must launch the Xilinx SDK *directly from Vivado*. This sets up a hardware wrapper project which is needed for the firmware, and some environment variables.
 
 1. `File` > `Launch SDK`
 2. Select `$REPO_DIR\sdk` for both "Exported location" and "Workspace"
@@ -148,43 +154,53 @@ The SDK workspace will initially be empty (except for `design_1_wrapper...` from
 
 Building the private user application will fail. Fix this by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
 
-1. In the `Project Explorer`, delete `common` folder from `bare` project
+### Fix `common` code compilation
+
+This section explains how to configure the SDK build system to correctly use the AMDC `common` code from the submodule.
+
+Link `common` folder to project:
+1. In the `Project Explorer`, delete `common` folder from `bare` project (if present)
 2. Open `bare` project properties
 3. `C/C++ General` > `Paths and Symbols` > `Source Location` > `Link Folder...`
 4. Check the `Link to folder in the file system` box
 5. Browse to `$REPO_DIR\sdk\bare\common`
 6. `OK`
----
+
+Fix compiler includes to reference `common`:
+
 7. Change to `Includes` tab
 8. `Edit...` on `/bare/common`
 9. Click `Workspace...` and select `bare` / `common`
 10. `OK`
 11. `OK`
----
+
+Fix strange SDK issue:
+
 12. `Edit...` on `/bare/bare`
 13. Change directory to `/bare`
 14. `OK`
----
+
+Fix another strange SDK issue:
+
 15. `Edit...` on `/bare/amdc_bsp/ps7_cortexa9_0/include`
 16. Change directory to `/amdc_bsp/ps7_cortexa9_0/include`
 17. `OK`
----
+
+Add library path for BSP:
+
 18. Change to `Library Paths` tab
 19. `Add...` > `Workspace...` > `amdc_bsp` / `ps7_cortex9_0` / `lib`
 20. `OK`
----
-21. Finally, click `OK` to exit properites dialog
 
-Just kidding, one more thing ;)
+Update linker library options:
 
-1. Open back up project properties dialog
-2. `C/C++ Build` > `Settings`
-3. `Tool Settings` tab
-4. `ARM v7 gcc linker` > `Inferred Options` > `Software Platform`
-5. Add the following for `Inferred Flags`: `-Wl,--start-group,-lxil,-lgcc,-lc,--end-group`
-6. `ARM v7 gcc linker` > `Libraries`
-7. Add `m` under `Libraries`
-8. Click `OK` to exit properties dialog
+21. Change to `C/C++ Build` > `Settings`
+22. `Tool Settings` tab
+23. `ARM v7 gcc linker` > `Inferred Options` > `Software Platform`
+24. Add the following for `Inferred Flags`: `-Wl,--start-group,-lxil,-lgcc,-lc,--end-group`
+25. `ARM v7 gcc linker` > `Libraries`
+26. Add `m` under `Libraries`
+27. Click `OK` to exit properties dialog
 
 ### Build SDK Projects
 
@@ -194,6 +210,28 @@ There shouldn't be any errors. Ensure there are no errors for `amdc_bsp` and you
 
 All done! Ready to program AMDC!
 
+
+## Ensure `git` Synchronized 
+
+At this point, you are done generating code / importing / exporting / etc. Now we will ensure git sees the correct changes.
+
+### Discard changes to AMDC-Firmware
+
+Your submodule `AMDC-Firmeware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
+
+Vivado probably updated the `*.bd` file... Simply run: `git restore ...` to put this file back to a clean state.
+
+### Add `.gitignore` as needed (private user code only)
+
+Run `git status` in your private user repo. You should not see compiled output. If git sees changes to the following folders, create a gitignore file so that they are ignored. Note that if the above steps were perfectly followed, you shouldn't have to add any gitignores.
+
+- `.metadata/`
+- `Debug/`
+- `Release/`
+
+## Making Private Repository Portable
+
+Please read [this document](docs/Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
 
 ## Programming AMDC
 

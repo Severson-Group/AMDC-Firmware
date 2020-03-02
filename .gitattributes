@@ -1,0 +1,5 @@
+# Ensure git doesn't automatically diff
+# the Vivado block diagram file
+
+*.bd -merge -text
+
