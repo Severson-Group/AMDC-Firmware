@@ -8,12 +8,28 @@ The following steps outline how to create a boot image and flash the AMDC NVM.
 
 The PicoZed system-on-module (SoM) on AMDC includes a flash memory device which stores the boot image for start-up. We need to first generate the appropriate image which will be loaded into this memory.
 
+### Ensure you have `fsbl` project in SDK
+
+Xilinx provides a First-Stage Bootloader application project which we will use to create our boot image. If you do not have the `fsbl` project in SDK:
+
+1. `File` > `New` > `Application Project`
+2. Name it `fsbl`
+3. Ensure `Board Support Package:` is `Use existing: amdc_bsp`
+4. Click `Next >`
+5. Select `Zynq FSBL` template
+6. Click `Finish`
+7. Your new `fsbl` project will be imported and build. It should not have issues.
+
+### Generate boot image
+
 1.  Right click on the `fsbl` project directory in SDK
 2.  Select `Create Boot Image`
 
 ![Dropdown menu from First Stage Bootloader (FSBL) project](images/flashing/img1.png)
 
-4. Ensure popup menu settings look like the following:
+4. Ensure popup menu settings look like the following.
+
+Explaination of settings: `.MCS` is the file format which is supported for QSPI flashing. The list of three items for "Boot image partitions" must always be the following in this order: fsbl.elf, FPGA bitstream .bit file, your user *.elf file.
 
 ![Popup menu settings](images/flashing/img2.png)
 
