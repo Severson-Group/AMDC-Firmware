@@ -149,43 +149,53 @@ The SDK workspace will initially be empty (except for `design_1_wrapper...` from
 
 Building the private user application will fail. Fix this by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
 
-1. In the `Project Explorer`, delete `common` folder from `bare` project
+### Fix `common` code compilation
+
+This section explains how to configure the SDK build system to correctly use the AMDC `common` code from the submodule.
+
+Link `common` folder to project:
+1. In the `Project Explorer`, delete `common` folder from `bare` project (if present)
 2. Open `bare` project properties
 3. `C/C++ General` > `Paths and Symbols` > `Source Location` > `Link Folder...`
 4. Check the `Link to folder in the file system` box
 5. Browse to `$REPO_DIR\sdk\bare\common`
 6. `OK`
----
+
+Fix compiler includes to reference `common`:
+
 7. Change to `Includes` tab
 8. `Edit...` on `/bare/common`
 9. Click `Workspace...` and select `bare` / `common`
 10. `OK`
 11. `OK`
----
+
+Fix strange SDK issue:
+
 12. `Edit...` on `/bare/bare`
 13. Change directory to `/bare`
 14. `OK`
----
+
+Fix another strange SDK issue:
+
 15. `Edit...` on `/bare/amdc_bsp/ps7_cortexa9_0/include`
 16. Change directory to `/amdc_bsp/ps7_cortexa9_0/include`
 17. `OK`
----
+
+Add library path for BSP:
+
 18. Change to `Library Paths` tab
 19. `Add...` > `Workspace...` > `amdc_bsp` / `ps7_cortex9_0` / `lib`
 20. `OK`
----
-21. Finally, click `OK` to exit properites dialog
 
-Just kidding, one more thing ;)
+Update linker library options:
 
-1. Open back up project properties dialog
-2. `C/C++ Build` > `Settings`
-3. `Tool Settings` tab
-4. `ARM v7 gcc linker` > `Inferred Options` > `Software Platform`
-5. Add the following for `Inferred Flags`: `-Wl,--start-group,-lxil,-lgcc,-lc,--end-group`
-6. `ARM v7 gcc linker` > `Libraries`
-7. Add `m` under `Libraries`
-8. Click `OK` to exit properties dialog
+21. Change to `C/C++ Build` > `Settings`
+22. `Tool Settings` tab
+23. `ARM v7 gcc linker` > `Inferred Options` > `Software Platform`
+24. Add the following for `Inferred Flags`: `-Wl,--start-group,-lxil,-lgcc,-lc,--end-group`
+25. `ARM v7 gcc linker` > `Libraries`
+26. Add `m` under `Libraries`
+27. Click `OK` to exit properties dialog
 
 ### Build SDK Projects
 
