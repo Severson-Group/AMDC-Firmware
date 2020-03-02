@@ -24,6 +24,7 @@ static volatile bool scheduler_idle = false;
 
 void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 {
+#if 0
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
@@ -35,6 +36,7 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
         io_led_set(&color);
         HANG;
     }
+#endif
 
     elapsed_usec += SYS_TICK_USEC;
     scheduler_idle = false;
