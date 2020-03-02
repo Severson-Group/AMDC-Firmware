@@ -42,7 +42,8 @@ For the majority of use cases, your user application(s) will be private and resi
     2. Ensure the path doesn't contain any spaces.
 2. In this repo:
     1. Add a git submodule for the `AMDC-Firmware` repo: `git submodule add https://github.com/Severson-Group/AMDC-Firmware`
-    2. **Copy** `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
+    2. Optional (and suggested): add `branch = develop` to `.gitmodules` so your submodule will track the develop branch by default
+    3. **Copy** `AMDC-Firmware/sdk/bare/user` to your repo's root directory, and rename (perhaps as "my-AMDC-private-C-code")
 
 You should now have a master repo with two subfolders:
 
