@@ -16,6 +16,7 @@ If you run into low-level issues (i.e. strange restart issues), consider using t
 - [User Apps](docs/Firmware-Arch-UserApps.md)
 
 ### [GitHub to AMDC Hardware: Building and Running Firmware](docs/Building-and-Running-Firmware.md)
+- [Create Private Repo](docs/Creating-Private-Repo.md)
 
 ### [Flashing AMDC](docs/Flashing-AMDC.md)
 
