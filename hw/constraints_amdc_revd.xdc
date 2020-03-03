@@ -93,7 +93,7 @@ set_property IOSTANDARD LVCMOS18 [get_ports spi2_in];
 set_property IOSTANDARD LVCMOS18 [get_ports spi2_out];
 
 set_property PACKAGE_PIN E2  [get_ports spi2_sclk]; # JX1-61
-set_property PACKAGE_PIN F7  [get_ports spi2_miso]; # JX1-67
+set_property PACKAGE_PIN D1  [get_ports spi2_miso]; # JX1-53
 set_property PACKAGE_PIN D2  [get_ports spi2_mosi]; # JX1-63
 set_property PACKAGE_PIN C1  [get_ports spi2_nss];  # JX1-55
 set_property PACKAGE_PIN Y15 [get_ports spi2_in];   # JX1-90
