@@ -76,7 +76,7 @@ set_property IOSTANDARD LVCMOS18 [get_ports spi1_out];
 set_property PACKAGE_PIN B4  [get_ports spi1_sclk]; # JX1-47
 set_property PACKAGE_PIN C6  [get_ports spi1_miso]; # JX1-41
 set_property PACKAGE_PIN B3  [get_ports spi1_mosi]; # JX1-49
-set_property PACKAGE_PIN D5  [get_ports spi1_nss];  # JX1-42
+set_property PACKAGE_PIN C5  [get_ports spi1_nss];  # JX1-43
 set_property PACKAGE_PIN Y14 [get_ports spi1_in];   # JX1-88
 set_property PACKAGE_PIN A7  [get_ports spi1_out];  # JX1-74
 
