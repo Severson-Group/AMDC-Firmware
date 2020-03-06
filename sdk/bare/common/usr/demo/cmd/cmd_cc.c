@@ -101,28 +101,28 @@ int cmd_cc(int argc, char **argv)
 	}
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("yusuke", argv[2])) {
-        // Setup for Ashad bench
-        task_cc_vdc_set(0, 10.0);
-        task_cc_vdc_set(1, 10.0);
+        // Setup for Yusuke bench
+    	uint8_t t_cc_idx = 0; //Torque ID for Inverter function
+    	uint8_t s_cc_idx = 1; //Suspension ID for Inverter function
 
-        task_cc_adc(0, 0, 3, 1.434, -0.01); // TA
-        task_cc_adc(0, 1, 2, 1.434, -0.08); // TB
-        task_cc_adc(0, 2, 1, 1.434, -0.00); // TC
-        task_cc_adc(1, 0, 6, 2.199, -0.01); // SA
-        task_cc_adc(1, 1, 5, 2.199, -0.04); // SB
-        task_cc_adc(1, 2, 4, 2.199, -0.07); // SC
+        task_cc_adc(t_cc_idx, 0, 6, 2.2448, -0.0368); // TA
+        task_cc_adc(t_cc_idx, 1, 5, 2.2463, -0.0676); // TB
+        task_cc_adc(t_cc_idx, 2, 4, 2.2467, -0.0852); // TC
+        task_cc_adc(s_cc_idx, 0, 3, 1.5041, -0.0084); // SA
+        task_cc_adc(s_cc_idx, 1, 2, 1.5037, -0.0698); // SB
+        task_cc_adc(s_cc_idx, 2, 1, 1.5047, -0.0164); // SC
 
-        task_cc_pwm(0, 0, 5); // TA
-        task_cc_pwm(0, 1, 4); // TB
-        task_cc_pwm(0, 2, 3); // TC
-        task_cc_pwm(1, 0, 1); // SA
-        task_cc_pwm(1, 1, 2); // SB
-        task_cc_pwm(1, 2, 0); // SC
+        task_cc_pwm(t_cc_idx, 0, 1); // TA
+        task_cc_pwm(t_cc_idx, 1, 2); // TB
+        task_cc_pwm(t_cc_idx, 2, 0); // TC
+        task_cc_pwm(s_cc_idx, 0, 5); // SA
+        task_cc_pwm(s_cc_idx, 1, 4); // SB
+        task_cc_pwm(s_cc_idx, 2, 3); // SC
 
-        task_cc_tune(0, 0.6, 0.0025, 0.0025, 6283.0); //Torque
-        task_cc_tune(1, 2.4, 0.010, 0.010, 6283.0); //Suspension
-
+        task_cc_tune(t_cc_idx, 0.21, 0.0032, 0.0032, 3142.0); //Torque
+        task_cc_tune(s_cc_idx, 0.82, 0.0021, 0.0021, 3142.0); //Suspension
         return SUCCESS;
+
     }
 
     if (argc == 4 && STREQ("vdc", argv[2])) {
