@@ -231,7 +231,7 @@ Run `git status` in your private user repo. You should not see compiled output. 
 
 ## Making Private Repository Portable
 
-Please read [this document](docs/Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
+Please read [this document](Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
 
 ## Programming AMDC
 
