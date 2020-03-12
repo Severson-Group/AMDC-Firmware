@@ -10,7 +10,7 @@ void app_blink_init(void)
     cmd_blink_register();
 
     // Initialize blink task with system
-    task_blink_init();
+//    task_blink_init();
 }
 
 #endif // APP_BLINK
