@@ -135,7 +135,7 @@ set_property PACKAGE_PIN B7   [get_ports spi4_miso]; # JX1-81
 set_property PACKAGE_PIN AA15 [get_ports spi4_mosi]; # JX1-89
 set_property PACKAGE_PIN B6   [get_ports spi4_nss];  # JX1-83
 set_property PACKAGE_PIN W18  [get_ports spi4_in];   # JX1-94
-set_property PACKAGE_PIN C8   [get_ports spi4_out];  # JX1-84
+set_property PACKAGE_PIN B8   [get_ports spi4_out];  # JX1-84
 
 
 #############
