@@ -57,6 +57,10 @@ After generating the boot image `*.MCS`file, we need to program the flash device
 5. Click `Program`
 6. It will start flashing the board. This will take ~3 minutes...
 
+### Known Issues
+
+Sometimes, when you try to flash the device (i.e. set 5-6 above), the `fsbl` main function will appear in SDK because a breakpoint is reached. This occurs because the SDK debugger is still attached to the AMDC. To fix this, disconnect the processor from the SDK Hardware Manager window.
+
 ## Configure PicoZed to boot from flash
 
 Now the boot image has been loaded onto the PicoZed flash device. We need to configure PicoZed to use it when booting.
