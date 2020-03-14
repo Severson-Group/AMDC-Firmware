@@ -30,6 +30,6 @@ This IP core interfaces to an incremental quadrature encoder (i.e. ABZ signals) 
 
 This IP core interfaces to the power stacks plugged into the AMDC hardware (up to 8x two-level three-phase inverters). Using the associated C driver, users can configure PWM switching characteristics (i.e. switching frequency and dead-time length). Duty ratios are set by users via memory-mapped registers. Four status lines per inverter are available via registers.
 
-### `amdc_leds`
+### [`amdc_leds`](amdc_leds_1.0/README.md)
 
 This IP core drives the serially-addressable RGB LEDs on the REV D AMDC hardware. The FPGA uses a single data line to control the color outputs of all four LEDs via a serial chain approach. Using the associated C driver, users can set color values to memory-mapped registers which automatically are flushed out to the LED hardware.
