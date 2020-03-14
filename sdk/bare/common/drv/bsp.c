@@ -3,6 +3,7 @@
 #include "drv/encoder.h"
 #include "drv/gpio.h"
 #include "drv/io.h"
+#include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/timer.h"
 #include "drv/dac.h"
@@ -24,6 +25,7 @@ void bsp_init(void)
         HANG;
     }
 
+    led_init();
     encoder_init();
     analog_init();
     pwm_init();
