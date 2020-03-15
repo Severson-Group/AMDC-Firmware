@@ -1,7 +1,7 @@
 #ifndef CC_H
 #define CC_H
 
-#include "usr/custom_types.h"
+#include "usr/vector_types.h"
 
 typedef struct cc_ctx_t {
     // Controller references

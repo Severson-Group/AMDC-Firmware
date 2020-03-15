@@ -3,7 +3,7 @@
 
 #include "usr/demo/task_control.h"
 #include "usr/demo/cc.h"
-#include "usr/custom_types.h"
+#include "usr/vector_types.h"
 #include "sys/scheduler.h"
 #include "sys/transform.h"
 #include "drv/analog.h"
