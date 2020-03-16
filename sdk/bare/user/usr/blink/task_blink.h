@@ -18,6 +18,7 @@
 
 // Called in app init function to set up task (or via command)
 void task_blink_init(void);
+void task_blink_deinit(void);
 
 // Callback function which scheduler calls periodically
 void task_blink_callback(void *arg);

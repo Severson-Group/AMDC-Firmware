@@ -1,6 +1,7 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/cmd/cmd_blink.h"
+#include "usr/blink/task_blink.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
@@ -12,9 +13,11 @@ static command_entry_t cmd_entry;
 
 // Defines help content displayed for this command
 // when user types "help" at command prompt
-#define NUM_HELP_ENTRIES	(1)
+#define NUM_HELP_ENTRIES (3)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-    {"hello <name>", "Print hello to screen"}
+        {"hello <name>", "Print hello to screen"},
+        {"init", "Start task"},
+        {"deinit", "Stop task"}
 };
 
 void cmd_blink_register(void)
@@ -93,6 +96,16 @@ int cmd_blink(int argc, char **argv)
         }
 
         // If user typed a valid command, return SUCCESS
+        return SUCCESS;
+    }
+
+    if (argc == 2 && strcmp("init", argv[1]) == 0) {
+        task_blink_init();
+        return SUCCESS;
+    }
+
+    if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
+        task_blink_deinit();
         return SUCCESS;
     }
 
