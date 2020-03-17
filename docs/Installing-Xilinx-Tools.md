@@ -12,7 +12,7 @@ Xilinx regularly updates the Vivado suite of tools. They release main updates in
 
 *This tutorial will assume you are installing Vivado locally on your personal **Windows** PC.*
 
-Ensure you have no Xilinx tools previously installed.
+Ensure you have no Xilinx tools previously installed on your PC (i.e. make sure you don't have `C:\Xilinx` folder). If you do, uninstall them now.
 
 ### Downloading installation executable
 
@@ -32,14 +32,34 @@ Ensure you have no Xilinx tools previously installed.
 
 7. When the installer opens, it will prompt you to get the latest software version. Decline by clicking `Continue`.
 
-8. Click `Next >`
+8. Click `Next >`.
 
-9. Enter your Xilinx account login info you created previously and click `Next >`
+9. Enter your Xilinx account login info you created previously and click `Next >`.
 
-10. Check all boxes to agree to terms and click `Next >`
+10. Check all boxes to agree to terms and click `Next >`.
 
-11. Select "Vivado HL System Edition" and click `Next >`
+11. Select "Vivado HL System Edition" and click `Next >`.
 
-12. *Recommended but optional to reduce disk space:* Under `Devices`, only select `SoCs` > `Zynq-7000`
+12. *Recommended but optional to reduce disk space:* Under `Devices`, only select `SoCs` > `Zynq-7000`.
 
-13. Ensure Vivado and SDK are both selected (they are by default) and click `Next >`
+13. Ensure Vivado and SDK are both selected (they are by default) and click `Next >`.
+
+14. *Recommended but optional:* Select "All users" for shortcut and file assocations.
+
+15. Review the install locations and download sizes (keep the defaults). Ensure you have space and click `Next >`.
+
+16. It will prompt that `C:\Xilinx` does not exist. Click `Yes` to create the folder.
+
+17. Click `Install`. It will now download the needed files and install them. This takes ~20-30 mins (depends on your internet speed)...
+
+18. At some point, the installer will prompt you to install "WinPcap". Do this with the defaults.
+
+19. At some point, the installer will prompt you to set-up MATLAB for the System Generator. Do this. It can be changed later.
+
+20. Finally, the installation will be complete.
+
+### License
+
+21. The Vivado License Manager will appear. Close this window without doing anything. Vivado seems to work without setting up the licensing. We will update this later if we learn more about this.
+
+*Vivado is now installed!*
