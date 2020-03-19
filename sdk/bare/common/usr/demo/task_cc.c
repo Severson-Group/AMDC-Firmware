@@ -49,6 +49,7 @@ typedef struct cc_context_t {
     vec_dq_t Idq_err;
     vec_dq_t Idq_err_acc;
     double theta_e;
+    uint8_t set_theta;
 } cc_context_t;
 
 // Period between controller updates
@@ -95,9 +96,11 @@ void task_cc_callback(void *arg)
     while (&cc_ctxs[cc_idx] != ctx) cc_idx++;
 
     // ---------------------
-    // Update position based on user specified speed
+    // Update position
     // ---------------------
-    ctx->theta_e += ctx->omega_e * Ts;
+//    if (ctx->set_theta == 0){     // Update position based on user specified speed
+//        ctx->theta_e += ctx->omega_e * Ts;
+//    }
     if (ctx->theta_e > PI2) ctx->theta_e -= PI2;
     if (ctx->theta_e < -PI2) ctx->theta_e += PI2;
 
@@ -237,10 +240,26 @@ void task_cc_set(int cc_idx, double Id_star, double Iq_star, double omega_e)
     ctx->Id_star = Id_star;
     ctx->Iq_star = Iq_star;
     ctx->omega_e = omega_e;
+    ctx->set_theta = 0;
 
     if (ctx->omega_e == 0.0) {
         ctx->theta_e = 0.0;
     }
+}
+
+void task_cc_set_w_theta(int cc_idx, double Id_star, double Iq_star, double theta_e)
+{
+    if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
+        return;
+    }
+
+    cc_context_t *ctx = &cc_ctxs[cc_idx];
+
+    ctx->Id_star = Id_star;
+    ctx->Iq_star = Iq_star;
+    ctx->theta_e = theta_e;
+    ctx->set_theta = 1;
+
 }
 
 #endif // APP_DEMO
