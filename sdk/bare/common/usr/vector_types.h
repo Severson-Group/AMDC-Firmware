@@ -1,5 +1,5 @@
-#ifndef CUSTOM_TYPES_H
-#define CUSTOM_TYPES_H
+#ifndef VECTOR_TYPES_H
+#define VECTOR_TYPES_H
 
 typedef union vec_dq {
     struct {
@@ -27,4 +27,4 @@ typedef union vec_abc {
     double elems[3];
 } vec_abc_t;
 
-#endif // CUSTOM_TYPES_H
+#endif // VECTOR_TYPES_H
