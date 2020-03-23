@@ -8,8 +8,7 @@ Following these instructions will get the AMDC firmware environment up and runni
 
 Firmware development environment needs a few things:
 
-- Xilinx Vivado (tested on 2017.2)
-- Xilinx SDK (comes with Vivado)
+- Xilinx Vivado 2019.1 and SDK (if you don't have these, [follow these steps to install them](Installing-Xilinx-Tools.md))
 - `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition from online
     1. Go here: http://zedboard.org/support/documentation/1519
     2. Scroll down to `Board Definition Files`
