@@ -6,18 +6,20 @@
 #include "drv/pwm.h"
 #include "drv/encoder.h"
 #include "drv/analog.h"
+#include "drv/ild1420.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (7)
+#define NUM_HELP_ENTRIES (8)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics"},
     {"pwm duty <pwm_idx> <percent>", "Set a duty ratio"},
     {"anlg read <chnl_idx>", "Read voltage on ADC channel"},
     {"led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)"},
+    {"ild read", "Read the latest packet from ILD1420 sensor"},
     {"enc steps", "Read encoder steps from power-up"},
     {"enc pos", "Read encoder position"},
     {"enc init", "Turn on blue LED until Z pulse found"}
@@ -107,7 +109,7 @@ int cmd_hw(int argc, char **argv)
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc == 7 && strcmp("led", argv[1]) == 0) {
-    	if (strcmp("set", argv[2]) == 0) {
+        if (strcmp("set", argv[2]) == 0) {
             int led_idx = atoi(argv[3]);
             if (led_idx < 0 || led_idx >= NUM_LEDS) return INVALID_ARGUMENTS;
 
@@ -122,9 +124,21 @@ int cmd_hw(int argc, char **argv)
             led_set_color_bytes(led_idx, r, g, b);
 
             return SUCCESS;
-    	}
+        }
     }
 
+    // Handle 'ild' sub-command
+    // hw ild read
+    if (argc == 3 && strcmp("ild", argv[1]) == 0) {
+        if (strcmp("read", argv[2]) == 0) {
+            ild1420_packet_t packet = ild1420_get_latest_packet();
+            debug_printf("dist:  %X\r\n", packet.distance);
+            debug_printf("err:   %X\r\n", packet.error);
+            debug_printf("fresh: %X\r\n", packet.fresh);
+
+            return SUCCESS;
+        }
+    }
 
     // Handle 'enc' sub-command
     if (strcmp("enc", argv[1]) == 0) {
