@@ -25,7 +25,7 @@ void transform_dqz(double C, double theta, double *abc, double *dqz)
 
 void transform_dqz_inverse(double C, double theta, double *abc, double *dqz)
 {
-    abc[0] = C * (cos(theta)		*dqz[0] 	-sin(theta)			*dqz[1]) 	+	dqz[2]);
-    abc[1] = C * (cos(theta - PI23)	*dqz[0] 	-sin(theta - PI23)	*dqz[1]) 	+	dqz[2]);
-    abc[2] = C * (cos(theta + PI23)	*dqz[0] 	-sin(theta + PI23)	*dqz[1]) 	+	dqz[2]);
+    abc[0] = C * (cos(theta)		*dqz[0] 	-sin(theta)			*dqz[1]) 	+	dqz[2];
+    abc[1] = C * (cos(theta - PI23)	*dqz[0] 	-sin(theta - PI23)	*dqz[1]) 	+	dqz[2];
+    abc[2] = C * (cos(theta + PI23)	*dqz[0] 	-sin(theta + PI23)	*dqz[1]) 	+	dqz[2];
 }
