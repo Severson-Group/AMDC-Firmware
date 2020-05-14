@@ -98,9 +98,9 @@ void task_cc_callback(void *arg)
     // ---------------------
     // Update position
     // ---------------------
-//    if (ctx->set_theta == 0){     // Update position based on user specified speed
-//        ctx->theta_e += ctx->omega_e * Ts;
-//    }
+    if (ctx->set_theta == 0){     // Update position based on user specified speed
+        ctx->theta_e += ctx->omega_e * Ts;
+    }
     if (ctx->theta_e > PI2) ctx->theta_e -= PI2;
     if (ctx->theta_e < -PI2) ctx->theta_e += PI2;
 
