@@ -17,7 +17,8 @@ void task_cc_vdc_set(int cc_idx, double vdc);
 void task_cc_pwm(int cc_idx, uint8_t phase, uint8_t pwm_chnl);
 void task_cc_adc(int cc_idx, uint8_t phase, uint8_t adc_chnl, double adc_gain, double adc_offset);
 void task_cc_tune(int cc_idx, double Rs, double Ld, double Lq, double bw);
-void task_cc_set(int cc_idx, double Id_star, double Iq_star, double omega_e);
-void task_cc_set_w_theta(int cc_idx, double Id_star, double Iq_star, double theta_e);
+void task_cc_setmode(int cc_idx, char *argMode);
+void task_cc_set_speed(int cc_idx, double Id_star, double Iq_star, double omega_e);
+void task_cc_set_angle(int cc_idx, double Id_star, double Iq_star, double theta_e);
 
 #endif // TASK_CC_H

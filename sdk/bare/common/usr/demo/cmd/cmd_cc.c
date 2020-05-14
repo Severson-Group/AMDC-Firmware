@@ -232,7 +232,7 @@ int cmd_cc(int argc, char **argv)
         if (Iq_star <= -100.0 || Iq_star >= 100.0) return INVALID_ARGUMENTS;
         if (omega_e <= -1e6 || omega_e >= 1e6) return INVALID_ARGUMENTS;
 
-        task_cc_set(cc_idx, Id_star, Iq_star, omega_e);
+        task_cc_set_speed(cc_idx, Id_star, Iq_star, omega_e);
         return SUCCESS;
     }
 
