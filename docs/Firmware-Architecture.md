@@ -12,7 +12,7 @@ This document outlines the AMDC firmware architecture. By understanding the high
 
 ## Layers of Abstraction
 
-A good software system has many layers of abstraction. The client of one subsystem does not need to know how that subsystem works interally -- he simply uses the interface provided and expects that it works as specified. The AMDC firmware is structured in this manner.
+A good software system has many layers of abstraction. The client of one subsystem does not need to know how that subsystem works interally -- she/he simply uses the interface provided and expects that it works as specified. The AMDC firmware is structured in this manner.
 
 <img src="images/arch/block-diagram.svg" />
 
