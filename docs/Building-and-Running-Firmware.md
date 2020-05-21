@@ -23,7 +23,7 @@ There are two recomended options for cloning the `AMDC-Firmware` repo from GitHu
 
 ### Open-Source Example Applications
 
-If you are _not_ creating private user applications, i.e. your code will be contributed back to the `AMDC-Firmware` repo as an example application:
+If you are _not_ creating private user applications, i.e. your code will _not_ be contributed back to the `AMDC-Firmware` repo as an example application:
 
 1. Download the `AMDC-Firmware` git repo to your local machine like normal:
     1. `git clone https://github.com/Severson-Group/AMDC-Firmware`
