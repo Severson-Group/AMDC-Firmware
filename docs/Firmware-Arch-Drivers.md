@@ -11,7 +11,7 @@ Why does the code base use "drivers"? What are these things?
 
 ## Under the Hood
 
-At a highish level, what does a driver under the hood? How does it interface with the FPGA?
+At a highish level, what does a driver do under the hood? How does it interface with the FPGA?
 
 ## Examples
 
