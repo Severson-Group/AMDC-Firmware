@@ -238,12 +238,11 @@ Ensure the AMDC JTAG / UART is plugged into your PC and AMDC main power is suppl
 
 ### Setup SDK Project Debug Configuration
 
-1. Right-click on the project to are trying to debug, e.g. `bare`
+1. Right-click on the project you are trying to debug, e.g. `bare`
 2. `Debug As` > `Debug Configurations...`
-3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
-    1. If not: 
-    2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
-    3. A new panel should appear on the right half of popup
+3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing. _If not:_
+    1. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
+    2. A new panel should appear on the right half of popup
 4. Ensure the `Target Setup` tab is open
 5. Select `Browse...` for `Bitstream File`
     1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
