@@ -58,7 +58,7 @@ NOTE: In the rest of this document, `$REPO_DIR` represents the file system path 
 
 #### Common `git submodule` commands
 
-Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source: from your top repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
+Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source. Execute this command from your master repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
 
 
 ## Vivado
