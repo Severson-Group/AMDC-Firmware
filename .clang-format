@@ -22,10 +22,10 @@ AlwaysBreakTemplateDeclarations: false
 BinPackArguments: false
 BinPackParameters: false
 BraceWrapping:   
-  AfterClass:      false
+  AfterClass:      true
   AfterCaseLabel:  true
   AfterControlStatement: false
-  AfterEnum:       true
+  AfterEnum:       false
   AfterFunction:   true
   AfterNamespace:  false
   AfterObjCDeclaration: false
@@ -35,7 +35,7 @@ BraceWrapping:
   BeforeElse:      false
   IndentBraces:    false
 BreakBeforeBinaryOperators: All
-BreakBeforeBraces: WebKit
+BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit:     120
@@ -75,13 +75,13 @@ PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Right
 ReflowComments:  true
 SortIncludes:    true
-SpaceAfterCStyleCast: false
+SpaceAfterCStyleCast: true
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
 SpacesInAngles:  false
-SpacesInContainerLiterals: true
+SpacesInContainerLiterals: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
