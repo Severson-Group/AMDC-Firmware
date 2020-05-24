@@ -16,7 +16,7 @@ The AMDC platform makes extensive use of the IP blocks to interface with the har
 
 ### `amdc_analog`
 
-This IP core is responsible for driving the external ADC on the AMDC hardware. The C driver let's the user configure the the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
+This IP core is responsible for driving the external ADC on the AMDC hardware. The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
 
 ### `amdc_dac`
 
