@@ -13,7 +13,7 @@ static command_entry_t cmd_entry;
 #define NUM_HELP_ENTRIES	(2)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"dtc <uDcomp> <mCurrLimit>", "Set deadtime compensation"},
-    {"Vdc <mVdc>", "Set Vdc"}
+    {"Vdc <mVdc>", "Set Vdc"},
 };
 
 void cmd_inv_register(void)

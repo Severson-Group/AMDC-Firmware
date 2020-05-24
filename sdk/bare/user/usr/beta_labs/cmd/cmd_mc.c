@@ -16,7 +16,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"deinit", "Stop motion controller"},
     {"rpm <rpms>", "Set commanded speed"},
     {"cff <on|off>", "Enable / disable command feed-forward"},
-    {"omega_m_src <enc|est>", "Set omega_m source between encoder and estimation"}
+    {"omega_m_src <enc|est>", "Set omega_m source between encoder and estimation"},
 };
 
 void cmd_mc_register(void)

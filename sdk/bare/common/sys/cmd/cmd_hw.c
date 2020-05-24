@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"anlg read <chnl_idx>", "Read voltage on ADC channel"},
     {"enc steps", "Read encoder steps from power-up"},
     {"enc pos", "Read encoder position"},
-    {"enc init", "Turn on blue LED until Z pulse found"}
+    {"enc init", "Turn on blue LED until Z pulse found"},
 };
 
 void cmd_hw_register(void)

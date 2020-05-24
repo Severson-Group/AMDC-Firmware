@@ -14,7 +14,7 @@ static command_entry_t cmd_entry;
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"init", "Start current controller"},
     {"deinit", "Stop current controller"},
-    {"set <mA> <mHz>", "Command sinusoidal current"}
+    {"set <mA> <mHz>", "Command sinusoidal current"},
 };
 
 void cmd_dtc_register(void)

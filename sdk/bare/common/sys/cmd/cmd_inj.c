@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"const <name> <set|add|sub> <mValue>", "Inject a constant"},
     {"noise <name> <set|add|sub> <mGain> <mOffset>", "Inject noise"},
     {"chirp <name> <set|add|sub> <mGain> <mFreqMin> <mFreqMax> <mPeriod>", "Inject chirp"},
-    {"triangle <name> <set|add|sub> <mValueMin> <mValueMax> <mPeriod>", "Inject triangle"}
+    {"triangle <name> <set|add|sub> <mValueMin> <mValueMax> <mPeriod>", "Inject triangle"},
 };
 
 void cmd_inj_register(void)

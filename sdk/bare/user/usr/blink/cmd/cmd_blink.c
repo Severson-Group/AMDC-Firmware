@@ -14,7 +14,7 @@ static command_entry_t cmd_entry;
 // when user types "help" at command prompt
 #define NUM_HELP_ENTRIES	(1)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-    {"hello <name>", "Print hello to screen"}
+    {"hello <name>", "Print hello to screen"},
 };
 
 void cmd_blink_register(void)

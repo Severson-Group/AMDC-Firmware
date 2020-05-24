@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"start", "Start logging"},
     {"stop", "Stop logging"},
     {"dump <log_var_idx>", "Dump log data to console"},
-    {"empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"}
+    {"empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"},
 };
 
 void cmd_log_register(void)

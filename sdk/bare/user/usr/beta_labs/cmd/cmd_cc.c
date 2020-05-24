@@ -17,7 +17,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"bw <mFreq>", "Set controller bandwidth"},
     {"offset <enc_pulses>", "Set DQ frame offset"},
     {"theta_e_src <enc|est>", "Set theta_e source between encoder and estimation"},
-    {"omega_e_src <enc|est>", "Set omega_e source between encoder and estimation"}
+    {"omega_e_src <enc|est>", "Set omega_e source between encoder and estimation"},
 };
 
 void cmd_cc_register(void)

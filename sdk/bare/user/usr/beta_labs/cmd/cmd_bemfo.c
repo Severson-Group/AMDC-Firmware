@@ -11,7 +11,7 @@ static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES (1)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-    {"start", "Reset controller state"}
+    {"start", "Reset controller state"},
 };
 
 void cmd_bemfo_register(void)

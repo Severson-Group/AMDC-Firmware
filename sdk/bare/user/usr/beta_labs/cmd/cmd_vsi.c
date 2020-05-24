@@ -15,7 +15,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     {"init", "Start VSI task"},
     {"deinit", "Stop VSI task"},
     {"legs <phAIdx> <phBIdx> <phCIdx>", "Set the output leg indices"},
-    {"set <vPercent> <freq> [mRamptime]", "Set operating point (optional transition ramp time)"}
+    {"set <vPercent> <freq> [mRamptime]", "Set operating point (optional transition ramp time)"},
 };
 
 void cmd_vsi_register(void)
