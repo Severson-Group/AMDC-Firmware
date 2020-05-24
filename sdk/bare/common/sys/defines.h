@@ -13,7 +13,9 @@
 #define MIN(x,y) (((x) > (y)) ? (y) : (x))
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
-#define HANG printf("HANG!!!\n"); while(1)
+#define HANG \
+    printf("HANG!!!\n"); \
+    while(1)
 
 #define SUCCESS_QUIET           (2)
 #define SUCCESS                 (1)
