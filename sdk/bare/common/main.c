@@ -30,7 +30,7 @@
 int main()
 {
     // Required system initialization
-    init_platform();
+    init_platform ();
 
     // User BSP library initialization
     bsp_init();

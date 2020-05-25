@@ -17,9 +17,9 @@ typedef enum {
 */
 
 typedef struct pwm_status_t {
-    uint8_t ready;
-    uint8_t fault_desat;
-    uint8_t fault_temp;
+	uint8_t ready;
+	uint8_t fault_desat;
+	uint8_t fault_temp;
 } pwm_status_t;
 
 void pwm_init(void);

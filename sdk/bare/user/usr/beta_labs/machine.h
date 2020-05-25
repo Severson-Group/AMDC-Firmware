@@ -24,8 +24,8 @@
 //#define Km_HAT        (0.330)     // Nm / sqrt(W)
 //#define Ke_HAT        (0.160)     // Vpkll / (rads/s)
 
-#define POLE_PAIRS (16.0)
-#define POLES      (32.0)
+#define POLE_PAIRS	(16.0)
+#define POLES		(32.0)
 
 // NOTE: use this to artificially limit current
 #define I_rated_rms (10.0) // Arms
