@@ -50,7 +50,7 @@ void pwm_set_switching_freq(double freq_hz)
     pwm_set_carrier_divisor(0);
 
     // Calculate what the carrier_max should be to achieve the right switching freq
-    carrier_max = (uint16_t) (((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
+    carrier_max = (uint16_t)(((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
     pwm_set_carrier_max(carrier_max);
 }
 
@@ -98,7 +98,6 @@ void pwm_set_deadtime_ns(uint16_t time_ns)
     // Write to slave reg 26 to set deadtime value
     Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
 }
-
 
 void pwm_get_all_flt_temp(uint8_t *flt_temp)
 {

@@ -18,7 +18,7 @@ void encoder_set_pulses_per_rev_bits(uint32_t bits)
 {
     printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
 
-    Xil_Out32(ENCODER_BASE_ADDR + 2*sizeof(uint32_t), bits);
+    Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), bits);
 }
 
 void encoder_get_steps(int32_t *steps)
@@ -28,7 +28,7 @@ void encoder_get_steps(int32_t *steps)
 
 void encoder_get_position(uint32_t *position)
 {
-    *position = Xil_In32(ENCODER_BASE_ADDR + 1*sizeof(uint32_t));
+    *position = Xil_In32(ENCODER_BASE_ADDR + 1 * sizeof(uint32_t));
 }
 
 // ****************
@@ -49,8 +49,8 @@ typedef struct sm_ctx_t {
     task_control_block_t tcb;
 } sm_ctx_t;
 
-#define SM_UPDATES_PER_SEC      (10000)
-#define SM_INTERVAL_USEC        (USEC_IN_SEC / SM_UPDATES_PER_SEC)
+#define SM_UPDATES_PER_SEC (10000)
+#define SM_INTERVAL_USEC   (USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
 static void _find_z_callback(void *arg)
 {
@@ -62,7 +62,7 @@ static void _find_z_callback(void *arg)
         uint32_t pos;
         encoder_get_position(&pos);
         if (pos != -1) {
-	    ctx->state = REMOVE_TASK;
+            ctx->state = REMOVE_TASK;
         }
 
         break;
