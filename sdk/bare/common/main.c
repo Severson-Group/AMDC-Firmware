@@ -47,7 +47,7 @@ int main()
 #endif
 
     // Initialize user applications
-    user_apps_init ();
+    user_apps_init();
 
     // Show start message to user, asking for cmds
     commands_start_msg();
