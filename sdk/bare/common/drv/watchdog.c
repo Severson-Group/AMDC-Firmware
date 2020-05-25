@@ -20,7 +20,8 @@ void watchdog_init(void)
     Status = XScuWdt_CfgInitialize(&WdtInstance, ConfigPtr, ConfigPtr->BaseAddr);
     if (Status != XST_SUCCESS) {
         // Hang if error...
-        while (1);
+        while (1) {
+        }
     }
 
     // Put the watchdog timer in watchdog mode.

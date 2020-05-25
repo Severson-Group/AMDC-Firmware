@@ -19,14 +19,14 @@ typedef enum {
     ANLG_CHNL13,
     ANLG_CHNL14,
     ANLG_CHNL15,
-    ANLG_CHNL16
+    ANLG_CHNL16,
 } analog_channel_e;
 
 typedef enum {
     ANLG_CLKDIV2 = 0,
     ANLG_CLKDIV4,
     ANLG_CLKDIV8,
-    ANLG_CLKDIV16
+    ANLG_CLKDIV16,
 } analog_clkdiv_e;
 
 #define ANALOG_NUM_CHANNELS (16)

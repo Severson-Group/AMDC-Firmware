@@ -31,9 +31,13 @@ void pwm_toggle_reset(void)
 {
     // Toggles RST on all inverter outputs for 1 ms
     pwm_set_all_rst(0xFF);
-    for (int i = 0; i < 83250; i++) asm("nop");
+    for (int i = 0; i < 83250; i++) {
+        asm("nop");
+    }
     pwm_set_all_rst(0x00);
-    for (int i = 0; i < 83250; i++) asm("nop");
+    for (int i = 0; i < 83250; i++) {
+        asm("nop");
+    }
     pwm_set_all_rst(0xFF);
 }
 
@@ -154,7 +158,7 @@ void pwm_get_status(uint8_t idx, pwm_status_t *status)
 
     uint8_t bit_mask = (1 << idx);
 
-    status->fault_temp  = (flt_temp  & bit_mask) ? 1 : 0;
+    status->fault_temp = (flt_temp & bit_mask) ? 1 : 0;
     status->fault_desat = (flt_desat & bit_mask) ? 1 : 0;
-    status->ready       = (rdy       & bit_mask) ? 1 : 0;
+    status->ready = (rdy & bit_mask) ? 1 : 0;
 }

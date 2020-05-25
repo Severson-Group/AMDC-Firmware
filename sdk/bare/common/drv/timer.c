@@ -17,7 +17,8 @@ static XTmrCtr timer;
 void fatalError(char *str)
 {
     printf("ERROR: %s\n", str);
-    while (1) {}
+    while (1) {
+    }
 }
 
 void timer_init(XTmrCtr_Handler timer_isr, uint32_t timer_period_usec)

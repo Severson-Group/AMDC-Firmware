@@ -25,7 +25,8 @@ void io_init(void)
     Status = XGpioPs_CfgInitialize(&Gpio, GPIOConfigPtr, GPIOConfigPtr->BaseAddr);
     if (Status != XST_SUCCESS) {
         // Just hang here if error...
-        while (1);
+        while (1) {
+        }
     }
 
     // Set RGB LED direction as output

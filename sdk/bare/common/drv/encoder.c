@@ -37,7 +37,7 @@ void encoder_get_position(uint32_t *position)
 
 typedef enum sm_states_e {
     WAIT_UNTIL_Z,
-    REMOVE_TASK
+    REMOVE_TASK,
 } sm_states_e;
 
 typedef struct sm_ctx_t {
@@ -61,7 +61,10 @@ static void _find_z_callback(void *arg)
     {
         uint32_t pos;
         encoder_get_position(&pos);
-        if (pos != -1) ctx->state = REMOVE_TASK;
+        if (pos != -1) {
+	    ctx->state = REMOVE_TASK;
+        }
+
         break;
     }
 
@@ -80,7 +83,7 @@ static void _find_z_callback(void *arg)
 
 static sm_ctx_t ctx;
 
-void encoder_find_z()
+void encoder_find_z(void)
 {
     // Initialize the state machine context
     ctx.state = WAIT_UNTIL_Z;
