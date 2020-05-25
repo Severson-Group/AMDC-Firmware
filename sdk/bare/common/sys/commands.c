@@ -1,22 +1,22 @@
 #include "sys/commands.h"
+#include "drv/encoder.h"
+#include "drv/uart.h"
+#include "sys/cmd/cmd_help.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
-#include "sys/cmd/cmd_help.h"
-#include "drv/encoder.h"
-#include "drv/uart.h"
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define RECV_BUFFER_LENGTH (4 * 1024)
-static char recv_buffer[RECV_BUFFER_LENGTH] = {0};
+static char recv_buffer[RECV_BUFFER_LENGTH] = { 0 };
 static int recv_buffer_idx = 0;
 
-#define CMD_MAX_ARGC        (16) // # of args accepted
-#define CMD_MAX_ARG_LENGTH  (16) // max chars of any arg
+#define CMD_MAX_ARGC       (16) // # of args accepted
+#define CMD_MAX_ARG_LENGTH (16) // max chars of any arg
 typedef struct pending_cmd_t {
     int argc;
     char *argv[CMD_MAX_ARGC];
@@ -40,7 +40,7 @@ typedef struct pending_cmd_t {
 // execute the previous command
 //
 #define MAX_PENDING_CMDS (8)
-static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = {0};
+static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = { 0 };
 static int pending_cmd_write_idx = 0;
 static int pending_cmd_read_idx = 0;
 
@@ -67,12 +67,7 @@ void commands_init(void)
     cmd_help_register();
 }
 
-
-typedef enum state_e {
-    BEGIN = 1,
-    LOOKING_FOR_SPACE,
-    LOOKING_FOR_CHAR
-} state_e;
+typedef enum state_e { BEGIN = 1, LOOKING_FOR_SPACE, LOOKING_FOR_CHAR } state_e;
 
 state_e state = BEGIN;
 
@@ -102,7 +97,8 @@ void _create_pending_cmds(char *buffer, int length)
             p->ready = 1;
 
             // Update current pending cmd slot
-            if (++pending_cmd_write_idx >= MAX_PENDING_CMDS) pending_cmd_write_idx = 0;
+            if (++pending_cmd_write_idx >= MAX_PENDING_CMDS)
+                pending_cmd_write_idx = 0;
             p = &pending_cmds[pending_cmd_write_idx];
             p->ready = 0;
 
@@ -198,7 +194,6 @@ void commands_callback_parse(void *arg)
     }
 }
 
-
 void commands_callback_exec(void *arg)
 {
     int err;
@@ -256,10 +251,11 @@ void commands_callback_exec(void *arg)
 }
 
 void commands_cmd_init(command_entry_t *cmd_entry,
-        const char *cmd, const char *desc,
-        command_help_t *help, int num_help_cmds,
-        int (*cmd_function)(int, char**)
-)
+                       const char *cmd,
+                       const char *desc,
+                       command_help_t *help,
+                       int num_help_cmds,
+                       int (*cmd_function)(int, char **))
 {
     cmd_entry->cmd = cmd;
     cmd_entry->desc = desc;
@@ -280,7 +276,8 @@ void commands_cmd_register(command_entry_t *cmd_entry)
 
     // Find end of list
     command_entry_t *curr = cmds;
-    while (curr->next != NULL) curr = curr->next;
+    while (curr->next != NULL)
+        curr = curr->next;
 
     // Append new cmd to end of list
     curr->next = cmd_entry;
@@ -320,14 +317,7 @@ int _command_handler(int argc, char **argv)
 // the help messages
 // ****************
 
-typedef enum sm_states_e {
-    TITLE1 = 1,
-    TITLE2,
-    TITLE3,
-    CMD_HEADER,
-    SUB_CMD,
-    REMOVE_TASK
-} sm_states_e;
+typedef enum sm_states_e { TITLE1 = 1, TITLE2, TITLE3, CMD_HEADER, SUB_CMD, REMOVE_TASK } sm_states_e;
 
 typedef struct sm_ctx_t {
     sm_states_e state;
@@ -336,8 +326,8 @@ typedef struct sm_ctx_t {
     task_control_block_t tcb;
 } sm_ctx_t;
 
-#define SM_UPDATES_PER_SEC      (10000)
-#define SM_INTERVAL_USEC        (USEC_IN_SEC / SM_UPDATES_PER_SEC)
+#define SM_UPDATES_PER_SEC (10000)
+#define SM_INTERVAL_USEC   (USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
 void help_state_machine_callback(void *arg)
 {
