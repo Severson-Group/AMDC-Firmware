@@ -1,33 +1,33 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/task_cc.h"
-#include "usr/beta_labs/inverter.h"
-#include "usr/beta_labs/task_mo.h"
-#include "usr/beta_labs/co.h"
-#include "usr/beta_labs/bemfo.h"
-#include "usr/beta_labs/machine.h"
-#include "usr/beta_labs/cmd/cmd_cc.h"
-#include "sys/debug.h"
-#include "sys/defines.h"
-#include "sys/scheduler.h"
-#include "sys/injection.h"
-#include "sys/transform.h"
 #include "drv/analog.h"
+#include "drv/dac.h"
 #include "drv/encoder.h"
 #include "drv/io.h"
-#include "drv/dac.h"
 #include "drv/pwm.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/injection.h"
+#include "sys/scheduler.h"
+#include "sys/transform.h"
+#include "usr/beta_labs/bemfo.h"
+#include "usr/beta_labs/cmd/cmd_cc.h"
+#include "usr/beta_labs/co.h"
+#include "usr/beta_labs/inverter.h"
+#include "usr/beta_labs/machine.h"
+#include "usr/beta_labs/task_mo.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 // Controller tuning
-#define Wb      (controller_bw * PI2) // rad/s
-#define Ts      (1.0 / TASK_CC_UPDATES_PER_SEC)
-#define Kp_d    (Wb * Ld_HAT)
-#define Kp_q    (Wb * Lq_HAT)
-#define Ki_d    ((Rs_HAT / Ld_HAT) * Kp_d)
-#define Ki_q    ((Rs_HAT / Lq_HAT) * Kp_q)
+#define Wb   (controller_bw * PI2) // rad/s
+#define Ts   (1.0 / TASK_CC_UPDATES_PER_SEC)
+#define Kp_d (Wb * Ld_HAT)
+#define Kp_q (Wb * Lq_HAT)
+#define Ki_d ((Rs_HAT / Ld_HAT) * Kp_d)
+#define Ki_q ((Rs_HAT / Lq_HAT) * Kp_q)
 
 // Variables for logging
 double LOG_Id = 0.0;
@@ -66,7 +66,6 @@ inj_ctx_t cc_inj_ctx_Vq_star;
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
-
 
 uint8_t task_cc_is_inited(void)
 {
@@ -141,7 +140,7 @@ double task_cc_get_theta_e_enc(void)
     double theta_e_enc = 0.0;
 
     // Convert to radians
-    theta_e_enc = (double)PI2 * ((double)position / (double)ENCODER_PULSES_PER_REV);
+    theta_e_enc = (double) PI2 * ((double) position / (double) ENCODER_PULSES_PER_REV);
 
     // Multiple by pole pairs to convert mechanical to electrical degrees
     theta_e_enc *= POLE_PAIRS;
@@ -177,7 +176,6 @@ void task_cc_callback(void *arg)
     injection_inj(&Id_star, &cc_inj_ctx_Id_star, Ts);
     injection_inj(&Iq_star, &cc_inj_ctx_Iq_star, Ts);
 
-
     // -------------------
     // Update theta_e using either encoder or estimation
     // -------------------
@@ -194,8 +192,6 @@ void task_cc_callback(void *arg)
     LOG_omega_m_enc = task_mo_get_omega_m();
     LOG_omega_m_hat = bemfo_get_omega_m_hat();
 
-
-
     // ------------------------------
     // Update omega_e_avg in rads/sec
     // ------------------------------
@@ -206,22 +202,19 @@ void task_cc_callback(void *arg)
         omega_e_avg = bemfo_get_omega_e_hat();
     }
 
-
     // ----------------------
     // Get current values
     // ----------------------
     double Iabc[3];
     _get_Iabc(Iabc);
 
-
     // ---------------------
     // Convert ABC to DQ
     // ---------------------
-    double Ixyz[3];  // alpha beta gamma currents
+    double Ixyz[3]; // alpha beta gamma currents
     double Idq0[3]; // d q 0 currents
     transform_clarke(TRANS_DQZ_C_INVARIANT_POWER, Iabc, Ixyz);
     transform_park(theta_e, Ixyz, Idq0);
-
 
     // -----------------------------
     // Run through block diagram of CVCR to get Vdq_star
@@ -241,8 +234,8 @@ void task_cc_callback(void *arg)
     double Vq_star;
     Iq_err = Iq_star - Iq;
     Iq_err_acc += Iq_err;
-    Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc) + (omega_e_avg * Lambda_pm_HAT);
-
+    Vq_star = (Kp_q * Iq_err) + (Ki_q * Ts * Iq_err_acc) + (omega_e_avg * Kp_d * Ts * Id_err_acc)
+        + (omega_e_avg * Lambda_pm_HAT);
 
     // -------------------
     // Inject signals into Vdq*
@@ -250,7 +243,6 @@ void task_cc_callback(void *arg)
     // -------------------
     injection_inj(&Vd_star, &cc_inj_ctx_Vd_star, Ts);
     injection_inj(&Vq_star, &cc_inj_ctx_Vq_star, Ts);
-
 
     // --------------------------------
     // Perform inverse DQ transform of Vdq_star
@@ -260,9 +252,7 @@ void task_cc_callback(void *arg)
     Vdq0[0] = Vd_star;
     Vdq0[1] = Vq_star;
     Vdq0[2] = 0.0;
-    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER,
-            theta_e, Vabc_star, Vdq0);
-
+    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_POWER, theta_e, Vabc_star, Vdq0);
 
     // ------------------------------------
     // Saturate Vabc_star to inverter bus voltage
@@ -271,14 +261,12 @@ void task_cc_callback(void *arg)
     inverter_saturate_to_Vdc(&Vabc_star[1]);
     inverter_saturate_to_Vdc(&Vabc_star[2]);
 
-
     // --------------------------------------
     // Write voltages out to PWM hardware
     // --------------------------------------
     inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, Vabc_star[0], Iabc[0]);
     inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, Vabc_star[1], Iabc[1]);
     inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, Vabc_star[2], Iabc[2]);
-
 
     // -------------------
     // Store LOG variables
@@ -289,7 +277,6 @@ void task_cc_callback(void *arg)
     LOG_Iq_star = Iq_star;
     LOG_Id = Id;
     LOG_Iq = Iq;
-
 
     // -------------------
     // Self-sensing:
@@ -313,7 +300,7 @@ void task_cc_callback(void *arg)
     Esal_dq0[2] = 0.0;
     transform_park(-theta_e, Esal_dq0, Esal_xyz);
     double Esal_alpha = Esal_xyz[0];
-    double Esal_beta  = Esal_xyz[1];
+    double Esal_beta = Esal_xyz[1];
 
     // Back-EMF Tracking Position State Filter
     bemfo_update(Esal_alpha, Esal_beta, 0.0);
@@ -329,7 +316,8 @@ void task_cc_clear(void)
     inverter_set_voltage(CC_PHASE_C_PWM_LEG_IDX, 0.0, 0.0);
 }
 
-void task_cc_set_dq_offset(int32_t offset) {
+void task_cc_set_dq_offset(int32_t offset)
+{
     dq_offset = offset;
 }
 
@@ -338,11 +326,13 @@ void task_cc_set_bw(double bw)
     controller_bw = bw;
 }
 
-void task_cc_set_Iq_star(double value) {
+void task_cc_set_Iq_star(double value)
+{
     Iq_star = value;
 }
 
-void task_cc_set_Id_star(double value) {
+void task_cc_set_Id_star(double value)
+{
     Id_star = value;
 }
 

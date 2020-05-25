@@ -55,7 +55,6 @@ void co_update(double *Idq0, double *Vdq0, double omega_e)
     _update_from_err(Idq_err, Idq, Vdq, omega_e);
 }
 
-
 static void _update_from_err(complex_t Idq_err, complex_t Idq, complex_t Vdq, double omega_e)
 {
     // Saving Last States
@@ -71,13 +70,13 @@ static void _update_from_err(complex_t Idq_err, complex_t Idq, complex_t Vdq, do
     // Q-axis
     Vq_sfb = Kpo_q * Idq_err.q + Kio_qTs * Idq_err_acc.q;
     Vq_tot = Vq_sfb - (Ld_HAT * Idq.d) * omega_e + Vdq.q;
-    Iq_1 = B_q *  Vq_tot;
+    Iq_1 = B_q * Vq_tot;
     Iq_hat = Iq_1 + Idq_hat_last.q * A_q;
 
     // D-axis
     Vd_sfb = Kpo_d * Idq_err.d + Kio_dTs * Idq_err_acc.d;
     Vd_tot = Vd_sfb + Lq_HAT * Idq.q * omega_e + Vdq.d;
-    Id_1 = B_d *  Vd_tot;
+    Id_1 = B_d * Vd_tot;
     Id_hat = Id_1 + Idq_hat_last.d * A_d;
 
     Idq_hat.d = Id_hat;
@@ -95,6 +94,5 @@ void co_get_Esal_hat(double *Esal_d_hat, double *Esal_q_hat)
     *Esal_d_hat = -Vd_sfb;
     *Esal_q_hat = -Vq_sfb;
 }
-
 
 #endif // APP_BETA_LABS
