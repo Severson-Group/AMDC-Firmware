@@ -49,10 +49,10 @@ void analog_get_clkdiv(analog_clkdiv_e *div)
 void analog_getf(analog_channel_e channel, float *value)
 {
     // Registers 0..15 are read-only values from ADC
-    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * (channel-1)));
+    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * (channel - 1)));
 
     // Conversion from raw bits to input voltage
-    float tmp = (float)((int16_t) out) / 400;
+    float tmp = (float) ((int16_t) out) / 400;
 
     *value = tmp;
 }
@@ -60,17 +60,15 @@ void analog_getf(analog_channel_e channel, float *value)
 void analog_geti(analog_channel_e channel, int16_t *value)
 {
     // Registers 0..15 are read-only values from ADC
-    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * (channel-1)));
+    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * (channel - 1)));
 
     *value = (int16_t) out;
 }
-
 
 void analog_set_pwm_sync(uint8_t carrier_high, uint8_t carrier_low)
 {
     // Read in reg
     uint32_t reg16 = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * 16));
-
 
     // Set bit reg16[2] high for `pwm_sync_high`
     if (carrier_high) {

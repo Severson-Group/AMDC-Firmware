@@ -1,11 +1,11 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/task_vsi.h"
-#include "sys/scheduler.h"
 #include "drv/pwm.h"
+#include "sys/scheduler.h"
+#include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <math.h>
 
 // Forward declarations
 static double omega_ramp_fcn(double *current, double *setpoint, double ramprate);
@@ -58,7 +58,8 @@ void task_vsi_deinit(void)
     _clear_state();
 }
 
-void task_vsi_callback(void *arg) {
+void task_vsi_callback(void *arg)
+{
     double update_da = omega_ramp_fcn(&VSI_old_omega, &VSI_omega, VSI_omega_ramp);
 
     theta += update_da;
@@ -67,9 +68,9 @@ void task_vsi_callback(void *arg) {
 
     double v = (VSI_R * VSI_old_omega) + VSI_V0;
 
-    double percent1 = v*cos(theta);
-    double percent2 = v*cos(theta - PI23);
-    double percent3 = v*cos(theta + PI23);
+    double percent1 = v * cos(theta);
+    double percent2 = v * cos(theta - PI23);
+    double percent3 = v * cos(theta + PI23);
 
     pwm_set_duty(VSI_leg1, (1 + percent1) / 2.0);
     pwm_set_duty(VSI_leg2, (1 + percent2) / 2.0);
@@ -98,7 +99,6 @@ void task_vsi_set(int vPercent, int freq, double ramptime)
     } else {
         VSI_omega_ramp = 0;
     }
-
 
     if (VSI_omega != VSI_old_omega) {
         // There is delta freq requested
@@ -133,8 +133,10 @@ static double omega_ramp_fcn(double *current, double *setpoint, double ramprate)
         ret = *current / TASK_VSI_UPDATES_PER_SEC;
 
         // Check if done ramping
-        if ((dir == 1)  && (*current > *setpoint)) *current = *setpoint;
-        if ((dir == -1) && (*current < *setpoint)) *current = *setpoint;
+        if ((dir == 1) && (*current > *setpoint))
+            *current = *setpoint;
+        if ((dir == -1) && (*current < *setpoint))
+            *current = *setpoint;
     } else {
         // Not ramping
         ret = *setpoint / TASK_VSI_UPDATES_PER_SEC;

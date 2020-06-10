@@ -4,8 +4,8 @@
 #include "sys/defines.h"
 #include <stdint.h>
 
-#define TASK_VSI_UPDATES_PER_SEC    (10000)
-#define TASK_VSI_INTERVAL_USEC      (USEC_IN_SEC / TASK_VSI_UPDATES_PER_SEC)
+#define TASK_VSI_UPDATES_PER_SEC (10000)
+#define TASK_VSI_INTERVAL_USEC   (USEC_IN_SEC / TASK_VSI_UPDATES_PER_SEC)
 
 uint8_t task_vsi_is_inited(void);
 void task_vsi_init(void);
