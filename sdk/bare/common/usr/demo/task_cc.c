@@ -51,7 +51,7 @@ typedef struct cc_context_t {
     vec_dq_t Idq_err;
     vec_dq_t Idq_err_acc;
     double theta_e;
-    enum setmode {angle, speed} mode;
+    enum setmode {MODE_ANGLE, MODE_SPEED} mode;
 } cc_context_t;
 
 // Period between controller updates
@@ -77,7 +77,7 @@ void task_cc_init(int cc_idx)
         scheduler_tcb_init(&ctx->tcb, task_cc_callback, ctx, "cc", TASK_CC_INTERVAL_USEC);
         scheduler_tcb_register(&ctx->tcb);
     }
-    ctx->mode = speed;
+    ctx->mode = MODE_SPEED;
 }
 
 void task_cc_deinit(int cc_idx)
@@ -105,8 +105,8 @@ void task_cc_setmode(int cc_idx, char *argMode)
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
 
-    if (STREQ("angle", argMode)) ctx->mode = angle;
-    else if (STREQ("speed", argMode)) ctx->mode = speed;
+    if (STREQ("angle", argMode)) ctx->mode = MODE_ANGLE;
+    else if (STREQ("speed", argMode)) ctx->mode = MODE_SPEED;
 
 }
 void task_cc_callback(void *arg)
@@ -118,7 +118,7 @@ void task_cc_callback(void *arg)
     // ---------------------
     // Update position
     // ---------------------
-    if (ctx->mode == speed){     				// Update position based on user specified speed
+    if (ctx->mode == MODE_SPEED){     				// Update position based on user specified speed
         ctx->theta_e += ctx->omega_e * Ts;
     }
     if (ctx->theta_e > PI2) ctx->theta_e -= PI2;
@@ -257,7 +257,7 @@ void task_cc_set_speed(int cc_idx, double Id_star, double Iq_star, double omega_
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
 
-    if (ctx->mode == speed)
+    if (ctx->mode == MODE_SPEED)
     {
         ctx->Id_star = Id_star;
         ctx->Iq_star = Iq_star;
@@ -277,7 +277,7 @@ void task_cc_set_angle(int cc_idx, double Id_star, double Iq_star, double theta_
     }
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
-    if (ctx->mode == angle)
+    if (ctx->mode == MODE_ANGLE)
     {
 		ctx->Id_star = Id_star;
 		ctx->Iq_star = Iq_star;
