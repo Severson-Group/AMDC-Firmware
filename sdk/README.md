@@ -1,6 +1,8 @@
 # `sdk/` Contents
 
-This folder contains the C code used on the AMDC.
+**All the DSP related files.**
+
+This folder contains the C code which is ran on the DSP on the AMDC hardware.
 
 Each folder is a complete project which can be compiled and ran on the Xilinx Zynq-7000 SoC. There are currently two projects:
 
