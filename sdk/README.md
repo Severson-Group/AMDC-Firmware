@@ -1,4 +1,4 @@
-# `sdk/` Contents
+# Contents of `sdk/`
 
 **All the DSP related files.**
 
