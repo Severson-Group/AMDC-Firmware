@@ -1,4 +1,4 @@
-# `hw/` Contents
+# Contents of `hw/`
 
 **All the FPGA project related files.**
 
