@@ -12,7 +12,7 @@ Each folder is a complete project which can be compiled and ran on the Xilinx Zy
 - Control performed in ISR context
 - Real-time Ethernet (lwIP) / serial logging capabilities
 
-2. `bare` &mdash; C code written by Nathan Petersen at UW-Madison (**actively maintained**)
+2. `bare` &mdash; minimal functionality, core framework for AMDC (**actively maintained**)
 
 - Designed for AMDC hardware platform (using PicoZed processor module)
 - Architecture based on generic tasks and commands
