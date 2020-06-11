@@ -4,13 +4,13 @@ This folder contains the C code used on the AMDC.
 
 Each folder is a complete project which can be compiled and ran on the Xilinx Zynq-7000 SoC. There are currently two projects:
 
-1. `basic` &mdash; C code written by Eric Severson for his PhD dissertation
+1. `basic` &mdash; C code written by Eric Severson for his PhD dissertation (*archived and not maintained*)
 
 - Designed for BM control on PECB platform (similar to AMDC, but based on ZedBoard; developed at UMN)
 - Control performed in ISR context
 - Real-time Ethernet (lwIP) / serial logging capabilities
 
-2. `bare` &mdash; C code written by Nathan Petersen at UW-Madison
+2. `bare` &mdash; C code written by Nathan Petersen at UW-Madison (**actively maintained**)
 
 - Designed for AMDC hardware platform (using PicoZed processor module)
 - Architecture based on generic tasks and commands
