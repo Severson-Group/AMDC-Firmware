@@ -6,7 +6,7 @@ AMDC is a next generation open-source hardware and software control platform for
 
 ## Getting Started
 
-The best way to get started with the AMDC platform is by throughly reading the documentation &mdash; see the next section.
+The best way to get started with the AMDC platform is by thoroughly reading the documentation &mdash; see the next section.
 
 ## Documentation
 
