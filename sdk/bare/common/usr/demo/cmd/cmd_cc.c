@@ -69,14 +69,14 @@ int cmd_cc(int argc, char **argv)
         // Enable current controller
         int cc_idx = atoi(argv[1]);
         task_cc_init(cc_idx);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("deinit", argv[2])) {
         // Disable current controller
         int cc_idx = atoi(argv[1]);
         task_cc_deinit(cc_idx);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("ashad", argv[2])) {
@@ -93,7 +93,7 @@ int cmd_cc(int argc, char **argv)
 
         task_cc_tune(0, 1.0, 0.0015, 0.0015, 628.0);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("yusuke", argv[2])) {
@@ -118,7 +118,7 @@ int cmd_cc(int argc, char **argv)
         task_cc_tune(0, 0.6, 0.0025, 0.0025, 6283.0); // Torque
         task_cc_tune(1, 2.4, 0.010, 0.010, 6283.0);   // Suspension
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 4 && STREQ("vdc", argv[2])) {
