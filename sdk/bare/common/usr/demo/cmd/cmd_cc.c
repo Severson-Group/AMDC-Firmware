@@ -129,10 +129,10 @@ int cmd_cc(int argc, char **argv)
 
         // Sanitize inputs
         if (vdc <= 0.0 || vdc > 1000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_vdc_set(cc_idx, vdc);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 5 && STREQ("pwm", argv[2])) {
@@ -147,17 +147,17 @@ int cmd_cc(int argc, char **argv)
         } else if (STREQ("c", argv[3])) {
             phase = 2;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         uint8_t pwm_chnl = atoi(argv[4]);
         if (pwm_chnl >= 24) {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         task_cc_pwm(cc_idx, phase, pwm_chnl);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 7 && STREQ("adc", argv[2])) {
@@ -172,25 +172,25 @@ int cmd_cc(int argc, char **argv)
         } else if (STREQ("c", argv[3])) {
             phase = 2;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         uint8_t adc_chnl = atoi(argv[4]);
         if (adc_chnl <= 0 || adc_chnl >= ANALOG_NUM_CHANNELS) {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         double adc_gain = strtod(argv[5], NULL);
         double adc_offset = strtod(argv[6], NULL);
 
         if (adc_gain <= -1e6 || adc_gain >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (adc_offset <= -1e6 || adc_offset >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_adc(cc_idx, phase, adc_chnl, adc_gain, adc_offset);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 7 && STREQ("tune", argv[2])) {
@@ -207,16 +207,16 @@ int cmd_cc(int argc, char **argv)
 
         // Sanitize inputs
         if (Rs <= 0.0 || Rs > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Ld <= 0.0 || Ld > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Lq <= 0.0 || Lq > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (bw <= 0.0 || bw > 100000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_tune(cc_idx, Rs, Ld, Lq, bw);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 6 && STREQ("set", argv[2])) {
@@ -232,17 +232,17 @@ int cmd_cc(int argc, char **argv)
 
         // Sanitize inputs
         if (Id_star <= -100.0 || Id_star >= 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Iq_star <= -100.0 || Iq_star >= 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (omega_e <= -1e6 || omega_e >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_set(cc_idx, Id_star, Iq_star, omega_e);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_DEMO

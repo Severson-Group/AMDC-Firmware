@@ -72,12 +72,12 @@ int cmd_blink(int argc, char **argv)
             debug_print("\r\n");
 
             // Indicate success, but hide SUCCESS message
-            return SUCCESS_QUIET;
+            return CMD_SUCCESS_QUIET;
 
         } else if (strcmp("fred", argv[2]) == 0) {
             // We don't want to talk to Fred... :(
             // Treat this case as an invalid command input from user
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         } else {
             // Normal hello for anyone else
@@ -85,11 +85,11 @@ int cmd_blink(int argc, char **argv)
             debug_print("\r\n");
 
             // Indicate success, but hide SUCCESS message
-            return SUCCESS_QUIET;
+            return CMD_SUCCESS_QUIET;
         }
 
         // If user typed a valid command, return SUCCESS
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // At any point, if an error is detected in given input command,
@@ -101,7 +101,7 @@ int cmd_blink(int argc, char **argv)
     // valid should you trust them.
     //
     // Common error return values are: FAILURE, INVALID_ARGUMENTS
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BLINK

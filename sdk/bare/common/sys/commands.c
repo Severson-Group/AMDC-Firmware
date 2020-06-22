@@ -84,7 +84,7 @@ void _create_pending_cmds(char *buffer, int length)
 
             // Set error flag if this arg was too long
             if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
-                p->err = INPUT_TOO_LONG;
+                p->err = CMD_INPUT_TOO_LONG;
             }
 
             // Put a NULL at the end of the last cmd arg
@@ -118,7 +118,7 @@ void _create_pending_cmds(char *buffer, int length)
                 // Populate first argument
                 p->argc = 1;
                 p->argv[0] = &buffer[i];
-                p->err = SUCCESS; // Assume the parsing will work!
+                p->err = CMD_SUCCESS; // Assume the parsing will work!
                 p->curr_arg_length = 1;
                 state = LOOKING_FOR_SPACE;
             }
@@ -134,7 +134,7 @@ void _create_pending_cmds(char *buffer, int length)
 
                 // Set error flag if this arg was too long
                 if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
-                    p->err = INPUT_TOO_LONG;
+                    p->err = CMD_INPUT_TOO_LONG;
                 }
 
                 // Put NULL at end of arg (replaces ' ')
@@ -151,7 +151,7 @@ void _create_pending_cmds(char *buffer, int length)
 
                 // Check if argc too big!
                 if (p->argc > CMD_MAX_ARGC) {
-                    p->err = INPUT_TOO_LONG;
+                    p->err = CMD_INPUT_TOO_LONG;
 
                     // Put argc back to zero...
                     // NOTE: this ensure no buffer overruns,
@@ -206,33 +206,33 @@ void commands_callback_exec(void *arg)
 
         // Don't run a cmd that has errors
         err = p->err;
-        if (err == SUCCESS) {
+        if (err == CMD_SUCCESS) {
             err = _command_handler(p->argc, p->argv);
         }
 
         // Display command status to user
         switch (err) {
-        case SUCCESS_QUIET:
+        case CMD_SUCCESS_QUIET:
             // Don't print anything
             break;
 
-        case SUCCESS:
+        case CMD_SUCCESS:
             debug_printf("SUCCESS\r\n\n");
             break;
 
-        case FAILURE:
+        case CMD_FAILURE:
             debug_printf("FAILURE\r\n\n");
             break;
 
-        case INVALID_ARGUMENTS:
+        case CMD_INVALID_ARGUMENTS:
             debug_printf("INVALID ARGUMENTS\r\n\n");
             break;
 
-        case INPUT_TOO_LONG:
+        case CMD_INPUT_TOO_LONG:
             debug_printf("INPUT TOO LONG\r\n\n");
             break;
 
-        case UNKNOWN_CMD:
+        case CMD_UNKNOWN_CMD:
             debug_printf("UNKNOWN CMD\r\n\n");
             break;
 
@@ -308,7 +308,7 @@ int _command_handler(int argc, char **argv)
         c = c->next;
     }
 
-    return UNKNOWN_CMD;
+    return CMD_UNKNOWN_CMD;
 }
 
 // ****************

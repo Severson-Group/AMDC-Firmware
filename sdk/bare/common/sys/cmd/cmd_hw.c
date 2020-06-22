@@ -41,50 +41,50 @@ int cmd_hw(int argc, char **argv)
         if (strcmp("sw", argv[2]) == 0) {
             // Check correct number of arguments
             if (argc != 5)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             // Parse out switching freq arg
             double fsw = (double) atoi(argv[3]);
             if (fsw > 1000000.0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (fsw < 2000.0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             // Parse out dead time arg
             int dt = atoi(argv[4]);
             if (dt > 5000)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (dt < 25)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             pwm_set_deadtime_ns(dt);
             pwm_set_switching_freq(fsw);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
         if (strcmp("duty", argv[2]) == 0) {
             // Check correct number of arguments
             if (argc != 5)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             // Parse out switching pwm_idx arg
             int pwm_idx = atoi(argv[3]);
             if (pwm_idx > 23)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (pwm_idx < 0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             // Parse out percent arg
             int percent = atoi(argv[4]);
             if (percent > 100)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (percent < 0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             pwm_set_duty(pwm_idx, (double) percent / 100.0);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
@@ -92,22 +92,22 @@ int cmd_hw(int argc, char **argv)
     if (strcmp("anlg", argv[1]) == 0) {
         if (strcmp("read", argv[2]) == 0) {
             // Check correct number of arguments
-            if (argc != 4)
-                return INVALID_ARGUMENTS;
+        	if (argc != 4)
+                return CMD_INVALID_ARGUMENTS;
 
             // Parse out switching pwm_idx arg
             int anlg_idx = atoi(argv[3]);
             if (anlg_idx > 15)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (anlg_idx < 0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             float value;
             analog_getf(anlg_idx + 1, &value);
 
             debug_printf("%fV\r\n", value);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
@@ -116,39 +116,39 @@ int cmd_hw(int argc, char **argv)
         if (strcmp("steps", argv[2]) == 0) {
             // Check correct number of arguments
             if (argc != 3)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             int32_t steps;
             encoder_get_steps(&steps);
 
             debug_printf("steps: %ld\r\n", steps);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
         if (strcmp("pos", argv[2]) == 0) {
             // Check correct number of arguments
             if (argc != 3)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             uint32_t position;
             encoder_get_position(&position);
 
             debug_printf("pos: %ld\r\n", position);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
         if (strcmp("init", argv[2]) == 0) {
             // Check correct number of arguments
             if (argc != 3)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             encoder_find_z();
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }

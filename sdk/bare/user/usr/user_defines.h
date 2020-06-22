@@ -15,7 +15,7 @@
 
 // Disable logging functionality
 // by defining DISABLE_LOGGING here:
-#define DISABLE_LOGGING
+//#define DISABLE_LOGGING
 
 // Disable injection functionality
 // by defining DISABLE_INJECTION here:

@@ -20,10 +20,10 @@ void cmd_help_register(void)
 int cmd_help(int argc, char **argv)
 {
     if (argc > 1) {
-        return INVALID_ARGUMENTS;
+        return CMD_INVALID_ARGUMENTS;
     }
 
     commands_display_help();
 
-    return SUCCESS_QUIET;
+    return CMD_SUCCESS_QUIET;
 }
