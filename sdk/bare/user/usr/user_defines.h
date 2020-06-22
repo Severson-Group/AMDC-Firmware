@@ -14,6 +14,6 @@
 #define ENABLE_LOGGING (1)
 
 // Enable injection functionality
-#define ENABLE_INJECTION (1)
+#define ENABLE_INJECTION (0)
 
 #endif // USER_DEFINES_H
