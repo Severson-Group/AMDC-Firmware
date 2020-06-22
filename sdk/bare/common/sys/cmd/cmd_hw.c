@@ -14,15 +14,16 @@
 static command_entry_t cmd_entry;
 
 #define NUM_HELP_ENTRIES (8)
-static command_help_t cmd_help[NUM_HELP_ENTRIES]
-    = { { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
-        { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
-        { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
-        { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
-        { "ild read", "Read the latest packet from ILD1420 sensor" },
-        { "enc steps", "Read encoder steps from power-up" },
-        { "enc pos", "Read encoder position" },
-        { "enc init", "Turn on blue LED until Z pulse found" } };
+static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+    { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
+    { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
+    { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+    { "ild read", "Read the latest packet from ILD1420 sensor" },
+    { "enc steps", "Read encoder steps from power-up" },
+    { "enc pos", "Read encoder position" },
+    { "enc init", "Turn on blue LED until Z pulse found" },
+};
 
 void cmd_hw_register(void)
 {
