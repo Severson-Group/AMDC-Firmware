@@ -20,18 +20,18 @@
 // Enable task statistic collection by default
 // NOTE: The user can still go and enable the stats themselves if this is set to 0!
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT (0)
+#define USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT (1)
 
 // Enable the watchdog timer
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_WATCHDOG (0)
+#define USER_CONFIG_ENABLE_WATCHDOG (1)
 
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_LOGGING (0)
+#define USER_CONFIG_ENABLE_LOGGING (1)
 
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_INJECTION (0)
+#define USER_CONFIG_ENABLE_INJECTION (1)
 
 #endif // USER_CONFIG_H

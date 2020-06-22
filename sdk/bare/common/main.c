@@ -38,6 +38,7 @@ int main()
     // Initialize system tasks
     serial_init();
     commands_init();
+
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif
