@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#ifndef DISABLE_LOGGING
+#if ENABLE_LOGGING == 1
 
 #include "cmd_log.h"
 #include "sys/commands.h"
@@ -12,13 +12,15 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (5)
+#define NUM_HELP_ENTRIES (7)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     { "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging" },
+    { "unreg <log_var_idx>", "Unregister variable slot" },
     { "start", "Start logging" },
     { "stop", "Stop logging" },
     { "dump <log_var_idx>", "Dump log data to console" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
+    { "info", "Print status of logging engine" },
 };
 
 void cmd_log_register(void)
@@ -65,18 +67,44 @@ int cmd_log(int argc, char **argv)
         // Parse arg5: type
         var_type_e type;
         if (strcmp("int", argv[6]) == 0) {
-            type = INT;
+            type = LOG_INT;
         } else if (strcmp("float", argv[6]) == 0) {
-            type = FLOAT;
+            type = LOG_FLOAT;
         } else if (strcmp("double", argv[6]) == 0) {
-            type = DOUBLE;
+            type = LOG_DOUBLE;
         } else {
             // ERROR
             return INVALID_ARGUMENTS;
         }
 
         // Register the variable with the logging engine
-        log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
+        int err = log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
+        if (err != SUCCESS) {
+            return FAILURE;
+        }
+
+        return SUCCESS;
+    }
+
+    // Handle 'unreg' sub-command
+    if (strcmp("unreg", argv[1]) == 0) {
+        // Check correct number of arguments
+        if (argc != 3)
+            return INVALID_ARGUMENTS;
+
+        // Parse log_var_idx arg
+        int log_var_idx = atoi(argv[2]);
+        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+            // ERROR
+            return INVALID_ARGUMENTS;
+        }
+
+        // Register the variable with the logging engine
+        int err = log_var_unregister(log_var_idx);
+        if (err != SUCCESS) {
+            return FAILURE;
+        }
+
         return SUCCESS;
     }
 
@@ -125,7 +153,11 @@ int cmd_log(int argc, char **argv)
             return INVALID_ARGUMENTS;
         }
 
-        log_var_dump_uart(log_var_idx);
+        int err = log_var_dump_uart(log_var_idx);
+        if (err != SUCCESS) {
+            return FAILURE;
+        }
+
         return SUCCESS;
     }
 
@@ -142,11 +174,29 @@ int cmd_log(int argc, char **argv)
             return INVALID_ARGUMENTS;
         }
 
-        log_var_empty(log_var_idx);
+        int err = log_var_empty(log_var_idx);
+        if (err != SUCCESS) {
+            return FAILURE;
+        }
+
+        return SUCCESS;
+    }
+
+    // Handle 'info' sub-command
+    if (strcmp("info", argv[1]) == 0) {
+        // Check correct number of arguments
+        if (argc != 2)
+            return INVALID_ARGUMENTS;
+
+        int err = log_print_info();
+        if (err != SUCCESS) {
+            return FAILURE;
+        }
+
         return SUCCESS;
     }
 
     return INVALID_ARGUMENTS;
 }
 
-#endif // DISABLE_LOGGING
+#endif // ENABLE_LOGGING
