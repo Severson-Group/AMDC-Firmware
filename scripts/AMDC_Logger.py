@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import pathlib as pl
 import os
+import datetime
 
 class AMDC_Logger():
     
@@ -111,7 +112,7 @@ class AMDC_Logger():
         self.amdc.cmdDelay = old_delay #reset cmd delay to previous value
         
         
-    def dump(self, file = None):
+    def dump(self, file = None, timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S'):
         
         if len(self.log_vars) > 0:
             for i, var in enumerate(self.log_vars):
@@ -122,7 +123,17 @@ class AMDC_Logger():
                     df = df.join(self.dump_single(var), how = 'outer')
                     
             if file != None:
-                df.to_csv(file)
+                
+                #ensure that file is pathlib path
+                file = pl.Path(file)
+                p = file.parent
+                
+                if timestamp:
+                    path = p / (file.stem + '_' + datetime.datetime.now().strftime(timestamp_fmt) + '.csv')
+                else:
+                    path = p / (file.stem + '.csv')
+            
+                df.to_csv(path)
                     
             return df
         
