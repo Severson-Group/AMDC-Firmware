@@ -1,10 +1,10 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/cmd/cmd_blink.h"
-#include "usr/blink/task_blink.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "usr/blink/task_blink.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,9 +15,9 @@ static command_entry_t cmd_entry;
 // when user types "help" at command prompt
 #define NUM_HELP_ENTRIES (3)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-        {"hello <name>", "Print hello to screen"},
-        {"init", "Start task"},
-        {"deinit", "Stop task"}
+    { "hello <name>", "Print hello to screen" },
+    { "init", "Start task" },
+    { "deinit", "Stop task" },
 
 };
 

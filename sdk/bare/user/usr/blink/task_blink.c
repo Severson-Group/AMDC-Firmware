@@ -1,8 +1,8 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/task_blink.h"
-#include "sys/scheduler.h"
 #include "drv/led.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
 
 // Hold LED animation state
@@ -10,13 +10,13 @@ static uint8_t led_pos = 0;
 static uint8_t led_color_idx = 0;
 #define NUM_LED_COLORS (7)
 static led_color_t led_colors[NUM_LED_COLORS] = {
-        LED_COLOR_RED,
-        LED_COLOR_GREEN,
-        LED_COLOR_BLUE,
-        LED_COLOR_YELLOW,
-        LED_COLOR_CYAN,
-        LED_COLOR_MAGENTA,
-        LED_COLOR_WHITE
+    LED_COLOR_RED,     //
+    LED_COLOR_GREEN,   //
+    LED_COLOR_BLUE,    //
+    LED_COLOR_YELLOW,  //
+    LED_COLOR_CYAN,    //
+    LED_COLOR_MAGENTA, //
+    LED_COLOR_WHITE,   //
 };
 
 // Scheduler TCB which holds task "context"
