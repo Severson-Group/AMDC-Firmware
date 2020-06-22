@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#ifndef DISABLE_LOGGING
+#if ENABLE_LOGGING == 1
 
 #include "sys/cmd/cmd_log.h"
 #include "sys/debug.h"
@@ -514,4 +514,4 @@ int log_print_info(void)
     return SUCCESS;
 }
 
-#endif // DISABLE_LOGGING
+#endif // ENABLE_LOGGING
