@@ -21,7 +21,7 @@ typedef struct buffer_entry_t {
 } buffer_entry_t;
 
 typedef struct log_var_t {
-	bool is_registered;
+    bool is_registered;
     char name[LOG_VAR_NAME_MAX_CHARS];
     void *addr;
     var_type_e type;
@@ -86,10 +86,10 @@ void log_callback(void *arg)
             v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
 
             if (v->type == LOG_INT) {
-                v->buffer[v->buffer_idx].value = *((uint32_t *)v->addr);
+                v->buffer[v->buffer_idx].value = *((uint32_t *) v->addr);
             } else if (v->type == LOG_FLOAT) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
-                *f = *((float *)v->addr);
+                *f = *((float *) v->addr);
             } else if (v->type == LOG_DOUBLE) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
                 double value = *((double *) v->addr);
@@ -110,12 +110,12 @@ void log_callback(void *arg)
 
 void log_start(void)
 {
-	is_log_running = true;
+    is_log_running = true;
 }
 
 void log_stop(void)
 {
-	is_log_running = false;
+    is_log_running = false;
 }
 
 bool log_is_logging(void)
@@ -123,11 +123,11 @@ bool log_is_logging(void)
     return is_log_running;
 }
 
-int log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec, var_type_e type)
+int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     // Populate variable entry...
@@ -149,7 +149,7 @@ int log_var_unregister(int idx)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     vars[idx].is_registered = false;
@@ -161,7 +161,7 @@ int log_var_is_registered(int idx, bool *is_registered)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     // Set output variable
@@ -226,12 +226,12 @@ int log_var_empty(int idx)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     if (scheduler_tcb_is_registered(&ctx_empty.tcb)) {
-    	// Already in process of emptying something!!
-    	return FAILURE;
+        // Already in process of emptying something!!
+        return FAILURE;
     }
 
     vars[idx].buffer_idx = 0;
@@ -346,11 +346,11 @@ int log_var_dump_uart(int log_var_idx)
 {
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     if (!vars[log_var_idx].is_registered) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     // Initialize the state machine context
@@ -365,7 +365,6 @@ int log_var_dump_uart(int log_var_idx)
     return SUCCESS;
 }
 
-
 // ***************************
 // Code for printing log info
 // ***************************
@@ -375,38 +374,38 @@ typedef enum sm_states_info_e {
     INFO_MAX_SLOTS,
     INFO_MAX_DEPTH,
 
-	INFO_VAR_TITLE,
-	INFO_VAR_DATA1,
-	INFO_VAR_DATA2,
-	INFO_VAR_DATA3,
-	INFO_VAR_DATA4,
+    INFO_VAR_TITLE,
+    INFO_VAR_DATA1,
+    INFO_VAR_DATA2,
+    INFO_VAR_DATA3,
+    INFO_VAR_DATA4,
 
-	INFO_NEXT_VAR,
+    INFO_NEXT_VAR,
 
-	INFO_REMOVE_TASK
+    INFO_REMOVE_TASK
 } sm_states_info_e;
 
 typedef struct sm_ctx_info_t {
-	sm_states_info_e state;
+    sm_states_info_e state;
     task_control_block_t tcb;
 
-	int var_idx;
+    int var_idx;
 } sm_ctx_info_t;
 
-#define SM_INFO_UPDATES_PER_SEC    SYS_TICK_FREQ
-#define SM_INFO_INTERVAL_USEC      (USEC_IN_SEC / SM_INFO_UPDATES_PER_SEC)
+#define SM_INFO_UPDATES_PER_SEC SYS_TICK_FREQ
+#define SM_INFO_INTERVAL_USEC   (USEC_IN_SEC / SM_INFO_UPDATES_PER_SEC)
 
 void state_machine_info_callback(void *arg)
 {
-	sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
+    sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
 
-	log_var_t *v = &vars[ctx->var_idx];
+    log_var_t *v = &vars[ctx->var_idx];
 
     switch (ctx->state) {
     case INFO_HEAD:
     {
-    	debug_printf("Log Info\r\n");
-    	debug_printf("--------\r\n");
+        debug_printf("Log Info\r\n");
+        debug_printf("--------\r\n");
         ctx->state = INFO_MAX_SLOTS;
         break;
     }
@@ -421,70 +420,70 @@ void state_machine_info_callback(void *arg)
     case INFO_MAX_DEPTH:
     {
         debug_printf("Max sample depth: %d\r\n", LOG_VARIABLE_SAMPLE_DEPTH);
-    	debug_printf("--------\r\n");
+        debug_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;
     }
 
     case INFO_VAR_TITLE:
     {
-    	if (v->is_registered) {
+        if (v->is_registered) {
             debug_printf("Slot %d:\r\n", ctx->var_idx);
             ctx->state = INFO_VAR_DATA1;
-    	} else {
+        } else {
             debug_printf("Slot %d: unused\r\n", ctx->var_idx);
             ctx->state = INFO_NEXT_VAR;
-    	}
-    	break;
+        }
+        break;
     }
 
     case INFO_VAR_DATA1:
     {
-    	debug_printf("  Name: %s\r\n", v->name);
-    	ctx->state = INFO_VAR_DATA2;
-    	break;
+        debug_printf("  Name: %s\r\n", v->name);
+        ctx->state = INFO_VAR_DATA2;
+        break;
     }
 
     case INFO_VAR_DATA2:
     {
-    	if (v->type == LOG_INT) {
-        	debug_printf("  Type: int\r\n");
-    	} else if (v->type == LOG_FLOAT) {
-        	debug_printf("  Type: float\r\n");
-    	} else {
-        	debug_printf("  Type: double\r\n");
-    	}
-    	ctx->state = INFO_VAR_DATA3;
-    	break;
+        if (v->type == LOG_INT) {
+            debug_printf("  Type: int\r\n");
+        } else if (v->type == LOG_FLOAT) {
+            debug_printf("  Type: float\r\n");
+        } else {
+            debug_printf("  Type: double\r\n");
+        }
+        ctx->state = INFO_VAR_DATA3;
+        break;
     }
 
     case INFO_VAR_DATA3:
     {
-    	debug_printf("  Memory address: 0x%X\r\n", v->addr);
-    	ctx->state = INFO_VAR_DATA4;
-    	break;
+        debug_printf("  Memory address: 0x%X\r\n", v->addr);
+        ctx->state = INFO_VAR_DATA4;
+        break;
     }
 
     case INFO_VAR_DATA4:
     {
-    	debug_printf("  Num samples: %d\r\n", v->num_samples);
-    	ctx->state = INFO_NEXT_VAR;
-    	break;
+        debug_printf("  Num samples: %d\r\n", v->num_samples);
+        ctx->state = INFO_NEXT_VAR;
+        break;
     }
 
     case INFO_NEXT_VAR:
     {
-    	ctx->var_idx++;
-    	if (ctx->var_idx >= LOG_MAX_NUM_VARS) {
-    		ctx->state = INFO_REMOVE_TASK;
-    	} else {
-    		ctx->state = INFO_VAR_TITLE;
-    	}
-    	break;
+        ctx->var_idx++;
+        if (ctx->var_idx >= LOG_MAX_NUM_VARS) {
+            ctx->state = INFO_REMOVE_TASK;
+        } else {
+            ctx->state = INFO_VAR_TITLE;
+        }
+        break;
     }
 
     case INFO_REMOVE_TASK:
-    	debug_printf("\r\n");
+        debug_printf("\r\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 
@@ -500,8 +499,8 @@ static sm_ctx_info_t ctx_info;
 int log_print_info(void)
 {
     if (scheduler_tcb_is_registered(&ctx_info.tcb)) {
-    	// Already in process of printing something!!
-    	return FAILURE;
+        // Already in process of printing something!!
+        return FAILURE;
     }
 
     // Initialize the state machine context

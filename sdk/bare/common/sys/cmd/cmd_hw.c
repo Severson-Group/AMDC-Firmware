@@ -92,7 +92,7 @@ int cmd_hw(int argc, char **argv)
     if (strcmp("anlg", argv[1]) == 0) {
         if (strcmp("read", argv[2]) == 0) {
             // Check correct number of arguments
-        	if (argc != 4)
+            if (argc != 4)
                 return CMD_INVALID_ARGUMENTS;
 
             // Parse out switching pwm_idx arg

@@ -20,9 +20,7 @@ void task_var_init(void)
     }
 
     // Fill TCB with parameters
-    scheduler_tcb_init(&tcb,
-            task_var_callback, NULL,
-            "var", TASK_VAR_INTERVAL_USEC);
+    scheduler_tcb_init(&tcb, task_var_callback, NULL, "var", TASK_VAR_INTERVAL_USEC);
 
     // Register task with scheduler
     scheduler_tcb_register(&tcb);
@@ -30,11 +28,11 @@ void task_var_init(void)
 
 void task_var_callback(void *arg)
 {
-	LOG_foo1 += 0.0001;
-	LOG_foo2 += LOG_foo1;
-	LOG_foo3 = LOG_foo1 * LOG_foo2;
-	LOG_foo4 = LOG_foo3 / LOG_foo1;
-	LOG_foo5 = 3.14;
+    LOG_foo1 += 0.0001;
+    LOG_foo2 += LOG_foo1;
+    LOG_foo3 = LOG_foo1 * LOG_foo2;
+    LOG_foo4 = LOG_foo3 / LOG_foo1;
+    LOG_foo5 = 3.14;
 }
 
 #endif // APP_BLINK
