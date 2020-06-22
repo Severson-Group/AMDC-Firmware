@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#ifndef DISABLE_INJECTION
+#if ENABLE_INJECTION == 1
 
 #include "sys/cmd/cmd_inj.h"
 #include "sys/debug.h"
@@ -367,4 +367,4 @@ void injection_list(void)
     scheduler_tcb_register(&ctx_list.tcb);
 }
 
-#endif // DISABLE_INJECTION
+#endif // ENABLE_INJECTION

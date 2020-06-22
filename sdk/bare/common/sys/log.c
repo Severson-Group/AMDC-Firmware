@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#ifndef DISABLE_LOGGING
+#if ENABLE_LOGGING == 1
 
 #include "sys/cmd/cmd_log.h"
 #include "sys/debug.h"
@@ -21,6 +21,7 @@ typedef struct buffer_entry_t {
 } buffer_entry_t;
 
 typedef struct log_var_t {
+    bool is_registered;
     char name[LOG_VAR_NAME_MAX_CHARS];
     void *addr;
     var_type_e type;
@@ -29,13 +30,13 @@ typedef struct log_var_t {
     uint64_t last_logged_usec;
 
     int num_samples;
-    buffer_entry_t buffer[LOG_BUFFER_LENGTH];
+    buffer_entry_t buffer[LOG_VARIABLE_SAMPLE_DEPTH];
     int buffer_idx;
 } log_var_t;
 
 static log_var_t vars[LOG_MAX_NUM_VARS] = { 0 };
 
-static uint8_t log_running;
+static bool is_log_running = false;
 
 static task_control_block_t tcb;
 
@@ -62,19 +63,20 @@ void log_init(void)
 
 void log_callback(void *arg)
 {
-    if (log_running == 0) {
+    if (!is_log_running) {
         return;
     }
+
+    uint64_t elapsed_usec = scheduler_get_elapsed_usec();
 
     for (uint8_t i = 0; i < LOG_MAX_NUM_VARS; i++) {
         log_var_t *v = &vars[i];
 
-        if (v->addr == NULL) {
+        if (!v->is_registered) {
             // Variable not active for logging, so skip
             continue;
         }
 
-        uint64_t elapsed_usec = scheduler_get_elapsed_usec();
         uint64_t usec_since_last_run = elapsed_usec - v->last_logged_usec;
 
         if (usec_since_last_run >= v->log_interval_usec) {
@@ -83,19 +85,19 @@ void log_callback(void *arg)
 
             v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
 
-            if (v->type == INT) {
+            if (v->type == LOG_INT) {
                 v->buffer[v->buffer_idx].value = *((uint32_t *) v->addr);
-            } else if (v->type == FLOAT) {
+            } else if (v->type == LOG_FLOAT) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
                 *f = *((float *) v->addr);
-            } else if (v->type == DOUBLE) {
+            } else if (v->type == LOG_DOUBLE) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
                 double value = *((double *) v->addr);
                 *f = (float) value;
             }
 
             v->buffer_idx++;
-            if (v->buffer_idx >= LOG_BUFFER_LENGTH) {
+            if (v->buffer_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
                 v->buffer_idx = 0;
             }
 
@@ -108,24 +110,24 @@ void log_callback(void *arg)
 
 void log_start(void)
 {
-    log_running = 1;
+    is_log_running = true;
 }
 
 void log_stop(void)
 {
-    log_running = 0;
+    is_log_running = false;
 }
 
-uint8_t log_is_logging(void)
+bool log_is_logging(void)
 {
-    return log_running;
+    return is_log_running;
 }
 
-void log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
+int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
-        HANG;
+        return FAILURE;
     }
 
     // Populate variable entry...
@@ -136,6 +138,36 @@ void log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec,
     // Calculate 'log_interval_usec' from samples per second
     vars[idx].log_interval_usec = USEC_IN_SEC / samples_per_sec;
     vars[idx].last_logged_usec = 0;
+
+    // Mark as registered
+    vars[idx].is_registered = true;
+
+    return SUCCESS;
+}
+
+int log_var_unregister(int idx)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+        return FAILURE;
+    }
+
+    vars[idx].is_registered = false;
+
+    return SUCCESS;
+}
+
+int log_var_is_registered(int idx, bool *is_registered)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+        return FAILURE;
+    }
+
+    // Set output variable
+    *is_registered = vars[idx].is_registered;
+
+    return SUCCESS;
 }
 
 // ***************************
@@ -190,8 +222,18 @@ void state_machine_empty_callback(void *arg)
 
 static sm_ctx_empty_t ctx_empty;
 
-void log_var_empty(int idx)
+int log_var_empty(int idx)
 {
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+        return FAILURE;
+    }
+
+    if (scheduler_tcb_is_registered(&ctx_empty.tcb)) {
+        // Already in process of emptying something!!
+        return FAILURE;
+    }
+
     vars[idx].buffer_idx = 0;
     vars[idx].last_logged_usec = 0;
     vars[idx].num_samples = 0;
@@ -204,6 +246,8 @@ void log_var_empty(int idx)
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx_empty.tcb, state_machine_empty_callback, &ctx_empty, "logempty", SM_EMPTY_INTERVAL_USEC);
     scheduler_tcb_register(&ctx_empty.tcb);
+
+    return SUCCESS;
 }
 
 // ***************************
@@ -263,9 +307,9 @@ void state_machine_dump_callback(void *arg)
 
     case DUMP_VARIABLES_VALUE:
         // Print just the value
-        if (v->type == INT) {
+        if (v->type == LOG_INT) {
             debug_printf("%ld\r\n", e->value);
-        } else if (v->type == FLOAT || v->type == DOUBLE) {
+        } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             float *f = (float *) &(e->value);
             debug_printf("%f\r\n", *f);
         }
@@ -298,8 +342,17 @@ void state_machine_dump_callback(void *arg)
 
 static sm_ctx_dump_t ctx_dump;
 
-void log_var_dump_uart(int log_var_idx)
+int log_var_dump_uart(int log_var_idx)
 {
+    // Sanity check variable idx
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
+        return FAILURE;
+    }
+
+    if (!vars[log_var_idx].is_registered) {
+        return FAILURE;
+    }
+
     // Initialize the state machine context
     ctx_dump.state = DUMP_TITLE;
     ctx_dump.var_idx = log_var_idx;
@@ -308,6 +361,157 @@ void log_var_dump_uart(int log_var_idx)
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx_dump.tcb, state_machine_dump_callback, &ctx_dump, "logdump", SM_DUMP_INTERVAL_USEC);
     scheduler_tcb_register(&ctx_dump.tcb);
+
+    return SUCCESS;
 }
 
-#endif // DISABLE_LOGGING
+// ***************************
+// Code for printing log info
+// ***************************
+
+typedef enum sm_states_info_e {
+    INFO_HEAD = 1,
+    INFO_MAX_SLOTS,
+    INFO_MAX_DEPTH,
+
+    INFO_VAR_TITLE,
+    INFO_VAR_DATA1,
+    INFO_VAR_DATA2,
+    INFO_VAR_DATA3,
+    INFO_VAR_DATA4,
+
+    INFO_NEXT_VAR,
+
+    INFO_REMOVE_TASK
+} sm_states_info_e;
+
+typedef struct sm_ctx_info_t {
+    sm_states_info_e state;
+    task_control_block_t tcb;
+
+    int var_idx;
+} sm_ctx_info_t;
+
+#define SM_INFO_UPDATES_PER_SEC SYS_TICK_FREQ
+#define SM_INFO_INTERVAL_USEC   (USEC_IN_SEC / SM_INFO_UPDATES_PER_SEC)
+
+void state_machine_info_callback(void *arg)
+{
+    sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
+
+    log_var_t *v = &vars[ctx->var_idx];
+
+    switch (ctx->state) {
+    case INFO_HEAD:
+    {
+        debug_printf("Log Info\r\n");
+        debug_printf("--------\r\n");
+        ctx->state = INFO_MAX_SLOTS;
+        break;
+    }
+
+    case INFO_MAX_SLOTS:
+    {
+        debug_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARS);
+        ctx->state = INFO_MAX_DEPTH;
+        break;
+    }
+
+    case INFO_MAX_DEPTH:
+    {
+        debug_printf("Max sample depth: %d\r\n", LOG_VARIABLE_SAMPLE_DEPTH);
+        debug_printf("--------\r\n");
+        ctx->state = INFO_VAR_TITLE;
+        break;
+    }
+
+    case INFO_VAR_TITLE:
+    {
+        if (v->is_registered) {
+            debug_printf("Slot %d:\r\n", ctx->var_idx);
+            ctx->state = INFO_VAR_DATA1;
+        } else {
+            debug_printf("Slot %d: unused\r\n", ctx->var_idx);
+            ctx->state = INFO_NEXT_VAR;
+        }
+        break;
+    }
+
+    case INFO_VAR_DATA1:
+    {
+        debug_printf("  Name: %s\r\n", v->name);
+        ctx->state = INFO_VAR_DATA2;
+        break;
+    }
+
+    case INFO_VAR_DATA2:
+    {
+        if (v->type == LOG_INT) {
+            debug_printf("  Type: int\r\n");
+        } else if (v->type == LOG_FLOAT) {
+            debug_printf("  Type: float\r\n");
+        } else {
+            debug_printf("  Type: double\r\n");
+        }
+        ctx->state = INFO_VAR_DATA3;
+        break;
+    }
+
+    case INFO_VAR_DATA3:
+    {
+        debug_printf("  Memory address: 0x%X\r\n", v->addr);
+        ctx->state = INFO_VAR_DATA4;
+        break;
+    }
+
+    case INFO_VAR_DATA4:
+    {
+        debug_printf("  Num samples: %d\r\n", v->num_samples);
+        ctx->state = INFO_NEXT_VAR;
+        break;
+    }
+
+    case INFO_NEXT_VAR:
+    {
+        ctx->var_idx++;
+        if (ctx->var_idx >= LOG_MAX_NUM_VARS) {
+            ctx->state = INFO_REMOVE_TASK;
+        } else {
+            ctx->state = INFO_VAR_TITLE;
+        }
+        break;
+    }
+
+    case INFO_REMOVE_TASK:
+        debug_printf("\r\n");
+        scheduler_tcb_unregister(&ctx->tcb);
+        break;
+
+    default:
+        // Can't happen
+        HANG;
+        break;
+    }
+}
+
+static sm_ctx_info_t ctx_info;
+
+int log_print_info(void)
+{
+    if (scheduler_tcb_is_registered(&ctx_info.tcb)) {
+        // Already in process of printing something!!
+        return FAILURE;
+    }
+
+    // Initialize the state machine context
+    ctx_info.state = INFO_HEAD;
+    ctx_info.var_idx = 0;
+
+    // Initialize the state machine callback tcb
+    scheduler_tcb_init(&ctx_info.tcb, state_machine_info_callback, &ctx_info, "loginfo", SM_INFO_INTERVAL_USEC);
+    scheduler_tcb_register(&ctx_info.tcb);
+
+    return SUCCESS;
+}
+
+#endif // ENABLE_LOGGING
