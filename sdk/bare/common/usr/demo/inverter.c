@@ -10,10 +10,10 @@ typedef struct inverter_ctx_t {
 } inverter_ctx_t;
 
 #define MAX_NUM_INVERTER_CTXS (8)
-static inverter_ctx_t inverter_ctxs[MAX_NUM_INVERTER_CTXS] = {0};
+static inverter_ctx_t inverter_ctxs[MAX_NUM_INVERTER_CTXS] = { 0 };
 
-
-inline static int saturate(double min, double max, double *value) {
+inline static int saturate(double min, double max, double *value)
+{
     if (*value < min) {
         // Lower bound saturation
         *value = min;
@@ -41,9 +41,9 @@ void inverter_saturate_to_Vdc(int inv_idx, double *phase_voltage)
         ctx->Vdc = 1.0;
     }
 
-
-    io_led_color_t color = {0, 0, 0};
-    if (saturate(-ctx->Vdc / 2.0, ctx->Vdc / 2.0, phase_voltage) != 0) color.g = 255;
+    io_led_color_t color = { 0, 0, 0 };
+    if (saturate(-ctx->Vdc / 2.0, ctx->Vdc / 2.0, phase_voltage) != 0)
+        color.g = 255;
     io_led_set_c(0, 1, 0, &color);
 }
 

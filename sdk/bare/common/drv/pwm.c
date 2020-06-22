@@ -31,9 +31,13 @@ void pwm_toggle_reset(void)
 {
     // Toggles RST on all inverter outputs for 1 ms
     pwm_set_all_rst(0xFF);
-    for (int i = 0; i < 83250; i++) asm("nop");
+    for (int i = 0; i < 83250; i++) {
+        asm("nop");
+    }
     pwm_set_all_rst(0x00);
-    for (int i = 0; i < 83250; i++) asm("nop");
+    for (int i = 0; i < 83250; i++) {
+        asm("nop");
+    }
     pwm_set_all_rst(0xFF);
 }
 
@@ -46,7 +50,7 @@ void pwm_set_switching_freq(double freq_hz)
     pwm_set_carrier_divisor(0);
 
     // Calculate what the carrier_max should be to achieve the right switching freq
-    carrier_max = (uint16_t) (((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
+    carrier_max = (uint16_t)(((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
     pwm_set_carrier_max(carrier_max);
 }
 
@@ -94,7 +98,6 @@ void pwm_set_deadtime_ns(uint16_t time_ns)
     // Write to slave reg 26 to set deadtime value
     Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
 }
-
 
 void pwm_get_all_flt_temp(uint8_t *flt_temp)
 {
@@ -154,7 +157,7 @@ void pwm_get_status(uint8_t idx, pwm_status_t *status)
 
     uint8_t bit_mask = (1 << idx);
 
-    status->fault_temp  = (flt_temp  & bit_mask) ? 1 : 0;
+    status->fault_temp = (flt_temp & bit_mask) ? 1 : 0;
     status->fault_desat = (flt_desat & bit_mask) ? 1 : 0;
-    status->ready       = (rdy       & bit_mask) ? 1 : 0;
+    status->ready = (rdy & bit_mask) ? 1 : 0;
 }

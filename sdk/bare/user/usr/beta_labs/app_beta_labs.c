@@ -1,13 +1,13 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/app_beta_labs.h"
-#include "usr/beta_labs/task_mo.h"
-#include "usr/beta_labs/cmd/cmd_inv.h"
-#include "usr/beta_labs/cmd/cmd_dtc.h"
-#include "usr/beta_labs/cmd/cmd_vsi.h"
-#include "usr/beta_labs/cmd/cmd_cc.h"
-#include "usr/beta_labs/cmd/cmd_mc.h"
 #include "usr/beta_labs/cmd/cmd_bemfo.h"
+#include "usr/beta_labs/cmd/cmd_cc.h"
+#include "usr/beta_labs/cmd/cmd_dtc.h"
+#include "usr/beta_labs/cmd/cmd_inv.h"
+#include "usr/beta_labs/cmd/cmd_mc.h"
+#include "usr/beta_labs/cmd/cmd_vsi.h"
+#include "usr/beta_labs/task_mo.h"
 
 void app_beta_labs_init(void)
 {

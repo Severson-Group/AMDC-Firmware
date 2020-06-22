@@ -2,18 +2,18 @@
 
 #ifndef DISABLE_LOGGING
 
-#include "sys/log.h"
+#include "sys/cmd/cmd_log.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/log.h"
 #include "sys/scheduler.h"
-#include "sys/cmd/cmd_log.h"
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
-#define LOG_BUFFER_LENGTH   (LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
+#define LOG_BUFFER_LENGTH (LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 
-#define LOG_VAR_NAME_MAX_CHARS  (20)
+#define LOG_VAR_NAME_MAX_CHARS (20)
 
 typedef struct buffer_entry_t {
     uint32_t timestamp;
@@ -33,12 +33,11 @@ typedef struct log_var_t {
     int buffer_idx;
 } log_var_t;
 
-static log_var_t vars[LOG_MAX_NUM_VARS] = {0};
+static log_var_t vars[LOG_MAX_NUM_VARS] = { 0 };
 
 static uint8_t log_running;
 
 static task_control_block_t tcb;
-
 
 void log_init(void)
 {
@@ -85,13 +84,13 @@ void log_callback(void *arg)
             v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
 
             if (v->type == INT) {
-                v->buffer[v->buffer_idx].value = *((uint32_t *)v->addr);
+                v->buffer[v->buffer_idx].value = *((uint32_t *) v->addr);
             } else if (v->type == FLOAT) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
-                *f = *((float *)v->addr);
+                *f = *((float *) v->addr);
             } else if (v->type == DOUBLE) {
                 float *f = (float *) &(v->buffer[v->buffer_idx].value);
-                double value = *((double *)v->addr);
+                double value = *((double *) v->addr);
                 *f = (float) value;
             }
 
@@ -122,10 +121,12 @@ uint8_t log_is_logging(void)
     return log_running;
 }
 
-void log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec, var_type_e type)
+void log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
 {
     // Sanity check variable idx
-    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) { HANG; }
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+        HANG;
+    }
 
     // Populate variable entry...
     strncpy(vars[idx].name, name, LOG_VAR_NAME_MAX_CHARS);
@@ -137,16 +138,12 @@ void log_var_register(int idx, char* name, void *addr, uint32_t samples_per_sec,
     vars[idx].last_logged_usec = 0;
 }
 
-
 // ***************************
 // Code for running the state machine to
 // clear and empty a log buffer
 // ***************************
 
-typedef enum sm_states_empty_e {
-    EMPTY_CLEARING = 1,
-    EMPTY_REMOVE_TASK
-} sm_states_empty_e;
+typedef enum sm_states_empty_e { EMPTY_CLEARING = 1, EMPTY_REMOVE_TASK } sm_states_empty_e;
 
 typedef struct sm_ctx_empty_t {
     sm_states_empty_e state;
@@ -157,8 +154,8 @@ typedef struct sm_ctx_empty_t {
 
 #define MAX_CLEAR_PER_SLICE (100)
 
-#define SM_EMPTY_UPDATES_PER_SEC    SYS_TICK_FREQ
-#define SM_EMPTY_INTERVAL_USEC      (USEC_IN_SEC / SM_EMPTY_UPDATES_PER_SEC)
+#define SM_EMPTY_UPDATES_PER_SEC SYS_TICK_FREQ
+#define SM_EMPTY_INTERVAL_USEC   (USEC_IN_SEC / SM_EMPTY_UPDATES_PER_SEC)
 
 void state_machine_empty_callback(void *arg)
 {
@@ -209,7 +206,6 @@ void log_var_empty(int idx)
     scheduler_tcb_register(&ctx_empty.tcb);
 }
 
-
 // ***************************
 // Code for running the state machine to
 // dump the log buffers to the UART
@@ -232,9 +228,8 @@ typedef struct sm_ctx_dump_t {
     task_control_block_t tcb;
 } sm_ctx_dump_t;
 
-
-#define SM_DUMP_UPDATES_PER_SEC     (200)
-#define SM_DUMP_INTERVAL_USEC       (USEC_IN_SEC / SM_DUMP_UPDATES_PER_SEC)
+#define SM_DUMP_UPDATES_PER_SEC (200)
+#define SM_DUMP_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_UPDATES_PER_SEC)
 
 void state_machine_dump_callback(void *arg)
 {

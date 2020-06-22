@@ -3,19 +3,9 @@
 
 #include <stdint.h>
 
-typedef enum inj_func_e {
-    CONST = 1,
-    NOISE,
-    CHIRP,
-    TRIANGLE,
-    NONE
-} inj_func_e;
+typedef enum inj_func_e { CONST = 1, NOISE, CHIRP, TRIANGLE, NONE } inj_func_e;
 
-typedef enum inj_op_e {
-    ADD = 1,
-    SUB,
-    SET
-} inj_op_e;
+typedef enum inj_op_e { ADD = 1, SUB, SET } inj_op_e;
 
 typedef struct inj_func_constant_t {
     double value;
@@ -57,7 +47,6 @@ typedef struct inj_ctx_t {
 
     double curr_time;
 } inj_ctx_t;
-
 
 void injection_init(void);
 

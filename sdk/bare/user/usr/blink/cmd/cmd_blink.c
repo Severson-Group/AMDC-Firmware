@@ -1,12 +1,12 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/cmd/cmd_blink.h"
-#include "usr/blink/task_blink.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
-#include <string.h>
+#include "usr/blink/task_blink.h"
 #include <stdlib.h>
+#include <string.h>
 
 // Stores command entry for command system module
 static command_entry_t cmd_entry;
@@ -15,9 +15,10 @@ static command_entry_t cmd_entry;
 // when user types "help" at command prompt
 #define NUM_HELP_ENTRIES (3)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-        {"hello <name>", "Print hello to screen"},
-        {"init", "Start task"},
-        {"deinit", "Stop task"}
+    { "hello <name>", "Print hello to screen" },
+    { "init", "Start task" },
+    { "deinit", "Stop task" },
+
 };
 
 void cmd_blink_register(void)
@@ -26,11 +27,7 @@ void cmd_blink_register(void)
     //
     // Here is where you define the base command string: "blink"
     // and what function is called to handle command
-    commands_cmd_init(&cmd_entry,
-            "blink", "Blink application commands",
-            cmd_help, NUM_HELP_ENTRIES,
-            cmd_blink
-    );
+    commands_cmd_init(&cmd_entry, "blink", "Blink application commands", cmd_help, NUM_HELP_ENTRIES, cmd_blink);
 
     // Register the command with the system
     commands_cmd_register(&cmd_entry);

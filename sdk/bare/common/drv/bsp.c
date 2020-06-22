@@ -1,12 +1,12 @@
 #include "drv/bsp.h"
 #include "drv/analog.h"
+#include "drv/dac.h"
 #include "drv/encoder.h"
 #include "drv/gpio.h"
 #include "drv/io.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/timer.h"
-#include "drv/dac.h"
 #include "drv/uart.h"
 #include "drv/watchdog.h"
 #include "sys/cmd/cmd_hw.h"
@@ -29,9 +29,9 @@ void bsp_init(void)
     encoder_init();
     analog_init();
     pwm_init();
-//    io_init();
-//    gpio_init();
-//    dac_init();
+    // io_init();
+    // gpio_init();
+    // dac_init();
 
 #ifdef ENABLE_WATCHDOG
     watchdog_init();

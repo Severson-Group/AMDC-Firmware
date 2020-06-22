@@ -8,8 +8,7 @@ Following these instructions will get the AMDC firmware environment up and runni
 
 Firmware development environment needs a few things:
 
-- Xilinx Vivado (tested on 2017.2)
-- Xilinx SDK (comes with Vivado)
+- Xilinx Vivado 2019.1 and SDK (if you don't have these, [follow these steps to install them](Installing-Xilinx-Tools.md))
 - `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition from online
     1. Go here: http://zedboard.org/support/documentation/1519
     2. Scroll down to `Board Definition Files`
@@ -59,7 +58,7 @@ NOTE: In the rest of this document, `$REPO_DIR` represents the file system path 
 
 #### Common `git submodule` commands
 
-Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source: from your top repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
+Your repo now contains `AMDC-Firmware` as a _git submodule_. Read about submodules [here](https://git-scm.com/book/en/v2/Git-Tools-Submodules) or [here](https://www.vogella.com/tutorials/GitSubmodules/article.html). The most common command you will use is the **update** command, which updates your submodule from the remote source. Execute this command from your master repo: `git submodule update`. If you have not initialized your submodules, append `--init` to the previous command.
 
 
 ## Vivado
@@ -231,7 +230,7 @@ Run `git status` in your private user repo. You should not see compiled output. 
 
 ## Making Private Repository Portable
 
-Please read [this document](docs/Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
+Please read [this document](Create-Private-Repo.md) for instructions on how to further configure your private repository to support expedited cloning.
 
 ## Programming AMDC
 
@@ -239,12 +238,11 @@ Ensure the AMDC JTAG / UART is plugged into your PC and AMDC main power is suppl
 
 ### Setup SDK Project Debug Configuration
 
-1. Right-click on the project to are trying to debug, e.g. `bare`
+1. Right-click on the project you are trying to debug, e.g. `bare`
 2. `Debug As` > `Debug Configurations...`
-3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing
-    1. If not: 
-    2. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
-    3. A new panel should appear on the right half of popup
+3. Ensure you have a `System Debugger using Debug_bare.elf on Local` launch configuration ready for editing. _If not:_
+    1. Right-click on `Xilinx C/C++ application (System Debugger)` from left pane > `New`
+    2. A new panel should appear on the right half of popup
 4. Ensure the `Target Setup` tab is open
 5. Select `Browse...` for `Bitstream File`
     1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
