@@ -3,10 +3,10 @@
 #include "xscuwdt.h"
 
 // Private watchdog defines
-#define WDT_DEVICE_ID       (XPAR_SCUWDT_0_DEVICE_ID)
-#define INTC_DEVICE_ID      (XPAR_SCUGIC_SINGLE_DEVICE_ID)
-#define WDT_IRPT_INTR       (XPAR_SCUWDT_INTR)
-#define WDT_LOAD_VALUE      (0xFFFFFFFF) // seems to be about 10 seconds
+#define WDT_DEVICE_ID  (XPAR_SCUWDT_0_DEVICE_ID)
+#define INTC_DEVICE_ID (XPAR_SCUGIC_SINGLE_DEVICE_ID)
+#define WDT_IRPT_INTR  (XPAR_SCUWDT_INTR)
+#define WDT_LOAD_VALUE (0xFFFFFFFF) // seems to be about 10 seconds
 
 XScuWdt WdtInstance;
 
@@ -20,7 +20,8 @@ void watchdog_init(void)
     Status = XScuWdt_CfgInitialize(&WdtInstance, ConfigPtr, ConfigPtr->BaseAddr);
     if (Status != XST_SUCCESS) {
         // Hang if error...
-        while (1);
+        while (1) {
+        }
     }
 
     // Put the watchdog timer in watchdog mode.

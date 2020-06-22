@@ -4,17 +4,17 @@
 
 // Motion state filter gains with Ts = 0.00025
 // Bandwidth tuned to 200.0 Hz
-#define Ts      (0.00025)
-#define Ksf2Ts  (1.226383390687582)
-#define Ksf1    (841.3256566809094)
+#define Ts     (0.00025)
+#define Ksf2Ts (1.226383390687582)
+#define Ksf1   (841.3256566809094)
 
-//Output States
+// Output States
 static double msf_omega_m_dot;
 static double msf_omega_m;
 static double msf_omega_m_ave;
 static double msf_delta_theta;
 
-//Internal States
+// Internal States
 static double msf_omega_m_last;
 static double msf_omega_m_dot_next;
 static double msf_omega_m_next;
@@ -22,8 +22,15 @@ static double msf_omega_err;
 static double msf_omega_dot_err;
 static double msf_delta_omega;
 
-double msf_get_omega_m(void) { return msf_omega_m; }
-double msf_get_omega_m_dot(void) { return msf_omega_m_dot; }
+double msf_get_omega_m(void)
+{
+    return msf_omega_m;
+}
+
+double msf_get_omega_m_dot(void)
+{
+    return msf_omega_m_dot;
+}
 
 void msf_init(void)
 {
@@ -31,7 +38,6 @@ void msf_init(void)
     msf_omega_m_dot_next = 0.0;
     msf_omega_m_next = 0.0;
 }
-
 
 double msf_update(double omega_m_star)
 {

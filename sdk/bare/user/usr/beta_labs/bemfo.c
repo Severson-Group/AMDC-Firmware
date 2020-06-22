@@ -1,8 +1,8 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/bemfo.h"
-#include "usr/beta_labs/task_cc.h"
 #include "usr/beta_labs/machine.h"
+#include "usr/beta_labs/task_cc.h"
 #include <math.h>
 
 // Tuning for Back EMF Observer with Ts = 1/20000 sec
@@ -90,9 +90,9 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat)
     unit_vec.q = sign(omega_m_hat_r_last) * sin(theta_e_hat + (PI / 2.0));
 
     // Normalize Esal vector to -1..1 in magnitude
-    double Esal_mag = sqrt((Esal_alpha*Esal_alpha) + (Esal_beta*Esal_beta));
+    double Esal_mag = sqrt((Esal_alpha * Esal_alpha) + (Esal_beta * Esal_beta));
     Esal_vec.d = Esal_alpha / Esal_mag;
-    Esal_vec.q = Esal_beta  / Esal_mag;
+    Esal_vec.q = Esal_beta / Esal_mag;
 
     LOG_Esal_vec_d = Esal_vec.d;
     LOG_Esal_vec_q = Esal_vec.q;
@@ -111,7 +111,7 @@ void bemfo_update(double Esal_alpha, double Esal_beta, double Tcff_hat)
 
     Tem_hat = theta_m_error_acc * Kio * Ts + theta_m_error * Ko + 0;
 
-    alpha_hat = Tem_hat * Ts / Jp; //note: alpha has Ts multiplied in
+    alpha_hat = Tem_hat * Ts / Jp; // note: alpha has Ts multiplied in
 
     omega_m_hat_l = omega_m_hat_l_next;
     omega_m_hat_l_next = omega_m_hat_l_next + alpha_hat;
@@ -139,7 +139,8 @@ double bemfo_get_theta_e_hat(void)
 
 static inline double sign(double x)
 {
-    if (x >= 0.0) return 1.0;
+    if (x >= 0.0)
+        return 1.0;
     return -1.0;
 }
 

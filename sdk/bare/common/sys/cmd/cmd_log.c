@@ -6,29 +6,25 @@
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/log.h"
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES	(5)
+#define NUM_HELP_ENTRIES (5)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
-    {"reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging"},
-    {"start", "Start logging"},
-    {"stop", "Stop logging"},
-    {"dump <log_var_idx>", "Dump log data to console"},
-    {"empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)"}
+    { "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging" },
+    { "start", "Start logging" },
+    { "stop", "Stop logging" },
+    { "dump <log_var_idx>", "Dump log data to console" },
+    { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
 };
 
 void cmd_log_register(void)
 {
     // Populate the command entry block
-    commands_cmd_init(&cmd_entry,
-            "log", "Logging engine commands",
-            cmd_help, NUM_HELP_ENTRIES,
-            cmd_log
-    );
+    commands_cmd_init(&cmd_entry, "log", "Logging engine commands", cmd_help, NUM_HELP_ENTRIES, cmd_log);
 
     // Register the command
     commands_cmd_register(&cmd_entry);
@@ -43,7 +39,8 @@ int cmd_log(int argc, char **argv)
     // Handle 'reg' sub-command
     if (strcmp("reg", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 7) return INVALID_ARGUMENTS;
+        if (argc != 7)
+            return INVALID_ARGUMENTS;
 
         // Parse arg1: log_var_idx
         int log_var_idx = atoi(argv[2]);
@@ -86,10 +83,12 @@ int cmd_log(int argc, char **argv)
     // Handle 'start' sub-command
     if (strcmp("start", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 2) return INVALID_ARGUMENTS;
+        if (argc != 2)
+            return INVALID_ARGUMENTS;
 
         // Make sure log was stopped before this
-        if (log_is_logging()) return FAILURE;
+        if (log_is_logging())
+            return FAILURE;
 
         log_start();
         return SUCCESS;
@@ -98,10 +97,12 @@ int cmd_log(int argc, char **argv)
     // Handle 'stop' sub-command
     if (strcmp("stop", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 2) return INVALID_ARGUMENTS;
+        if (argc != 2)
+            return INVALID_ARGUMENTS;
 
         // Make sure log was running before this
-        if (!log_is_logging()) return FAILURE;
+        if (!log_is_logging())
+            return FAILURE;
 
         log_stop();
         return SUCCESS;
@@ -110,10 +111,12 @@ int cmd_log(int argc, char **argv)
     // Handle 'dump' sub-command
     if (strcmp("dump", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 3) return INVALID_ARGUMENTS;
+        if (argc != 3)
+            return INVALID_ARGUMENTS;
 
         // Ensure logging was stopped before this
-        if (log_is_logging()) return FAILURE;
+        if (log_is_logging())
+            return FAILURE;
 
         // Parse arg1: log_var_idx
         int log_var_idx = atoi(argv[2]);
@@ -129,7 +132,8 @@ int cmd_log(int argc, char **argv)
     // Handle 'empty' sub-command
     if (strcmp("empty", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 3) return INVALID_ARGUMENTS;
+        if (argc != 3)
+            return INVALID_ARGUMENTS;
 
         // Parse arg1: log_var_idx
         int log_var_idx = atoi(argv[2]);

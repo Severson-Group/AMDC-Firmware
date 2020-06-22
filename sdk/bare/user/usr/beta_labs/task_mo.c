@@ -1,10 +1,10 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/task_mo.h"
-#include "usr/beta_labs/machine.h"
-#include "sys/scheduler.h"
-#include "drv/encoder.h"
 #include "drv/dac.h"
+#include "drv/encoder.h"
+#include "sys/scheduler.h"
+#include "usr/beta_labs/machine.h"
 
 static task_control_block_t tcb;
 
@@ -39,7 +39,6 @@ void task_mo_callback(void *arg)
 
     task_mo_omega_m = filter(omega_m);
 
-
     // Update log variables
     uint32_t pos;
     encoder_get_position(&pos);
@@ -60,13 +59,13 @@ double task_mo_get_omega_m(void)
     return task_mo_omega_m;
 }
 
-//Tuning for LPF based on Ts = 0.0001
-#define A_1Hz       (0.9993718788200349)
-#define A_5Hz       (0.9968633369849541)
-#define A_10Hz      (0.9937365126247782)
-#define A_50Hz      (0.9690724263048106)
-#define A_100Hz     (0.9391013674242926)
-#define A_500Hz     (0.7304026910486456)
+// Tuning for LPF based on Ts = 0.0001
+#define A_1Hz   (0.9993718788200349)
+#define A_5Hz   (0.9968633369849541)
+#define A_10Hz  (0.9937365126247782)
+#define A_50Hz  (0.9690724263048106)
+#define A_100Hz (0.9391013674242926)
+#define A_500Hz (0.7304026910486456)
 
 #define A (A_100Hz)
 
@@ -82,4 +81,3 @@ inline static double filter(double input)
 }
 
 #endif // APP_BETA_LABS
-

@@ -3,16 +3,18 @@
 
 #include <stdint.h>
 
-//typedef enum {
-//  INV_1 = 1,
-//  INV_2,
-//  INV_3,
-//  INV_4,
-//  INV_5,
-//  INV_6,
-//  INV_7,
-//  INV_8,
-//} inverter_e;
+/*
+typedef enum {
+    INV_1 = 1,
+    INV_2,
+    INV_3,
+    INV_4,
+    INV_5,
+    INV_6,
+    INV_7,
+    INV_8,
+} inverter_e;
+*/
 
 typedef struct pwm_status_t {
     uint8_t ready;
