@@ -16,7 +16,7 @@ The AMDC platform makes extensive use of the IP blocks to interface with the har
 
 ### `amdc_analog`
 
-This IP core is responsible for driving the external ADC on the AMDC hardware. The C driver let's the user configure the the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
+This IP core is responsible for driving the external ADC on the AMDC hardware. The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
 
 ### `amdc_dac`
 
@@ -29,3 +29,7 @@ This IP core interfaces to an incremental quadrature encoder (i.e. ABZ signals) 
 ### `amdc_inverters`
 
 This IP core interfaces to the power stacks plugged into the AMDC hardware (up to 8x two-level three-phase inverters). Using the associated C driver, users can configure PWM switching characteristics (i.e. switching frequency and dead-time length). Duty ratios are set by users via memory-mapped registers. Four status lines per inverter are available via registers.
+
+### [`amdc_leds`](amdc_leds_1.0/README.md)
+
+This IP core drives the serially-addressable RGB LEDs on the REV D AMDC hardware. The FPGA uses a single data line to control the color outputs of all four LEDs via a serial chain approach. Using the associated C driver, users can set color values to memory-mapped registers which automatically are flushed out to the LED hardware.

@@ -1,6 +1,7 @@
 #include "cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
+#include "drv/led.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
@@ -11,11 +12,12 @@
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (6)
+#define NUM_HELP_ENTRIES (7)
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
@@ -106,6 +108,31 @@ int cmd_hw(int argc, char **argv)
             analog_getf(anlg_idx + 1, &value);
 
             debug_printf("%fV\r\n", value);
+
+            return SUCCESS;
+        }
+    }
+
+    // Handle 'led' sub-command
+    // hw led set <led_idx> <r> <g> <b>
+    if (argc == 7 && strcmp("led", argv[1]) == 0) {
+        if (strcmp("set", argv[2]) == 0) {
+            int led_idx = atoi(argv[3]);
+            if (led_idx < 0 || led_idx >= NUM_LEDS)
+                return INVALID_ARGUMENTS;
+
+            int r = atoi(argv[4]);
+            int g = atoi(argv[5]);
+            int b = atoi(argv[6]);
+
+            if (r < 0 || r > 255)
+                return INVALID_ARGUMENTS;
+            if (g < 0 || g > 255)
+                return INVALID_ARGUMENTS;
+            if (b < 0 || b > 255)
+                return INVALID_ARGUMENTS;
+
+            led_set_color_bytes(led_idx, r, g, b);
 
             return SUCCESS;
         }
