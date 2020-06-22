@@ -4,6 +4,7 @@
 #include "drv/led.h"
 #include "sys/scheduler.h"
 #include <stdint.h>
+#include <math.h>
 
 // Hold LED animation state
 static uint8_t led_pos = 0;
@@ -21,6 +22,14 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
+
+// Example logging variables for testing
+int LOG_var1 = 0;
+float LOG_var2 = 0;
+double LOG_var3 = 0;
+
+static double theta = 0;
+static double dtheta = 0.01;
 
 void task_blink_init(void)
 {
@@ -67,6 +76,12 @@ void task_blink_callback(void *arg)
             led_color_idx = 0;
         }
     }
+
+    // Update logging variables
+    LOG_var1++;
+    LOG_var2 = sinf(theta);
+    LOG_var3 = cos(theta);
+    theta += dtheta;
 }
 
 #endif // APP_BLINK
