@@ -253,59 +253,66 @@ int log_var_empty(int idx)
 // ***************************
 // Code for running the state machine to
 // dump the log buffers to the UART
+// using ASCII characters (human readable)
 // ***************************
 
-typedef enum sm_states_dump_e {
-    DUMP_TITLE = 1,
-    DUMP_NUM_SAMPLES,
-    DUMP_HEADER,
-    DUMP_VARIABLES_TS,
-    DUMP_VARIABLES_VALUE,
-    DUMP_FOOTER,
-    DUMP_REMOVE_TASK
-} sm_states_dump_e;
+typedef enum sm_states_dump_ascii_e {
+    DUMP_ASCII_TITLE = 1,
+    DUMP_ASCII_NUM_SAMPLES,
+    DUMP_ASCII_HEADER,
+    DUMP_ASCII_VARIABLES_TS,
+    DUMP_ASCII_VARIABLES_VALUE,
+    DUMP_ASCII_FOOTER,
+    DUMP_ASCII_REMOVE_TASK
+} sm_states_dump_ascii_e;
 
-typedef struct sm_ctx_dump_t {
-    sm_states_dump_e state;
+typedef struct sm_ctx_dump_ascii_t {
+    sm_states_dump_ascii_e state;
     int var_idx;
     int sample_idx;
     task_control_block_t tcb;
-} sm_ctx_dump_t;
+} sm_ctx_dump_ascii_t;
 
-#define SM_DUMP_UPDATES_PER_SEC (200)
-#define SM_DUMP_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_UPDATES_PER_SEC)
+#define SM_DUMP_ASCII_UPDATES_PER_SEC (200)
+#define SM_DUMP_ASCII_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_ASCII_UPDATES_PER_SEC)
 
-void state_machine_dump_callback(void *arg)
+void state_machine_dump_ascii_callback(void *arg)
 {
-    sm_ctx_dump_t *ctx = (sm_ctx_dump_t *) arg;
+	sm_ctx_dump_ascii_t *ctx = (sm_ctx_dump_ascii_t *) arg;
 
     log_var_t *v = &vars[ctx->var_idx];
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
     switch (ctx->state) {
-    case DUMP_TITLE:
+    case DUMP_ASCII_TITLE:
         debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
-        ctx->state = DUMP_NUM_SAMPLES;
+        ctx->state = DUMP_ASCII_NUM_SAMPLES;
         break;
 
-    case DUMP_NUM_SAMPLES:
+    case DUMP_ASCII_NUM_SAMPLES:
         debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
-        ctx->state = DUMP_HEADER;
+        ctx->state = DUMP_ASCII_HEADER;
         break;
 
-    case DUMP_HEADER:
+    case DUMP_ASCII_HEADER:
         debug_printf("-------START-------\r\n");
-        ctx->state = DUMP_VARIABLES_TS;
+
+        if (v->num_samples == 0) {
+        	// Nothing to dump!
+        	ctx->state = DUMP_ASCII_FOOTER;
+        } else {
+            ctx->state = DUMP_ASCII_VARIABLES_TS;
+        }
         break;
 
-    case DUMP_VARIABLES_TS:
+    case DUMP_ASCII_VARIABLES_TS:
         // Print just the timestamp
         debug_printf("> %ld\t\t", e->timestamp);
 
-        ctx->state = DUMP_VARIABLES_VALUE;
+        ctx->state = DUMP_ASCII_VARIABLES_VALUE;
         break;
 
-    case DUMP_VARIABLES_VALUE:
+    case DUMP_ASCII_VARIABLES_VALUE:
         // Print just the value
         if (v->type == LOG_INT) {
             debug_printf("%ld\r\n", e->value);
@@ -317,19 +324,19 @@ void state_machine_dump_callback(void *arg)
         ctx->sample_idx++;
 
         if (ctx->sample_idx >= v->num_samples) {
-            ctx->state = DUMP_FOOTER;
+            ctx->state = DUMP_ASCII_FOOTER;
         } else {
-            ctx->state = DUMP_VARIABLES_TS;
+            ctx->state = DUMP_ASCII_VARIABLES_TS;
         }
         break;
 
-    case DUMP_FOOTER:
+    case DUMP_ASCII_FOOTER:
         debug_printf("-------END-------\r\n\r\n");
 
-        ctx->state = DUMP_REMOVE_TASK;
+        ctx->state = DUMP_ASCII_REMOVE_TASK;
         break;
 
-    case DUMP_REMOVE_TASK:
+    case DUMP_ASCII_REMOVE_TASK:
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 
@@ -340,9 +347,9 @@ void state_machine_dump_callback(void *arg)
     }
 }
 
-static sm_ctx_dump_t ctx_dump;
+static sm_ctx_dump_ascii_t ctx_dump_ascii;
 
-int log_var_dump_uart(int log_var_idx)
+int log_var_dump_uart_ascii(int log_var_idx)
 {
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
@@ -354,13 +361,135 @@ int log_var_dump_uart(int log_var_idx)
     }
 
     // Initialize the state machine context
-    ctx_dump.state = DUMP_TITLE;
-    ctx_dump.var_idx = log_var_idx;
-    ctx_dump.sample_idx = 0;
+    ctx_dump_ascii.state = DUMP_ASCII_TITLE;
+    ctx_dump_ascii.var_idx = log_var_idx;
+    ctx_dump_ascii.sample_idx = 0;
 
     // Initialize the state machine callback tcb
-    scheduler_tcb_init(&ctx_dump.tcb, state_machine_dump_callback, &ctx_dump, "logdump", SM_DUMP_INTERVAL_USEC);
-    scheduler_tcb_register(&ctx_dump.tcb);
+    scheduler_tcb_init(&ctx_dump_ascii.tcb, state_machine_dump_ascii_callback, &ctx_dump_ascii, "logdascii", SM_DUMP_ASCII_INTERVAL_USEC);
+    scheduler_tcb_register(&ctx_dump_ascii.tcb);
+
+    return SUCCESS;
+}
+
+
+// ***************************
+// Code for running the state machine to
+// dump the log buffers to the UART using binary
+// ***************************
+
+typedef enum sm_states_dump_binary_e {
+    DUMP_BINARY_TITLE = 1,
+    DUMP_BINARY_NUM_SAMPLES,
+    DUMP_BINARY_HEADER,
+    DUMP_BINARY_VARIABLES_TS,
+    DUMP_BINARY_VARIABLES_VALUE,
+    DUMP_BINARY_FOOTER,
+    DUMP_BINARY_REMOVE_TASK
+} sm_states_dump_binary_e;
+
+typedef struct sm_ctx_dump_binary_t {
+    sm_states_dump_binary_e state;
+    int var_idx;
+    int sample_idx;
+    task_control_block_t tcb;
+} sm_ctx_dump_binary_t;
+
+#define SM_DUMP_BIANRY_UPDATES_PER_SEC (10000)
+#define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
+
+void state_machine_dump_binary_callback(void *arg)
+{
+	sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
+
+    log_var_t *v = &vars[ctx->var_idx];
+    buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+
+    switch (ctx->state) {
+    case DUMP_BINARY_TITLE:
+        debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
+        ctx->state = DUMP_BINARY_NUM_SAMPLES;
+        break;
+
+    case DUMP_BINARY_NUM_SAMPLES:
+        debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
+        ctx->state = DUMP_BINARY_HEADER;
+        break;
+
+    case DUMP_BINARY_HEADER:
+        debug_printf("-------START-------\r\n");
+
+        if (v->num_samples == 0) {
+        	// Nothing to dump!
+        	ctx->state = DUMP_BINARY_FOOTER;
+        } else {
+            ctx->state = DUMP_BINARY_VARIABLES_TS;
+        }
+        break;
+
+    case DUMP_BINARY_VARIABLES_TS:
+        // Print just the timestamp
+        debug_printf("> %ld\t\t", e->timestamp);
+
+        ctx->state = DUMP_BINARY_VARIABLES_VALUE;
+        break;
+
+    case DUMP_BINARY_VARIABLES_VALUE:
+        // Print just the value
+        if (v->type == LOG_INT) {
+            debug_printf("%ld\r\n", e->value);
+        } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+            float *f = (float *) &(e->value);
+            debug_printf("%f\r\n", *f);
+        }
+
+        ctx->sample_idx++;
+
+        if (ctx->sample_idx >= v->num_samples) {
+            ctx->state = DUMP_BINARY_FOOTER;
+        } else {
+            ctx->state = DUMP_BINARY_VARIABLES_TS;
+        }
+        break;
+
+    case DUMP_BINARY_FOOTER:
+        debug_printf("-------END-------\r\n\r\n");
+
+        ctx->state = DUMP_BINARY_REMOVE_TASK;
+        break;
+
+    case DUMP_BINARY_REMOVE_TASK:
+        scheduler_tcb_unregister(&ctx->tcb);
+        break;
+
+    default:
+        // Can't happen
+        HANG;
+        break;
+    }
+}
+
+static sm_ctx_dump_binary_t ctx_dump_binary;
+
+int log_var_dump_uart_binary(int log_var_idx)
+{
+    // Sanity check variable idx
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
+        return FAILURE;
+    }
+
+    if (!vars[log_var_idx].is_registered) {
+        return FAILURE;
+    }
+
+    // Initialize the state machine context
+    ctx_dump_binary.state = DUMP_BINARY_TITLE;
+    ctx_dump_binary.var_idx = log_var_idx;
+    ctx_dump_binary.sample_idx = 0;
+
+    // Initialize the state machine callback tcb
+    scheduler_tcb_init(&ctx_dump_binary.tcb, state_machine_dump_binary_callback, &ctx_dump_binary, "logdbin", SM_DUMP_BINARY_INTERVAL_USEC);
+    scheduler_tcb_register(&ctx_dump_binary.tcb);
 
     return SUCCESS;
 }

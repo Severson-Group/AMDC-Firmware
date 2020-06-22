@@ -4,12 +4,21 @@
 #include "drv/io.h"
 #include "sys/scheduler.h"
 #include <stdint.h>
+#include <math.h>
 
 // Hold LED state (0: off, 1: red, 2: green, 3: blue)
 static uint8_t led_state = 0;
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
+
+// Example logging variables for testing
+int LOG_var1 = 0;
+float LOG_var2 = 0;
+double LOG_var3 = 0;
+
+static double theta = 0;
+static double dtheta = 0.01;
 
 void task_blink_init(void)
 {
@@ -33,6 +42,12 @@ void task_blink_callback(void *arg)
     if (++led_state >= 4) {
         led_state = 0;
     }
+
+    // Update logging variables
+    LOG_var1++;
+    LOG_var2 = sinf(theta);
+    LOG_var3 = cos(theta);
+    theta += dtheta;
 }
 
 #endif // APP_BLINK

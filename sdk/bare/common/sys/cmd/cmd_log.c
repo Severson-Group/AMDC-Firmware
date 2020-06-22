@@ -18,7 +18,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     { "unreg <log_var_idx>", "Unregister variable slot" },
     { "start", "Start logging" },
     { "stop", "Stop logging" },
-    { "dump <log_var_idx>", "Dump log data to console" },
+    { "dump <bin|text> <log_var_idx>", "Dump log data to console" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
     { "info", "Print status of logging engine" },
 };
@@ -139,23 +139,34 @@ int cmd_log(int argc, char **argv)
     // Handle 'dump' sub-command
     if (strcmp("dump", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 3)
+        if (argc != 4)
             return INVALID_ARGUMENTS;
 
         // Ensure logging was stopped before this
         if (log_is_logging())
             return FAILURE;
 
-        // Parse arg1: log_var_idx
-        int log_var_idx = atoi(argv[2]);
+        // Parse log_var_idx
+        int log_var_idx = atoi(argv[3]);
         if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
             // ERROR
             return INVALID_ARGUMENTS;
         }
 
-        int err = log_var_dump_uart(log_var_idx);
-        if (err != SUCCESS) {
-            return FAILURE;
+        if (strcmp("text", argv[2]) == 0) {
+        	// Dump using text (human-readable)
+            int err = log_var_dump_uart_ascii(log_var_idx);
+            if (err != SUCCESS) {
+                return FAILURE;
+            }
+        } else if (strcmp("bin", argv[2]) == 0) {
+        	// Dump using binary
+            int err = log_var_dump_uart_binary(log_var_idx);
+            if (err != SUCCESS) {
+                return FAILURE;
+            }
+        } else {
+        	return INVALID_ARGUMENTS;
         }
 
         return SUCCESS;
