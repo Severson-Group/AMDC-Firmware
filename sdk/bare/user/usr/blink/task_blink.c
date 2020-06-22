@@ -5,6 +5,7 @@
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
 #include <stdint.h>
+#include <math.h>
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #include "drv/led.h"
