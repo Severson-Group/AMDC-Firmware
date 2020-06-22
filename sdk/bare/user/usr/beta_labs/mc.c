@@ -4,9 +4,9 @@
 
 // Tuning for motion controller with Ts = 0.00025
 // Bandwidth is tuned to 5 Hz
-#define Ba      (0.18121428301337322)
-#define Ksa     (0.4668134916780646)
-#define Kisa    (0.10834187149852403)
+#define Ba   (0.18121428301337322)
+#define Ksa  (0.4668134916780646)
+#define Kisa (0.10834187149852403)
 
 // Static variables for controller
 static double delta_theta_m_error_acc;

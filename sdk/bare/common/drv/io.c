@@ -1,15 +1,15 @@
 #include "drv/io.h"
-#include <stdio.h>
 #include "xgpiops.h"
+#include <stdio.h>
 
-#define IO_LED_R_MIO_PIN    (41)
-#define IO_LED_G_MIO_PIN    (43)
-#define IO_LED_B_MIO_PIN    (45)
+#define IO_LED_R_MIO_PIN (41)
+#define IO_LED_G_MIO_PIN (43)
+#define IO_LED_B_MIO_PIN (45)
 
-#define IO_BTN1_MIO_PIN     (47)
+#define IO_BTN1_MIO_PIN (47)
 
-#define IO_SW1_MIO_PIN      (42)
-#define IO_SW2_MIO_PIN      (44)
+#define IO_SW1_MIO_PIN (42)
+#define IO_SW2_MIO_PIN (44)
 
 static XGpioPs Gpio;
 
@@ -25,7 +25,8 @@ void io_init(void)
     Status = XGpioPs_CfgInitialize(&Gpio, GPIOConfigPtr, GPIOConfigPtr->BaseAddr);
     if (Status != XST_SUCCESS) {
         // Just hang here if error...
-        while (1);
+        while (1) {
+        }
     }
 
     // Set RGB LED direction as output
@@ -60,9 +61,17 @@ void io_led_set_c(uint8_t r, uint8_t g, uint8_t b, io_led_color_t *color)
     uint8_t gg = color->g > 0 ? 1 : 0;
     uint8_t bb = color->b > 0 ? 1 : 0;
 
-    if (r) XGpioPs_WritePin(&Gpio, IO_LED_R_MIO_PIN, rr);
-    if (g) XGpioPs_WritePin(&Gpio, IO_LED_G_MIO_PIN, gg);
-    if (b) XGpioPs_WritePin(&Gpio, IO_LED_B_MIO_PIN, bb);
+    if (r) {
+        XGpioPs_WritePin(&Gpio, IO_LED_R_MIO_PIN, rr);
+    }
+
+    if (g) {
+        XGpioPs_WritePin(&Gpio, IO_LED_G_MIO_PIN, gg);
+    }
+
+    if (b) {
+        XGpioPs_WritePin(&Gpio, IO_LED_B_MIO_PIN, bb);
+    }
 }
 
 void io_switch_get(uint8_t *sw1, uint8_t *sw2)

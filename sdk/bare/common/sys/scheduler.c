@@ -1,8 +1,8 @@
 #include "sys/scheduler.h"
-#include "usr/user_defines.h"
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
+#include "usr/user_defines.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -56,9 +56,8 @@ void scheduler_init(void)
     printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
-void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
-                        void *callback_arg, const char *name,
-                        uint32_t interval_usec)
+void scheduler_tcb_init(
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec)
 {
     tcb->id = next_tcb_id++;
     tcb->name = name;
@@ -87,7 +86,8 @@ void scheduler_tcb_register(task_control_block_t *tcb)
 
     // Find end of list
     task_control_block_t *curr = tasks;
-    while (curr->next != NULL) curr = curr->next;
+    while (curr->next != NULL)
+        curr = curr->next;
 
     // Append new tcb to end of list
     curr->next = tcb;
@@ -131,7 +131,8 @@ void scheduler_tcb_unregister(task_control_block_t *tcb)
     prev->next = curr->next;
 }
 
-uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb) {
+uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb)
+{
     return tcb->registered;
 }
 
@@ -164,10 +165,11 @@ void scheduler_run(void)
 
         // Wait here until unpaused (i.e. when SysTick fires)
         scheduler_idle = true;
-        while (scheduler_idle);
+        while (scheduler_idle) {
+        }
 
-        // Reset the watchdog timer after SysTick fires
 #ifdef ENABLE_WATCHDOG
+        // Reset the watchdog timer after SysTick fires
         watchdog_reset();
 #endif
     }

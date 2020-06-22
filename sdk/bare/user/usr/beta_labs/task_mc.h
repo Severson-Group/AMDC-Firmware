@@ -4,8 +4,8 @@
 #include "sys/defines.h"
 #include <stdint.h>
 
-#define TASK_MC_UPDATES_PER_SEC     (4000)
-#define TASK_MC_INTERVAL_USEC       (USEC_IN_SEC / TASK_MC_UPDATES_PER_SEC)
+#define TASK_MC_UPDATES_PER_SEC (4000)
+#define TASK_MC_INTERVAL_USEC   (USEC_IN_SEC / TASK_MC_UPDATES_PER_SEC)
 
 uint8_t task_mc_is_inited(void);
 void task_mc_init(void);

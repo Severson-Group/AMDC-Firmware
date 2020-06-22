@@ -1,0 +1,13 @@
+name: CI
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install libraries for clang-format to work
+      run: wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 10
+    - name: Check formatting matches clang-format
+      run: ./scripts/clang-format -version && bash ./scripts/check-format.sh

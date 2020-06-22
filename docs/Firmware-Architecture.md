@@ -1,9 +1,9 @@
 # Firmware Architecture
 
 **Firmware Architecture**
-- [Drivers](00a-Firmware-Arch-Drivers.md)
-- [System](00b-Firmware-Arch-System.md)
-- [User Applications](00c-Firmware-Arch-UserApps.md)
+- [Drivers](Firmware-Arch-Drivers.md)
+- [System](Firmware-Arch-System.md)
+- [User Applications](Firmware-Arch-UserApps.md)
 
 ## Motivation
 
@@ -12,7 +12,7 @@ This document outlines the AMDC firmware architecture. By understanding the high
 
 ## Layers of Abstraction
 
-A good software system has many layers of abstraction. The client of one subsystem does not need to know how that subsystem works interally -- he simply uses the interface provided and expects that it works as specified. The AMDC firmware is structured in this manner.
+A good software system has many layers of abstraction. The client of one subsystem does not need to know how that subsystem works interally -- she/he simply uses the interface provided and expects that it works as specified. The AMDC firmware is structured in this manner.
 
 <img src="images/arch/block-diagram.svg" />
 
@@ -40,19 +40,19 @@ Most of the system hardware peripherials are located in the FPGA and are custom 
 
 As an example, consider trying to use an FPGA timer. The timers can be configured to trigger interrupts from the FPGA. The `drv/timer.c` driver abstracts away the fairly complex task of initializing the FPGA hardware and setting up register values. Instead, the user can essentially command: "set up timer 1 to trigger interrupt at 10kHz" and it automagically happens. :)
 
-[Read more about the driver layer...](00a-Firmware-Arch-Drivers.md)
+[Read more about the driver layer...](Firmware-Arch-Drivers.md)
 
 ## System
 
 All firmware system code is located in the `sys` directory. These modules are responsible for "system" level subsystems. The AMDC firmware system code is designed to behave similar to a [Real-Time Operating System (RTOS)](https://en.wikipedia.org/wiki/Real-time_operating_system), but without the added complexity of a full RTOS.
 
-[Read more about the system layer...](00b-Firmware-Arch-System.md)
+[Read more about the system layer...](Firmware-Arch-System.md)
 
 ## User Apps
 
 All user apps are written in C and exist in the `usr` directory. These apps are built on top of all other system functionality (the system modules, drivers, and hardware). These user apps interact with the system code for various things: register tasks, register commands, etc. The user apps can also interact with the system drivers to interface with hardware resources (i.e., PWM outputs, analog inputs, etc).
 
-[Read more about the user application layer...](00c-Firmware-Arch-UserApps.md)
+[Read more about the user application layer...](Firmware-Arch-UserApps.md)
 
 To understand how to create an application for AMDC, you must fully grasp the following concepts: *tasks* and *commands*.
 
@@ -60,7 +60,7 @@ To understand how to create an application for AMDC, you must fully grasp the fo
 
 The AMDC firmware is mainly *task based*. These tasks are repeatedly executed at user-specified intervals (i.e., 1Hz, 500Hz, 10kHz, etc). You can think of a task as simply a block of code that runs periodically. These tasks can form the backbone of a user control algorithm. For example, imagine a PID controller. This code must be executed periodically to update its state. This would fit naturally into a **task** -- the user can configure the system to run the controller task at a periodic interval so that the state updates.
 
-[Read more about tasks...](00b-Firmware-Arch-System.md#tasks)
+[Read more about tasks...](Firmware-Arch-System.md#tasks)
 
 ### Commands
 
@@ -68,8 +68,8 @@ To interact with the firmware which is running on AMDC, a command-line interface
 
 However, each user application will most likely require its own commands in addition to the default system commands. For example, if an application is controlling a motor, having a command to set the desired output shaft speed would be helpful. The system `commands.c` module exists for this purpose -- the user application simply registers their own command with the system. The user does not need to understand how the incoming characters are parsed and handled -- the system will call the user command handler function if their command has been typed in.
 
-[Read more about commands...](00b-Firmware-Arch-System.md#commands)
+[Read more about commands...](Firmware-Arch-System.md#commands)
 
 ## Examples
 
-To fully grasp the AMDC firmware architecture, examples are provided which concretely show the ideas presented above. See the example application: [`blink`](../sdk/bare/usr/blink/).
+To fully grasp the AMDC firmware architecture, examples are provided which concretely show the ideas presented above. See the example application: [`blink`](../sdk/bare/user/usr/blink/).

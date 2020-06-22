@@ -1,11 +1,11 @@
 #include "sys/debug.h"
 #include "sys/serial.h"
-#include <string.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <string.h>
 
 #define BUFFER_LENGTH (1024)
-static char buffer[BUFFER_LENGTH] = {0};
+static char buffer[BUFFER_LENGTH] = { 0 };
 
 void debug_print(char *msg)
 {

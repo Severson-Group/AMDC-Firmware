@@ -1,13 +1,13 @@
 #ifdef APP_DEMO
 
 #include "usr/demo/task_cc.h"
-#include "usr/demo/inverter.h"
+#include "drv/analog.h"
 #include "sys/scheduler.h"
 #include "sys/transform.h"
-#include "drv/analog.h"
+#include "usr/demo/inverter.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct pwm_config_t {
     uint8_t pwm_chnl;
@@ -52,10 +52,10 @@ typedef struct cc_context_t {
 } cc_context_t;
 
 // Period between controller updates
-const double Ts =  1.0 / TASK_CC_UPDATES_PER_SEC;
+const double Ts = 1.0 / TASK_CC_UPDATES_PER_SEC;
 
 #define MAX_NUM_CC_CTXS (8)
-static cc_context_t cc_ctxs[MAX_NUM_CC_CTXS] = {0};
+static cc_context_t cc_ctxs[MAX_NUM_CC_CTXS] = { 0 };
 
 void task_cc_init(int cc_idx)
 {
@@ -92,14 +92,17 @@ void task_cc_callback(void *arg)
 {
     cc_context_t *ctx = (cc_context_t *) arg;
     int cc_idx = 0;
-    while (&cc_ctxs[cc_idx] != ctx) cc_idx++;
+    while (&cc_ctxs[cc_idx] != ctx)
+        cc_idx++;
 
     // ---------------------
     // Update position based on user specified speed
     // ---------------------
     ctx->theta_e += ctx->omega_e * Ts;
-    if (ctx->theta_e > PI2) ctx->theta_e -= PI2;
-    if (ctx->theta_e < -PI2) ctx->theta_e += PI2;
+    if (ctx->theta_e > PI2)
+        ctx->theta_e -= PI2;
+    if (ctx->theta_e < -PI2)
+        ctx->theta_e += PI2;
 
     // ---------------------
     // Read currents from ADC inputs
@@ -117,7 +120,6 @@ void task_cc_callback(void *arg)
     Iabc.b = ((double) Iabc_f[1] * ctx->adc_config[1].adc_gain) + ctx->adc_config[1].adc_offset;
     Iabc.c = ((double) Iabc_f[2] * ctx->adc_config[2].adc_gain) + ctx->adc_config[2].adc_offset;
 
-
     // ---------------------
     // Convert ABC to DQ
     // ---------------------
@@ -129,7 +131,6 @@ void task_cc_callback(void *arg)
     double Idq0[3]; // d q 0 currents
     transform_clarke(TRANS_DQZ_C_INVARIANT_AMPLITUDE, Iabc1, Ixyz);
     transform_park(ctx->theta_e, Ixyz, Idq0);
-
 
     // -----------------------------
     // Run through block diagram of CVCR to get Vdq*
@@ -150,7 +151,6 @@ void task_cc_callback(void *arg)
     ctx->Idq_err_acc.q += ctx->Idq_err.q;
     Vdq_star.q = (ctx->Kp.q * ctx->Idq_err.q) + (ctx->Ki.q * Ts * ctx->Idq_err_acc.q);
 
-
     // --------------------------------
     // Perform inverse DQ transform of Vdq_star
     // --------------------------------
@@ -159,13 +159,11 @@ void task_cc_callback(void *arg)
     Vdq0[0] = Vdq_star.d;
     Vdq0[1] = Vdq_star.q;
     Vdq0[2] = 0.0;
-    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_AMPLITUDE,
-            ctx->theta_e, Vabc_star1, Vdq0);
+    transform_dqz_inverse(TRANS_DQZ_C_INVARIANT_AMPLITUDE, ctx->theta_e, Vabc_star1, Vdq0);
     vec_abc_t Vabc_star;
     Vabc_star.a = Vabc_star1[0];
     Vabc_star.b = Vabc_star1[1];
     Vabc_star.c = Vabc_star1[2];
-
 
     // ------------------------------------
     // Saturate Vabc_star to inverter bus voltage
@@ -173,7 +171,6 @@ void task_cc_callback(void *arg)
     inverter_saturate_to_Vdc(cc_idx, &Vabc_star.a);
     inverter_saturate_to_Vdc(cc_idx, &Vabc_star.b);
     inverter_saturate_to_Vdc(cc_idx, &Vabc_star.c);
-
 
     // --------------------------------------
     // Write voltages out to PWM hardware

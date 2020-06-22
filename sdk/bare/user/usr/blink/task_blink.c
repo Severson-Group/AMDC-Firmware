@@ -29,9 +29,7 @@ void task_blink_init(void)
     }
 
     // Fill TCB with parameters
-    scheduler_tcb_init(&tcb,
-            task_blink_callback, NULL,
-            "blink", TASK_BLINK_INTERVAL_USEC);
+    scheduler_tcb_init(&tcb, task_blink_callback, NULL, "blink", TASK_BLINK_INTERVAL_USEC);
 
     // Register task with scheduler
     scheduler_tcb_register(&tcb);
