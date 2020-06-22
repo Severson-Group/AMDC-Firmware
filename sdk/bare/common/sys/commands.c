@@ -47,7 +47,7 @@ static int pending_cmd_read_idx = 0;
 static int _command_handler(int argc, char **argv);
 
 // Head of linked list of commands
-command_entry_t *cmds = NULL;
+static command_entry_t *cmds = NULL;
 
 static task_control_block_t tcb_parse;
 static task_control_block_t tcb_exec;
