@@ -200,7 +200,8 @@ void state_machine_empty_callback(void *arg)
         int from_idx = ctx->cleared_up_to_idx;
         int num_to_clear = MIN(MAX_CLEAR_PER_SLICE, LOG_BUFFER_LENGTH - from_idx);
 
-        memset(&vars[ctx->var_idx].buffer[from_idx], 0, num_to_clear);
+        char *mem_address = (char *) &vars[ctx->var_idx].buffer[0];
+        memset(&mem_address[from_idx], 0, num_to_clear);
 
         ctx->cleared_up_to_idx = from_idx + num_to_clear;
 
@@ -380,13 +381,13 @@ int log_var_dump_uart_ascii(int log_var_idx)
 // ***************************
 
 typedef enum sm_states_dump_binary_e {
-    DUMP_BINARY_TITLE = 1,
-    DUMP_BINARY_NUM_SAMPLES,
-    DUMP_BINARY_HEADER,
-    DUMP_BINARY_VARIABLES_TS,
-    DUMP_BINARY_VARIABLES_VALUE,
-    DUMP_BINARY_FOOTER,
-    DUMP_BINARY_REMOVE_TASK
+	DUMP_BINARY_MAGIC_HEADER  = 1,
+	DUMP_BINARY_NUM_SAMPLES,
+	DUMP_BINARY_DATA_TYPE,
+	DUMP_BINARY_SAMPLE_TS,
+	DUMP_BINARY_SAMPLE_VALUE,
+	DUMP_BINARY_MAGIC_FOOTER,
+	DUMP_BINARY_REMOVE_TASK
 } sm_states_dump_binary_e;
 
 typedef struct sm_ctx_dump_binary_t {
@@ -396,8 +397,11 @@ typedef struct sm_ctx_dump_binary_t {
     task_control_block_t tcb;
 } sm_ctx_dump_binary_t;
 
-#define SM_DUMP_BIANRY_UPDATES_PER_SEC (10000)
+#define SM_DUMP_BIANRY_UPDATES_PER_SEC (500)
 #define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
+
+static const uint32_t MAGIC_HEADER = 0x12345678;
+static const uint32_t MAGIC_FOOTER = 0x11223344;
 
 void state_machine_dump_binary_callback(void *arg)
 {
@@ -407,59 +411,75 @@ void state_machine_dump_binary_callback(void *arg)
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
     switch (ctx->state) {
-    case DUMP_BINARY_TITLE:
-        debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
+    case DUMP_BINARY_MAGIC_HEADER:
+    {
+    	serial_write((char *) &MAGIC_HEADER, 4);
         ctx->state = DUMP_BINARY_NUM_SAMPLES;
         break;
+    }
 
     case DUMP_BINARY_NUM_SAMPLES:
-        debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
-        ctx->state = DUMP_BINARY_HEADER;
+    {
+    	uint32_t out = (uint32_t) v->num_samples;
+    	serial_write((char *) &out, 4);
+        ctx->state = DUMP_BINARY_DATA_TYPE;
         break;
+    }
 
-    case DUMP_BINARY_HEADER:
-        debug_printf("-------START-------\r\n");
+    case DUMP_BINARY_DATA_TYPE:
+    {
+    	uint32_t var_type = (uint32_t) v->type;
+    	serial_write((char *) &var_type, 4);
 
         if (v->num_samples == 0) {
         	// Nothing to dump!
-        	ctx->state = DUMP_BINARY_FOOTER;
+        	ctx->state = DUMP_BINARY_MAGIC_FOOTER;
         } else {
-            ctx->state = DUMP_BINARY_VARIABLES_TS;
+            ctx->state = DUMP_BINARY_SAMPLE_TS;
         }
+    	break;
+    }
+
+    case DUMP_BINARY_SAMPLE_TS:
+    {
+    	// Dump timestamp
+    	uint32_t ts = e->timestamp;
+    	serial_write((char *) &ts, 4);
+
+        ctx->state = DUMP_BINARY_SAMPLE_VALUE;
         break;
+    }
 
-    case DUMP_BINARY_VARIABLES_TS:
-        // Print just the timestamp
-        debug_printf("> %ld\t\t", e->timestamp);
-
-        ctx->state = DUMP_BINARY_VARIABLES_VALUE;
-        break;
-
-    case DUMP_BINARY_VARIABLES_VALUE:
-        // Print just the value
+    case DUMP_BINARY_SAMPLE_VALUE:
+    {
+        // Dump value
         if (v->type == LOG_INT) {
-            debug_printf("%ld\r\n", e->value);
+        	int32_t out = (int32_t) e->value;
+        	serial_write((char *) &out, 4);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
-            float *f = (float *) &(e->value);
-            debug_printf("%f\r\n", *f);
+            float out = *((float *) &(e->value));
+            serial_write((char *) &out, 4);
         }
 
         ctx->sample_idx++;
 
         if (ctx->sample_idx >= v->num_samples) {
-            ctx->state = DUMP_BINARY_FOOTER;
+            ctx->state = DUMP_BINARY_MAGIC_FOOTER;
         } else {
-            ctx->state = DUMP_BINARY_VARIABLES_TS;
+            ctx->state = DUMP_BINARY_SAMPLE_TS;
         }
         break;
+    }
 
-    case DUMP_BINARY_FOOTER:
-        debug_printf("-------END-------\r\n\r\n");
-
+    case DUMP_BINARY_MAGIC_FOOTER:
+    {
+    	serial_write((char *) &MAGIC_FOOTER, 4);
         ctx->state = DUMP_BINARY_REMOVE_TASK;
         break;
+    }
 
     case DUMP_BINARY_REMOVE_TASK:
+        debug_print("\r\n\r\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 
@@ -484,7 +504,7 @@ int log_var_dump_uart_binary(int log_var_idx)
     }
 
     // Initialize the state machine context
-    ctx_dump_binary.state = DUMP_BINARY_TITLE;
+    ctx_dump_binary.state = DUMP_BINARY_MAGIC_HEADER;
     ctx_dump_binary.var_idx = log_var_idx;
     ctx_dump_binary.sample_idx = 0;
 
@@ -503,12 +523,14 @@ typedef enum sm_states_info_e {
     INFO_HEAD = 1,
     INFO_MAX_SLOTS,
     INFO_MAX_DEPTH,
+	INFO_MAX_SAMPLE_RATE,
 
     INFO_VAR_TITLE,
     INFO_VAR_DATA1,
     INFO_VAR_DATA2,
     INFO_VAR_DATA3,
     INFO_VAR_DATA4,
+    INFO_VAR_DATA5,
 
     INFO_NEXT_VAR,
 
@@ -550,6 +572,13 @@ void state_machine_info_callback(void *arg)
     case INFO_MAX_DEPTH:
     {
         debug_printf("Max sample depth: %d\r\n", LOG_VARIABLE_SAMPLE_DEPTH);
+        ctx->state = INFO_MAX_SAMPLE_RATE;
+        break;
+    }
+
+    case INFO_MAX_SAMPLE_RATE:
+    {
+        debug_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
         debug_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;
@@ -595,6 +624,13 @@ void state_machine_info_callback(void *arg)
     }
 
     case INFO_VAR_DATA4:
+    {
+        debug_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
+        ctx->state = INFO_VAR_DATA5;
+        break;
+    }
+
+    case INFO_VAR_DATA5:
     {
         debug_printf("  Num samples: %d\r\n", v->num_samples);
         ctx->state = INFO_NEXT_VAR;
