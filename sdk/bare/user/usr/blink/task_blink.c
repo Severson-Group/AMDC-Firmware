@@ -3,8 +3,8 @@
 #include "usr/blink/task_blink.h"
 #include "drv/led.h"
 #include "sys/scheduler.h"
-#include <stdint.h>
 #include <math.h>
+#include <stdint.h>
 
 // Hold LED animation state
 static uint8_t led_pos = 0;
