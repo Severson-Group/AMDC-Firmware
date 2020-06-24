@@ -3,8 +3,8 @@
 #include "usr/blink/task_blink.h"
 #include "drv/io.h"
 #include "sys/scheduler.h"
-#include <stdint.h>
 #include <math.h>
+#include <stdint.h>
 
 // Hold LED state (0: off, 1: red, 2: green, 3: blue)
 static uint8_t led_state = 0;
