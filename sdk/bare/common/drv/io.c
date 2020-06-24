@@ -1,3 +1,7 @@
+#include "usr/user_defines.h"
+
+#if HARDWARE_REVISION == 3
+
 #include "drv/io.h"
 #include "xgpiops.h"
 #include <stdio.h>
@@ -84,3 +88,5 @@ void io_button_get(uint8_t *btn1)
 {
     *btn1 = XGpioPs_ReadPin(&Gpio, IO_BTN1_MIO_PIN);
 }
+
+#endif // HARDWARE_REVISION

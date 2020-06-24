@@ -1,3 +1,5 @@
+#if 0
+
 #ifndef DAC_H
 #define DAC_H
 
@@ -16,3 +18,5 @@ void dac_set_voltage_raw(uint8_t idx, uint16_t value);
 void dac_set_led(uint8_t idx, uint8_t state);
 
 #endif // DAC_H
+
+#endif

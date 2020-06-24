@@ -1,3 +1,5 @@
+#if 0
+
 #include "drv/dac.h"
 #include "xil_io.h"
 #include <stdio.h>
@@ -95,3 +97,5 @@ void dac_set_led(uint8_t idx, uint8_t state)
 
     Xil_Out32(DAC_BASE_ADDR + (8 * sizeof(uint32_t)), curr_led_state);
 }
+
+#endif
