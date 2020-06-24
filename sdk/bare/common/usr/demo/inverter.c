@@ -1,9 +1,9 @@
 #ifdef APP_DEMO
 
-#include "usr/user_defines.h"
 #include "usr/demo/inverter.h"
 #include "drv/io.h"
 #include "drv/pwm.h"
+#include "usr/user_defines.h"
 #include <math.h>
 
 typedef struct inverter_ctx_t {
