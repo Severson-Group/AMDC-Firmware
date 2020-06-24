@@ -4,12 +4,15 @@
 
 #include "sys/cmd/cmd_log.h"
 #include "sys/debug.h"
+#include "sys/serial.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+void log_preload(void);
 
 #define LOG_BUFFER_LENGTH (LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 
@@ -59,6 +62,33 @@ void log_init(void)
 
     // Register command
     cmd_log_register();
+
+    // TODO(NP): Debugging!
+    // Initialize one log variable slot with known information to test dumping
+//    log_preload();
+}
+
+void log_preload(void)
+{
+	// Register last slot
+	log_var_register(LOG_MAX_NUM_VARS-1, "testvar", (void *) 0x1, 1000, LOG_INT);
+
+	// Get point to slot
+	log_var_t *v = &vars[LOG_MAX_NUM_VARS-1];
+
+	v->buffer_idx = 0;
+	v->num_samples = 0;
+
+	// Put fake sample entries into slot buffer
+	for (int i = 0; i < 10000; i++) {
+		v->buffer[v->buffer_idx].timestamp = 1000 + i;
+
+		int out = 1000 + (10 * i);
+		v->buffer[v->buffer_idx].value = *((uint32_t *) &out);
+
+        v->buffer_idx++;
+        v->num_samples++;
+	}
 }
 
 void log_callback(void *arg)
@@ -396,7 +426,9 @@ typedef struct sm_ctx_dump_binary_t {
     task_control_block_t tcb;
 } sm_ctx_dump_binary_t;
 
-#define SM_DUMP_BIANRY_UPDATES_PER_SEC (500)
+// State machine at 2kHz results in 1kSPS dumping,
+// which is nearly full UART bandwidth at 112500 baud
+#define SM_DUMP_BIANRY_UPDATES_PER_SEC (2000)
 #define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
 
 static const uint32_t MAGIC_HEADER = 0x12345678;
@@ -412,6 +444,9 @@ void state_machine_dump_binary_callback(void *arg)
     switch (ctx->state) {
     case DUMP_BINARY_MAGIC_HEADER:
     {
+    	serial_write((char *) &MAGIC_HEADER, 4);
+    	serial_write((char *) &MAGIC_HEADER, 4);
+    	serial_write((char *) &MAGIC_HEADER, 4);
     	serial_write((char *) &MAGIC_HEADER, 4);
         ctx->state = DUMP_BINARY_NUM_SAMPLES;
         break;
@@ -472,6 +507,9 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_MAGIC_FOOTER:
     {
+    	serial_write((char *) &MAGIC_FOOTER, 4);
+    	serial_write((char *) &MAGIC_FOOTER, 4);
+    	serial_write((char *) &MAGIC_FOOTER, 4);
     	serial_write((char *) &MAGIC_FOOTER, 4);
         ctx->state = DUMP_BINARY_REMOVE_TASK;
         break;
