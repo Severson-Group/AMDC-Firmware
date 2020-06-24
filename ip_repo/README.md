@@ -12,7 +12,7 @@ There are three types of AXI4 interfaces:
 
 ## IP Blocks
 
-The AMDC platform makes extensive use of the IP blocks to interface with the hardware peripherials on the circuit board. This includes PWM outputs, ADC inputs, encoders, SPIs, UARTs, and serially-addressable LEDs. These IP cores and their associated C drivers allow user applications, written in C, to easily control and interface to hardware. The AXI4-Lite interface is generally used for hardware interfacing on the AMDC. AXI4-Lite enables development of simple register-based peripherials.
+The AMDC platform makes extensive use of the IP blocks to interface with the hardware peripherals on the circuit board. This includes PWM outputs, ADC inputs, encoders, SPIs, UARTs, and serially-addressable LEDs. These IP cores and their associated C drivers allow user applications, written in C, to easily control and interface to hardware. The AXI4-Lite interface is generally used for hardware interfacing on the AMDC. AXI4-Lite enables development of simple register-based peripherals.
 
 ### `amdc_analog`
 
