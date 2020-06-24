@@ -23,10 +23,11 @@ All data is little-endian.
 
 0x00000010
 
-### Data Type (1 byte, integer)
+### Data Type (4 bytes, integer)
 
-0x01 = int
-0x02 = float
+- 0x00000001 = int
+- 0x00000002 = float
+- 0x00000003 = double
 
 ### Each Sample (8 bytes)
 
