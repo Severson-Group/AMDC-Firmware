@@ -200,59 +200,6 @@ int log_var_is_registered(int idx, bool *is_registered)
     return SUCCESS;
 }
 
-// ***************************
-// Code for running the state machine to
-// clear and empty a log buffer
-// ***************************
-
-typedef enum sm_states_empty_e { EMPTY_CLEARING = 1, EMPTY_REMOVE_TASK } sm_states_empty_e;
-
-typedef struct sm_ctx_empty_t {
-    sm_states_empty_e state;
-    int var_idx;
-    int cleared_up_to_idx;
-    task_control_block_t tcb;
-} sm_ctx_empty_t;
-
-#define MAX_CLEAR_PER_SLICE (100)
-
-#define SM_EMPTY_UPDATES_PER_SEC SYS_TICK_FREQ
-#define SM_EMPTY_INTERVAL_USEC   (USEC_IN_SEC / SM_EMPTY_UPDATES_PER_SEC)
-
-void state_machine_empty_callback(void *arg)
-{
-    sm_ctx_empty_t *ctx = (sm_ctx_empty_t *) arg;
-
-    switch (ctx->state) {
-    case EMPTY_CLEARING:
-    {
-        int from_idx = ctx->cleared_up_to_idx;
-        int num_to_clear = MIN(MAX_CLEAR_PER_SLICE, LOG_BUFFER_LENGTH - from_idx);
-
-        char *mem_address = (char *) &vars[ctx->var_idx].buffer[0];
-        memset(&mem_address[from_idx], 0, num_to_clear);
-
-        ctx->cleared_up_to_idx = from_idx + num_to_clear;
-
-        if (ctx->cleared_up_to_idx >= LOG_BUFFER_LENGTH) {
-            ctx->state = EMPTY_REMOVE_TASK;
-        }
-        break;
-    }
-
-    case EMPTY_REMOVE_TASK:
-        scheduler_tcb_unregister(&ctx->tcb);
-        break;
-
-    default:
-        // Can't happen
-        HANG;
-        break;
-    }
-}
-
-static sm_ctx_empty_t ctx_empty;
-
 int log_var_empty(int idx)
 {
     // Sanity check variable idx
@@ -260,23 +207,14 @@ int log_var_empty(int idx)
         return FAILURE;
     }
 
-    if (scheduler_tcb_is_registered(&ctx_empty.tcb)) {
-        // Already in process of emptying something!!
-        return FAILURE;
-    }
-
+    // Result metadata
     vars[idx].buffer_idx = 0;
     vars[idx].last_logged_usec = 0;
     vars[idx].num_samples = 0;
 
-    // Initialize the state machine context
-    ctx_empty.state = EMPTY_CLEARING;
-    ctx_empty.var_idx = idx;
-    ctx_empty.cleared_up_to_idx = 0;
-
-    // Initialize the state machine callback tcb
-    scheduler_tcb_init(&ctx_empty.tcb, state_machine_empty_callback, &ctx_empty, "logempty", SM_EMPTY_INTERVAL_USEC);
-    scheduler_tcb_register(&ctx_empty.tcb);
+    // Note: we don't have to actually clear the memory buffer since we only dump
+    // the number of samples we recorded! So the old data can live in memory
+    // and not be an issue.
 
     return SUCCESS;
 }
