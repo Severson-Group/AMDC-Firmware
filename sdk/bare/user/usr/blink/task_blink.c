@@ -1,9 +1,8 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/task_blink.h"
-#include "usr/user_defines.h"
 #include "sys/scheduler.h"
-#include <math.h>
+#include "usr/user_defines.h"
 #include <stdint.h>
 
 #if HARDWARE_REVISION == 4
@@ -13,7 +12,6 @@
 #if HARDWARE_REVISION == 3
 #include "drv/io.h"
 #endif // HARDWARE_REVISION
-
 
 #if HARDWARE_REVISION == 3
 // Hold LED state (0: off, 1: red, 2: green, 3: blue)

@@ -1,11 +1,11 @@
 #include "sys/cmd/cmd_hw.h"
-#include "usr/user_defines.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "usr/user_defines.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
