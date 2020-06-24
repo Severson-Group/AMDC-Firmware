@@ -8,7 +8,7 @@
 // Must be less than or equal to scheduler updates per second
 // This value is defined in sys/scheduler.h and defaults to 10kHz.
 // Note that it can be overridden via usr/user_defines.h
-#define TASK_BLINK_UPDATES_PER_SEC (1)
+#define TASK_BLINK_UPDATES_PER_SEC (5)
 
 // Microseconds interval between when task is called
 //
@@ -18,6 +18,7 @@
 
 // Called in app init function to set up task (or via command)
 void task_blink_init(void);
+void task_blink_deinit(void);
 
 // Callback function which scheduler calls periodically
 void task_blink_callback(void *arg);
