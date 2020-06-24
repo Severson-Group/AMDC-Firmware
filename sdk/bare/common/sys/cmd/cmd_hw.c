@@ -1,4 +1,5 @@
-#include "cmd_hw.h"
+#include "sys/cmd/cmd_hw.h"
+#include "usr/user_defines.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
 #include "drv/led.h"
@@ -12,15 +13,25 @@
 
 static command_entry_t cmd_entry;
 
+#if HARDWARE_REVISION == 3
+#define NUM_HELP_ENTRIES (6)
+#endif // HARDWARE_REVISION
+
+#if HARDWARE_REVISION == 4
 #define NUM_HELP_ENTRIES (7)
+#endif // HARDWARE_REVISION
+
 static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
-    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
+
+#if HARDWARE_REVISION == 4
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+#endif // HARDWARE_REVISION
 };
 
 void cmd_hw_register(void)
@@ -113,6 +124,8 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
+
+#if HARDWARE_REVISION == 4
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc == 7 && strcmp("led", argv[1]) == 0) {
@@ -137,6 +150,7 @@ int cmd_hw(int argc, char **argv)
             return SUCCESS;
         }
     }
+#endif // HARDWARE_REVISION
 
     // Handle 'enc' sub-command
     if (strcmp("enc", argv[1]) == 0) {

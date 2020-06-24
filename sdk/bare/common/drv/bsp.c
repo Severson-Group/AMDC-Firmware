@@ -14,6 +14,14 @@
 #include "usr/user_defines.h"
 #include <stdio.h>
 
+#if (HARDWARE_REVISION == 3) || \
+	(HARDWARE_REVISION == 4)
+	// Ensure a valid hardware revision is specified
+	// NOTE: this firmware only supports REV C hardware onward
+#else
+	#error "ERROR: Hardware revision not specified correctly"
+#endif
+
 void bsp_init(void)
 {
     printf("BSP:\tInitializing...\n");
@@ -25,12 +33,20 @@ void bsp_init(void)
         HANG;
     }
 
-    led_init();
     encoder_init();
     analog_init();
     pwm_init();
-    // io_init();
-    // gpio_init();
+
+#if HARDWARE_REVISION == 4
+    led_init();
+#endif
+
+#if HARDWARE_REVISION == 3
+    io_init();
+    gpio_init();
+#endif
+
+    // The DAC driver is current not supported on any hardware
     // dac_init();
 
 #ifdef ENABLE_WATCHDOG

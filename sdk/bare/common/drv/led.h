@@ -1,6 +1,10 @@
 #ifndef LED_H
 #define LED_H
 
+#include "usr/user_defines.h"
+
+#if HARDWARE_REVISION == 4
+
 #include <stdint.h>
 
 typedef struct led_color_t {
@@ -36,5 +40,7 @@ void led_set_raw(led_t idx, uint32_t color);
 
 led_color_t led_get_color(led_t idx);
 uint32_t led_get_raw(led_t idx);
+
+#endif // HARDWARE_REVISION
 
 #endif // LED_H
