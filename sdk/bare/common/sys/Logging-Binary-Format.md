@@ -15,9 +15,9 @@ To start a dump of the Nth variable slot: `log dump bin N`
 
 All data is little-endian.
 
-### Magic Header (4 bytes)
+### Magic Header (16 bytes)
 
-0x12345678
+0x12345678 (repeated four times)
 
 ### Number of Samples (4 bytes, integer)
 
@@ -35,6 +35,6 @@ All data is little-endian.
 |---------------------|----------|
 | Timestamp (usec)    | Data     |
 
-### Magic Footer (4 bytes)
+### Magic Footer (16 bytes)
 
-0x11223344
+0x11223344 (repeated four times)
