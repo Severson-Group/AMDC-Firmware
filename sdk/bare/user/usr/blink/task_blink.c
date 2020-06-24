@@ -1,8 +1,8 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/task_blink.h"
-#include "usr/user_defines.h"
 #include "sys/scheduler.h"
+#include "usr/user_defines.h"
 #include <stdint.h>
 
 #if HARDWARE_REVISION == 4
@@ -12,7 +12,6 @@
 #if HARDWARE_REVISION == 3
 #include "drv/io.h"
 #endif // HARDWARE_REVISION
-
 
 #if HARDWARE_REVISION == 3
 // Hold LED state (0: off, 1: red, 2: green, 3: blue)
@@ -34,7 +33,6 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
     LED_COLOR_WHITE,   //
 };
 #endif // HARDWARE_REVISION
-
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;

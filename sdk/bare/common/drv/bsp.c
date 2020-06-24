@@ -14,12 +14,11 @@
 #include "usr/user_defines.h"
 #include <stdio.h>
 
-#if (HARDWARE_REVISION == 3) || \
-	(HARDWARE_REVISION == 4)
-	// Ensure a valid hardware revision is specified
-	// NOTE: this firmware only supports REV C hardware onward
+#if (HARDWARE_REVISION == 3) || (HARDWARE_REVISION == 4)
+// Ensure a valid hardware revision is specified
+// NOTE: this firmware only supports REV C hardware onward
 #else
-	#error "ERROR: Hardware revision not specified correctly"
+#error "ERROR: Hardware revision not specified correctly"
 #endif
 
 void bsp_init(void)
