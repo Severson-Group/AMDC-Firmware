@@ -1,6 +1,7 @@
 #include "sys/serial.h"
 #include "drv/uart.h"
 #include "sys/scheduler.h"
+#include "sys/util.h"
 #include <string.h>
 
 #define OUTPUT_BUFFER_LENGTH (32 * 1024)

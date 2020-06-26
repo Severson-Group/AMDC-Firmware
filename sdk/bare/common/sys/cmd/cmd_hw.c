@@ -5,6 +5,7 @@
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/util.h"
 #include "usr/user_defines.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -16,15 +17,7 @@
 
 static command_entry_t cmd_entry;
 
-#if HARDWARE_REVISION == 3
-#define NUM_HELP_ENTRIES (6)
-#endif // HARDWARE_REVISION
-
-#if HARDWARE_REVISION == 4
-#define NUM_HELP_ENTRIES (7)
-#endif // HARDWARE_REVISION
-
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
@@ -40,7 +33,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 void cmd_hw_register(void)
 {
     // Populate the command entry block
-    commands_cmd_init(&cmd_entry, "hw", "Hardware related commands", cmd_help, NUM_HELP_ENTRIES, cmd_hw);
+    commands_cmd_init(&cmd_entry, "hw", "Hardware related commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_hw);
 
     // Register the command
     commands_cmd_register(&cmd_entry);

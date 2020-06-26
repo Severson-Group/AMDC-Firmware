@@ -6,6 +6,7 @@
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/util.h"
 #include "usr/demo/task_cc.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -38,8 +39,7 @@ float value;
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (8)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "setup [ashad|yusuke]", "Set-up specific bench configuration" },
     { "<cc_idx> init", "Initialize current controller" },
     { "<cc_idx> deinit", "Deinitialize current controller" },
@@ -52,7 +52,8 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 
 void cmd_cc_register(void)
 {
-    commands_cmd_init(&cmd_entry, "cc", "Current control (D/Q) related commands", cmd_help, NUM_HELP_ENTRIES, cmd_cc);
+    commands_cmd_init(
+        &cmd_entry, "cc", "Current control (D/Q) related commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_cc);
 
     // Register the command with the system
     commands_cmd_register(&cmd_entry);

@@ -6,13 +6,13 @@
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/injection.h"
+#include "sys/util.h"
 #include <stdlib.h>
 #include <string.h>
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (6)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "clear", "Clear all injections" },
     { "list", "List all available injection points" },
     { "const <name> <set|add|sub> <mValue>", "Inject a constant" },
@@ -24,7 +24,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 void cmd_inj_register(void)
 {
     // Populate the command entry block
-    commands_cmd_init(&cmd_entry, "inj", "Inject signals into system", cmd_help, NUM_HELP_ENTRIES, cmd_inj);
+    commands_cmd_init(&cmd_entry, "inj", "Inject signals into system", cmd_help, ARRAY_SIZE(cmd_help), cmd_inj);
 
     // Register the command
     commands_cmd_register(&cmd_entry);

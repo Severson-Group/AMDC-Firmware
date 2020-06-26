@@ -7,6 +7,7 @@
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
+#include "sys/util.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
