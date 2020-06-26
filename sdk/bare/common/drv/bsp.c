@@ -1,10 +1,11 @@
 #include "usr/user_defines.h"
 
 #if (HARDWARE_TARGET == 3) || (HARDWARE_TARGET == 4)
-// Ensure a valid hardware revision is specified
+// Ensure a valid hardware target is specified
 // NOTE: this firmware only supports REV C hardware onward
 #else
-#error "ERROR: Hardware revision not specified correctly"
+#error "ERROR: Hardware target not specified correctly"
+// If you have this error, please define HARDWARE_TARGET in your user_defines.h file!
 #endif
 
 #include "drv/analog.h"
