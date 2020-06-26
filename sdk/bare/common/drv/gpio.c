@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if HARDWARE_REVISION == 3
+#if HARDWARE_TARGET == 3
 
 #include "drv/gpio.h"
 #include "xgpiops.h"
@@ -82,4 +82,4 @@ void gpio_set_dir(uint8_t group, uint8_t dir)
     XGpioPs_WritePin(&Gpio, pin, dir);
 }
 
-#endif // HARDWARE_REVISION
+#endif // HARDWARE_TARGET

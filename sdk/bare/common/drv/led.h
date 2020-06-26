@@ -1,9 +1,9 @@
-#ifndef LED_H
-#define LED_H
-
 #include "usr/user_defines.h"
 
-#if HARDWARE_REVISION == 4
+#if HARDWARE_TARGET == 4
+
+#ifndef LED_H
+#define LED_H
 
 #include <stdint.h>
 
@@ -41,6 +41,6 @@ void led_set_raw(led_t idx, uint32_t color);
 led_color_t led_get_color(led_t idx);
 uint32_t led_get_raw(led_t idx);
 
-#endif // HARDWARE_REVISION
-
 #endif // LED_H
+
+#endif // HARDWARE_TARGET

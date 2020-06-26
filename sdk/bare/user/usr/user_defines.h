@@ -7,7 +7,7 @@
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
 // Alphabet to number: A = 1, B = 2, C = 3, etc
-#define HARDWARE_REVISION (3)
+#define HARDWARE_TARGET (3)
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here:

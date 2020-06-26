@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if (HARDWARE_REVISION == 3) || (HARDWARE_REVISION == 4)
+#if (HARDWARE_TARGET == 3) || (HARDWARE_TARGET == 4)
 // Ensure a valid hardware revision is specified
 // NOTE: this firmware only supports REV C hardware onward
 #else
@@ -11,8 +11,6 @@
 #include "drv/bsp.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
-#include "drv/gpio.h"
-#include "drv/io.h"
 #include "drv/pwm.h"
 #include "drv/timer.h"
 #include "drv/uart.h"
@@ -21,7 +19,12 @@
 #include "sys/defines.h"
 #include <stdio.h>
 
-#if HARDWARE_REVISION == 4
+#if HARDWARE_TARGET == 3
+#include "drv/gpio.h"
+#include "drv/io.h"
+#endif
+
+#if HARDWARE_TARGET == 4
 #include "drv/led.h"
 #endif
 
@@ -40,11 +43,11 @@ void bsp_init(void)
     analog_init();
     pwm_init();
 
-#if HARDWARE_REVISION == 4
+#if HARDWARE_TARGET == 4
     led_init();
 #endif
 
-#if HARDWARE_REVISION == 3
+#if HARDWARE_TARGET == 3
     io_init();
     gpio_init();
 #endif
