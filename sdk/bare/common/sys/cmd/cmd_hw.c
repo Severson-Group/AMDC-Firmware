@@ -46,18 +46,16 @@ int cmd_hw(int argc, char **argv)
     if (argc >= 2 && STR_EQ("pwm", argv[1])) {
         if (argc == 5 && STR_EQ("sw", argv[2])) {
             // Parse out switching freq arg
-            double fsw = (double) atoi(argv[3]);
-            if (fsw > 1000000.0)
+            double fsw = strtod(argv[3], NULL);
+            if (fsw > 2e6 || fsw < 2e3) {
                 return CMD_INVALID_ARGUMENTS;
-            if (fsw < 2000.0)
-                return CMD_INVALID_ARGUMENTS;
+            }
 
             // Parse out dead time arg
             int dt = atoi(argv[4]);
-            if (dt > 5000)
+            if (dt > 5000 || dt < 25) {
                 return CMD_INVALID_ARGUMENTS;
-            if (dt < 25)
-                return CMD_INVALID_ARGUMENTS;
+            }
 
             pwm_set_deadtime_ns(dt);
             pwm_set_switching_freq(fsw);
@@ -68,19 +66,18 @@ int cmd_hw(int argc, char **argv)
         if (argc == 5 && STR_EQ("duty", argv[2])) {
             // Parse out switching pwm_idx arg
             int pwm_idx = atoi(argv[3]);
-            if (pwm_idx > 23)
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
                 return CMD_INVALID_ARGUMENTS;
-            if (pwm_idx < 0)
-                return CMD_INVALID_ARGUMENTS;
+            }
 
             // Parse out percent arg
-            int percent = atoi(argv[4]);
-            if (percent > 100)
+            double percent = strtod(argv[4], NULL);
+            if (percent > 1.0 || percent < 0.0) {
                 return CMD_INVALID_ARGUMENTS;
-            if (percent < 0)
-                return CMD_INVALID_ARGUMENTS;
+            }
 
-            pwm_set_duty(pwm_idx, (double) percent / 100.0);
+            pwm_set_duty(pwm_idx, percent);
 
             return CMD_SUCCESS;
         }
