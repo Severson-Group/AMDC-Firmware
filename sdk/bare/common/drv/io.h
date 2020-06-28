@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 
 #ifndef IO_H
 #define IO_H
@@ -23,4 +23,4 @@ void io_button_get(uint8_t *btn1);
 
 #endif // IO_H
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

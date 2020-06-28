@@ -1,11 +1,11 @@
 #include "usr/user_defines.h"
 
-#if (HARDWARE_TARGET == 3) || (HARDWARE_TARGET == 4)
+#if (USER_CONFIG_HARDWARE_TARGET == 3) || (USER_CONFIG_HARDWARE_TARGET == 4)
 // Ensure a valid hardware target is specified
 // NOTE: this firmware only supports REV C hardware onward
 #else
 #error "ERROR: Hardware target not specified correctly"
-// If you have this error, please define HARDWARE_TARGET in your user_defines.h file!
+// If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your user_defines.h file!
 #endif
 
 #include "drv/analog.h"
@@ -20,12 +20,12 @@
 #include "sys/defines.h"
 #include <stdio.h>
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 #include "drv/gpio.h"
 #include "drv/io.h"
 #endif
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
 #include "drv/led.h"
 #endif
 
@@ -44,11 +44,11 @@ void bsp_init(void)
     analog_init();
     pwm_init();
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
     led_init();
 #endif
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
     io_init();
     gpio_init();
 #endif
@@ -56,7 +56,7 @@ void bsp_init(void)
     // The DAC driver is current not supported on any hardware
     // dac_init();
 
-#ifdef ENABLE_WATCHDOG
+#if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();
 #endif
 

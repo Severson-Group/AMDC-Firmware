@@ -11,9 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
 #include "drv/led.h"
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
 static command_entry_t cmd_entry;
 
@@ -25,9 +25,9 @@ static command_help_t cmd_help[] = {
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 };
 
 void cmd_hw_register(void)
@@ -102,7 +102,7 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc >= 2 && STR_EQ("led", argv[1])) {
@@ -127,7 +127,7 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
     }
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Handle 'enc' sub-command
     if (argc >= 2 && STR_EQ("enc", argv[1])) {

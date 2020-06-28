@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 
 #ifndef GPIO_H
 #define GPIO_H
@@ -19,4 +19,4 @@ void gpio_set_dir(uint8_t group, uint8_t dir);
 
 #endif // GPIO_H
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

@@ -18,7 +18,7 @@ typedef enum {
 
 // REV C hardware is the only hardware
 // which supports more than 8 analog inputs.
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
     ANALOG_IN9,
     ANALOG_IN10,
     ANALOG_IN11,
@@ -27,7 +27,7 @@ typedef enum {
     ANALOG_IN14,
     ANALOG_IN15,
     ANALOG_IN16,
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Keep this as last entry!
     ANALOG_NUM_CHANNELS,

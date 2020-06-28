@@ -60,12 +60,12 @@ int pwm_set_carrier_divisor(uint8_t divisor);
 int pwm_set_carrier_max(uint16_t max);
 int pwm_set_deadtime_ns(uint16_t deadtime);
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 int pwm_get_status(pwm_channel_e channel, pwm_status_t *status);
 void pwm_get_all_flt_temp(uint8_t *flt_temp);
 void pwm_get_all_flt_desat(uint8_t *flt_desat);
 void pwm_get_all_rdy(uint8_t *rdy);
 void pwm_set_all_rst(uint8_t rst);
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
 #endif // PWM_H

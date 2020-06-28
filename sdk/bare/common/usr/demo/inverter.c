@@ -42,12 +42,12 @@ void inverter_saturate_to_Vdc(int inv_idx, double *phase_voltage)
         ctx->Vdc = 1.0;
     }
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
     io_led_color_t color = { 0, 0, 0 };
     if (saturate(-ctx->Vdc / 2.0, ctx->Vdc / 2.0, phase_voltage) != 0)
         color.g = 255;
     io_led_set_c(0, 1, 0, &color);
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void inverter_set_voltage(int inv_idx, uint8_t pwm_idx, double phase_voltage)

@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if ENABLE_LOGGING == 1
+#if USER_CONFIG_ENABLE_LOGGING == 1
 
 #include "cmd_log.h"
 #include "sys/commands.h"
@@ -161,4 +161,4 @@ int cmd_log(int argc, char **argv)
     return CMD_INVALID_ARGUMENTS;
 }
 
-#endif // ENABLE_LOGGING
+#endif // USER_CONFIG_ENABLE_LOGGING

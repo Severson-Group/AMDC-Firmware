@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if ENABLE_INJECTION == 1
+#if USER_CONFIG_ENABLE_INJECTION == 1
 
 #include "cmd_inj.h"
 #include "sys/commands.h"
@@ -211,4 +211,4 @@ int cmd_inj(int argc, char **argv)
     return CMD_INVALID_ARGUMENTS;
 }
 
-#endif // ENABLE_INJECTION
+#endif // USER_CONFIG_ENABLE_INJECTION

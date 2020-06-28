@@ -40,7 +40,7 @@ void pwm_init(void)
 
 void pwm_toggle_reset(void)
 {
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 
     // Toggles RST on all inverter outputs for 1 ms
     pwm_set_all_rst(0xFF);
@@ -53,7 +53,7 @@ void pwm_toggle_reset(void)
     }
     pwm_set_all_rst(0xFF);
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 int pwm_set_switching_freq(double freq_hz)
@@ -149,7 +149,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     return SUCCESS;
 }
 
-#if HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == 3
 
 void pwm_get_all_flt_temp(uint8_t *flt_temp)
 {
@@ -220,4 +220,4 @@ int pwm_get_status(pwm_channel_e channel, pwm_status_t *status)
     return SUCCESS;
 }
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

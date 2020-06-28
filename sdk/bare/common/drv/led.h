@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == 4
 
 #ifndef LED_H
 #define LED_H
@@ -43,4 +43,4 @@ uint32_t led_get_raw(led_t idx);
 
 #endif // LED_H
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

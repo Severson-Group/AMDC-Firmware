@@ -1,6 +1,6 @@
 #include "usr/user_defines.h"
 
-#if ENABLE_LOGGING == 1
+#if USER_CONFIG_ENABLE_LOGGING == 1
 
 #include "sys/cmd/cmd_log.h"
 #include "sys/debug.h"
@@ -341,4 +341,4 @@ int log_var_dump_uart(int log_var_idx)
     return SUCCESS;
 }
 
-#endif // ENABLE_LOGGING
+#endif // USER_CONFIG_ENABLE_LOGGING
