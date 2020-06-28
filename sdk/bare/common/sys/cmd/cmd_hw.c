@@ -112,22 +112,22 @@ int cmd_hw(int argc, char **argv)
         if (argc == 7 && STR_EQ("set", argv[2])) {
             int led_idx = atoi(argv[3]);
             if (led_idx < 0 || led_idx >= NUM_LEDS)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             int r = atoi(argv[4]);
             int g = atoi(argv[5]);
             int b = atoi(argv[6]);
 
             if (r < 0 || r > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (g < 0 || g > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (b < 0 || b > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             led_set_color_bytes(led_idx, r, g, b);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 #endif // HARDWARE_TARGET

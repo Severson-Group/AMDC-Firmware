@@ -29,11 +29,13 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+#if HARDWARE_TARGET == 3
         io_led_color_t color;
         color.r = 255;
         color.g = 0;
         color.b = 0;
         io_led_set(&color);
+#endif // HARDWARE_TARGET
         HANG;
     }
 #endif // ENABLE_TIME_QUANTUM_CHECKING
