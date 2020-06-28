@@ -1,4 +1,4 @@
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
 #if USER_CONFIG_ENABLE_INJECTION == 1
 

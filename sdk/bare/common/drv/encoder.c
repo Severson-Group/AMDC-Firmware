@@ -2,7 +2,7 @@
 #include "drv/io.h"
 #include "sys/defines.h"
 #include "sys/scheduler.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include "xil_io.h"
 #include <math.h>
 #include <stdio.h>

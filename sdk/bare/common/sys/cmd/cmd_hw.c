@@ -6,7 +6,7 @@
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>

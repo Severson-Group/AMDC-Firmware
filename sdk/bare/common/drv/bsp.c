@@ -1,4 +1,4 @@
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
 #if (USER_CONFIG_HARDWARE_TARGET == 3) || (USER_CONFIG_HARDWARE_TARGET == 4)
 // Ensure a valid hardware target is specified

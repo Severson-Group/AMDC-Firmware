@@ -2,7 +2,7 @@
 
 #include "usr/blink/task_blink.h"
 #include "sys/scheduler.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdint.h>
 
 #if USER_CONFIG_HARDWARE_TARGET == 4

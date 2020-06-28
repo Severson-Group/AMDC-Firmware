@@ -2,7 +2,7 @@
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
 

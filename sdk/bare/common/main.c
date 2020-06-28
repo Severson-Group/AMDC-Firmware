@@ -24,7 +24,7 @@
 #include "sys/scheduler.h"
 #include "sys/serial.h"
 #include "usr/user_apps.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdio.h>
 
 int main()

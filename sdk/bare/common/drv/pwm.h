@@ -1,7 +1,7 @@
 #ifndef PWM_H
 #define PWM_H
 
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdint.h>
 
