@@ -38,11 +38,11 @@ int main()
     // Initialize system tasks
     serial_init();
     commands_init();
-#ifndef DISABLE_LOGGING
+#if ENABLE_LOGGING == 1
     log_init();
 #endif
 
-#ifndef DISABLE_INJECTION
+#if ENABLE_INJECTION == 1
     injection_init();
 #endif
 

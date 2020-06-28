@@ -28,10 +28,10 @@ int cmd_bemfo(int argc, char **argv)
     // Handle 'start' sub-command
     if (argc == 2 && strcmp("start", argv[1]) == 0) {
         bemfo_start();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BETA_LABS

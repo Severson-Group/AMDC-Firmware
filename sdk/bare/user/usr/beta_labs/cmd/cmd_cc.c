@@ -39,60 +39,60 @@ int cmd_cc(int argc, char **argv)
     if (strcmp("init", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 2)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Make sure cc task was not already inited
         if (task_cc_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_cc_init();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'deinit' sub-command
     if (strcmp("deinit", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 2)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Make sure cc task was already inited
         if (!task_cc_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_cc_deinit();
         task_cc_clear();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'bw' sub-command
     if (strcmp("bw", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 3)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Pull out mAmp argument
         // and saturate to 1 .. 500Hz
         double mBw = (double) atoi(argv[2]);
         if (mBw < 1000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (mBw > 500000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_set_bw(mBw / 1000.0);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'offset' sub-command
     if (strcmp("offset", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 3)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Pull out offset argument
         int32_t offset = atoi(argv[2]);
 
         task_cc_set_dq_offset(offset);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'theta_e_src' sub-command
@@ -103,12 +103,12 @@ int cmd_cc(int argc, char **argv)
         } else if (strcmp("est", argv[2]) == 0) {
             use_encoder = 0;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         task_cc_set_theta_e_src(use_encoder);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'omega_e_src' sub-command
@@ -119,15 +119,15 @@ int cmd_cc(int argc, char **argv)
         } else if (strcmp("est", argv[2]) == 0) {
             use_encoder = 0;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         task_cc_set_omega_e_src(use_encoder);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BETA_LABS
