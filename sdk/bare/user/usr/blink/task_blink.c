@@ -100,13 +100,12 @@ void task_blink_callback(void *arg)
 
 void task_blink_stats_print(void)
 {
-	task_stats_print(&tcb.stats);
+    task_stats_print(&tcb.stats);
 }
 
 void task_blink_stats_reset(void)
 {
-	task_stats_reset(&tcb.stats);
+    task_stats_reset(&tcb.stats);
 }
-
 
 #endif // APP_BLINK

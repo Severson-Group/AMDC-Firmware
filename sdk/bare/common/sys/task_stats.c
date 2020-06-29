@@ -1,17 +1,19 @@
 #include "sys/task_stats.h"
-#include "sys/scheduler.h"
-#include "sys/debug.h"
 #include "drv/fpga_timer.h"
+#include "sys/debug.h"
+#include "sys/scheduler.h"
 #include <assert.h>
 #include <stdint.h>
 
-void tast_stats_init(task_stats_t *stats) {
+void tast_stats_init(task_stats_t *stats)
+{
     assert(stats);
 
     task_stats_reset(stats);
 }
 
-void task_stats_reset(task_stats_t *stats) {
+void task_stats_reset(task_stats_t *stats)
+{
     assert(stats);
 
     stats->is_init = false;
@@ -20,7 +22,8 @@ void task_stats_reset(task_stats_t *stats) {
     statistics_clear(&stats->run_time);
 }
 
-void task_stats_pre_task(task_stats_t *stats) {
+void task_stats_pre_task(task_stats_t *stats)
+{
     assert(stats);
 
     if (stats->enabled) {
@@ -37,7 +40,8 @@ void task_stats_pre_task(task_stats_t *stats) {
     }
 }
 
-void task_stats_post_task(task_stats_t *stats) {
+void task_stats_post_task(task_stats_t *stats)
+{
     assert(stats);
 
     if (stats->enabled && stats->is_init) {
@@ -49,29 +53,28 @@ void task_stats_post_task(task_stats_t *stats) {
     }
 }
 
-
 // ***************************
 // Code for printing stats
 // ***************************
 
 typedef enum sm_states_e {
-	PRINT_HEADER = 0,
+    PRINT_HEADER = 0,
 
-	PRINT_LOOP_MIN,
-	PRINT_LOOP_MAX,
-	PRINT_LOOP_MEAN,
-	PRINT_LOOP_VARIANCE,
+    PRINT_LOOP_MIN,
+    PRINT_LOOP_MAX,
+    PRINT_LOOP_MEAN,
+    PRINT_LOOP_VARIANCE,
 
-	PRINT_RUN_MIN,
-	PRINT_RUN_MAX,
-	PRINT_RUN_MEAN,
-	PRINT_RUN_VARIANCE,
+    PRINT_RUN_MIN,
+    PRINT_RUN_MAX,
+    PRINT_RUN_MEAN,
+    PRINT_RUN_VARIANCE,
 
-	REMOVE_TASK,
+    REMOVE_TASK,
 } sm_states_e;
 
 typedef struct sm_ctx_t {
-	sm_states_e state;
+    sm_states_e state;
     task_control_block_t tcb;
 
     task_stats_t *stats;
@@ -82,62 +85,62 @@ typedef struct sm_ctx_t {
 
 void state_machine_callback(void *arg)
 {
-	sm_ctx_t *ctx = (sm_ctx_t *) arg;
+    sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
     switch (ctx->state) {
     case PRINT_HEADER:
-    	debug_printf("Task Stats:\r\n");
+        debug_printf("Task Stats:\r\n");
         ctx->state = PRINT_LOOP_MIN;
-    	break;
+        break;
 
     // Loop timings
-
+    // ...
     case PRINT_LOOP_MIN:
-    	debug_printf("Loop Min:\t%.2f usec\r\n", ctx->stats->loop_time.min);
+        debug_printf("Loop Min:\t%.2f usec\r\n", ctx->stats->loop_time.min);
         ctx->state = PRINT_LOOP_MAX;
-    	break;
+        break;
 
     case PRINT_LOOP_MAX:
-    	debug_printf("Loop Max:\t%.2f usec\r\n", ctx->stats->loop_time.max);
+        debug_printf("Loop Max:\t%.2f usec\r\n", ctx->stats->loop_time.max);
         ctx->state = PRINT_LOOP_MEAN;
         break;
 
     case PRINT_LOOP_MEAN:
-    	debug_printf("Loop Mean:\t%.2f usec\r\n", ctx->stats->loop_time.mean);
+        debug_printf("Loop Mean:\t%.2f usec\r\n", ctx->stats->loop_time.mean);
         ctx->state = PRINT_LOOP_VARIANCE;
         break;
 
     case PRINT_LOOP_VARIANCE:
-    	debug_printf("Loop Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->loop_time));
+        debug_printf("Loop Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->loop_time));
         ctx->state = PRINT_RUN_MIN;
         break;
 
     // Run timings
-
+    // ...
     case PRINT_RUN_MIN:
-    	debug_printf("Run Min:\t%.2f usec\r\n", ctx->stats->run_time.min);
+        debug_printf("Run Min:\t%.2f usec\r\n", ctx->stats->run_time.min);
         ctx->state = PRINT_RUN_MAX;
-    	break;
+        break;
 
     case PRINT_RUN_MAX:
-    	debug_printf("Run Max:\t%.2f usec\r\n", ctx->stats->run_time.max);
+        debug_printf("Run Max:\t%.2f usec\r\n", ctx->stats->run_time.max);
         ctx->state = PRINT_RUN_MEAN;
         break;
 
     case PRINT_RUN_MEAN:
-    	debug_printf("Run Mean:\t%.2f usec\r\n", ctx->stats->run_time.mean);
+        debug_printf("Run Mean:\t%.2f usec\r\n", ctx->stats->run_time.mean);
         ctx->state = PRINT_RUN_VARIANCE;
         break;
 
     case PRINT_RUN_VARIANCE:
-    	debug_printf("Run Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->run_time));
+        debug_printf("Run Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->run_time));
         ctx->state = REMOVE_TASK;
         break;
 
     case REMOVE_TASK:
-    	debug_printf("\r\n");
+        debug_printf("\r\n");
         scheduler_tcb_unregister(&ctx->tcb);
-    	break;
+        break;
 
     default:
         // Can't happen
@@ -151,8 +154,8 @@ static sm_ctx_t ctx;
 void task_stats_print(task_stats_t *stats)
 {
     // Initialize the state machine context
-	ctx.state = PRINT_HEADER;
-	ctx.stats = stats;
+    ctx.state = PRINT_HEADER;
+    ctx.stats = stats;
 
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx.tcb, state_machine_callback, &ctx, "printstats", SM_INTERVAL_USEC);

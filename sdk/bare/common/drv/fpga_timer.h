@@ -5,7 +5,6 @@
 
 void fpga_timer_init(void);
 
-
 // Return the current time in FPGA clock cycles (200MHz clock)
 uint32_t fpga_timer_now(void);
 

@@ -22,4 +22,4 @@ void statistics_clear(statistics_t *stats);
 void statistics_push(statistics_t *stats, double val);
 double statistics_variance(statistics_t *stats);
 
-#endif  // STATISTICS_H
+#endif // STATISTICS_H

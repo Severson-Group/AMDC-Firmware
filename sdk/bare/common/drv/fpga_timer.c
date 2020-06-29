@@ -27,19 +27,19 @@ void fpga_timer_init(void)
 
 uint32_t fpga_timer_now(void)
 {
-	return XTmrCtr_GetValue(&timer, 0);
+    return XTmrCtr_GetValue(&timer, 0);
 }
 
 double fpga_timer_ticks_to_usec(uint32_t ticks)
 {
-	// FPGA clock is 200MHz on AMDC
-    double usec = (double)ticks / 200;
+    // FPGA clock is 200MHz on AMDC
+    double usec = (double) ticks / 200;
     return usec;
 }
 
 double fpga_timer_ticks_to_sec(uint32_t ticks)
 {
-	// FPGA clock is 200MHz on AMDC
-    double sec = (double)ticks / 200e6;
+    // FPGA clock is 200MHz on AMDC
+    double sec = (double) ticks / 200e6;
     return sec;
 }

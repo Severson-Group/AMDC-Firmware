@@ -109,18 +109,16 @@ int cmd_blink(int argc, char **argv)
     }
 
     if (argc >= 2 && strcmp("stats", argv[1]) == 0) {
-    	if (argc == 3 && strcmp("print", argv[2]) == 0) {
-    		task_blink_stats_print();
+        if (argc == 3 && strcmp("print", argv[2]) == 0) {
+            task_blink_stats_print();
             return SUCCESS;
-    	}
+        }
 
-    	if (argc == 3 && strcmp("reset", argv[2]) == 0) {
+        if (argc == 3 && strcmp("reset", argv[2]) == 0) {
             task_blink_stats_reset();
             return SUCCESS;
-    	}
+        }
     }
-
-
 
     // At any point, if an error is detected in given input command,
     // simply return an error code (defined in sys/defines.h)

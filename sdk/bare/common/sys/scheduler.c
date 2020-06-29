@@ -155,11 +155,11 @@ void scheduler_run(void)
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
-            	task_stats_pre_task(&t->stats);
+                task_stats_pre_task(&t->stats);
                 running_task = t;
                 t->callback(t->callback_arg);
                 running_task = NULL;
-            	task_stats_post_task(&t->stats);
+                task_stats_post_task(&t->stats);
 
                 t->last_run_usec = elapsed_usec;
             }

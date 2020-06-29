@@ -1,8 +1,8 @@
 #ifndef TASK_STATS_H
 #define TASK_STATS_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "sys/statistics.h"
 
@@ -20,11 +20,13 @@ void task_stats_reset(task_stats_t *stats);
 
 void task_stats_print(task_stats_t *stats);
 
-static inline void task_stats_enable(task_stats_t *stats) {
+static inline void task_stats_enable(task_stats_t *stats)
+{
     stats->enabled = true;
 }
 
-static inline void task_stats_disable(task_stats_t *stats) {
+static inline void task_stats_disable(task_stats_t *stats)
+{
     stats->enabled = false;
 }
 
@@ -49,4 +51,4 @@ void task_stats_pre_task(task_stats_t *stats);
  */
 void task_stats_post_task(task_stats_t *stats);
 
-#endif  // TASK_STATS_H
+#endif // TASK_STATS_H
