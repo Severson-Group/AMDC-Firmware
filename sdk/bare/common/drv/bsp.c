@@ -13,6 +13,7 @@
 #include "drv/dac.h"
 #include "drv/encoder.h"
 #include "drv/pwm.h"
+#include "drv/fpga_timer.h"
 #include "drv/timer.h"
 #include "drv/uart.h"
 #include "drv/watchdog.h"
@@ -43,6 +44,8 @@ void bsp_init(void)
     encoder_init();
     analog_init();
     pwm_init();
+
+    fpga_timer_init();
 
 #if USER_CONFIG_HARDWARE_TARGET == 4
     led_init();

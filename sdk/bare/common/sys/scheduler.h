@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "sys/defines.h"
+#include "sys/task_stats.h"
 #include "usr/user_config.h"
 
 // SysTick
@@ -30,6 +31,9 @@ typedef struct task_control_block_t {
     void *callback_arg;
     uint64_t interval_usec;
     uint64_t last_run_usec;
+
+    task_stats_t stats;
+
     struct task_control_block_t *next;
 } task_control_block_t;
 

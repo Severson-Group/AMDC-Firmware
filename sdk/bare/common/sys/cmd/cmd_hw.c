@@ -1,6 +1,7 @@
 #include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
+#include "drv/fpga_timer.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
@@ -24,6 +25,7 @@ static command_help_t cmd_help[] = {
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
+    { "timer now", "Read value from FPGA timer" },
 
 #if USER_CONFIG_HARDWARE_TARGET == 4
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
@@ -102,33 +104,6 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-#if USER_CONFIG_HARDWARE_TARGET == 4
-    // Handle 'led' sub-command
-    // hw led set <led_idx> <r> <g> <b>
-    if (argc >= 2 && STR_EQ("led", argv[1])) {
-        if (argc == 7 && STR_EQ("set", argv[2])) {
-            int led_idx = atoi(argv[3]);
-            if (led_idx < 0 || led_idx >= NUM_LEDS)
-                return CMD_INVALID_ARGUMENTS;
-
-            int r = atoi(argv[4]);
-            int g = atoi(argv[5]);
-            int b = atoi(argv[6]);
-
-            if (r < 0 || r > 255)
-                return CMD_INVALID_ARGUMENTS;
-            if (g < 0 || g > 255)
-                return CMD_INVALID_ARGUMENTS;
-            if (b < 0 || b > 255)
-                return CMD_INVALID_ARGUMENTS;
-
-            led_set_color_bytes(led_idx, r, g, b);
-
-            return CMD_SUCCESS;
-        }
-    }
-#endif // USER_CONFIG_HARDWARE_TARGET
-
     // Handle 'enc' sub-command
     if (argc >= 2 && STR_EQ("enc", argv[1])) {
         if (argc == 3 && STR_EQ("steps", argv[2])) {
@@ -155,6 +130,44 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
     }
+
+    // Handle 'timer' sub-command
+    if (argc >= 2 && STR_EQ("timer", argv[1])) {
+        if (argc == 3 && STR_EQ("now", argv[2])) {
+            uint32_t counts = fpga_timer_now();
+
+            debug_printf("counts: %lu\r\n", counts);
+
+            return CMD_SUCCESS;
+        }
+    }
+
+#if USER_CONFIG_HARDWARE_TARGET == 4
+    // Handle 'led' sub-command
+    // hw led set <led_idx> <r> <g> <b>
+    if (argc >= 2 && STR_EQ("led", argv[1])) {
+        if (argc == 7 && STR_EQ("set", argv[2])) {
+            int led_idx = atoi(argv[3]);
+            if (led_idx < 0 || led_idx >= NUM_LEDS)
+                return CMD_INVALID_ARGUMENTS;
+
+            int r = atoi(argv[4]);
+            int g = atoi(argv[5]);
+            int b = atoi(argv[6]);
+
+            if (r < 0 || r > 255)
+                return CMD_INVALID_ARGUMENTS;
+            if (g < 0 || g > 255)
+                return CMD_INVALID_ARGUMENTS;
+            if (b < 0 || b > 255)
+                return CMD_INVALID_ARGUMENTS;
+
+            led_set_color_bytes(led_idx, r, g, b);
+
+            return CMD_SUCCESS;
+        }
+    }
+#endif // USER_CONFIG_HARDWARE_TARGET
 
     return CMD_INVALID_ARGUMENTS;
 }
