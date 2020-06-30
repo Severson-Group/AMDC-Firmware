@@ -5,6 +5,7 @@
 #include "sys/prof_timer.h"
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
+#include "xil_io.h"
 #include <math.h>
 #include <stdint.h>
 
@@ -41,6 +42,8 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
 static task_control_block_t tcb;
 
 static prof_timer_t my_math_timer = { .name = "Blink Math", .is_enabled = true };
+static prof_timer_t my_AXI_timer = { .name = "Blink AXI", .is_enabled = true };
+static prof_timer_t my_ADD_timer = { .name = "Blink ADD", .is_enabled = true };
 
 void task_blink_init(void)
 {
@@ -116,7 +119,7 @@ void task_blink_stats_reset(void)
     task_stats_reset(&tcb.stats);
 }
 
-void task_blink_expensive_run(int N)
+void task_blink_expensive_run1(int N)
 {
     for (int i = 0; i < N; i++) {
         prof_timer_start_crit(&my_math_timer);
@@ -129,9 +132,43 @@ void task_blink_expensive_run(int N)
     }
 }
 
-void task_blink_expensive_stats(void)
+void task_blink_expensive_run2(int N)
 {
-    prof_timer_t *t = &my_math_timer;
+    for (int i = 0; i < N; i++) {
+        prof_timer_start_crit(&my_AXI_timer);
+
+        // Read from the analog driver, channel 0
+        volatile uint32_t reg_value;
+        reg_value = Xil_In32(0x43C00000);
+
+        prof_timer_stop_crit(&my_AXI_timer);
+    }
+}
+
+void task_blink_expensive_run3(int N)
+{
+    register volatile uint32_t tmp = 0;
+
+    for (int i = 0; i < N; i++) {
+        prof_timer_start_crit(&my_ADD_timer);
+
+        tmp = tmp + 1;
+
+        prof_timer_stop_crit(&my_ADD_timer);
+    }
+}
+
+void task_blink_expensive_stats(int i)
+{
+    prof_timer_t *t = NULL;
+
+    if (i == 1) {
+        t = &my_math_timer;
+    } else if (i == 2) {
+        t = &my_AXI_timer;
+    } else if (i == 3) {
+        t = &my_ADD_timer;
+    }
 
     debug_printf("Name:\t%s\r\n", t->name);
     debug_printf("Max:\t%.3f usec\r\n", t->stats.max);

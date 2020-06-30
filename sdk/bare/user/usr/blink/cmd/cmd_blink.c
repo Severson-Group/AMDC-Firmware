@@ -20,9 +20,8 @@ static command_help_t cmd_help[] = {
     { "deinit", "Stop task" },
     { "stats print", "Print stats" },
     { "stats reset", "Reset stats" },
-    { "expen run <N>", "Run an expensive operation N times" },
-    { "expen stats", "Print stats for expensive operation" },
-
+    { "expen run<1|2|3> <N>", "Run an expensive operation N times" },
+    { "expen stats <N>", "Print stats for expensive operation" },
 };
 
 void cmd_blink_register(void)
@@ -123,19 +122,47 @@ int cmd_blink(int argc, char **argv)
     }
 
     if (argc >= 2 && strcmp("expen", argv[1]) == 0) {
-        if (argc == 4 && strcmp("run", argv[2]) == 0) {
+        if (argc == 4 && strcmp("run1", argv[2]) == 0) {
             int N = atoi(argv[3]);
 
             if (N < 0 || N > 1000) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            task_blink_expensive_run(N);
+            task_blink_expensive_run1(N);
             return SUCCESS;
         }
 
-        if (argc == 3 && strcmp("stats", argv[2]) == 0) {
-            task_blink_expensive_stats();
+        if (argc == 4 && strcmp("run2", argv[2]) == 0) {
+            int N = atoi(argv[3]);
+
+            if (N < 0 || N > 1000) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            task_blink_expensive_run2(N);
+            return SUCCESS;
+        }
+
+        if (argc == 4 && strcmp("run3", argv[2]) == 0) {
+            int N = atoi(argv[3]);
+
+            if (N < 0 || N > 1000) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            task_blink_expensive_run3(N);
+            return SUCCESS;
+        }
+
+        if (argc == 4 && strcmp("stats", argv[2]) == 0) {
+            int N = atoi(argv[3]);
+
+            if (N < 1 || N > 3) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            task_blink_expensive_stats(N);
             return SUCCESS;
         }
     }

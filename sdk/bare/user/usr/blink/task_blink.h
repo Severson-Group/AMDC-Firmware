@@ -29,7 +29,10 @@ void task_blink_stats_print(void);
 // Reset the statistics gathered by the scheduler
 void task_blink_stats_reset(void);
 
-void task_blink_expensive_run(int N);
-void task_blink_expensive_stats(void);
+// TODO(NP): remove these, this is only for debugging profiler timing
+void task_blink_expensive_run1(int N);
+void task_blink_expensive_run2(int N);
+void task_blink_expensive_run3(int N);
+void task_blink_expensive_stats(int i);
 
 #endif // TASK_BLINK_H
