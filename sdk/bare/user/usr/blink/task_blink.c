@@ -1,8 +1,11 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/task_blink.h"
+#include "sys/debug.h"
+#include "sys/prof_timer.h"
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
+#include <math.h>
 #include <stdint.h>
 
 #if USER_CONFIG_HARDWARE_TARGET == 4
@@ -37,6 +40,8 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
 
+static prof_timer_t my_math_timer = { .name = "Blink Math", .is_enabled = true };
+
 void task_blink_init(void)
 {
     // Fill TCB with parameters
@@ -44,6 +49,9 @@ void task_blink_init(void)
 
     // Register task with scheduler
     scheduler_tcb_register(&tcb);
+
+    // Register profiling timer
+    prof_timer_register(&my_math_timer);
 }
 
 void task_blink_deinit(void)
@@ -106,6 +114,33 @@ void task_blink_stats_print(void)
 void task_blink_stats_reset(void)
 {
     task_stats_reset(&tcb.stats);
+}
+
+void task_blink_expensive_run(int N)
+{
+    for (int i = 0; i < N; i++) {
+        prof_timer_start_crit(&my_math_timer);
+
+        double volatile x;
+        x = sin(random()) * sqrt(random());
+        x += 0.0;
+
+        prof_timer_stop_crit(&my_math_timer);
+    }
+}
+
+void task_blink_expensive_stats(void)
+{
+    prof_timer_t *t = &my_math_timer;
+
+    debug_printf("Name:\t%s\r\n", t->name);
+    debug_printf("Max:\t%.3f usec\r\n", t->stats.max);
+    debug_printf("Min:\t%.3f usec\r\n", t->stats.min);
+    debug_printf("Mean:\t%.3f usec\r\n", t->stats.mean);
+    debug_printf("Var:\t%.3f usec\r\n", statistics_variance(&t->stats));
+    debug_printf("Num:\t%d samples\r\n", t->stats.num_samples);
+
+    prof_timer_reset(t);
 }
 
 #endif // APP_BLINK

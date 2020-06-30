@@ -29,4 +29,7 @@ void task_blink_stats_print(void);
 // Reset the statistics gathered by the scheduler
 void task_blink_stats_reset(void);
 
+void task_blink_expensive_run(int N);
+void task_blink_expensive_stats(void);
+
 #endif // TASK_BLINK_H

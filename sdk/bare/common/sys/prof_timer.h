@@ -100,8 +100,10 @@ static inline void prof_timer_start(prof_timer_t *x)
 
 static inline void prof_timer_start_crit(prof_timer_t *x)
 {
-    if (x->is_enabled)
+    if (x->is_enabled) {
         x->__primask = util_critical_section_enter();
+    }
+
     prof_timer_start(x);
 }
 
