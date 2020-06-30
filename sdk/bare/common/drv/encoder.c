@@ -1,4 +1,5 @@
 #include "drv/encoder.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "sys/defines.h"
 #include "sys/scheduler.h"
@@ -73,7 +74,7 @@ static void _find_z_callback(void *arg)
     {
         scheduler_tcb_unregister(&ctx->tcb);
 
-#if HARDWARE_TARGET == 3
+#if HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
         color.b = 0;
         io_led_set_c(0, 0, 1, &color);
@@ -90,7 +91,7 @@ void encoder_find_z(void)
     // Initialize the state machine context
     ctx.state = WAIT_UNTIL_Z;
 
-#if HARDWARE_TARGET == 3
+#if HARDWARE_TARGET == AMDC_REV_C
     io_led_color_t color;
     color.b = 255;
     io_led_set_c(0, 0, 1, &color);

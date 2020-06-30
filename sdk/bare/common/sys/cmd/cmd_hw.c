@@ -1,6 +1,7 @@
 #include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
+#include "drv/hardware_targets.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
@@ -11,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if HARDWARE_TARGET == 4
+#if HARDWARE_TARGET == AMDC_REV_D
 #include "drv/led.h"
 #endif // HARDWARE_TARGET
 
@@ -25,7 +26,7 @@ static command_help_t cmd_help[] = {
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
 
-#if HARDWARE_TARGET == 4
+#if HARDWARE_TARGET == AMDC_REV_D
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
 #endif // HARDWARE_TARGET
 };
@@ -120,7 +121,7 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-#if HARDWARE_TARGET == 4
+#if HARDWARE_TARGET == AMDC_REV_D
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc == 7 && strcmp("led", argv[1]) == 0) {

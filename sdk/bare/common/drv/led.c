@@ -1,6 +1,7 @@
+#include "drv/hardware_targets.h"
 #include "usr/user_defines.h"
 
-#if HARDWARE_TARGET == 4
+#if HARDWARE_TARGET == AMDC_REV_D
 
 #include "drv/led.h"
 #include "xil_io.h"

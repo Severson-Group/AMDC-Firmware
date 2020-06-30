@@ -1,6 +1,7 @@
+#include "drv/hardware_targets.h"
 #include "usr/user_defines.h"
 
-#if HARDWARE_TARGET == 3
+#if HARDWARE_TARGET == AMDC_REV_C
 
 #ifndef IO_H
 #define IO_H
