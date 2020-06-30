@@ -159,6 +159,11 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
     if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
         return FAILURE;
     }
+    
+    // If variable slot is already registered, don't allow overwrite
+    if (vars[idx].is_registered) {
+        return FAILURE;
+    }
 
     // Populate variable entry...
     strncpy(vars[idx].name, name, LOG_VAR_NAME_MAX_CHARS);
