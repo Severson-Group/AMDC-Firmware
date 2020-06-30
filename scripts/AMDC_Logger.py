@@ -244,6 +244,15 @@ class AMDC_Logger():
         else:
             return None
         
+    def load(self, file):
+        
+        p = pl.Path(file)
+        p = p.parent / (p.stem + '.csv')
+        
+        out = pd.read_csv(p, comment = '#', index_col = 't')
+        
+        return out
+        
     def _dump_single_bin(self, var):
         
         var = self._sanitize_inputs(var)[0]
