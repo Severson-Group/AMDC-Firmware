@@ -1,11 +1,11 @@
 #include "sys/prof_timer.h"
-#include "sys/statistics.h"
 #include "drv/fpga_timer.h"
+#include "sys/statistics.h"
 #include "sys/util.h"
 #include <assert.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 static prof_timer_t *m_head = NULL;
 
@@ -36,8 +36,8 @@ void prof_timer_register(prof_timer_t *x)
     if (entry) {
         entry->__next = x;
     } else {
-    	// No registered entries
-    	m_head = x;
+        // No registered entries
+        m_head = x;
     }
 
     m_num_registered++;
@@ -62,7 +62,7 @@ void prof_timer_unregister(prof_timer_t *x)
         // iterating over the list to find the element of the list
         // that references us. Then we set the next reference of
         // the previous element to our next reference.
-    	prof_timer_t *prev = m_head;
+        prof_timer_t *prev = m_head;
         size_t i = 0;
         while (prev && (prev->__next) && (i < m_num_registered)) {
             if (prev->__next == x) {

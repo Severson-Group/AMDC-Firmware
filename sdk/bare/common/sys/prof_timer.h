@@ -60,20 +60,20 @@
 #ifndef PROF_TIMER_H
 #define PROF_TIMER_H
 
+#include "drv/fpga_timer.h"
 #include "sys/statistics.h"
 #include "sys/util.h"
-#include "drv/fpga_timer.h"
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 // ---------
 // Structure
 // ---------
 
 typedef struct prof_timer {
-	// A name for printouts
+    // A name for printouts
     const char *name;
 
     // Will the stats actually be calculated?
