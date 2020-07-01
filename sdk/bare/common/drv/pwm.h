@@ -45,7 +45,14 @@ typedef struct pwm_status_t {
     uint8_t fault_temp;
 } pwm_status_t;
 
-bool pwm_is_valid_channel(pwm_channel_e channel);
+static inline bool pwm_is_valid_channel(pwm_channel_e channel)
+{
+    if (channel >= PWM_OUT1 && channel < PWM_NUM_CHANNELS) {
+        return true;
+    }
+
+    return false;
+}
 
 void pwm_init(void);
 

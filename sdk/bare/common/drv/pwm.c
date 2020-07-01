@@ -14,15 +14,6 @@ static uint16_t deadtime;
 // or
 // carrier_max = ((200e6 / divisor) / (switching_freq)) / 2
 
-bool pwm_is_valid_channel(pwm_channel_e channel)
-{
-    if (channel >= PWM_OUT1 && channel < PWM_NUM_CHANNELS) {
-        return true;
-    }
-
-    return false;
-}
-
 void pwm_init(void)
 {
     printf("PWM:\tInitializing...\n");

@@ -40,8 +40,23 @@ typedef enum {
     ANALOG_CLKDIV16,
 } analog_clkdiv_e;
 
-bool analog_is_valid_channel(analog_channel_e channel);
-bool analog_is_valid_clkdiv(analog_clkdiv_e div);
+static inline bool analog_is_valid_channel(analog_channel_e channel)
+{
+    if (channel >= ANALOG_IN1 && channel < ANALOG_NUM_CHANNELS) {
+        return true;
+    }
+
+    return false;
+}
+
+static inline bool analog_is_valid_clkdiv(analog_clkdiv_e div)
+{
+    if (div == ANALOG_CLKDIV2 || div == ANALOG_CLKDIV4 || div == ANALOG_CLKDIV8 || div == ANALOG_CLKDIV16) {
+        return true;
+    }
+
+    return false;
+}
 
 void analog_init(void);
 

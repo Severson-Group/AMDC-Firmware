@@ -6,24 +6,6 @@
 
 #define ANALOG_BASE_ADDR (0x43C00000)
 
-bool analog_is_valid_channel(analog_channel_e channel)
-{
-    if (channel >= ANALOG_IN1 && channel < ANALOG_NUM_CHANNELS) {
-        return true;
-    }
-
-    return false;
-}
-
-bool analog_is_valid_clkdiv(analog_clkdiv_e div)
-{
-    if (div == ANALOG_CLKDIV2 || div == ANALOG_CLKDIV4 || div == ANALOG_CLKDIV8 || div == ANALOG_CLKDIV16) {
-        return true;
-    }
-
-    return false;
-}
-
 void analog_init(void)
 {
     printf("ANLG:\tInitializing...\n");
