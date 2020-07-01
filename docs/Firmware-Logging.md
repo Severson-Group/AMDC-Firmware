@@ -104,8 +104,8 @@ The python interface is built on top of the serial terminal logging interface in
 
 To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
 
-1. `AMDC`: class that is found in the `AMDC` module. Responsible for communicating with AMDC over serial terminal
-2. `AMDC_Logger`: class that is found in the `AMDC_Logger` module. Responsible for sending logging commands to AMDC and book keeping
+1. `AMDC`: class that is found in the `AMDC` module. Responsible for communicating with the AMDC over serial terminal
+2. `AMDC_Logger`: class that is found in the `AMDC_Logger` module. Responsible for sending logging commands to the AMDC and book keeping
 
 The top of your python script should look like the following:
 
@@ -118,7 +118,7 @@ from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 ```
 
-Note that you may have to change the scripts folder location to wherever you have the AMDC-Firmware scripts folder on your computer. Adding this location to the `sys.path` variable allows python to find the `AMDC` and `AMDC_Logger` modules to import them.
+Adding the location of the scripts folder to the `sys.path` variable allows python to find the `AMDC` and `AMDC_Logger` modules to import them.
 
 After importing the modules, perform the following steps:
 
@@ -139,14 +139,22 @@ logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 2), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
 
 #### 4. Synchronize logger with AMDC:
-```logger.sync()```
-This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the amdc won't align and you'll get unexpected behavior.
+
+```
+logger.sync()
+```
+
+This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the AMDC won't align and you'll get unexpected behavior.
 
 #### 5. Register variables of interest:  
 There are several ways to register variables for logging. One way is as follows:
-```logger.register('LOG_foo', samples_per_sec = 1000, var_type = 'double')```
+```
+logger.register('LOG_foo', samples_per_sec = 1000, var_type = 'double')
+```
 Note that register has default arguments of `samples_per_sec = 1000` and `var_type = 'double'` so the preceding line could also be accomplished as follows:
-```logger.register('LOG_foo')```
+```
+logger.register('LOG_foo')
+```
 
 If you have multiple variables that you wish to register with the same type and sample rate you can register them all at the same time. the `AMDC_Logger` class is also smart and sanitizes the input variables so you don't have to prepend `LOG_` to each variable if you don't want. The following snippets of code all accomplish the same task.
 
@@ -159,17 +167,25 @@ logger.register(('foo', 'bar', 'baz'))     #tuple of variable names
 
 There is also a convenient `auto_register()` function that can be used to search your user code for variables of the form `LOG_*` and register them for you automatically. You just give the file path to your app's c code as follows:
 
-```logger.auto_register(path_to_user_app)```
+```
+logger.auto_register(path_to_user_app)
+```
 
 if you want to check to see which variables the auto register function will register before calling it, you can call the `auto_find_vars()` function as follows:
-```log_vars, log_types = auto_find_vars(path_to_user_app)```
+```
+log_vars, log_types = auto_find_vars(path_to_user_app)
+```
 where `log_vars` is a list containing all of the variables found in the user c code and `log_types` is a list containing the corresponding variable types.
 
 #### 6. Start logging:
-`logger.start()`
+```
+logger.start()
+```
 
 #### 7. Stop logging:
-`logger.stop()`
+```
+logger.stop()
+```
 
 Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following illustrates a common use case
 
