@@ -66,6 +66,8 @@ The terminal interface operates the same as any other user application (as shown
 The logging application has the following commands:
 
 1. `reg` -- registers a new variable for logging
+    > **Required Arguments**
+
 2. `unreg` -- unregisters a variable that you no longer care to log
 3. `start` -- starts recording data
 4. `stop` -- stops recording data
@@ -75,7 +77,7 @@ The logging application has the following commands:
 
 ## Python Interface
 
-Before you can use the python interface, you must modify your C-code according to the C-Code Modifications [section](#c-code-modifications).
+Before you can use the python interface, you must modify your c code according to the C-Code Modifications [section](#c-code-modifications).
 
 1. Instantiate a logger object
 1. Synchronize logger with AMDC
