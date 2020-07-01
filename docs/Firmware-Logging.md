@@ -182,7 +182,7 @@ logger.stop()
 
 7. Dump data:
 
-After collecting data, you will want to access that data. You do that as follows:
+After collecting data, you will want to access that data. You do that as follows:  
 ```
 data = logger.dump()
 ```
@@ -190,21 +190,21 @@ The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super
 
 The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all variables. This can be time consuming so if you want you can specifiy a subset of variables to dump as follows:
 
-`data = logger.dump(log_vars = 'foo bar')`
+```data = logger.dump(log_vars = 'foo bar')```
 
 You can also specify a file path and dump will automatically save the data to a `.csv` file. This is nice to make sure your data is persistent. By default, the `dump()` function appends a timestamp to your file name so that you can't accidently overwrite data that you've collected. 
 
-`data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv')`
+```data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv')```
 
 Sometimes it is nice to add notes to a specific set of data. You can do this by adding the additional optional parameter `comment` to the `dump()` function.
 
-`data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')`
+```data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')```
 
 Now that your data is in a `DataFrame` you can post process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
 
 Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe as follows:
 
-`data = logger.dump(file = 'sensed_values.csv')`
+```data = logger.dump(file = 'sensed_values.csv')```
 
 Now we can make a plot of our position data in one line by calling the `plot()` method on the `DataFrame` while indexing into the displacement data of the `DataFrame`:
 
