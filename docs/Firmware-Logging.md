@@ -181,7 +181,7 @@ where `log_vars` is a list containing all of the variables found in the user c c
 ```
 logger.clear_all()
 ```
-Calling the clear all method resets all of the internal indices of the logger so that you don't receive old logged data. You can kind of think of it as clearing the log. If you just wish to clear a single variable for some reason you can call the `clear()` method and pass in the name of the variable you wish to clear. NOTE: clearing variables does not unregister them from logging.
+Calling the `clear_all()` method resets all of the internal indices of the logger so that you don't receive old logged data. You can kind of think of it as clearing the log. If you just wish to clear a single variable for some reason you can call the `clear()` method and pass in the name of the variable you wish to clear. NOTE: clearing variables does not unregister them from logging.
 
 ```
 logger.clear('foo') #clear single variable
@@ -201,6 +201,7 @@ logger.stop()
 Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following example illustrates a common use case:
 
 ```
+logger.clear_all()
 logger.start()
 
 do_something()
@@ -263,6 +264,43 @@ This is just one example of how quick `pandas` can make visualizing our logged d
 ### Miscellaneous Log Functions
 
 1. Log for set duration
-1. Clear logged variables
+```
+logger.log(duration = 0.5) #record data for half second
+```
+The above is exactly equivalent to
+```
+logger.start()
+time.sleep(0.5)
+logger.stop()
+```
+
 1. Unregister Variables
+Perhaps for some reason you want to unregister some variables, that can be done easily using the `unregister()` method as follows:
+
+```
+logger.unregister('foo bar')
+```
+Again the input can take many forms, the following would also work:
+```
+logger.unregister('LOG_foo LOG_bar')
+logger.unregister(['LOG_foo', LOG_bar'])
+logger.unregister(['foo', 'bar'])
+...
+```
+If for some reason you want to unregister all variables, you can do that as the following:
+
+```
+logger.unregister_all()
+```
+
 1. Load saved data
+At some point you'll probably want to load in an old run of data. You can do this using the `load()` method as follows:
+```
+data = logger.load('old_data_file.csv')
+```
+This will load your old data run into a `pandas` `DataFrame`. The load function is just a thin wrapper around the `pandas` `read_csv()` method and the above line of code is equivalent to:
+```
+data = pd.read_csv('old_data_file.csv', comment = '#', index_col = 't')
+```
+loading the data this way sets time to be the index of the `DataFrame` and ignores any comments you may have stored with the data.
+
