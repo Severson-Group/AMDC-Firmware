@@ -137,7 +137,10 @@ logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 1), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
 
 3. Synchronize logger with AMDC
-1. Register variables of interest
+```logger.sync()```
+This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the amdc won't align and you'll get unexpected behavior.
+
+4. Register variables of interest
 1. Clear logged variables
 1. Start logging
 1. Stop logging
