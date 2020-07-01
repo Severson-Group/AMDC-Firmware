@@ -96,6 +96,27 @@ The logging application has the following commands:
 
 Before you can use the python interface, you must modify your c code according to the C-Code Modifications [section](#c-code-modifications).
 
+The python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that python can take care of all of the book keeping for you by remembering which variables are being logged, which variables are in which slots, and which slots are still available. It also automatically determines the memory addresses of each variable and converts them to correct format, reads dumped data off of the serial terminal and converts it to a format that can be saved to a `.csv` file and has other convenience functions that make logging much easier. 
+
+To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
+
+1. `AMDC` class that is found in the `AMDC` module
+2. `AMDC_Logger` class that is found in the `AMDC_Logger` module
+
+The top of your python script should likely have the following:
+
+```
+import sys
+scripts_folder = r'C:\Users\nheme\Documents\Git_Hub\CRAMB_Control\AMDC-Firmware\scripts'
+sys.path.append(scripts_folder)
+
+from AMDC import AMDC
+from AMDC_Logger import AMDC_Logger, find_mapfile
+```
+
+
+
+
 1. Instantiate a logger object
 1. Synchronize logger with AMDC
 1. Register variables of interest
