@@ -60,3 +60,14 @@ The terminal interface operates the same as any other user application. It is hi
 <img src="images/logging/terminal.png" />
 
 ## Python Interface
+
+1. Instantiate a logger object
+1. Synchronize logger with AMDC
+1. Register variables of interest
+1. Clear logged variables
+1. Start logging
+1. Stop logging
+1. Log for set duration
+1. Dump data
+1. Unregister Variables
+1. Load saved data
