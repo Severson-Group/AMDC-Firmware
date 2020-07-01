@@ -67,11 +67,11 @@ The logging application has the following commands:
 
 1. `reg` -- registers a new variable for logging
     > **Required Arguments**  
-    > - `log_var_idx`  
-    > - `name`  
-    > - `memory_addr`  
-    > - `samples_per_sec`  
-    > - `type`    
+    > - `log_var_idx` -- the index that you want the variable to be stored in (must be 0-31). The command will fail if a variable is already registered in this slot.
+    > - `name` -- name of the variable that you are logging (example: `LOG_foo`)
+    > - `memory_addr` -- global memory address of the variable you are logging in decimal format. The reason global variables are created for logging is because their addresses remain constant during runtime. The memory address can be found in "mapfile.txt" in a hexadecimal format, which is located in the "Debug" folder of the users private c code. After locating the variables address, you must convert it from hexadecimal to decimal before entering it through the terminal.
+    > - `samples_per_sec`  -- the sample rate in samples per second that you wish to record the variable at. Note that not all variables have to have the same sample rate.
+    > - `type` -- data type of the variable being logged. Valid types are: `double`, `float`, `int` 
 
 2. `unreg` -- unregisters a variable that you no longer care to log  
     > **Required Arguments**  
