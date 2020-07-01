@@ -53,7 +53,8 @@ void callback_func(){
 }
 ```
 
-
 ## Terminal Interface
+
+The terminal interface operates the same as any other user application. It is highly recommended, however, that the user does not use the terminal interface directly, as it is difficult to use manually and requires a lot of book keeping.
 
 ## Python Interface
