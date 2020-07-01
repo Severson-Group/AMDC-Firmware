@@ -1,6 +1,7 @@
+#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 #include "drv/io.h"
 #include "xgpiops.h"
