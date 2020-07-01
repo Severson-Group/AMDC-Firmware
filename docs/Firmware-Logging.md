@@ -263,7 +263,7 @@ This is just one example of how quick `pandas` can make visualizing our logged d
 
 ### Miscellaneous Log Functions
 
-1. Log for set duration
+#### Log for set duration
 ```
 logger.log(duration = 0.5) #record data for half second
 ```
@@ -274,7 +274,7 @@ time.sleep(0.5)
 logger.stop()
 ```
 
-1. Unregister Variables
+#### Unregister Variables
 Perhaps for some reason you want to unregister some variables, that can be done easily using the `unregister()` method as follows:
 
 ```
@@ -293,7 +293,7 @@ If for some reason you want to unregister all variables, you can do that as the 
 logger.unregister_all()
 ```
 
-1. Load saved data
+#### Load saved data
 At some point you'll probably want to load in an old run of data. You can do this using the `load()` method as follows:
 ```
 data = logger.load('old_data_file.csv')
