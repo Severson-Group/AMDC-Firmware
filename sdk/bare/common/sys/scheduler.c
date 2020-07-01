@@ -68,6 +68,9 @@ void scheduler_tcb_init(
     tcb->callback_arg = callback_arg;
     tcb->interval_usec = interval_usec;
     tcb->last_run_usec = 0;
+
+    // Always turn on the task statistics!
+    tcb->stats.enabled = true;
 }
 
 void scheduler_tcb_register(task_control_block_t *tcb)
@@ -153,9 +156,11 @@ void scheduler_run(void)
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
+                task_stats_pre_task(&t->stats);
                 running_task = t;
                 t->callback(t->callback_arg);
                 running_task = NULL;
+                task_stats_post_task(&t->stats);
 
                 t->last_run_usec = elapsed_usec;
             }

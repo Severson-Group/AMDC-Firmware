@@ -18,6 +18,8 @@ static command_help_t cmd_help[] = {
     { "hello <name>", "Print hello to screen" },
     { "init", "Start task" },
     { "deinit", "Stop task" },
+    { "stats print", "Print stats" },
+    { "stats reset", "Reset stats" },
 
 };
 
@@ -104,6 +106,18 @@ int cmd_blink(int argc, char **argv)
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
         task_blink_deinit();
         return SUCCESS;
+    }
+
+    if (argc >= 2 && strcmp("stats", argv[1]) == 0) {
+        if (argc == 3 && strcmp("print", argv[2]) == 0) {
+            task_blink_stats_print();
+            return SUCCESS;
+        }
+
+        if (argc == 3 && strcmp("reset", argv[2]) == 0) {
+            task_blink_stats_reset();
+            return SUCCESS;
+        }
     }
 
     // At any point, if an error is detected in given input command,

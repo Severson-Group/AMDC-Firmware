@@ -23,4 +23,10 @@ void task_blink_deinit(void);
 // Callback function which scheduler calls periodically
 void task_blink_callback(void *arg);
 
+// Print the statistics gathered by the scheduler
+void task_blink_stats_print(void);
+
+// Reset the statistics gathered by the scheduler
+void task_blink_stats_reset(void);
+
 #endif // TASK_BLINK_H

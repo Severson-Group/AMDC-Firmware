@@ -6,13 +6,14 @@
 // NOTE: this firmware only supports REV C hardware onward
 #else
 #error "ERROR: Hardware target not specified correctly"
-// If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your user_defines.h file!
+// If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your usr/user_config.h file!
 #endif
 
 #include "drv/analog.h"
 #include "drv/bsp.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
+#include "drv/fpga_timer.h"
 #include "drv/pwm.h"
 #include "drv/timer.h"
 #include "drv/uart.h"
@@ -44,6 +45,8 @@ void bsp_init(void)
     encoder_init();
     analog_init();
     pwm_init();
+
+    fpga_timer_init();
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     led_init();
