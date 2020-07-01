@@ -16,7 +16,7 @@ The AMDC supports logging capabilities. Although it is possible to perform these
 
 1. `AMDC_Logger.py`
 
-Documentation for logging on the AMDC can be found [here](../)
+Documentation for logging on the AMDC can be found [here](../docs/Firmware-Logging.md)
 
 ## Auto-Formatting C Code via `clang-format`
 
