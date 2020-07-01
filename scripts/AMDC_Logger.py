@@ -6,6 +6,12 @@ import os
 import datetime
 import struct
 
+#########################################################
+# Title:       AMDC Logging code
+# Author(s):   Nicholas Hemenway, Nathan Petersen
+# Date:        06/30/2020
+#########################################################
+
 class AMDC_Logger():
     
     default_max_slots = 32
