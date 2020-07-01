@@ -96,6 +96,8 @@ The logging application has the following commands:
 
 Before you can use the python interface, you must modify your c code according to the C-Code Modifications [section](#c-code-modifications).
 
+Note that in the text that follows, `REPO_DIR` is an alias for the file path to where your repository is located. `REPO_DIR` contains the `AMDC-Firmware` submodule as well as a the folder containing your user c code.
+
 The python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that python can take care of all of the book keeping for you by remembering which variables are being logged, which variables are in which slots, and which slots are still available. It also automatically determines the memory addresses of each variable and converts them to correct format, reads dumped data off of the serial terminal and converts it to a format that can be saved to a `.csv` file and has other convenience functions that make logging much easier. 
 
 To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
@@ -107,7 +109,7 @@ The top of your python script should look like the following:
 
 ```
 import sys
-scripts_folder = r'.\AMDC-Firmware\scripts'
+scripts_folder = r'REPO_DIR\AMDC-Firmware\scripts'
 sys.path.append(scripts_folder)
 
 from AMDC import AMDC
@@ -126,15 +128,15 @@ amdc.connect() #opens up serial communication
 
 Note that you may need to change the port number (i.e. `COM4' --> 'COM3', etc.) depending on which port the AMDC is communicating to your computer through. You can determine this by first connecting to the AMDC through the terminal and noting which port it tries to automatically connect with. 
 
-2. Instantiate and `AMDC_Logger` object:
+2. Instantiate an `AMDC_Logger` object:
 ```
-mapfile_path = find_mapfile(r'C:\Users\nheme\Documents\Git_Hub\CRAMB_Control')
+mapfile_path = find_mapfile(REPO_DIR)
 logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 ```
 
+The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 1), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
 
-1. Instantiate a logger object
-1. Synchronize logger with AMDC
+3. Synchronize logger with AMDC
 1. Register variables of interest
 1. Clear logged variables
 1. Start logging
