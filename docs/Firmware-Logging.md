@@ -5,12 +5,13 @@ There are two interfaces that can be used for logging: 1) the standard serial te
 
 ## General Flow
 
-The general flow for logging data in the AMDC is simple and uses the following procedure:
+The general flow for logging data in the AMDC is simple and uses the procedure shown below. Note that steps 2-5 are done through the python interface:
 
+1. Set up user C-code for logging
 1. Register variable(s) to log
 1. Start logging
 1. Stop logging
-1. Dump all of the collected data
+1. Dump the collected data
 
 ## C-Code Modifications
 
