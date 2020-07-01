@@ -55,9 +55,19 @@ void callback_func(){
 
 ## Terminal Interface
 
-The terminal interface operates the same as any other user application. It is highly recommended, however, that the user does not use the terminal interface directly, as it is difficult to use manually and requires a lot of book keeping.
+The terminal interface operates the same as any other user application (as shown below). It is highly recommended, however, that the user does not use the terminal interface directly, as it is difficult to use and requires a lot of book keeping. The following documentation will describe each of terminal commands, but is primarily just for completeness of the documentation.
 
 <img src="images/logging/terminal.png" />
+
+The logging application has the following commands:
+
+1. `reg` -- registers a new variable for logging
+2. `unreg` -- unregisters a variable that you no longer care to log
+3. `start` -- starts recording data
+4. `stop` -- stops recording data
+5. `dump` -- dumps all of the recorded data of a slot out to the serial terminal
+6. `empty` -- resets the index of a logging slot (calling `dump` after `empty` on the same slot will result in no data being output)
+7. `info` -- returns information about what variables are being logged and what slots are taken
 
 ## Python Interface
 
