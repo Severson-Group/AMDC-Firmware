@@ -67,15 +67,15 @@ The logging application has the following commands:
 
 1. `reg` -- registers a new variable for logging
     > **Required Arguments**  
-    > - `log_var_idx` -- the index that you want the variable to be stored in (must be 0-31). The command will fail if a variable is already registered in this slot.
+    > - `log_var_idx` -- the index that you want the variable to be stored in (must be 0-31). The command will fail if a variable is already registered in the requested slot.
     > - `name` -- name of the variable that you are logging (example: `LOG_foo`)
-    > - `memory_addr` -- global memory address of the variable you are logging in decimal format. The reason global variables are created for logging is because their addresses remain constant during runtime. The memory address can be found in "mapfile.txt" in a hexadecimal format, which is located in the "Debug" folder of the users private c code. After locating the variables address, you must convert it from hexadecimal to decimal before entering it through the terminal.
+    > - `memory_addr` -- global memory address of the variable you are logging in decimal format. The reason global variables are created for logging is because their address remains constant at runtime. The memory address can be found in "mapfile.txt" in a hexadecimal format, which is located in the "Debug" folder of the users private c code. After locating the variable's address, you must convert it from hexadecimal to decimal before entering it in the terminal.
     > - `samples_per_sec`  -- the sample rate in samples per second that you wish to record the variable at. Note that not all variables have to have the same sample rate.
     > - `type` -- data type of the variable being logged. Valid types are: `double`, `float`, `int` 
 
 2. `unreg` -- unregisters a variable that you no longer care to log  
     > **Required Arguments**  
-    > - log_var_idx
+    > - log_var_idx -- the index of the variable that you want to unregister (must be 0-31).
     
 3. `start` -- starts recording data  
     
@@ -83,14 +83,12 @@ The logging application has the following commands:
     
 5. `dump` -- dumps all of the recorded data of a slot out to the serial terminal  
     > **Required Arguments**  
-    > - `bin`  
-    > - `text`   
-    > - `log_var_idx`
-    
+    > - `bin` or `text` -- One of the preceding flags must be set. If `bin` is used, the data will be dumped to the serial terminal in binary format. If `text` is used, the data will be dumped to the serial terminal in human readable text format. Using `bin` is much faster.
+    > - `log_var_idx` -- index of the variable that you wish to dump (must be 0-31)
     
 6. `empty` -- resets the index of a logging slot (calling `dump` after `empty` on the same slot will result in no data being output)  
     > **Required Arguments**  
-    > - `log_var_idx`
+    > - `log_var_idx` -- index of the variable you wish to reset
     
 7. `info` -- prints information about what variables are being logged and what slots are taken to the serial terminal  
 
