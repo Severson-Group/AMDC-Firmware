@@ -103,18 +103,34 @@ To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules
 1. `AMDC` class that is found in the `AMDC` module
 2. `AMDC_Logger` class that is found in the `AMDC_Logger` module
 
-The top of your python script should likely have the following:
+The top of your python script should look like the following:
 
 ```
 import sys
-scripts_folder = r'C:\Users\nheme\Documents\Git_Hub\CRAMB_Control\AMDC-Firmware\scripts'
+scripts_folder = r'.\AMDC-Firmware\scripts'
 sys.path.append(scripts_folder)
 
 from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 ```
 
+Note that you may have to change the scripts folder location to wherever you have the AMDC-Firmware scripts folder on your computer. Adding this location to the `sys.path` variable allows python to find the `AMDC` and `AMDC_Logger` modules to import them.
 
+After importing the modules, perform the following steps:
+
+1. Instantiate an `AMDC` object and connect it to the AMDC:
+```
+amdc = AMDC(port = 'COM4')  
+amdc.connect() #opens up serial communication
+```
+
+Note that you may need to change the port number (i.e. `COM4' --> 'COM3', etc.) depending on which port the AMDC is communicating to your computer through. You can determine this by first connecting to the AMDC through the terminal and noting which port it tries to automatically connect with. 
+
+2. Instantiate and `AMDC_Logger` object:
+```
+mapfile_path = find_mapfile(r'C:\Users\nheme\Documents\Git_Hub\CRAMB_Control')
+logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
+```
 
 
 1. Instantiate a logger object
