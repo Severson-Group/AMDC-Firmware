@@ -1,6 +1,7 @@
 #ifndef ANALOG_H
 #define ANALOG_H
 
+#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -18,7 +19,7 @@ typedef enum {
 
 // REV C hardware is the only hardware
 // which supports more than 8 analog inputs.
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     ANALOG_IN9,
     ANALOG_IN10,
     ANALOG_IN11,
