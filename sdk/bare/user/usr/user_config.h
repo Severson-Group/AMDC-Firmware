@@ -17,6 +17,11 @@
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (1)
 
+// Enable task statistic collection by default
+// NOTE: The user can still go and enable the stats themselves if this is set to 0!
+// set to 1 for enabled, 0 for disabled
+#define USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT (0)
+
 // Enable the watchdog timer
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_WATCHDOG (0)
