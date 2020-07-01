@@ -96,7 +96,7 @@ The logging application has the following commands:
 
 Before you can use the python interface, you must modify your c code according to the C-Code Modifications [section](#c-code-modifications).
 
-Note that in the text that follows, `REPO_DIR` is an alias for the file path to where your repository is located. `REPO_DIR` contains the `AMDC-Firmware` submodule as well as a the folder containing your user c code.
+Note that in the text that follows, `REPO_DIR` is an alias for the file path to where your repository is located. `REPO_DIR` contains the `AMDC-Firmware` submodule as well as a the folder containing your user c-code.
 
 The python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that python can take care of all of the book keeping for you by remembering which variables are being logged, which variables are in which slots, and which slots are still available. It also automatically determines the memory addresses of each variable and converts them to correct format, reads dumped data off of the serial terminal and converts it to a format that can be saved to a `.csv` file and has other convenience functions that make logging much easier. 
 
