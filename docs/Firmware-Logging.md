@@ -102,8 +102,8 @@ The python interface is built on top of the serial terminal logging interface in
 
 To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
 
-1. `AMDC` class that is found in the `AMDC` module
-2. `AMDC_Logger` class that is found in the `AMDC_Logger` module
+1. `AMDC`: class that is found in the `AMDC` module. Responsible for communicating with AMDC over serial terminal
+2. `AMDC_Logger`: class that is found in the `AMDC_Logger` module. Responsible for sending logging commands to AMDC and book keeping
 
 The top of your python script should look like the following:
 
@@ -136,15 +136,31 @@ logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 
 The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 1), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
 
-3. Synchronize logger with AMDC
+3. Synchronize logger with AMDC:
 ```logger.sync()```
 This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the amdc won't align and you'll get unexpected behavior.
 
-4. Register variables of interest
-1. Clear logged variables
-1. Start logging
+4. Register variables of interest:  
+There are several ways to register variables for logging. One way is as follows:
+```logger.register('LOG_foo', samples_per_sec = 1000, var_type = 'double')```
+Note that register has default arguments of `samples_per_sec = 1000` and `var_type = 'double'` so the preceding line could also be accomplished as follows:
+```logger.register('LOG_foo')```
+
+If you have multiple variables that you wish to register with the same type and sample rate you can register them all at the same time. the `AMDC_Logger` class is also smart and sanitizes the input variables so you don't have to prepend `LOG_` to each variable if you don't want. The following snippets of code all accomplish the same task.
+
+```
+logger.register('LOG_foo LOG_bar LOG_baz') # variable names in one string seperated by white space
+logger.register('foo bar baz')             # one string with no LOG_ (this option is probably the fastest/easiest)
+logger.register(['foo', 'bar', 'baz'])     #list of variable names no
+logger.register(('foo', 'bar', 'baz'))     #tuple of variable names
+```
+
+5. Start logging
 1. Stop logging
-1. Log for set duration
 1. Dump data
+
+
+1. Log for set duration
+1. Clear logged variables
 1. Unregister Variables
 1. Load saved data
