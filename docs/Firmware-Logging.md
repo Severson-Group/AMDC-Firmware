@@ -100,6 +100,8 @@ Note that in the text that follows, `REPO_DIR` is an alias for the file path to 
 
 The python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that python can take care of all of the book keeping for you by remembering which variables are being logged, which variables are in which slots, and which slots are still available. It also automatically determines the memory addresses of each variable and converts them to correct format, reads dumped data off of the serial terminal and converts it to a format that can be saved to a `.csv` file and has other convenience functions that make logging much easier. 
 
+#### 1. Import needed modules
+
 To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
 
 1. `AMDC`: class that is found in the `AMDC` module. Responsible for communicating with AMDC over serial terminal
@@ -120,7 +122,7 @@ Note that you may have to change the scripts folder location to wherever you hav
 
 After importing the modules, perform the following steps:
 
-1. Instantiate an `AMDC` object and connect it to the AMDC:
+#### 2. Instantiate an `AMDC` object and connect it to the AMDC:
 ```
 amdc = AMDC(port = 'COM4')  
 amdc.connect() #opens up serial communication
@@ -128,19 +130,19 @@ amdc.connect() #opens up serial communication
 
 Note that you may need to change the port number (i.e. `COM4' --> 'COM3', etc.) depending on which port the AMDC is communicating to your computer through. You can determine this by first connecting to the AMDC through the terminal and noting which port it tries to automatically connect with. 
 
-2. Instantiate an `AMDC_Logger` object:
+#### 3. Instantiate an `AMDC_Logger` object:
 ```
 mapfile_path = find_mapfile(REPO_DIR)
 logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 ```
 
-The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 1), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
+The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object (created in step 2), and a file path to where the mapfile is located. You can manually locate and specifiy the location of `mapfile.txt` or you can use the convenience function `find_mapfile()` which takes in the base path of the repository and locates and returns the path to the mapfile.
 
-3. Synchronize logger with AMDC:
+#### 4. Synchronize logger with AMDC:
 ```logger.sync()```
 This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the amdc won't align and you'll get unexpected behavior.
 
-4. Register variables of interest:  
+#### 5. Register variables of interest:  
 There are several ways to register variables for logging. One way is as follows:
 ```logger.register('LOG_foo', samples_per_sec = 1000, var_type = 'double')```
 Note that register has default arguments of `samples_per_sec = 1000` and `var_type = 'double'` so the preceding line could also be accomplished as follows:
@@ -163,10 +165,10 @@ if you want to check to see which variables the auto register function will regi
 ```log_vars, log_types = auto_find_vars(path_to_user_app)```
 where `log_vars` is a list containing all of the variables found in the user c code and `log_types` is a list containing the corresponding variable types.
 
-5. Start logging:
+#### 6. Start logging:
 `logger.start()`
 
-6. Stop logging:
+#### 7. Stop logging:
 `logger.stop()`
 
 Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following illustrates a common use case
@@ -180,7 +182,7 @@ time.sleep(3) #record data for 3 seconds
 logger.stop()
 ```
 
-7. Dump data:
+#### 8. Dump data:
 
 After collecting data, you will want to access that data. You do that as follows:  
 ```
