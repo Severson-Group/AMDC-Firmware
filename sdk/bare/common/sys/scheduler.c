@@ -1,8 +1,9 @@
 #include "sys/scheduler.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -24,19 +25,21 @@ static volatile bool scheduler_idle = false;
 
 void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 {
-#if 0
+#if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
         color.r = 255;
         color.g = 0;
         color.b = 0;
         io_led_set(&color);
+#endif // USER_CONFIG_HARDWARE_TARGET
         HANG;
     }
-#endif
+#endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
 
     elapsed_usec += SYS_TICK_USEC;
     scheduler_idle = false;
@@ -168,7 +171,7 @@ void scheduler_run(void)
         while (scheduler_idle) {
         }
 
-#ifdef ENABLE_WATCHDOG
+#if USER_CONFIG_ENABLE_WATCHDOG == 1
         // Reset the watchdog timer after SysTick fires
         watchdog_reset();
 #endif

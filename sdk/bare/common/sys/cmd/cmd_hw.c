@@ -7,14 +7,14 @@
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#if HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #include "drv/led.h"
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
 static command_entry_t cmd_entry;
 
@@ -26,9 +26,9 @@ static command_help_t cmd_help[] = {
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
 
-#if HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 };
 
 void cmd_hw_register(void)
@@ -40,152 +40,127 @@ void cmd_hw_register(void)
     commands_cmd_register(&cmd_entry);
 }
 
-//
-// Handles the 'hw' command
-// and all sub-commands
-//
+// Handles the 'hw' command and all sub-commands
 int cmd_hw(int argc, char **argv)
 {
     // Handle 'pwm' sub-command
-    if (strcmp("pwm", argv[1]) == 0) {
-        if (strcmp("sw", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 5)
-                return INVALID_ARGUMENTS;
-
+    if (argc >= 2 && STR_EQ("pwm", argv[1])) {
+        if (argc == 5 && STR_EQ("sw", argv[2])) {
             // Parse out switching freq arg
-            double fsw = (double) atoi(argv[3]);
-            if (fsw > 1000000.0)
-                return INVALID_ARGUMENTS;
-            if (fsw < 2000.0)
-                return INVALID_ARGUMENTS;
+            double fsw = strtod(argv[3], NULL);
+            if (fsw > 2e6 || fsw < 2e3) {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
             // Parse out dead time arg
             int dt = atoi(argv[4]);
-            if (dt > 5000)
-                return INVALID_ARGUMENTS;
-            if (dt < 25)
-                return INVALID_ARGUMENTS;
+            if (dt > 5000 || dt < 25) {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
-            pwm_set_deadtime_ns(dt);
-            pwm_set_switching_freq(fsw);
+            if (pwm_set_deadtime_ns(dt) != SUCCESS) {
+                return CMD_FAILURE;
+            }
 
-            return SUCCESS;
+            if (pwm_set_switching_freq(fsw) != SUCCESS) {
+                return CMD_FAILURE;
+            }
+
+            return CMD_SUCCESS;
         }
 
-        if (strcmp("duty", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 5)
-                return INVALID_ARGUMENTS;
-
+        if (argc == 5 && STR_EQ("duty", argv[2])) {
             // Parse out switching pwm_idx arg
             int pwm_idx = atoi(argv[3]);
-            if (pwm_idx > 23)
-                return INVALID_ARGUMENTS;
-            if (pwm_idx < 0)
-                return INVALID_ARGUMENTS;
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
             // Parse out percent arg
-            int percent = atoi(argv[4]);
-            if (percent > 100)
-                return INVALID_ARGUMENTS;
-            if (percent < 0)
-                return INVALID_ARGUMENTS;
+            double percent = strtod(argv[4], NULL);
+            if (percent > 1.0 || percent < 0.0) {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
-            pwm_set_duty(pwm_idx, (double) percent / 100.0);
+            pwm_set_duty(pwm_idx, percent);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
     // Handle 'anlg' sub-command
-    if (strcmp("anlg", argv[1]) == 0) {
-        if (strcmp("read", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 4)
-                return INVALID_ARGUMENTS;
-
-            // Parse out switching pwm_idx arg
+    if (argc >= 2 && STR_EQ("anlg", argv[1])) {
+        if (argc == 4 && STR_EQ("read", argv[2])) {
+            // Parse out analog channel arg
             int anlg_idx = atoi(argv[3]);
-            if (anlg_idx > 15)
-                return INVALID_ARGUMENTS;
-            if (anlg_idx < 0)
-                return INVALID_ARGUMENTS;
 
-            float value;
-            analog_getf(anlg_idx + 1, &value);
+            if (!analog_is_valid_channel(anlg_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
-            debug_printf("%fV\r\n", value);
+            float out_volts;
+            analog_getf(anlg_idx, &out_volts);
 
-            return SUCCESS;
+            debug_printf("%fV\r\n", out_volts);
+
+            return CMD_SUCCESS;
         }
     }
 
-#if HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
-    if (argc == 7 && strcmp("led", argv[1]) == 0) {
-        if (strcmp("set", argv[2]) == 0) {
+    if (argc >= 2 && STR_EQ("led", argv[1])) {
+        if (argc == 7 && STR_EQ("set", argv[2])) {
             int led_idx = atoi(argv[3]);
             if (led_idx < 0 || led_idx >= NUM_LEDS)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             int r = atoi(argv[4]);
             int g = atoi(argv[5]);
             int b = atoi(argv[6]);
 
             if (r < 0 || r > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (g < 0 || g > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (b < 0 || b > 255)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
 
             led_set_color_bytes(led_idx, r, g, b);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Handle 'enc' sub-command
-    if (strcmp("enc", argv[1]) == 0) {
-        if (strcmp("steps", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 3)
-                return INVALID_ARGUMENTS;
-
+    if (argc >= 2 && STR_EQ("enc", argv[1])) {
+        if (argc == 3 && STR_EQ("steps", argv[2])) {
             int32_t steps;
             encoder_get_steps(&steps);
 
             debug_printf("steps: %ld\r\n", steps);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
-        if (strcmp("pos", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 3)
-                return INVALID_ARGUMENTS;
-
+        if (argc == 3 && STR_EQ("pos", argv[2])) {
             uint32_t position;
             encoder_get_position(&position);
 
             debug_printf("pos: %ld\r\n", position);
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
-        if (strcmp("init", argv[2]) == 0) {
-            // Check correct number of arguments
-            if (argc != 3)
-                return INVALID_ARGUMENTS;
-
+        if (argc == 3 && STR_EQ("init", argv[2])) {
             encoder_find_z();
 
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }

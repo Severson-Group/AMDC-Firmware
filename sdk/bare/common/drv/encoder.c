@@ -3,7 +3,7 @@
 #include "drv/io.h"
 #include "sys/defines.h"
 #include "sys/scheduler.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 #include "xil_io.h"
 #include <math.h>
 #include <stdio.h>
@@ -74,11 +74,11 @@ static void _find_z_callback(void *arg)
     {
         scheduler_tcb_unregister(&ctx->tcb);
 
-#if HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
         color.b = 0;
         io_led_set_c(0, 0, 1, &color);
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
         break;
     }
     }
@@ -91,11 +91,11 @@ void encoder_find_z(void)
     // Initialize the state machine context
     ctx.state = WAIT_UNTIL_Z;
 
-#if HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     io_led_color_t color;
     color.b = 255;
     io_led_set_c(0, 0, 1, &color);
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx.tcb, _find_z_callback, &ctx, "find_z", SM_INTERVAL_USEC);

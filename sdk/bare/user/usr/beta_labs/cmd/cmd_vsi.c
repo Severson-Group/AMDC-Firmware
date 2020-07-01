@@ -32,20 +32,20 @@ int cmd_vsi(int argc, char **argv)
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
         // Make sure task was not already inited
         if (task_vsi_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_vsi_init();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'deinit' sub-command
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
         // Make sure task was not already inited
         if (!task_vsi_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_vsi_deinit();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'legs ...' sub-command
@@ -54,29 +54,29 @@ int cmd_vsi(int argc, char **argv)
         // and clip to 0..23
         int phAIdx = atoi(argv[2]);
         if (phAIdx < 0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (phAIdx > 23)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Parse out phBIdx
         // and clip to 0..23
         int phBIdx = atoi(argv[3]);
         if (phBIdx < 0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (phBIdx > 23)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Parse out phCIdx
         // and clip to 0..23
         int phCIdx = atoi(argv[4]);
         if (phCIdx < 0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (phCIdx > 23)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_vsi_set_legs(phAIdx, phBIdx, phCIdx);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'set ...' sub-command
@@ -85,17 +85,17 @@ int cmd_vsi(int argc, char **argv)
         // and clip to 0..100
         int vPercent = atoi(argv[2]);
         if (vPercent < 0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (vPercent > 100)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Parse out freq
         // and clip to 0..10,000
         int freq = atoi(argv[3]);
         if (freq < 0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (freq > 10000)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Parse out mRamptime (optional)
         // and clip to 0..60sec
@@ -103,17 +103,17 @@ int cmd_vsi(int argc, char **argv)
         if (argc == 5) {
             mRamptime = atoi(argv[4]);
             if (mRamptime < 0)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             if (mRamptime > 60000)
-                return INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
         }
 
         task_vsi_set(vPercent, freq, (double) mRamptime / 1000.0);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BETA_LABS

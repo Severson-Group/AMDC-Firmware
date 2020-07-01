@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "sys/defines.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
 // SysTick
 //

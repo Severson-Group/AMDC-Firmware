@@ -1,7 +1,7 @@
 #include "drv/hardware_targets.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
-#if HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 #include "drv/io.h"
 #include "xgpiops.h"
@@ -90,4 +90,4 @@ void io_button_get(uint8_t *btn1)
     *btn1 = XGpioPs_ReadPin(&Gpio, IO_BTN1_MIO_PIN);
 }
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

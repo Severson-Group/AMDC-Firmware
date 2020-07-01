@@ -1,7 +1,7 @@
 #include "drv/hardware_targets.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
-#if HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 #ifndef IO_H
 #define IO_H
@@ -24,4 +24,4 @@ void io_button_get(uint8_t *btn1);
 
 #endif // IO_H
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET

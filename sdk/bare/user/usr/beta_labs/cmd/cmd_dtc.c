@@ -36,61 +36,61 @@ int cmd_dtc(int argc, char **argv)
     if (strcmp("init", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 2)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Make sure dtc task was not already inited
         if (task_dtc_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_dtc_init();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'deinit' sub-command
     if (strcmp("deinit", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 2)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Make sure dtc task was already inited
         if (!task_dtc_is_inited())
-            return FAILURE;
+            return CMD_FAILURE;
 
         task_dtc_clear();
         task_dtc_deinit();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     // Handle 'set' sub-command
     if (strcmp("set", argv[1]) == 0) {
         // Check correct number of arguments
         if (argc != 4)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Pull out mA argument
         // and saturate to 0 .. 8A
         double mA = (double) atoi(argv[2]);
         if (mA > 8000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (mA < 0.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         // Pull out mHz argument
         // and saturate to 0 .. 10Hz
         double mHz = (double) atoi(argv[3]);
         if (mHz > 10000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (mHz < 0.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         double Hz = mHz / 1000;
         double A = mA / 1000;
 
         task_dtc_set_I_star(A, Hz);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BETA_LABS

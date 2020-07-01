@@ -1,7 +1,7 @@
 #include "drv/hardware_targets.h"
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
-#if HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 #include "drv/gpio.h"
 #include "xgpiops.h"
@@ -83,4 +83,4 @@ void gpio_set_dir(uint8_t group, uint8_t dir)
     XGpioPs_WritePin(&Gpio, pin, dir);
 }
 
-#endif // HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
