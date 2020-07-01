@@ -1,6 +1,7 @@
 #ifndef ANALOG_H
 #define ANALOG_H
 
+#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -18,7 +19,7 @@ typedef enum {
 
 // REV C hardware is the only hardware
 // which supports more than 8 analog inputs.
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     ANALOG_IN9,
     ANALOG_IN10,
     ANALOG_IN11,
@@ -40,8 +41,23 @@ typedef enum {
     ANALOG_CLKDIV16,
 } analog_clkdiv_e;
 
-bool analog_is_valid_channel(analog_channel_e channel);
-bool analog_is_valid_clkdiv(analog_clkdiv_e div);
+static inline bool analog_is_valid_channel(analog_channel_e channel)
+{
+    if (channel >= ANALOG_IN1 && channel < ANALOG_NUM_CHANNELS) {
+        return true;
+    }
+
+    return false;
+}
+
+static inline bool analog_is_valid_clkdiv(analog_clkdiv_e div)
+{
+    if (div == ANALOG_CLKDIV2 || div == ANALOG_CLKDIV4 || div == ANALOG_CLKDIV8 || div == ANALOG_CLKDIV16) {
+        return true;
+    }
+
+    return false;
+}
 
 void analog_init(void);
 

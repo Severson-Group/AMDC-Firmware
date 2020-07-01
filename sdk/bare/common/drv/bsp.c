@@ -38,7 +38,7 @@ void bsp_init(void)
     int err;
 
     err = uart_init();
-    if (err != CMD_SUCCESS) {
+    if (err != SUCCESS) {
         HANG;
     }
 

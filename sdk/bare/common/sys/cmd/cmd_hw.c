@@ -60,8 +60,13 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            pwm_set_deadtime_ns(dt);
-            pwm_set_switching_freq(fsw);
+            if (pwm_set_deadtime_ns(dt) != SUCCESS) {
+                return CMD_FAILURE;
+            }
+
+            if (pwm_set_switching_freq(fsw) != SUCCESS) {
+                return CMD_FAILURE;
+            }
 
             return CMD_SUCCESS;
         }

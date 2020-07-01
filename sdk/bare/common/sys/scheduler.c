@@ -1,4 +1,5 @@
 #include "sys/scheduler.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
@@ -29,7 +30,7 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
         color.r = 255;
         color.g = 0;
