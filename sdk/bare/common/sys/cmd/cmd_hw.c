@@ -59,11 +59,11 @@ int cmd_hw(int argc, char **argv)
             }
 
             if (pwm_set_deadtime_ns(dt) != SUCCESS) {
-            	return CMD_FAILURE;
+                return CMD_FAILURE;
             }
 
             if (pwm_set_switching_freq(fsw) != SUCCESS) {
-            	return CMD_FAILURE;
+                return CMD_FAILURE;
             }
 
             return CMD_SUCCESS;

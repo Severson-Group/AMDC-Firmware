@@ -1,6 +1,6 @@
 #include "drv/pwm.h"
-#include "sys/defines.h"
 #include "drv/hardware_targets.h"
+#include "sys/defines.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
 #include <stdbool.h>
