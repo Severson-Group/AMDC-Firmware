@@ -187,7 +187,7 @@ logger.start()
 logger.stop()
 ```
 
-Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following illustrates a common use case
+Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following example illustrates a common use case:
 
 ```
 logger.start()
@@ -204,15 +204,15 @@ After collecting data, you will want to access that data. You do that as follows
 ```
 data = logger.dump()
 ```
-The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. The columns of the data frame that is output are the variable names and the index of the dataframe is time.
+The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. The columns of the `DataFrame` correspond to each logged variable and the index of the dataframe is time.
 
-The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all variables. This can be time consuming so if you want you can specifiy a subset of variables to dump as follows:
+The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all logged variables. This can be time consuming though, so if you want, you can specifiy a subset of variables to dump as follows:
 
 ```
 data = logger.dump(log_vars = 'foo bar')
 ```
 
-You can also specify a file path and dump will automatically save the data to a `.csv` file. This is nice to make sure your data is persistent. By default, the `dump()` function appends a timestamp to your file name so that you can't accidently overwrite data that you've collected. 
+You can also specify a file path and `dump()` will automatically save your data to a `.csv` file. This is nice to make sure your data is persistent between experiments. By default, the `dump()` function appends a timestamp to your file name so that you can't accidently overwrite data that you've collected. 
 
 ```
 data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv')
@@ -224,21 +224,28 @@ Sometimes it is nice to add notes to a specific set of data. You can do this by 
 data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')
 ```
 
-Now that your data is in a `DataFrame` you can post process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
+Now that your data is in a `DataFrame` you can post-process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
 
-Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe as follows:
+Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe and save the data as follows:
 
 ```
 data = logger.dump(file = 'sensed_values.csv')
 ```
 
-Now we can make a plot of our position data in one line by calling the `plot()` method on the `DataFrame` while indexing into the displacement data of the `DataFrame`:
+Now we can make a plot of only the position data in a single line by calling the `plot()` method on the `DataFrame` while indexing into the displacement data:
 
 ```
 data['x y z'.split()].plot()
 ```
+Note that the above single line is equivalent to the following:
 
+```
+pos_vars = ['x', 'y', 'z']
+pos_data = data[pos_vars] #index into dataframe to get position data columns (returns new dataframe)
+pos_data.plot()
+```
 
+This is just one example of how quick `pandas` can make visualizing our logged data for debugging and quick inspection.
 
 1. Log for set duration
 1. Clear logged variables
