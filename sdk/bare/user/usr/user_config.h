@@ -1,11 +1,12 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
+#include "drv/hardware_targets.h"
+
 // This file is used to override system defines.
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
-// Alphabet to number: A = 1, B = 2, C = 3, etc
-#define USER_CONFIG_HARDWARE_TARGET (4)
+#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_C
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here.
@@ -22,7 +23,7 @@
 
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_LOGGING (1)
+#define USER_CONFIG_ENABLE_LOGGING (0)
 
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled

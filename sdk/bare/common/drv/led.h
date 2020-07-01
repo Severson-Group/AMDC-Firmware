@@ -1,6 +1,7 @@
+#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 
 #ifndef LED_H
 #define LED_H

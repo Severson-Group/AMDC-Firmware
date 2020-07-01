@@ -1,11 +1,12 @@
+#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if (USER_CONFIG_HARDWARE_TARGET == 3) || (USER_CONFIG_HARDWARE_TARGET == 4)
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D)
 // Ensure a valid hardware target is specified
 // NOTE: this firmware only supports REV C hardware onward
 #else
 #error "ERROR: Hardware target not specified correctly"
-// If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your user_defines.h file!
+// If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your usr/user_config.h file!
 #endif
 
 #include "drv/analog.h"
@@ -21,12 +22,12 @@
 #include "sys/defines.h"
 #include <stdio.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 #include "drv/gpio.h"
 #include "drv/io.h"
 #endif
 
-#if USER_CONFIG_HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #include "drv/led.h"
 #endif
 
@@ -47,11 +48,11 @@ void bsp_init(void)
 
     fpga_timer_init();
 
-#if USER_CONFIG_HARDWARE_TARGET == 4
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     led_init();
 #endif
 
-#if USER_CONFIG_HARDWARE_TARGET == 3
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     io_init();
     gpio_init();
 #endif
