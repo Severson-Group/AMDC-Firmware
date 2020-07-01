@@ -15,7 +15,7 @@ The general flow for logging data in the AMDC is simple and uses the procedure s
 
 ## Internal Workings
 
-Internally...
+...
 
 ## C-Code Modifications
 
