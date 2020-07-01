@@ -1,8 +1,8 @@
 #include "sys/scheduler.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
-#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
