@@ -12,11 +12,11 @@ NOTE: these python scripts were built for compatibility with the `bare` DSP proj
 
 ## AMDC_Logger Python Class
 
-The AMDC supports logging capabilities. Though it is possible to perform these logging functions directly through the serial terminal, it is very difficult. Because of this, an `AMDC_Logger` class was created to make logging easier. It relies on the following file:
+The AMDC supports logging capabilities. Although it is possible to perform these logging functions directly through the serial terminal, it is very difficult. Because of this, an `AMDC_Logger` class was created in python to make logging easier. It relies on the following file:
 
 1. `AMDC_Logger.py`
 
-Documentation for logging on the AMDC can be found [here]()
+Documentation for logging on the AMDC can be found [here](../)
 
 ## Auto-Formatting C Code via `clang-format`
 
