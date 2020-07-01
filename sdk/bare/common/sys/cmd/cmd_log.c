@@ -6,14 +6,14 @@
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/log.h"
+#include "sys/util.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (5)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging" },
     { "start", "Start logging" },
     { "stop", "Stop logging" },
@@ -24,7 +24,7 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
 void cmd_log_register(void)
 {
     // Populate the command entry block
-    commands_cmd_init(&cmd_entry, "log", "Logging engine commands", cmd_help, NUM_HELP_ENTRIES, cmd_log);
+    commands_cmd_init(&cmd_entry, "log", "Logging engine commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_log);
 
     // Register the command
     commands_cmd_register(&cmd_entry);

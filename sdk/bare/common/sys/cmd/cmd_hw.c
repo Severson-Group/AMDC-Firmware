@@ -1,30 +1,40 @@
-#include "cmd_hw.h"
+#include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/encoder.h"
+#include "drv/hardware_targets.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/util.h"
+#include "usr/user_defines.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
+#if HARDWARE_TARGET == AMDC_REV_D
+#include "drv/led.h"
+#endif // HARDWARE_TARGET
+
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (6)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
+
+#if HARDWARE_TARGET == AMDC_REV_D
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+#endif // HARDWARE_TARGET
 };
 
 void cmd_hw_register(void)
 {
     // Populate the command entry block
-    commands_cmd_init(&cmd_entry, "hw", "Hardware related commands", cmd_help, NUM_HELP_ENTRIES, cmd_hw);
+    commands_cmd_init(&cmd_entry, "hw", "Hardware related commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_hw);
 
     // Register the command
     commands_cmd_register(&cmd_entry);
@@ -110,6 +120,33 @@ int cmd_hw(int argc, char **argv)
             return SUCCESS;
         }
     }
+
+#if HARDWARE_TARGET == AMDC_REV_D
+    // Handle 'led' sub-command
+    // hw led set <led_idx> <r> <g> <b>
+    if (argc == 7 && strcmp("led", argv[1]) == 0) {
+        if (strcmp("set", argv[2]) == 0) {
+            int led_idx = atoi(argv[3]);
+            if (led_idx < 0 || led_idx >= NUM_LEDS)
+                return INVALID_ARGUMENTS;
+
+            int r = atoi(argv[4]);
+            int g = atoi(argv[5]);
+            int b = atoi(argv[6]);
+
+            if (r < 0 || r > 255)
+                return INVALID_ARGUMENTS;
+            if (g < 0 || g > 255)
+                return INVALID_ARGUMENTS;
+            if (b < 0 || b > 255)
+                return INVALID_ARGUMENTS;
+
+            led_set_color_bytes(led_idx, r, g, b);
+
+            return SUCCESS;
+        }
+    }
+#endif // HARDWARE_TARGET
 
     // Handle 'enc' sub-command
     if (strcmp("enc", argv[1]) == 0) {

@@ -1,9 +1,14 @@
 #ifndef USER_DEFINES_H
 #define USER_DEFINES_H
 
+#include "drv/hardware_targets.h"
+
 //
 // This file is used to override system defines.
 //
+
+// Specify hardware revision (from drv/hardware_targets.h)
+#define HARDWARE_TARGET AMDC_REV_C
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here:

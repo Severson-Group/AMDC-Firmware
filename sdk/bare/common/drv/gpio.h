@@ -1,3 +1,8 @@
+#include "drv/hardware_targets.h"
+#include "usr/user_defines.h"
+
+#if HARDWARE_TARGET == AMDC_REV_C
+
 #ifndef GPIO_H
 #define GPIO_H
 
@@ -14,3 +19,5 @@ void gpio_port_write(uint8_t port, uint16_t value);
 void gpio_set_dir(uint8_t group, uint8_t dir);
 
 #endif // GPIO_H
+
+#endif // HARDWARE_TARGET
