@@ -177,12 +177,23 @@ log_vars, log_types = auto_find_vars(path_to_user_app)
 ```
 where `log_vars` is a list containing all of the variables found in the user c code and `log_types` is a list containing the corresponding variable types.
 
-#### 6. Start logging:
+#### 6. Clear logged variables:
+```
+logger.clear_all()
+```
+Calling the clear all method resets all of the internal indices of the logger so that you don't receive old logged data. You can kind of think of it as clearing the log. If you just wish to clear a single variable for some reason you can call the `clear()` method and pass in the name of the variable you wish to clear. NOTE: clearing variables does not unregister them from logging.
+
+```
+logger.clear('foo') #clear single variable
+```
+
+
+#### 7. Start logging:
 ```
 logger.start()
 ```
 
-#### 7. Stop logging:
+#### 8. Stop logging:
 ```
 logger.stop()
 ```
@@ -198,7 +209,7 @@ time.sleep(3) #record data for 3 seconds
 logger.stop()
 ```
 
-#### 8. Dump data:
+#### 9. Dump data:
 
 After collecting data, you will want to access that data. You do that as follows:  
 ```
@@ -224,6 +235,8 @@ Sometimes it is nice to add notes to a specific set of data. You can do this by 
 data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')
 ```
 
+#### Example
+
 Now that your data is in a `DataFrame` you can post-process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
 
 Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe and save the data as follows:
@@ -246,6 +259,8 @@ pos_data.plot()
 ```
 
 This is just one example of how quick `pandas` can make visualizing our logged data for debugging and quick inspection.
+
+### Miscellaneous Log Functions
 
 1. Log for set duration
 1. Clear logged variables
