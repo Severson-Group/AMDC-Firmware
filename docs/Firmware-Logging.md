@@ -1,5 +1,5 @@
 # Logging with the AMDC
-The ability to log and extract variables of interest out of the AMDC is a critical feature needed for debugging, testing, and general data recording. Because of this, the AMDC has logging capabilities built into the firmware. The intent of this document is to show a user how to implement logging in their code. 
+The ability to log and extract variables of interest out of the AMDC is a critical feature needed for debugging, testing, and general data recording. Because of this, the AMDC has logging capabilities built into the firmware and can record up to 32 variables. The intent of this document is to show a user how to implement logging in their code. 
 
 There are two interfaces that can be used for logging: 1) the standard serial terminal interface that is typically used with user commands (logging can be thought of as an application that can be included in your project) and 2) a Python interface that is built on top of and wraps the serial interface. It is highly recommended that users use the Python interface as it provides certain convenience methods and abstractions that make logging much more intuitive and less error prone.
 
@@ -12,6 +12,10 @@ The general flow for logging data in the AMDC is simple and uses the procedure s
 1. Start logging
 1. Stop logging
 1. Dump the collected data
+
+## Internal Workings
+
+Internally...
 
 ## C-Code Modifications
 
@@ -67,7 +71,7 @@ The logging application has the following commands:
 4. `stop` -- stops recording data
 5. `dump` -- dumps all of the recorded data of a slot out to the serial terminal
 6. `empty` -- resets the index of a logging slot (calling `dump` after `empty` on the same slot will result in no data being output)
-7. `info` -- returns information about what variables are being logged and what slots are taken
+7. `info` -- prints information about what variables are being logged and what slots are taken to the serial terminal
 
 ## Python Interface
 
