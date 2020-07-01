@@ -60,11 +60,13 @@ void task_stats_post_task(task_stats_t *stats)
 typedef enum sm_states_e {
     PRINT_HEADER = 0,
 
+    PRINT_LOOP_NUM_SAMPLES,
     PRINT_LOOP_MIN,
     PRINT_LOOP_MAX,
     PRINT_LOOP_MEAN,
     PRINT_LOOP_VARIANCE,
 
+    PRINT_RUN_NUM_SAMPLES,
     PRINT_RUN_MIN,
     PRINT_RUN_MAX,
     PRINT_RUN_MEAN,
@@ -90,11 +92,16 @@ void state_machine_callback(void *arg)
     switch (ctx->state) {
     case PRINT_HEADER:
         debug_printf("Task Stats:\r\n");
-        ctx->state = PRINT_LOOP_MIN;
+        ctx->state = PRINT_LOOP_NUM_SAMPLES;
         break;
 
     // Loop timings
     // ...
+    case PRINT_LOOP_NUM_SAMPLES:
+        debug_printf("Loop Num:\t%d samples\r\n", ctx->stats->loop_time.num_samples);
+        ctx->state = PRINT_LOOP_MIN;
+        break;
+
     case PRINT_LOOP_MIN:
         debug_printf("Loop Min:\t%.2f usec\r\n", ctx->stats->loop_time.min);
         ctx->state = PRINT_LOOP_MAX;
@@ -112,11 +119,16 @@ void state_machine_callback(void *arg)
 
     case PRINT_LOOP_VARIANCE:
         debug_printf("Loop Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->loop_time));
-        ctx->state = PRINT_RUN_MIN;
+        ctx->state = PRINT_RUN_NUM_SAMPLES;
         break;
 
     // Run timings
     // ...
+    case PRINT_RUN_NUM_SAMPLES:
+        debug_printf("Run Num:\t%d samples\r\n", ctx->stats->run_time.num_samples);
+        ctx->state = PRINT_RUN_MIN;
+        break;
+
     case PRINT_RUN_MIN:
         debug_printf("Run Min:\t%.2f usec\r\n", ctx->stats->run_time.min);
         ctx->state = PRINT_RUN_MAX;

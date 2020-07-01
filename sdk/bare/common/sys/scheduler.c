@@ -69,8 +69,11 @@ void scheduler_tcb_init(
     tcb->interval_usec = interval_usec;
     tcb->last_run_usec = 0;
 
-    // Always turn on the task statistics!
+#if USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT == 1
     tcb->stats.enabled = true;
+#else
+    tcb->stats.enabled = false;
+#endif // USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT
 }
 
 void scheduler_tcb_register(task_control_block_t *tcb)
