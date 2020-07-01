@@ -75,6 +75,8 @@ The logging application has the following commands:
 
 ## Python Interface
 
+Before you can use the python interface, you must modify your C-code according to the C-Code Modifications [section](#c-code-modifications).
+
 1. Instantiate a logger object
 1. Synchronize logger with AMDC
 1. Register variables of interest
