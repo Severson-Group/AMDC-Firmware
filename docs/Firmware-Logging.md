@@ -67,15 +67,31 @@ The logging application has the following commands:
 
 1. `reg` -- registers a new variable for logging
     > **Required Arguments**  
-    > - `test` -- this is a test
-   
+    > - `test` -- this is a test   
 
-2. `unreg` -- unregisters a variable that you no longer care to log
-3. `start` -- starts recording data
-4. `stop` -- stops recording data
-5. `dump` -- dumps all of the recorded data of a slot out to the serial terminal
-6. `empty` -- resets the index of a logging slot (calling `dump` after `empty` on the same slot will result in no data being output)
-7. `info` -- prints information about what variables are being logged and what slots are taken to the serial terminal
+2. `unreg` -- unregisters a variable that you no longer care to log  
+    > **Required Arguments**  
+    > - `test` -- this is a test
+    
+3. `start` -- starts recording data  
+    > **Required Arguments**  
+    > - `test` -- this is a test
+    
+4. `stop` -- stops recording data  
+    > **Required Arguments**  
+    > - `test` -- this is a test
+    
+5. `dump` -- dumps all of the recorded data of a slot out to the serial terminal  
+    > **Required Arguments**  
+    > - `test` -- this is a test
+    
+6. `empty` -- resets the index of a logging slot (calling `dump` after `empty` on the same slot will result in no data being output)  
+    > **Required Arguments**  
+    > - `test` -- this is a test
+    
+7. `info` -- prints information about what variables are being logged and what slots are taken to the serial terminal  
+    > **Required Arguments**  
+    > - `test` -- this is a test
 
 ## Python Interface
 
