@@ -155,9 +155,61 @@ logger.register(['foo', 'bar', 'baz'])     #list of variable names no
 logger.register(('foo', 'bar', 'baz'))     #tuple of variable names
 ```
 
-5. Start logging
-1. Stop logging
-1. Dump data
+There is also a convenient `auto_register()` function that can be used to search your user code for variables of the form `LOG_*` and register them for you automatically. You just give the file path to your app's c code as follows:
+
+```logger.auto_register(path_to_user_app)```
+
+if you want to check to see which variables the auto register function will register before calling it, you can call the `auto_find_vars()` function as follows:
+```log_vars, log_types = auto_find_vars(path_to_user_app)```
+where `log_vars` is a list containing all of the variables found in the user c code and `log_types` is a list containing the corresponding variable types.
+
+5. Start logging:
+`logger.start()`
+
+6. Stop logging:
+`logger.stop()`
+
+Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following illustrates a common use case
+
+```
+logger.start()
+
+do_something()
+time.sleep(3) #record data for 3 seconds
+
+logger.stop()
+```
+
+7. Dump data:
+
+After collecting data, you will want to access that data. You do that as follows:
+```
+data = logger.dump()
+```
+The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. The columns of the data frame that is output are the variable names and the index of the dataframe is time.
+
+The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all variables. This can be time consuming so if you want you can specifiy a subset of variables to dump as follows:
+
+`data = logger.dump(log_vars = 'foo bar')`
+
+You can also specify a file path and dump will automatically save the data to a `.csv` file. This is nice to make sure your data is persistent. By default, the `dump()` function appends a timestamp to your file name so that you can't accidently overwrite data that you've collected. 
+
+`data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv')`
+
+Sometimes it is nice to add notes to a specific set of data. You can do this by adding the additional optional parameter `comment` to the `dump()` function.
+
+`data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')`
+
+Now that your data is in a `DataFrame` you can post process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
+
+Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe as follows:
+
+`data = logger.dump(file = 'sensed_values.csv')`
+
+Now we can make a plot of our position data in one line by calling the `plot()` method on the `DataFrame` while indexing into the displacement data of the `DataFrame`:
+
+```data['x y z'.split()].plot()```
+
 
 
 1. Log for set duration
