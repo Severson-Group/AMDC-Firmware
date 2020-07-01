@@ -66,7 +66,9 @@ The terminal interface operates the same as any other user application (as shown
 The logging application has the following commands:
 
 1. `reg` -- registers a new variable for logging
-    > **Required Arguments**
+    > **Required Arguments**  
+    > - `test` -- this is a test
+   
 
 2. `unreg` -- unregisters a variable that you no longer care to log
 3. `start` -- starts recording data
