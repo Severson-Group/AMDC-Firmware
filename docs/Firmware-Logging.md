@@ -22,7 +22,7 @@ The general flow for logging data in the AMDC is simple and uses the procedure s
 
 To further help the user understand the functionality of the logging engine, a description of its inner workings is provided here. Note that this is only for background information; the user does not need to update or change the embedded logging engine (`sys/log.c`).
 
-For each C-code variable which should be logged, e.g. `LOG_x`, a slot allocated within the logging engine. This slot contains metadata as well as a large memory array. When logging starts, the value of the logged variable (e.g. `LOG_x`) is copied into the memory buffer at the specified sampling interval. Once logging is done, this large array of samples can be transfered from the AMDC to the host via the command-line interface.
+For each C-code variable which should be logged, e.g. `LOG_x`, a slot is allocated within the logging engine. This slot contains metadata as well as a large memory array. When logging starts, the value of the logged variable (e.g. `LOG_x`) is copied into the memory buffer at the specified sampling interval. Once logging is done, this large array of samples can be transfered from the AMDC to the host via the command-line interface.
 
 ## C-Code Modifications
 
