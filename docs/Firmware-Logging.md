@@ -35,6 +35,12 @@ To further help the user understand the functionality of the logging engine, a d
 
 For each C-code variable which should be logged, e.g. `LOG_x`, a slot is allocated within the logging engine. This slot contains metadata as well as a large memory array. When logging starts, the value of the logged variable (e.g. `LOG_x`) is copied into the memory buffer at the specified sampling interval. Once logging is done, this large array of samples can be transfered from the AMDC to the host via the command-line interface.
 
+### Specifications
+
+The logging engine, by default, can record 32 different variables at one time. Each variable log has a maximum sample depth of 100k samples. Once this is full, the logging system automatically stops writing data (even if logging is still enabled). The logging engine *does not* use a circular buffer approach.
+
+These defaults (32 slots at 100k sample depth) can be configured by the user. Note that the maximum memory usage is limited, so users must keep the product of these the same. For example, the user could change the settings to be 128 variables at 25k sample depth.
+
 ## C-Code Modifications
 
 The firmware has been designed specifically to limit the amount of changes users have to make to their C-code to log variables of interest. The only modifications that users need to make to their C-code are as follows:
