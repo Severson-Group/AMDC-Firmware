@@ -154,19 +154,19 @@ int cmd_log(int argc, char **argv)
         }
 
         if (strcmp("text", argv[2]) == 0) {
-        	// Dump using text (human-readable)
+            // Dump using text (human-readable)
             int err = log_var_dump_uart_ascii(log_var_idx);
             if (err != SUCCESS) {
                 return CMD_FAILURE;
             }
         } else if (strcmp("bin", argv[2]) == 0) {
-        	// Dump using binary
+            // Dump using binary
             int err = log_var_dump_uart_binary(log_var_idx);
             if (err != SUCCESS) {
                 return CMD_FAILURE;
             }
         } else {
-        	return CMD_INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         return CMD_SUCCESS;

@@ -7,8 +7,8 @@
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
-#include "sys/util.h"
 #include "sys/serial.h"
+#include "sys/util.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -71,25 +71,25 @@ void log_init(void)
 
 void log_preload(void)
 {
-	// Register last slot
-	log_var_register(LOG_MAX_NUM_VARS-1, "testvar", (void *) 0x1, 1000, LOG_INT);
+    // Register last slot
+    log_var_register(LOG_MAX_NUM_VARS - 1, "testvar", (void *) 0x1, 1000, LOG_INT);
 
-	// Get point to slot
-	log_var_t *v = &vars[LOG_MAX_NUM_VARS-1];
+    // Get point to slot
+    log_var_t *v = &vars[LOG_MAX_NUM_VARS - 1];
 
-	v->buffer_idx = 0;
-	v->num_samples = 0;
+    v->buffer_idx = 0;
+    v->num_samples = 0;
 
-	// Put fake sample entries into slot buffer
-	for (int i = 0; i < 10000; i++) {
-		v->buffer[v->buffer_idx].timestamp = 1000 + i;
+    // Put fake sample entries into slot buffer
+    for (int i = 0; i < 10000; i++) {
+        v->buffer[v->buffer_idx].timestamp = 1000 + i;
 
-		int out = 1000 + (10 * i);
-		v->buffer[v->buffer_idx].value = *((uint32_t *) &out);
+        int out = 1000 + (10 * i);
+        v->buffer[v->buffer_idx].value = *((uint32_t *) &out);
 
         v->buffer_idx++;
         v->num_samples++;
-	}
+    }
 }
 
 void log_callback(void *arg)
@@ -310,7 +310,7 @@ typedef struct sm_ctx_dump_ascii_t {
 
 void state_machine_dump_ascii_callback(void *arg)
 {
-	sm_ctx_dump_ascii_t *ctx = (sm_ctx_dump_ascii_t *) arg;
+    sm_ctx_dump_ascii_t *ctx = (sm_ctx_dump_ascii_t *) arg;
 
     log_var_t *v = &vars[ctx->var_idx];
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
@@ -330,8 +330,8 @@ void state_machine_dump_ascii_callback(void *arg)
         debug_printf("-------START-------\r\n");
 
         if (v->num_samples == 0) {
-        	// Nothing to dump!
-        	ctx->state = DUMP_ASCII_FOOTER;
+            // Nothing to dump!
+            ctx->state = DUMP_ASCII_FOOTER;
         } else {
             ctx->state = DUMP_ASCII_VARIABLES_TS;
         }
@@ -398,12 +398,15 @@ int log_var_dump_uart_ascii(int log_var_idx)
     ctx_dump_ascii.sample_idx = 0;
 
     // Initialize the state machine callback tcb
-    scheduler_tcb_init(&ctx_dump_ascii.tcb, state_machine_dump_ascii_callback, &ctx_dump_ascii, "logdascii", SM_DUMP_ASCII_INTERVAL_USEC);
+    scheduler_tcb_init(&ctx_dump_ascii.tcb,
+                       state_machine_dump_ascii_callback,
+                       &ctx_dump_ascii,
+                       "logdascii",
+                       SM_DUMP_ASCII_INTERVAL_USEC);
     scheduler_tcb_register(&ctx_dump_ascii.tcb);
 
     return SUCCESS;
 }
-
 
 // ***************************
 // Code for running the state machine to
@@ -411,13 +414,13 @@ int log_var_dump_uart_ascii(int log_var_idx)
 // ***************************
 
 typedef enum sm_states_dump_binary_e {
-	DUMP_BINARY_MAGIC_HEADER  = 1,
-	DUMP_BINARY_NUM_SAMPLES,
-	DUMP_BINARY_DATA_TYPE,
-	DUMP_BINARY_SAMPLE_TS,
-	DUMP_BINARY_SAMPLE_VALUE,
-	DUMP_BINARY_MAGIC_FOOTER,
-	DUMP_BINARY_REMOVE_TASK
+    DUMP_BINARY_MAGIC_HEADER = 1,
+    DUMP_BINARY_NUM_SAMPLES,
+    DUMP_BINARY_DATA_TYPE,
+    DUMP_BINARY_SAMPLE_TS,
+    DUMP_BINARY_SAMPLE_VALUE,
+    DUMP_BINARY_MAGIC_FOOTER,
+    DUMP_BINARY_REMOVE_TASK
 } sm_states_dump_binary_e;
 
 typedef struct sm_ctx_dump_binary_t {
@@ -437,7 +440,7 @@ static const uint32_t MAGIC_FOOTER = 0x11223344;
 
 void state_machine_dump_binary_callback(void *arg)
 {
-	sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
+    sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
 
     log_var_t *v = &vars[ctx->var_idx];
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
@@ -445,41 +448,41 @@ void state_machine_dump_binary_callback(void *arg)
     switch (ctx->state) {
     case DUMP_BINARY_MAGIC_HEADER:
     {
-    	serial_write((char *) &MAGIC_HEADER, 4);
-    	serial_write((char *) &MAGIC_HEADER, 4);
-    	serial_write((char *) &MAGIC_HEADER, 4);
-    	serial_write((char *) &MAGIC_HEADER, 4);
+        serial_write((char *) &MAGIC_HEADER, 4);
+        serial_write((char *) &MAGIC_HEADER, 4);
+        serial_write((char *) &MAGIC_HEADER, 4);
+        serial_write((char *) &MAGIC_HEADER, 4);
         ctx->state = DUMP_BINARY_NUM_SAMPLES;
         break;
     }
 
     case DUMP_BINARY_NUM_SAMPLES:
     {
-    	uint32_t out = (uint32_t) v->num_samples;
-    	serial_write((char *) &out, 4);
+        uint32_t out = (uint32_t) v->num_samples;
+        serial_write((char *) &out, 4);
         ctx->state = DUMP_BINARY_DATA_TYPE;
         break;
     }
 
     case DUMP_BINARY_DATA_TYPE:
     {
-    	uint32_t var_type = (uint32_t) v->type;
-    	serial_write((char *) &var_type, 4);
+        uint32_t var_type = (uint32_t) v->type;
+        serial_write((char *) &var_type, 4);
 
         if (v->num_samples == 0) {
-        	// Nothing to dump!
-        	ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+            // Nothing to dump!
+            ctx->state = DUMP_BINARY_MAGIC_FOOTER;
         } else {
             ctx->state = DUMP_BINARY_SAMPLE_TS;
         }
-    	break;
+        break;
     }
 
     case DUMP_BINARY_SAMPLE_TS:
     {
-    	// Dump timestamp
-    	uint32_t ts = e->timestamp;
-    	serial_write((char *) &ts, 4);
+        // Dump timestamp
+        uint32_t ts = e->timestamp;
+        serial_write((char *) &ts, 4);
 
         ctx->state = DUMP_BINARY_SAMPLE_VALUE;
         break;
@@ -489,8 +492,8 @@ void state_machine_dump_binary_callback(void *arg)
     {
         // Dump value
         if (v->type == LOG_INT) {
-        	int32_t out = (int32_t) e->value;
-        	serial_write((char *) &out, 4);
+            int32_t out = (int32_t) e->value;
+            serial_write((char *) &out, 4);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             float out = *((float *) &(e->value));
             serial_write((char *) &out, 4);
@@ -508,10 +511,10 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_MAGIC_FOOTER:
     {
-    	serial_write((char *) &MAGIC_FOOTER, 4);
-    	serial_write((char *) &MAGIC_FOOTER, 4);
-    	serial_write((char *) &MAGIC_FOOTER, 4);
-    	serial_write((char *) &MAGIC_FOOTER, 4);
+        serial_write((char *) &MAGIC_FOOTER, 4);
+        serial_write((char *) &MAGIC_FOOTER, 4);
+        serial_write((char *) &MAGIC_FOOTER, 4);
+        serial_write((char *) &MAGIC_FOOTER, 4);
         ctx->state = DUMP_BINARY_REMOVE_TASK;
         break;
     }
@@ -547,7 +550,11 @@ int log_var_dump_uart_binary(int log_var_idx)
     ctx_dump_binary.sample_idx = 0;
 
     // Initialize the state machine callback tcb
-    scheduler_tcb_init(&ctx_dump_binary.tcb, state_machine_dump_binary_callback, &ctx_dump_binary, "logdbin", SM_DUMP_BINARY_INTERVAL_USEC);
+    scheduler_tcb_init(&ctx_dump_binary.tcb,
+                       state_machine_dump_binary_callback,
+                       &ctx_dump_binary,
+                       "logdbin",
+                       SM_DUMP_BINARY_INTERVAL_USEC);
     scheduler_tcb_register(&ctx_dump_binary.tcb);
 
     return SUCCESS;
@@ -561,7 +568,7 @@ typedef enum sm_states_info_e {
     INFO_HEAD = 1,
     INFO_MAX_SLOTS,
     INFO_MAX_DEPTH,
-	INFO_MAX_SAMPLE_RATE,
+    INFO_MAX_SAMPLE_RATE,
 
     INFO_VAR_TITLE,
     INFO_VAR_DATA1,
