@@ -378,6 +378,7 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 
 ### Copy-Paste Example
 ```Python
+import time
 import pathlib as pl
 import sys
 repo_dir = ''                                      #CHANGE THIS TO YOUR REPO DIRECTORY
@@ -388,6 +389,7 @@ sys.path.append(str(scripts_folder))
 from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 
+####################   SETUP LOGGER   ####################
 amdc = AMDC(port = 'COM4')                         #MIGHT HAVE TO CHANGE THE PORT NUMBER
 amdc.connect() #opens up serial communication
 
@@ -395,6 +397,7 @@ mapfile_path = find_mapfile(repo_dir)
 logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 logger.sync()
 
+####################   REGISTER VARIABLES   ####################
 #register variables
 user_app_c_code_path = ''                        #SET THIS TO PATH OF YOUR USER APPLICATION CODE
 logger.auto_register(user_app_c_code_path)
@@ -402,8 +405,9 @@ logger.auto_register(user_app_c_code_path)
 #view which variables are logged
 logger.info()
 
-#clear the logger and then record data for 3 seconds
-logger.clear_all()
+####################   COLLECT DATA   ####################
+#clear the logger and record 3 seconds of data
+logger.clear_all() 
 logger.start()
 
 #DO SOMETHING
@@ -411,7 +415,8 @@ time.sleep(3) # Record data for 3 seconds
 
 logger.stop()
 
-#extract data
+####################   DUMP DATA AND PLOT   ####################
 data = logger.dump(file = 'test_data.csv')
+data.plot()
 ```
 
