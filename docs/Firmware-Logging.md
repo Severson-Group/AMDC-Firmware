@@ -377,36 +377,62 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 ### Function Reference
 
 ### Copy-Paste Example
+
+The following Python script example shows the full flow of logging on the AMDC. Users can copy and paste this script to get started.
+
 ```Python
+###########################
+# Set-up Python environment
+###########################
+
 import time
 import pathlib as pl
 import sys
-repo_dir = ''                                      #CHANGE THIS TO YOUR REPO DIRECTORY
+repo_dir = ''                                      # CHANGE THIS TO YOUR REPO DIRECTORY
 repo_dir = pl.Path(repo_dir)
 scripts_folder = repo_dir / 'AMDC-Firmware' / 'scripts'  
 sys.path.append(str(scripts_folder))
 
+##############################
+# Import AMDC-specific scripts
+##############################
+
 from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 
-####################   SETUP LOGGER   ####################
-amdc = AMDC(port = 'COM4')                         #MIGHT HAVE TO CHANGE THE PORT NUMBER
+####################################
+# Create AMDC object + connect to it
+####################################
+
+amdc = AMDC(port = 'COM4')                         # MIGHT HAVE TO CHANGE THE PORT NUMBER
 amdc.connect() #opens up serial communication
+
+#############################################
+# Create an AMDC logger object + sync to AMDC
+#############################################
 
 mapfile_path = find_mapfile(repo_dir)
 logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 logger.sync()
 
-####################   REGISTER VARIABLES   ####################
-#register variables
-user_app_c_code_path = ''                        #SET THIS TO PATH OF YOUR USER APPLICATION CODE
+####################
+# Register variables
+####################
+
+user_app_c_code_path = ''                         # SET THIS TO PATH OF YOUR USER APPLICATION CODE
 logger.auto_register(user_app_c_code_path)
 
-#view which variables are logged
+#################################
+# View which variables are logged
+#################################
+
 logger.info()
 
-####################   COLLECT DATA   ####################
-#clear the logger and record 3 seconds of data
+##############
+# Collect Data
+##############
+
+# Clear the logger first, then record 3 seconds of data
 logger.clear_all() 
 logger.start()
 
@@ -415,8 +441,10 @@ time.sleep(3) # Record data for 3 seconds
 
 logger.stop()
 
-####################   DUMP DATA AND PLOT   ####################
+########################
+# Extract data + plot it
+########################
+
 data = logger.dump(file = 'test_data.csv')
 data.plot()
 ```
-
