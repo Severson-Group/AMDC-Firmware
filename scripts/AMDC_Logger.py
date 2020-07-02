@@ -227,6 +227,9 @@ class AMDC_Logger():
                 file = pl.Path(file)
                 p = file.parent
                 
+                if not p.exists():
+                    p.mkdir()
+                
                 if timestamp:
                     path = p / (file.stem + '_' + datetime.datetime.now().strftime(timestamp_fmt) + '.csv')
                 else:
