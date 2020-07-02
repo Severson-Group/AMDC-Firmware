@@ -2,6 +2,11 @@
 
 This document describes and documents the "logging" functionality that is designed into the AMDC system firmware. At the highest level, logging simply means recording variables over time from inside the firmware and retreiving the sampled values. This functionality is so fundamental to working with embedded systems that it is included directly from the main `AMDC-Firmware` code distribution -- the user does not have to reinvent the wheel.
 
+## Contents  
+- [Introduction](#introduction)
+- [General Flow](#general-flow)
+- []()
+
 ## Introduction
 
 The ability to log and extract variables of interest out of the AMDC is a critical feature needed for debugging, testing, and general data recording. Because of this, the AMDC has logging capabilities built into the firmware and can record up to 32 variables at one time. The intent of this document is to show a user how to implement logging in their code.
