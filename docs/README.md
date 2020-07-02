@@ -15,3 +15,5 @@ If you run into low-level issues (i.e. strange restart issues), consider using t
 ## [Flashing AMDC](Flashing-AMDC.md)
 
 ## [Low-Level Debugging](Low-Level-Debugging.md)
+
+## [Logging](Firmware-Logging.md)
