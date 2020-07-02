@@ -136,7 +136,7 @@ To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules
 
 The top of your python script should look like the following:
 
-```
+```Python
 import sys
 scripts_folder = r'REPO_DIR\AMDC-Firmware\scripts'
 sys.path.append(scripts_folder)
@@ -151,7 +151,7 @@ After importing the modules, perform the following steps:
 
 ### 2. Instantiate an `AMDC` object and connect it to the AMDC:
 
-```
+```Python
 amdc = AMDC(port = 'COM4')  
 amdc.connect() #opens up serial communication
 ```
@@ -160,7 +160,7 @@ Note that you may need to change the port number (i.e. `COM4` --> `COM3`, etc.) 
 
 ### 3. Instantiate an `AMDC_Logger` object:
 
-```
+```Python
 mapfile_path = find_mapfile(REPO_DIR)
 logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 ```
@@ -169,7 +169,7 @@ The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object 
 
 ### 4. Synchronize logger with AMDC:
 
-```
+```Python
 logger.sync()
 ```
 
@@ -179,19 +179,19 @@ This step isn't required but is recommended. It reads the current state of loggi
 
 There are several ways to register variables for logging. One way is as follows:
 
-```
+```Python
 logger.register('LOG_foo', samples_per_sec = 1000, var_type = 'double')
 ```
 
 Note that register has default arguments of `samples_per_sec = 1000` and `var_type = 'double'` so the preceding line could also be accomplished as follows:
 
-```
+```Python
 logger.register('LOG_foo')
 ```
 
 If you have multiple variables that you wish to register with the same type and sample rate you can register them all at the same time. the `AMDC_Logger` class is also smart and sanitizes the input variables so you don't have to prepend `LOG_` to each variable if you don't want. The following snippets of code all accomplish the same task.
 
-```
+```Python
 logger.register('LOG_foo LOG_bar LOG_baz') # variable names in one string seperated by white space
 logger.register('foo bar baz')             # one string with no LOG_ (this option is probably the fastest/easiest)
 logger.register(['foo', 'bar', 'baz'])     #list of variable names no
@@ -200,13 +200,13 @@ logger.register(('foo', 'bar', 'baz'))     #tuple of variable names
 
 There is also a convenient `auto_register()` function that can be used to search your user code for variables of the form `LOG_*` and register them for you automatically. You just give the file path to your app's c code as follows:
 
-```
+```Python
 logger.auto_register(path_to_user_app)
 ```
 
 if you want to check to see which variables the auto register function will register before calling it, you can call the `auto_find_vars()` function as follows:
 
-```
+```Python
 log_vars, log_types = auto_find_vars(path_to_user_app)
 ```
 
@@ -214,31 +214,31 @@ where `log_vars` is a list containing all of the variables found in the user c c
 
 ### 6. Clear logged variables:
 
-```
+```Python
 logger.clear_all()
 ```
 
 Calling the `clear_all()` method resets all of the internal indices of the logger so that you don't receive old logged data. You can kind of think of it as clearing the log. If you just wish to clear a single variable for some reason you can call the `clear()` method and pass in the name of the variable you wish to clear. NOTE: clearing variables does not unregister them from logging.
 
-```
+```Python
 logger.clear('foo') #clear single variable
 ```
 
 ### 7. Start logging:
 
-```
+```Python
 logger.start()
 ```
 
 ### 8. Stop logging:
 
-```
+```Python
 logger.stop()
 ```
 
 Typically, you will want to record an event or to record data for a set amount of time. Because of this, it is common to import the `time` module and to use the `sleep()` function which expects a delay time in seconds. The following example illustrates a common use case:
 
-```
+```Python
 logger.clear_all()
 logger.start()
 
@@ -252,7 +252,7 @@ logger.stop()
 
 After collecting data, you will want to access that data. You do that as follows:  
 
-```
+```Python
 data = logger.dump()
 ```
 
@@ -260,19 +260,19 @@ The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super
 
 The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all logged variables. This can be time consuming though, so if you want, you can specifiy a subset of variables to dump as follows:
 
-```
+```Python
 data = logger.dump(log_vars = 'foo bar')
 ```
 
 You can also specify a file path and `dump()` will automatically save your data to a `.csv` file. This is nice to make sure your data is persistent between experiments. By default, the `dump()` function appends a timestamp to your file name so that you can't accidently overwrite data that you've collected. 
 
-```
+```Python
 data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv')
 ```
 
 Sometimes it is nice to add notes to a specific set of data. You can do this by adding the additional optional parameter `comment` to the `dump()` function.
 
-```
+```Python
 data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the motor appeared to run smooth')
 ```
 
@@ -282,19 +282,19 @@ Now that your data is in a `DataFrame` you can post-process it however you wish.
 
 Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe and save the data as follows:
 
-```
+```Python
 data = logger.dump(file = 'sensed_values.csv')
 ```
 
 Now we can make a plot of only the position data in a single line by calling the `plot()` method on the `DataFrame` while indexing into the displacement data:
 
-```
+```Python
 data['x y z'.split()].plot()
 ```
 
 Note that the above single line is equivalent to the following:
 
-```
+```Python
 pos_vars = ['x', 'y', 'z']
 pos_data = data[pos_vars] #index into dataframe to get position data columns (returns new dataframe)
 pos_data.plot()
@@ -306,13 +306,13 @@ This is just one example of how quick `pandas` can make visualizing our logged d
 
 #### Log for set duration
 
-```
+```Python
 logger.log(duration = 0.5) # Record data for about half second
 ```
 
 The above is exactly equivalent to
 
-```
+```Python
 logger.start()
 time.sleep(0.5)
 logger.stop()
@@ -322,13 +322,13 @@ logger.stop()
 
 Perhaps for some reason you want to unregister some variables, that can be done easily using the `unregister()` method as follows:
 
-```
+```Python
 logger.unregister('foo bar')
 ```
 
 Again the input can take many forms, the following would also work:
 
-```
+```Python
 logger.unregister('LOG_foo LOG_bar')
 logger.unregister(['LOG_foo', LOG_bar'])
 logger.unregister(['foo', 'bar'])
@@ -337,7 +337,7 @@ logger.unregister(['foo', 'bar'])
 
 If for some reason you want to unregister all variables, you can do that as the following:
 
-```
+```Python
 logger.unregister_all()
 ```
 
@@ -345,13 +345,13 @@ logger.unregister_all()
 
 At some point you'll probably want to load in an old run of data. You can do this using the `load()` method as follows:
 
-```
+```Python
 data = logger.load('old_data_file.csv')
 ```
 
 This will load your old data run into a `pandas` `DataFrame`. The load function is just a thin wrapper around the `pandas` `read_csv()` method and the above line of code is equivalent to:
 
-```
+```Python
 data = pd.read_csv('old_data_file.csv', comment = '#', index_col = 't')
 ```
 
