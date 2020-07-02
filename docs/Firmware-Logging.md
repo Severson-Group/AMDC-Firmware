@@ -21,9 +21,15 @@ The general flow for logging data in the AMDC is simple and uses the procedure s
 
 The firmware has been design specifically to limit the amount of changes users have to make to their C-code to log variables of interest. The only modifications that users need to make to their C-code are as follows:
 
-1. For every variable that you want to log within your code, create a new global variable with the same name prepended by `LOG_` (note that it is case sensitive). For example, if you have a variable `foo` in your code that you would like to log, create a new global variable of the same type called `LOG_foo`.
+1. Enable the logging feature by going into the `user_config.h` file, located in the `usr` folder of your private c code and setting the following define variable to 1:
+```
+#define USER_CONFIG_ENABLE_LOGGING (1)
+```
+Note that it is set to 0 (logging disabled) by default
 
-1. Update all global logging variables wherever desired by assigning the local variable to the global variable (e.g. `LOG_foo = foo;`)
+2. For every variable that you want to log within your code, create a new global variable with the same name prepended by `LOG_` (note that it is case sensitive). For example, if you have a variable `foo` in your code that you would like to log, create a new global variable of the same type called `LOG_foo`.
+
+3. Update all global logging variables wherever desired by assigning the local variable to the global variable (e.g. `LOG_foo = foo;`)
 
 #### Example
 The following example illustrates one possible use case:
