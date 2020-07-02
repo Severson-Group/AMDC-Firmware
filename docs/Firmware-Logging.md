@@ -5,7 +5,13 @@ This document describes and documents the "logging" functionality that is design
 ## Contents  
 - [Introduction](#introduction)
 - [General Flow](#general-flow)
-- []()
+- [Internal Workings](#internal-workings)
+- [C-Code Modifications](#c-code-modifications)
+- [Terminal Interface](#terminal-interface)
+- [Python Interface](#python-interface)  
+    - [Function Reference](#function-reference)
+    - [Copy-Paste Example](#copy-paste-example)
+
 
 ## Introduction
 
@@ -361,3 +367,7 @@ data = pd.read_csv('old_data_file.csv', comment = '#', index_col = 't')
 ```
 
 loading the data this way sets time to be the index of the `DataFrame` and ignores any comments you may have stored with the data.
+
+### Function Reference
+
+### Copy-Paste Example
