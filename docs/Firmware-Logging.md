@@ -131,11 +131,11 @@ The logging system has the following commands:
 
 ## Python Interface
 
-Before you can use the python interface, you must modify your C code according to the C-Code Modifications [section](#c-code-modifications).
+Before you can use the Python interface, you must modify your C code according to the C-Code Modifications [section](#c-code-modifications).
 
 Note that in the text that follows, `REPO_DIR` is an alias for the file path to where your repository is located. `REPO_DIR` contains the `AMDC-Firmware` submodule as well as a the folder containing your user C-code.
 
-The python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that python can take care of all of the book keeping for you. The Python interface offers the following advantages:
+The Python interface is built on top of the serial terminal logging interface in the sense that it simply enters commands at the serial terminal for you. What makes this so advantageous, however, is that Python can take care of all of the book keeping for you. The Python interface offers the following advantages:
 
 - Remembering which variables are being logged, which variables are in which slots, and which slots are still available
 - Automatically determines the memory addresses of each variable and converts them to the correct format
@@ -146,12 +146,12 @@ The following steps describe how to use the Python interface. (Note that a full 
 
 ### 1. Import needed modules
 
-To use logging in python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
+To use logging in Python, you must `import` the `AMDC` and `AMDC_Logger` modules from the scipts folder of the AMDC-Firmware. There are two main classes that you need to be concerned with:
 
 1. `AMDC`: class that is found in the `AMDC` module. Responsible for communicating with the AMDC over serial terminal
 2. `AMDC_Logger`: class that is found in the `AMDC_Logger` module. Responsible for sending logging commands to the AMDC and book keeping
 
-The top of your python script should look like the following:
+The top of your Python script should look like the following:
 
 ```Python
 import sys
@@ -162,7 +162,7 @@ from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 ```
 
-Adding the location of the scripts folder to the `sys.path` variable allows python to find the `AMDC` and `AMDC_Logger` modules to import them.
+Adding the location of the scripts folder to the `sys.path` variable allows Python to find the `AMDC` and `AMDC_Logger` modules to import them.
 
 After importing the modules, perform the following steps:
 
@@ -190,7 +190,7 @@ The `AMDC_Logger` object requires two inputs on instantiation: an `AMDC` object 
 logger.sync()
 ```
 
-This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes python to that state. It's useful for if you restart your python session while the amdc is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of python's book keeping and the AMDC won't align and you'll get unexpected behavior.
+This step isn't required but is recommended. It reads the current state of logging in the AMDC and synchronizes Python to that state. It's useful for if you restart your Python session while the AMDC is still on. If you don't do this and variables are are set up for logging in the AMDC, the internal state of Python's book keeping and the AMDC won't align and you'll get unexpected behavior.
 
 ### 5. Register variables of interest:  
 
@@ -273,9 +273,9 @@ After collecting data, you will want to access that data. You do that as follows
 data = logger.dump()
 ```
 
-The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. You can kind of think of a `DataFrame` like an Excel spreadsheet. The columns of the `DataFrame` correspond to each logged variable and the index of the dataframe is time.
+The output of the `dump()` method is a `pandas.DataFrame` object. `pandas` is a popular data science library in Python and a `DataFrame` is the primary object that `pandas` works with. You can kind of think of a `DataFrame` like an Excel spreadsheet. The columns of the `DataFrame` correspond to each logged variable and the index of the dataframe is time.
 
-The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all logged variables. This can be time consuming though, so if you want, you can specifiy a subset of variables to dump as follows:
+The `dump()` function is powerful and has a lot of optional arguments. By default, `dump()` will dump out all logged variables. This can be time consuming though, so if you want, you can specifiy a subset of variables to dump as follows:
 
 ```Python
 data = logger.dump(log_vars = 'foo bar')
@@ -295,7 +295,7 @@ data = logger.dump(log_vars = 'foo bar', file = 'my_data.csv', comment = 'the mo
 
 ### Example
 
-Now that your data is in a `DataFrame` you can post-process it however you wish. As a bit of motivation for of why `DataFrames` are powerful for logging and debugging, consider the following example. 
+Now that your data is in a `DataFrame` you can post-process it however you wish. As motivation for why `DataFrame` is powerful for logging and debugging, consider the following example. 
 
 Imagine we have recorded position data from `x`, `y`, and `z` displacement sensors as well as measured three phase currents `Ia`, `Ib`, and `Ic`. We can extract all of the data into a single dataframe and save the data as follows:
 
