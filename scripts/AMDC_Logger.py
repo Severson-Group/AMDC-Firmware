@@ -30,17 +30,17 @@ class AMDC_Logger():
         old_state = self.amdc.cmdEcho
         self.amdc.cmdEcho = False
         
-        max_slots, names, types, indices, sample_rates = self._get_amdc_state()
+        max_slots, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
         
         N = 15
         
         title = 'AMDC LOGGER INFO'.center(22).center(60, '#') + '\n\n'
-        header = 'Variable Name:'.ljust(N) + 'Index:'.center(N) + 'Type:'.center(N) + 'Sample Rate [Hz]:'
+        header = 'Variable Name:'.ljust(N) + 'Index:'.center(N) + 'Type:'.center(N) + 'Sample Rate [Hz]:'.center(N + 10) + 'Number of Samples:'
         
         print(title + header)
         
-        for (var, idx, t, sps) in zip(names, indices, types, sample_rates):
-            line = f'{var}'.ljust(N) + f'{idx}'.center(N) + f'{t}'.center(N) + f'{sps}'.center(N)
+        for (var, idx, t, sps, samples) in zip(names, indices, types, sample_rates, num_samples):
+            line = f'{var}'.ljust(N) + f'{idx}'.center(N) + f'{t}'.center(N) + f'{sps}'.center(N + 10) + f'{samples}'.center(N)
             print(line)
             
         self.amdc.cmdEcho = old_state
@@ -50,7 +50,7 @@ class AMDC_Logger():
         #the AMDC is the source of truth so calling sync will synchronize python
         #with the amdc. this is useful if the python kernel is restarted
         
-        max_slots, names, types, indices, sample_rates = self._get_amdc_state()
+        max_slots, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
         self.max_slots = max_slots
 
         self._reset()
@@ -519,6 +519,7 @@ class AMDC_Logger():
         types = []
         indices = []
         sample_rates = []
+        num_samples = []
         
         slot = 0
         
@@ -540,7 +541,10 @@ class AMDC_Logger():
             if 'Sampling' in line:
                 sample_rates.append(int(line.split()[-1]))
                 
-        return max_slots, names, types, indices, sample_rates
+            if 'Num samples' in line:
+                num_samples.append(int(line.split()[-1]))
+                
+        return max_slots, names, types, indices, sample_rates, num_samples
         
 def find_mapfile(root):
     
