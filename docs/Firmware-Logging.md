@@ -376,18 +376,34 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 
 ### Function Reference
 
-- `info()`  
-- `sync()`  
-- `register(log_vars, samples_per_sec = 1000, var_type = 'double')`  
-- `auto_register(root, samples_per_sec = None)`  
-- `unregister(log_vars, send_cmd = True)`  
-- `unregister_all()`  
-- `clear(var)`  
-- `clear_all()`  
-- `auto_find_vars(root)`  
-- `start()`  
-- `stop()`  
-- `log(duration = 0.25)`  
+The follow are methods available in the `AMDC_Logger` class:
+
+#### Registering / Unregistering
+
+- `register(log_vars, samples_per_sec = 1000, var_type = 'double')`
+- `auto_register(root, samples_per_sec = None)`
+- `unregister(log_vars, send_cmd = True)`
+- `unregister_all()`
+- `auto_find_vars(root)`
+
+#### Clear Log Slots
+
+- `clear(var)`
+- `clear_all()`
+
+#### Print Log Info
+
+- `info()`
+- `sync()`
+
+#### Start / Stop
+
+- `start()`
+- `stop()`
+- `log(duration = 0.25)`
+
+#### Dump Data / Load
+
 - `dump(log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4)`
 - `load(file)`
 
