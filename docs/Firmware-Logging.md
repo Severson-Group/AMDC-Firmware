@@ -377,9 +377,9 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 ### Function Reference
 - `info()`  
 - `sync()`  
-- `register(names, samples_per_sec = 1000, var_type = 'double')`  
+- `register(log_vars, samples_per_sec = 1000, var_type = 'double')`  
 - `auto_register(root, samples_per_sec = None)`  
-- `unregister(variables, send_cmd = True)`  
+- `unregister(log_vars, send_cmd = True)`  
 - `unregister_all()`  
 - `clear(var)`  
 - `clear_all()`  
