@@ -204,7 +204,9 @@ class AMDC_Logger():
                     while tries < max_tries:
                         try:
                             df_new = dump_func(var)
-                        except:
+                        except Exception as e:
+                            print(e)
+                            
                             tries += 1
                             if tries < max_tries:
                                 print(f'failed loading {var}... retrying\n')
