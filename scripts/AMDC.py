@@ -5,7 +5,8 @@ class AMDC:
     def __init__(self, port, baudrate = '115200',
                             cmdDelay = 0.5, cmdDelayChar = 0.001,
                             cmdEcho = True, cmdEchoPrepend = "\t> ",
-                            printOutput = True, outputPrepend = ""):
+                            printOutput = True, outputPrepend = "",
+                            captureOutput = True):
         # Serial port configuration
         self.ser = serial.Serial(timeout = 0)
         self.ser.baudrate = baudrate
@@ -18,6 +19,7 @@ class AMDC:
         self.cmdEchoPrepend = cmdEchoPrepend
         self.printOutput = printOutput
         self.outputPrepend = outputPrepend
+        self.captureOutput = captureOutput
 
     def connect(self):
         self.ser.open()
@@ -47,27 +49,28 @@ class AMDC:
         # Print log for user
         if self.cmdEcho:
             print(f"{self.cmdEchoPrepend}{cmd_str}")
-            
-        #Print out any feedback from command
-        output = [] #empty array for output that's returned from command
-        count_empty = 0  #number of empty lines in a row
-        allowed_empty = 10 #the code will keep reading lines until it reaches 
-                            #this many consecutive blank lines
-        while count_empty < allowed_empty:
-            
-            line = self.ser.readline().decode() #read in line and decode
-            
-            if len(line)>0 and line != '\n': #if line is not empty and not just new line
-                line = line.strip('\n\r') #remove newline and carriage returns
-                output.append(line) #append line to output list
-                count_empty = 0
-            else:
-                count_empty +=1
-                
-        if self.printOutput:
-            print(f"{self.outputPrepend}{output}")
-            
-        return output
+
+        if self.captureOutput:
+            #Print out any feedback from command
+            output = [] #empty array for output that's returned from command
+            count_empty = 0  #number of empty lines in a row
+            allowed_empty = 10 #the code will keep reading lines until it reaches 
+                                #this many consecutive blank lines
+            while count_empty < allowed_empty:
+
+                line = self.ser.readline().decode() #read in line and decode
+
+                if len(line)>0 and line != '\n': #if line is not empty and not just new line
+                    line = line.strip('\n\r') #remove newline and carriage returns
+                    output.append(line) #append line to output list
+                    count_empty = 0
+                else:
+                    count_empty +=1
+
+            if self.printOutput:
+                print(f"{self.outputPrepend}{output}")
+
+            return output
 
 
 
