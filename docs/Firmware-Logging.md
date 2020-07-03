@@ -376,7 +376,7 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 
 ### Function Reference
 
-The follow are methods available in the `AMDC_Logger` class:
+The following are methods available in the `AMDC_Logger` class:
 
 #### Registering / Unregistering
 
