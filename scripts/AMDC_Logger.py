@@ -103,9 +103,9 @@ class AMDC_Logger():
         #register all found variables
         for var, tp in zip(log_vars, log_types):
             if samples_per_sec != None:
-                self.register(names = var, samples_per_sec = samples_per_sec, var_type = tp)
+                self.register(log_vars = var, samples_per_sec = samples_per_sec, var_type = tp)
             else:
-                self.register(names = var, var_type = tp)
+                self.register(log_vars = var, var_type = tp)
                 
     def unregister(self, log_vars, send_cmd = True):
         
