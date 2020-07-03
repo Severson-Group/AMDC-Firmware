@@ -391,7 +391,7 @@ The following are methods available in the `AMDC_Logger` class:
 - `clear(var)`
 - `clear_all()`
 
-#### Print Log Info
+#### Log Status
 
 - `info()`
 - `sync()`
