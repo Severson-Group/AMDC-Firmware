@@ -64,9 +64,9 @@ class AMDC_Logger():
             loc = self.available_indices.index(idx)
             self.available_indices.pop(loc)
         
-    def register(self, names, samples_per_sec = 1000, var_type = 'double'):
+    def register(self, log_vars, samples_per_sec = 1000, var_type = 'double'):
         
-        names = self._sanitize_inputs(names)
+        names = self._sanitize_inputs(log_vars)
         
         for name in names:
             
@@ -107,9 +107,9 @@ class AMDC_Logger():
             else:
                 self.register(names = var, var_type = tp)
                 
-    def unregister(self, variables, send_cmd = True):
+    def unregister(self, log_vars, send_cmd = True):
         
-        variables = self._sanitize_inputs(variables)
+        variables = self._sanitize_inputs(log_vars)
         
         for var in variables:
             try:
