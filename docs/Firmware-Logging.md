@@ -142,7 +142,7 @@ The python interface is built on top of the serial terminal logging interface in
 - Reads dumped data off of the serial terminal and converts it to a format that can be saved to a `.csv` file
 - Other convenience functions that make logging much easier
 
-The following steps describe how to use the Python interface.
+The following steps describe how to use the Python interface. (Note that a full example that users can copy and paste is included at the [end](#copy-paste-example))
 
 ### 1. Import needed modules
 
@@ -273,7 +273,7 @@ After collecting data, you will want to access that data. You do that as follows
 data = logger.dump()
 ```
 
-The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. The columns of the `DataFrame` correspond to each logged variable and the index of the dataframe is time.
+The output of the `dump()` method is a `pandas` `DataFrame`. `pandas` is a super popular data science library in python and a `DataFrame` is the primary object that pandas works with. You can kind of think of a `DataFrame` like an Excel spreadsheet. The columns of the `DataFrame` correspond to each logged variable and the index of the dataframe is time.
 
 The `dump()` function is really powerful and has a lot of optional arguments. By default dump will dump out all logged variables. This can be time consuming though, so if you want, you can specifiy a subset of variables to dump as follows:
 
