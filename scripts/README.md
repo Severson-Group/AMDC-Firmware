@@ -1,22 +1,14 @@
 # Contents of `scripts/`
 
-This folder contains miscellaneous scripts related to the AMDC firmware.
+This folder contains miscellaneous scripts that support usage of the AMDC. All scripts were built for compatibility with the `bare` DSP project.
 
 ## AMDC Python Class
 
-The AMDC can be interfaced to via the serial interface. This interface has been encapsulted into a simple python class which relies on the follow file:
-
-1. `AMDC.py`
-
-NOTE: these python scripts were built for compatibility with the `bare` DSP project.
+`AMDC.py` is a Python class that encapsulates communication to the AMDC via the serial UART interface. This class provides several convenience functions to make communication to the AMDC more efficient than directly issuing commands via a command line terminal.
 
 ## AMDC_Logger Python Class
 
-The AMDC supports logging capabilities. Although it is possible to perform these logging functions directly through the serial terminal, it is very difficult. Because of this, an `AMDC_Logger` class was created in python to make logging easier. It relies on the following file:
-
-1. `AMDC_Logger.py`
-
-Documentation for logging on the AMDC can be found [here](../docs/Firmware-Logging.md)
+`AMDC_Logger.py` is a Python class that encapsulates the AMDC's logging capabilities. It is designed to be injected with an `AMDC.py` object for data communication. Although it is possible to perform logging functions directly by issuing serial commands from a terminal, doing so is challenging and inefficient. `AMPDC_Logger.py` makes logging easy and allows for data to be directly interpretted and plotted by the wealth of libraries available via Python. Learn more [here](../docs/Firmware-Logging.md)
 
 ## Auto-Formatting C Code via `clang-format`
 
