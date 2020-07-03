@@ -375,6 +375,7 @@ data = pd.read_csv('old_data_file.csv', comment = '#', index_col = 't')
 loading the data this way sets time to be the index of the `DataFrame` and ignores any comments you may have stored with the data.
 
 ### Function Reference
+
 - `info()`  
 - `sync()`  
 - `register(log_vars, samples_per_sec = 1000, var_type = 'double')`  
@@ -391,11 +392,14 @@ loading the data this way sets time to be the index of the `DataFrame` and ignor
 - `load(file)`
 
 ### Copy-Paste Example
+
+The following Python script example shows the full flow of logging on the AMDC. Users can copy and paste this script to get started.	
+
 ```Python
 import time
 import pathlib as pl
 import sys
-repo_dir = ''                                      #CHANGE THIS TO YOUR REPO DIRECTORY
+repo_dir = ''                                      # CHANGE THIS TO YOUR REPO DIRECTORY
 repo_dir = pl.Path(repo_dir)
 scripts_folder = repo_dir / 'AMDC-Firmware' / 'scripts'  
 sys.path.append(str(scripts_folder))
@@ -404,7 +408,7 @@ from AMDC import AMDC
 from AMDC_Logger import AMDC_Logger, find_mapfile
 
 ####################   SETUP LOGGER   ####################
-amdc = AMDC(port = 'COM4')                         #MIGHT HAVE TO CHANGE THE PORT NUMBER
+amdc = AMDC(port = 'COM4')                         # MIGHT HAVE TO CHANGE THE PORT NUMBER
 amdc.connect() #opens up serial communication
 
 mapfile_path = find_mapfile(repo_dir)
@@ -412,20 +416,19 @@ logger = AMDC_Logger(AMDC = amdc, mapfile = mapfile_path)
 logger.sync()
 
 ####################   REGISTER VARIABLES   ####################
-#register variables
-user_app_c_code_path = ''                        #SET THIS TO PATH OF YOUR USER APPLICATION CODE
+user_app_c_code_path = ''                          # SET THIS TO PATH OF YOUR USER APPLICATION CODE
 logger.auto_register(user_app_c_code_path)
 
-#view which variables are logged
+# View which variables are logged
 logger.info()
 
 ####################   COLLECT DATA   ####################
-#clear the logger and record 3 seconds of data
+# Clear the logger, then record data
 logger.clear_all() 
 logger.start()
 
-#DO SOMETHING
-time.sleep(3) # Record data for 3 seconds
+# DATA IS BEING RECORDED
+time.sleep(3)
 
 logger.stop()
 
