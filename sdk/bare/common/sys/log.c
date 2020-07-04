@@ -306,13 +306,9 @@ void state_machine_dump_ascii_callback(void *arg)
         ctx->state = DUMP_ASCII_REMOVE_TASK;
         break;
 
+    default:
     case DUMP_ASCII_REMOVE_TASK:
         scheduler_tcb_unregister(&ctx->tcb);
-        break;
-
-    default:
-        // Can't happen
-        HANG;
         break;
     }
 }
@@ -356,9 +352,9 @@ typedef enum sm_states_dump_binary_e {
     DUMP_BINARY_NUM_SAMPLES,
     DUMP_BINARY_SAMPLE_INTERVAL_USEC,
     DUMP_BINARY_DATA_TYPE,
-    DUMP_BINARY_SAMPLE_TS,
     DUMP_BINARY_SAMPLE_VALUE,
     DUMP_BINARY_MAGIC_FOOTER,
+    DUMP_BINARY_PRINT_FOOTER_SPACE,
     DUMP_BINARY_REMOVE_TASK
 } sm_states_dump_binary_e;
 
@@ -369,7 +365,7 @@ typedef struct sm_ctx_dump_binary_t {
     task_control_block_t tcb;
 } sm_ctx_dump_binary_t;
 
-// State machine at 2kHz results in 1kSPS dumping,
+// State machine at 2kHz results in 2kSPS dumping,
 // which is nearly full UART bandwidth at 112500 baud
 #define SM_DUMP_BIANRY_UPDATES_PER_SEC (2000)
 #define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
@@ -385,6 +381,7 @@ void state_machine_dump_binary_callback(void *arg)
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
     switch (ctx->state) {
+
     case DUMP_BINARY_MAGIC_HEADER:
     {
         serial_write((char *) &MAGIC_HEADER, 4);
@@ -420,39 +417,31 @@ void state_machine_dump_binary_callback(void *arg)
             // Nothing to dump!
             ctx->state = DUMP_BINARY_MAGIC_FOOTER;
         } else {
-            ctx->state = DUMP_BINARY_SAMPLE_TS;
+            ctx->state = DUMP_BINARY_SAMPLE_VALUE;
         }
-        break;
-    }
-
-    case DUMP_BINARY_SAMPLE_TS:
-    {
-        // Dump timestamp
-        uint32_t ts = e->timestamp;
-        serial_write((char *) &ts, 4);
-
-        ctx->state = DUMP_BINARY_SAMPLE_VALUE;
         break;
     }
 
     case DUMP_BINARY_SAMPLE_VALUE:
     {
-        // Dump value
+        // Dump the sampled value
         if (v->type == LOG_INT) {
             int32_t out = (int32_t) e->value;
             serial_write((char *) &out, 4);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
-            float out = *((float *) &(e->value));
+            // During the sampling, the distinction between float and double variable types
+            // was accounted for. The data is stored in the log array in the float format.
+            float out = (float) (e->value);
             serial_write((char *) &out, 4);
         }
 
         ctx->sample_idx++;
 
+        // Stay in the current state until we have dumped enough samples
         if (ctx->sample_idx >= v->num_samples) {
             ctx->state = DUMP_BINARY_MAGIC_FOOTER;
-        } else {
-            ctx->state = DUMP_BINARY_SAMPLE_TS;
         }
+
         break;
     }
 
@@ -462,19 +451,23 @@ void state_machine_dump_binary_callback(void *arg)
         serial_write((char *) &MAGIC_FOOTER, 4);
         serial_write((char *) &MAGIC_FOOTER, 4);
         serial_write((char *) &MAGIC_FOOTER, 4);
+        ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
+        break;
+    }
+
+    case DUMP_BINARY_PRINT_FOOTER_SPACE:
+    {
+        debug_print("\r\n\r\n");
         ctx->state = DUMP_BINARY_REMOVE_TASK;
         break;
     }
 
     case DUMP_BINARY_REMOVE_TASK:
-        debug_print("\r\n\r\n");
+    default:
+    {
         scheduler_tcb_unregister(&ctx->tcb);
         break;
-
-    default:
-        // Can't happen
-        HANG;
-        break;
+    }
     }
 }
 
@@ -633,6 +626,7 @@ void state_machine_info_callback(void *arg)
     {
         ctx->var_idx++;
         if (ctx->var_idx >= LOG_MAX_NUM_VARS) {
+            debug_printf("\r\n");
             ctx->state = INFO_REMOVE_TASK;
         } else {
             ctx->state = INFO_VAR_TITLE;
@@ -641,13 +635,8 @@ void state_machine_info_callback(void *arg)
     }
 
     case INFO_REMOVE_TASK:
-        debug_printf("\r\n");
-        scheduler_tcb_unregister(&ctx->tcb);
-        break;
-
     default:
-        // Can't happen
-        HANG;
+        scheduler_tcb_unregister(&ctx->tcb);
         break;
     }
 }
