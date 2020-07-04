@@ -273,6 +273,9 @@ class AMDC_Logger():
         old_state = self.amdc.captureOutput
         self.amdc.captureOutput = False
 
+        start_time = time.time()
+        timeout_sec = 50 # dump is at 2kSPS, so this could wait for 100k samples
+
         # Start dumping to host
         self.amdc.cmd(f"log dump bin {log_var_idx}")    
         
@@ -288,9 +291,6 @@ class AMDC_Logger():
 
         dump_data = bytearray()
         dump_data_idx = 0
-
-        start_time = time.time()
-        timeout_sec = 50 # dump is at 2kSPS, so this could wait for 100k samples
 
         found_footer = False
         while not found_footer:
@@ -543,7 +543,7 @@ class AMDC_Logger():
                 types.append(line.split()[-1])
                 
             if 'Sampling' in line:
-                sample_rates.append(int(line.split()[-1]))
+                sample_rates.append(1 / ((int(line.split()[-1]))/1e6))
                 
             if 'Num samples' in line:
                 num_samples.append(int(line.split()[-1]))
