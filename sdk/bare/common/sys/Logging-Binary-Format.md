@@ -13,9 +13,13 @@ To start a dump of the Nth variable slot: `log dump bin N`
 
 ## Binary Format
 
-All data is little-endian.
+All data is little-endian. The following summarizes a complete data packet for one variable dump.
 
-### Magic Header (16 bytes)
+| Byte 0-15 | Byte 16-19 | Byte 20 - 23 | Byte 24 - 31 | ... | Byte `32 + 8*(n-1)` - `32 + 8*n-1` | Byte `32 + 8*n` -  `32 + 8*n + 15` |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Header | Number of samples | Data Type | sample packet 0 | ... | sample packet _n_ | Footer |
+
+### Header (16 bytes)
 
 0x12345678 (repeated four times)
 
@@ -35,6 +39,6 @@ Example (4660 samples): 0x00001234
 |---------------------|----------|
 | Timestamp (usec)    | Data     |
 
-### Magic Footer (16 bytes)
+### Footer (16 bytes)
 
 0x11223344 (repeated four times)
