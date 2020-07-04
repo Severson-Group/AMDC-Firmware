@@ -15,7 +15,7 @@ To start a dump of the Nth variable slot: `log dump bin N`
 
 All data is little-endian. The following summarizes a complete data packet for one variable dump.
 
-| Byte 0-15 | Byte 16-19 | Byte 20-23 | Byte 24 - 27 | Byte 28 - 35 | ... | Byte `36 + 8*(n-1)` - `36 + 8*n-1` | Byte `36 + 8*n` -  `36 + 8*n + 15` |
+| Byte 0-15 | Byte 16-19 | Byte 20-23 | Byte 24 - 27 | Byte 28 - 35 | ... | Byte `36 + 4*(n-1)` - `36 + 4*n-1` | Byte `36 + 4*n` -  `36 + 4*n + 15` |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | Header | Number of samples | Sample Rate | Data Type | sample packet 0 | ... | sample packet _n_ | Footer |
 
@@ -37,11 +37,10 @@ Example (50000 usec): 0x0000C350
 - 0x00000002 = float
 - 0x00000003 = double
 
-### Each Sample (8 bytes)
+### Each Sample (4 bytes)
 
-| Byte 0-3            | Byte 4-7 |
-|---------------------|----------|
-| Timestamp (usec)    | Data     |
+- If int, bytes are in signed integer format.
+- If float or double, bytes are in IEEE 754 float format (standard C `float` data type).
 
 ### Footer (16 bytes)
 
