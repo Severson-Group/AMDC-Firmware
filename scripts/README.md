@@ -8,7 +8,7 @@ This folder contains miscellaneous scripts that support usage of the AMDC. All s
 
 ## AMDC_Logger Python Class
 
-`AMDC_Logger.py` is a Python class that encapsulates the AMDC's logging capabilities. It is designed to be injected with an `AMDC.py` object for data communication. Although it is possible to perform logging functions directly by issuing serial commands from a terminal, doing so is challenging and inefficient. `AMPDC_Logger.py` makes logging easy and allows for data to be directly interpretted and plotted by the wealth of libraries available via Python. Learn more [here](../docs/Firmware-Logging.md)
+`AMDC_Logger.py` is a Python class that encapsulates the AMDC's logging capabilities. It is designed to be injected with an `AMDC.py` object for data communication. Although it is possible to perform logging functions directly by issuing serial commands from a terminal, doing so is challenging and inefficient. `AMDC_Logger.py` makes logging easy and allows for data to be directly interpretted and plotted by the wealth of libraries available via Python. Learn more [here](../docs/Firmware-Logging.md)
 
 ## Auto-Formatting C Code via `clang-format`
 
