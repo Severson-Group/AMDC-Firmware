@@ -19,9 +19,9 @@ All data is little-endian.
 
 0x12345678 (repeated four times)
 
-### Number of Samples (4 bytes, integer)
+### Number of Samples in Transmission (4 bytes, unsigned integer)
 
-0x00000010
+Example (4660 samples): 0x00001234
 
 ### Data Type (4 bytes, integer)
 
