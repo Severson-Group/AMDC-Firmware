@@ -15,9 +15,9 @@ To start a dump of the Nth variable slot: `log dump bin N`
 
 All data is little-endian. The following summarizes a complete data packet for one variable dump.
 
-| Byte 0-15 | Byte 16-19 | Byte 20 - 23 | Byte 24 - 31 | ... | Byte `32 + 8*(n-1)` - `32 + 8*n-1` | Byte `32 + 8*n` -  `32 + 8*n + 15` |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| Header | Number of samples | Data Type | sample packet 0 | ... | sample packet _n_ | Footer |
+| Byte 0-15 | Byte 16-19 | Byte 20-23 | Byte 24 - 27 | Byte 28 - 35 | ... | Byte `36 + 8*(n-1)` - `36 + 8*n-1` | Byte `36 + 8*n` -  `36 + 8*n + 15` |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Header | Number of samples | Sample Rate | Data Type | sample packet 0 | ... | sample packet _n_ | Footer |
 
 ### Header (16 bytes)
 
@@ -26,6 +26,10 @@ All data is little-endian. The following summarizes a complete data packet for o
 ### Number of Samples in Transmission (4 bytes, unsigned integer)
 
 Example (4660 samples): 0x00001234
+
+### Sample Rate (usec) (4 bytes, unsigned integer)
+
+Example (50000 usec): 0x0000C350
 
 ### Data Type (4 bytes, integer)
 

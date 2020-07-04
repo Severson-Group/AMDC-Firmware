@@ -354,6 +354,7 @@ int log_var_dump_uart_ascii(int log_var_idx)
 typedef enum sm_states_dump_binary_e {
     DUMP_BINARY_MAGIC_HEADER = 1,
     DUMP_BINARY_NUM_SAMPLES,
+    DUMP_BINARY_SAMPLE_INTERVAL_USEC,
     DUMP_BINARY_DATA_TYPE,
     DUMP_BINARY_SAMPLE_TS,
     DUMP_BINARY_SAMPLE_VALUE,
@@ -398,6 +399,14 @@ void state_machine_dump_binary_callback(void *arg)
     {
         uint32_t out = (uint32_t) v->num_samples;
         serial_write((char *) &out, 4);
+        ctx->state = DUMP_BINARY_SAMPLE_INTERVAL_USEC;
+        break;
+    }
+
+    case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
+    {
+        uint32_t interval_usec = (uint32_t) v->log_interval_usec;
+        serial_write((char *) &interval_usec, 4);
         ctx->state = DUMP_BINARY_DATA_TYPE;
         break;
     }
