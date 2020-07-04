@@ -290,10 +290,10 @@ class AMDC_Logger():
         dump_data_idx = 0
 
         start_time = time.time()
-        timeout_sec = 60 # about 1kSPS
+        timeout_sec = 50 # dump is at 2kSPS, so this could wait for 100k samples
 
         found_footer = False
-        while not found_footer:   
+        while not found_footer:
             # Read in all serial data from OS buffer
             out = bytes(self.amdc.ser.read_all())
             dump_data += out
@@ -341,32 +341,36 @@ class AMDC_Logger():
 
         metadata_start_idx = magic_header_idx+(4*4)
 
-        s = struct.Struct("<II")
-        unpacked_header = s.unpack(bout[metadata_start_idx:metadata_start_idx+s.size])
-        num_samples  = unpacked_header[0]
-        data_type    = unpacked_header[1]
+        s = struct.Struct("<III")
+        unpacked_header      = s.unpack(bout[metadata_start_idx:metadata_start_idx+s.size])
+        num_samples          = unpacked_header[0]
+        sample_interval_usec = unpacked_header[1]
+        data_type            = unpacked_header[2]
 
-        print("num samples:", hex(num_samples), num_samples)
-        print("dump took:", '{:f}'.format(end_time - start_time), " sec\n")
+        print("Num samples:", num_samples)
+        print("Dump took:", '{:.2f}'.format(end_time - start_time), " sec\n")
         # print("data type:", hex(data_type), data_type)
         
         dump_samples_idx = metadata_start_idx+s.size+1
 
         if data_type == 1:
-            s = struct.Struct('<Ii')
+            s = struct.Struct('<i')
         elif data_type == 2 or data_type == 3:
-            s = struct.Struct('<If')
+            s = struct.Struct('<f')
         else:
             raise Exception("ERROR: unknown data type!")
 
         samples = []
+        time_sec = 0
 
         for i in range(0,num_samples):   
             sample = s.unpack(bout[dump_samples_idx:dump_samples_idx+s.size])
             dump_samples_idx += s.size
 
-            ts  = sample[0]/1e6
-            val = sample[1]
+            ts  = time_sec
+            val = sample[0]
+
+            time_sec += sample_interval_usec / 1e6
 
             # FIXME(NP): we shouldn't need to do this.... :(
             if i != 0:

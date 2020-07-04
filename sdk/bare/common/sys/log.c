@@ -431,7 +431,7 @@ void state_machine_dump_binary_callback(void *arg)
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             // During the sampling, the distinction between float and double variable types
             // was accounted for. The data is stored in the log array in the float format.
-            float out = (float) (e->value);
+            float out = *((float *) &(e->value));
             serial_write((char *) &out, 4);
         }
 
