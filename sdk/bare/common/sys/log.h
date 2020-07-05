@@ -27,6 +27,12 @@ bool log_is_logging(void);
 int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type);
 
 int log_var_empty(int idx);
-int log_var_dump_uart(int idx);
+int log_var_dump_uart_ascii(int idx);
+int log_var_dump_uart_binary(int idx);
+
+int log_var_unregister(int idx);
+int log_var_is_registered(int idx, bool *is_registered);
+
+int log_print_info(void);
 
 #endif // LOG_H

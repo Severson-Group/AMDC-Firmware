@@ -54,3 +54,4 @@ sdk/**/*.d
 # Python #
 ##########
 scripts/__pycache__/
+**/.ipynb_checkpoints/

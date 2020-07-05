@@ -15,10 +15,12 @@ static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
     { "reg <log_var_idx> <name> <memory_addr> <samples_per_sec> <type>", "Register memory address for logging" },
+    { "unreg <log_var_idx>", "Unregister variable slot" },
     { "start", "Start logging" },
     { "stop", "Stop logging" },
-    { "dump <log_var_idx>", "Dump log data to console" },
+    { "dump <bin|text> <log_var_idx>", "Dump log data to console" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
+    { "info", "Print status of logging engine" },
 };
 
 void cmd_log_register(void)
@@ -84,6 +86,28 @@ int cmd_log(int argc, char **argv)
         return CMD_SUCCESS;
     }
 
+    // Handle 'unreg' sub-command
+    if (strcmp("unreg", argv[1]) == 0) {
+        // Check correct number of arguments
+        if (argc != 3)
+            return CMD_INVALID_ARGUMENTS;
+
+        // Parse log_var_idx arg
+        int log_var_idx = atoi(argv[2]);
+        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+            // ERROR
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        // Register the variable with the logging engine
+        int err = log_var_unregister(log_var_idx);
+        if (err != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
+    }
+
     // Handle 'start' sub-command
     if (strcmp("start", argv[1]) == 0) {
         // Check correct number of arguments
@@ -115,23 +139,34 @@ int cmd_log(int argc, char **argv)
     // Handle 'dump' sub-command
     if (strcmp("dump", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 3)
+        if (argc != 4)
             return CMD_INVALID_ARGUMENTS;
 
         // Ensure logging was stopped before this
         if (log_is_logging())
             return CMD_FAILURE;
 
-        // Parse arg1: log_var_idx
-        int log_var_idx = atoi(argv[2]);
+        // Parse log_var_idx
+        int log_var_idx = atoi(argv[3]);
         if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
 
-        int err = log_var_dump_uart(log_var_idx);
-        if (err != SUCCESS) {
-            return CMD_FAILURE;
+        if (strcmp("text", argv[2]) == 0) {
+            // Dump using text (human-readable)
+            int err = log_var_dump_uart_ascii(log_var_idx);
+            if (err != SUCCESS) {
+                return CMD_FAILURE;
+            }
+        } else if (strcmp("bin", argv[2]) == 0) {
+            // Dump using binary
+            int err = log_var_dump_uart_binary(log_var_idx);
+            if (err != SUCCESS) {
+                return CMD_FAILURE;
+            }
+        } else {
+            return CMD_INVALID_ARGUMENTS;
         }
 
         return CMD_SUCCESS;
@@ -151,6 +186,20 @@ int cmd_log(int argc, char **argv)
         }
 
         int err = log_var_empty(log_var_idx);
+        if (err != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
+    }
+
+    // Handle 'info' sub-command
+    if (strcmp("info", argv[1]) == 0) {
+        // Check correct number of arguments
+        if (argc != 2)
+            return CMD_INVALID_ARGUMENTS;
+
+        int err = log_print_info();
         if (err != SUCCESS) {
             return CMD_FAILURE;
         }
