@@ -3,6 +3,7 @@
 #if USER_CONFIG_ENABLE_LOGGING == 1
 
 #include "sys/cmd/cmd_log.h"
+#include "sys/crc32.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/log.h"
@@ -13,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void log_preload(void);
+#define LOG_DEBUG_ENABLE_PRELOAD_SLOT (0)
 
 #define LOG_BUFFER_LENGTH (LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
 
@@ -64,15 +65,9 @@ void log_init(void)
     // Register command
     cmd_log_register();
 
-    // TODO(NP): Debugging!
-    // Initialize one log variable slot with known information to test dumping
-    // log_preload();
-}
-
-void log_preload(void)
-{
-    // Register last slot
-    log_var_register(LOG_MAX_NUM_VARS - 1, "testvar", (void *) 0x1, 1000, LOG_INT);
+#if LOG_DEBUG_ENABLE_PRELOAD_SLOT == 1
+    // Initialize one log variable slot (last one) with known information to test dumping
+    log_var_register(LOG_MAX_NUM_VARS - 1, "LOG_testvar", (void *) 0x1, 1000, LOG_INT);
 
     // Get point to slot
     log_var_t *v = &vars[LOG_MAX_NUM_VARS - 1];
@@ -81,15 +76,16 @@ void log_preload(void)
     v->num_samples = 0;
 
     // Put fake sample entries into slot buffer
-    for (int i = 0; i < 10000; i++) {
-        v->buffer[v->buffer_idx].timestamp = 1000 + i;
+    for (int i = 0; i < 100; i++) {
+        v->buffer[v->buffer_idx].timestamp = 2000 + i;
 
-        int out = 1000 + (10 * i);
+        int out = 2000 + i;
         v->buffer[v->buffer_idx].value = *((uint32_t *) &out);
 
         v->buffer_idx++;
         v->num_samples++;
     }
+#endif // LOG_DEBUG_ENABLE_PRELOAD_SLOT
 }
 
 void log_callback(void *arg)
@@ -362,6 +358,7 @@ typedef struct sm_ctx_dump_binary_t {
     sm_states_dump_binary_e state;
     int var_idx;
     int sample_idx;
+    uint32_t crc;
     task_control_block_t tcb;
 } sm_ctx_dump_binary_t;
 
@@ -384,10 +381,18 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_MAGIC_HEADER:
     {
+        // Write to data stream output (UART)
         serial_write((char *) &MAGIC_HEADER, 4);
         serial_write((char *) &MAGIC_HEADER, 4);
         serial_write((char *) &MAGIC_HEADER, 4);
         serial_write((char *) &MAGIC_HEADER, 4);
+
+        // Run data through CRC
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+
         ctx->state = DUMP_BINARY_NUM_SAMPLES;
         break;
     }
@@ -395,7 +400,13 @@ void state_machine_dump_binary_callback(void *arg)
     case DUMP_BINARY_NUM_SAMPLES:
     {
         uint32_t out = (uint32_t) v->num_samples;
+
+        // Write to output data stream (UART)
         serial_write((char *) &out, 4);
+
+        // Run data through CRC
+        ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+
         ctx->state = DUMP_BINARY_SAMPLE_INTERVAL_USEC;
         break;
     }
@@ -403,7 +414,13 @@ void state_machine_dump_binary_callback(void *arg)
     case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
     {
         uint32_t interval_usec = (uint32_t) v->log_interval_usec;
+
+        // Write to output data stream (UART)
         serial_write((char *) &interval_usec, 4);
+
+        // Run data through CRC
+        ctx->crc = crc32_calc_part((uint8_t *) &interval_usec, 4, ctx->crc);
+
         ctx->state = DUMP_BINARY_DATA_TYPE;
         break;
     }
@@ -411,7 +428,12 @@ void state_machine_dump_binary_callback(void *arg)
     case DUMP_BINARY_DATA_TYPE:
     {
         uint32_t var_type = (uint32_t) v->type;
+
+        // Write to output data stream (UART)
         serial_write((char *) &var_type, 4);
+
+        // Run data through CRC
+        ctx->crc = crc32_calc_part((uint8_t *) &var_type, 4, ctx->crc);
 
         if (v->num_samples == 0) {
             // Nothing to dump!
@@ -428,11 +450,13 @@ void state_machine_dump_binary_callback(void *arg)
         if (v->type == LOG_INT) {
             int32_t out = (int32_t) e->value;
             serial_write((char *) &out, 4);
+            ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             // During the sampling, the distinction between float and double variable types
             // was accounted for. The data is stored in the log array in the float format.
             float out = *((float *) &(e->value));
             serial_write((char *) &out, 4);
+            ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
         }
 
         ctx->sample_idx++;
@@ -451,6 +475,21 @@ void state_machine_dump_binary_callback(void *arg)
         serial_write((char *) &MAGIC_FOOTER, 4);
         serial_write((char *) &MAGIC_FOOTER, 4);
         serial_write((char *) &MAGIC_FOOTER, 4);
+
+        // Calculate CRC across footer bytes
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+
+        // After we are done calculating the CRC, we must
+        // invert it to match the Python implementation.
+        ctx->crc = ~(ctx->crc);
+
+        // The CRC includes the footer, so the client must
+        // read an extra 4 bytes (the CRC bytes!)
+        serial_write((char *) &(ctx->crc), 4);
+
         ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
         break;
     }
@@ -488,6 +527,9 @@ int log_var_dump_uart_binary(int log_var_idx)
     ctx_dump_binary.state = DUMP_BINARY_MAGIC_HEADER;
     ctx_dump_binary.var_idx = log_var_idx;
     ctx_dump_binary.sample_idx = 0;
+
+    // CRC-32 must be seeded as follows:
+    ctx_dump_binary.crc = CRC32_DEFAULT_INIT;
 
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx_dump_binary.tcb,

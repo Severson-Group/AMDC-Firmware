@@ -11,8 +11,8 @@ static task_control_block_t tcb;
 
 // Example logging variables for testing
 double LOG_vsi_a = 0;
-double LOG_vsi_b = 0;
-double LOG_vsi_c = 0;
+float LOG_vsi_b = 0;
+int LOG_vsi_c = 0;
 
 static double Ts = 1.0 / 10000.0; // [sec]
 static double theta = 0.0;        // [rad]
@@ -39,9 +39,14 @@ void task_vsi_callback(void *arg)
     theta = fmod(theta, 2.0 * M_PI); // Wrap to 2*pi
 
     // Calculate desired duty ratios
-    LOG_vsi_a = Do * cos(theta);
-    LOG_vsi_b = Do * cos(theta + 2.0 * M_PI / 3.0);
-    LOG_vsi_c = Do * cos(theta + 4.0 * M_PI / 3.0);
+    double vsi_a = Do * cos(theta);
+    double vsi_b = Do * cos(theta + 2.0 * M_PI / 3.0);
+    double vsi_c = Do * cos(theta + 4.0 * M_PI / 3.0);
+
+    // Update logging variables
+    LOG_vsi_a = (double) (10e3 * vsi_a);
+    LOG_vsi_b = (float) (10e3 * vsi_b);
+    LOG_vsi_c = (int) (10e3 * vsi_c);
 }
 
 #endif // APP_BLINK
