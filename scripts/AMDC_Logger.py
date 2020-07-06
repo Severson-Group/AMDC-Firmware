@@ -177,16 +177,19 @@ class AMDC_Logger():
         self.amdc.cmdDelay = old_delay #reset cmd delay to previous value
         
         
-    def dump(self, log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4):
+    def dump(self, log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4, print_output = True):
               
         if log_vars is not None:
             variables = self._sanitize_inputs(log_vars)
         else:
             variables = self.log_vars
+            
+        binary = 0
         
         if how.lower() == 'ascii':
             dump_func = self._dump_single_text
         elif how.lower() == 'binary':
+            binary = 1
             dump_func = self._dump_single_bin
         else:
             raise Exception("Invalid type of dump, valid types are: 'binary' or 'ascii'")
@@ -201,7 +204,11 @@ class AMDC_Logger():
                     #try multiple times to load data if it fails
                     while tries < max_tries:
                         try:
-                            df_new = dump_func(var)
+                            if binary:
+                                df_new = dump_func(var, print_output = print_output)
+                            else:
+                                df_new = dump_func(var)
+                                
                         except Exception as e:
                             print(e)
                             
@@ -262,7 +269,7 @@ class AMDC_Logger():
         
         return out
         
-    def _dump_single_bin(self, var):
+    def _dump_single_bin(self, var, print_output = True):
         # Function level debugging (for print statements)
         debug = False
         
@@ -279,8 +286,9 @@ class AMDC_Logger():
         timeout_sec = 55 # dump is at 2kSPS, so this could wait for max 110k samples
 
         # Start dumping to host
-        self.amdc.cmd(f"log dump bin {log_var_idx}")    
-        print("Dumping:", var)
+        self.amdc.cmd(f"log dump bin {log_var_idx}") 
+        if print_output:
+            print("Dumping:", var)
         
         # Reset the previous state
         self.amdc.captureOutput = old_state_captureOutput
@@ -387,8 +395,9 @@ class AMDC_Logger():
         sample_interval_usec = unpacked_header[1]
         data_type            = unpacked_header[2]
 
-        print("Dump took:", '{:.3f}'.format(end_time - start_time), " sec")
-        print("Dump rate:", '{:.3f}'.format(num_samples / (end_time - start_time)), " sps")
+        if print_output:
+            print("Dump took:", '{:.3f}'.format(end_time - start_time), " sec")
+            print("Dump rate:", '{:.3f}'.format(num_samples / (end_time - start_time)), " sps")
 
         if debug:
             print("DEBUG:", "data type:", hex(data_type), data_type)
@@ -416,7 +425,8 @@ class AMDC_Logger():
 
             time_sec += sample_interval_usec / 1e6
 
-        print("Num samples:", num_samples, "\n")
+        if print_output:        
+            print("Num samples:", num_samples, "\n")
 
         # Convert to DataFrame
         arr = np.array(samples)
