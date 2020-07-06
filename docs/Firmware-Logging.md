@@ -404,7 +404,7 @@ The following are methods available in the `AMDC_Logger` class:
 
 #### Dump Data / Load
 
-- `dump(log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4)`
+- `dump(log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4, print_output = True)`
 - `load(file)`
 
 ### Copy-Paste Example
