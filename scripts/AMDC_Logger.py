@@ -430,6 +430,10 @@ class AMDC_Logger():
 
         # Convert to DataFrame
         arr = np.array(samples)
+
+        # Round all timesteps to nearest 1usec
+        arr[:,0] = arr[:,0].round(6)
+
         df = pd.DataFrame(data = arr, columns = ['t', var[4::]])
         df['t'] = df['t'] - df['t'].min()
         df.set_index('t', inplace = True)
