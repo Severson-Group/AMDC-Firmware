@@ -565,6 +565,9 @@ class AMDC_Logger():
         old_state = self.amdc.printOutput
         self.amdc.printOutput = False
         
+        oldDelay = self.amdc.cmdDelay
+        self.amdc.cmdDelay = 0.5
+        
         out = self.amdc.cmd('log info')
         self.amdc.printOutput = old_state
 
@@ -598,6 +601,8 @@ class AMDC_Logger():
                 
             if 'Num samples' in line:
                 num_samples.append(int(line.split()[-1]))
+                
+        self.amdc.cmdDelay = oldDelay
                 
         return max_slots, names, types, indices, sample_rates, num_samples
         
