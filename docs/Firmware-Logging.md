@@ -381,7 +381,7 @@ The following are methods available in the `AMDC_Logger` class:
 #### Registering / Unregistering
 
 - `register(log_vars, samples_per_sec = 1000, var_type = 'double')`
-- `auto_register(root, samples_per_sec = None)`
+- `auto_register(root, samples_per_sec = 1000)`
 - `unregister(log_vars, send_cmd = True)`
 - `unregister_all()`
 - `auto_find_vars(root)`
