@@ -89,7 +89,7 @@ class AMDC_Logger():
                 print(f'Did not register, cannot exceed maximum of {self.max_slots} logged variables')
                 print(f'Logged variables are:\n{self.log_vars}')
                 
-    def auto_register(self, root, samples_per_sec = None):
+    def auto_register(self, root, samples_per_sec = 1000):
         
         #provide path to root of C code for which you want the logger to search for variables
         #of the form `LOG_{var_name}`
@@ -100,10 +100,7 @@ class AMDC_Logger():
         
         #register all found variables
         for var, tp in zip(log_vars, log_types):
-            if samples_per_sec != None:
-                self.register(log_vars = var, samples_per_sec = samples_per_sec, var_type = tp)
-            else:
-                self.register(log_vars = var, var_type = tp)
+            self.register(log_vars = var, samples_per_sec = samples_per_sec, var_type = tp)
                 
     def unregister(self, log_vars, send_cmd = True):
         
