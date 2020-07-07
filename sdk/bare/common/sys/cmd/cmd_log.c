@@ -169,7 +169,7 @@ int cmd_log(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
         }
 
-        return CMD_SUCCESS;
+        return CMD_SUCCESS_QUIET;
     }
 
     // Handle 'empty' sub-command

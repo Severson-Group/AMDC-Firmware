@@ -3,7 +3,7 @@ import time
     
 class AMDC:
     def __init__(self, port, baudrate = '115200',
-                            cmdDelay = 0.5, cmdDelayChar = 0.001,
+                            cmdDelay = 0.2, cmdDelayChar = 0.001,
                             cmdEcho = True, cmdEchoPrepend = "\t> ",
                             printOutput = True, outputPrepend = "",
                             captureOutput = True):
@@ -35,7 +35,7 @@ class AMDC:
         self.disconnect()
 
     def cmd(self, cmd_str):
-        to_send_str = f"{cmd_str}\r\n"
+        to_send_str = f"{cmd_str}\n"
         to_send_bytes = str.encode(to_send_str)
         for b in to_send_bytes:
             self.ser.write(bytes([b]))

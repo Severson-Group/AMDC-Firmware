@@ -5,6 +5,7 @@ import pathlib as pl
 import os
 import datetime
 import struct
+import binascii
 
 #########################################################
 # Title:       AMDC Logging code
@@ -26,10 +27,6 @@ class AMDC_Logger():
         self.log_var_indices = []
         
     def info(self):
-        
-        old_state = self.amdc.cmdEcho
-        self.amdc.cmdEcho = False
-        
         max_slots, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
         
         N = 15
@@ -42,8 +39,9 @@ class AMDC_Logger():
         for (var, idx, t, sps, samples) in zip(names, indices, types, sample_rates, num_samples):
             line = f'{var}'.ljust(N) + f'{idx}'.center(N) + f'{t}'.center(N) + f'{sps}'.center(N + 10) + f'{samples}'.center(N)
             print(line)
-            
-        self.amdc.cmdEcho = old_state
+
+        # Add extra new line
+        print()
 
     def sync(self):
         
@@ -179,16 +177,19 @@ class AMDC_Logger():
         self.amdc.cmdDelay = old_delay #reset cmd delay to previous value
         
         
-    def dump(self, log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4):
+    def dump(self, log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4, print_output = True):
               
         if log_vars is not None:
             variables = self._sanitize_inputs(log_vars)
         else:
             variables = self.log_vars
+            
+        binary = 0
         
         if how.lower() == 'ascii':
             dump_func = self._dump_single_text
         elif how.lower() == 'binary':
+            binary = 1
             dump_func = self._dump_single_bin
         else:
             raise Exception("Invalid type of dump, valid types are: 'binary' or 'ascii'")
@@ -203,7 +204,11 @@ class AMDC_Logger():
                     #try multiple times to load data if it fails
                     while tries < max_tries:
                         try:
-                            df_new = dump_func(var)
+                            if binary:
+                                df_new = dump_func(var, print_output = print_output)
+                            else:
+                                df_new = dump_func(var)
+                                
                         except Exception as e:
                             print(e)
                             
@@ -264,33 +269,41 @@ class AMDC_Logger():
         
         return out
         
-    def _dump_single_bin(self, var):
+    def _dump_single_bin(self, var, print_output = True):
+        # Function level debugging (for print statements)
+        debug = False
         
         var = self._sanitize_inputs(var)[0]
         log_var_idx = self._get_index(var)
         
         # Don't automatically capture binary output data! 
-        old_state = self.amdc.captureOutput
+        old_state_captureOutput = self.amdc.captureOutput
+        old_state_cmdDelay = self.amdc.cmdDelay
         self.amdc.captureOutput = False
+        self.amdc.cmdDelay = 0.010
 
         start_time = time.time()
-        timeout_sec = 50 # dump is at 2kSPS, so this could wait for 100k samples
+        timeout_sec = 55 # dump is at 2kSPS, so this could wait for max 110k samples
 
         # Start dumping to host
-        self.amdc.cmd(f"log dump bin {log_var_idx}")    
+        self.amdc.cmd(f"log dump bin {log_var_idx}") 
+        if print_output:
+            print("Dumping:", var)
         
         # Reset the previous state
-        self.amdc.captureOutput = old_state
+        self.amdc.captureOutput = old_state_captureOutput
+        self.amdc.old_state_cmdDelay = old_state_cmdDelay
 
         # These are repeating 4 times in the binary stream!
         MAGIC_HEADER = 0x12345678
         MAGIC_FOOTER = 0x11223344
 
         magic_header_idx = 0
-        # magic_footer_idx = 0
+        magic_footer_idx = 0
 
         dump_data = bytearray()
         dump_data_idx = 0
+        dump_data_max = 0
 
         found_footer = False
         while not found_footer:
@@ -300,16 +313,19 @@ class AMDC_Logger():
 
             N = len(out)
 
+            dump_data_max += N
+            dump_data_idx = 0
+
             s = struct.Struct('<IIII')    
 
-            for i in range(0,N-s.size):
-                magic = s.unpack(out[i:i+s.size])
+            for i in range(0,dump_data_max-s.size):
+                magic = s.unpack(dump_data[i:i+s.size])
 
                 if magic[0] == MAGIC_HEADER and magic[1] == MAGIC_HEADER and magic[2] == MAGIC_HEADER and magic[3] == MAGIC_HEADER:
                     magic_header_idx = dump_data_idx
 
                 if magic[0] == MAGIC_FOOTER and magic[1] == MAGIC_FOOTER and magic[2] == MAGIC_FOOTER and magic[3] == MAGIC_FOOTER:
-                    # magic_footer_idx = dump_data_idx
+                    magic_footer_idx = dump_data_idx
                     found_footer = True
                     break
 
@@ -321,21 +337,53 @@ class AMDC_Logger():
 
                 # Break loop if timeout
                 if time.time() >= start_time + timeout_sec:
-                    raise Exception("ERROR: couldn't find magic footer!")
+                    raise Exception("ERROR: timeout, could not find footer!")
 
         end_time = time.time()
 
-        # Flush the host OS to make sure all
-        # serial data is out of buffers
-        # (this might be necessary to get last sample value!)
+        # Flush the host OS to make sure all serial data is out of buffers
+        #
+        # This might be unnessecary; at minimum, we might need to do this
+        # one time to get the CRC bytes from the AMDC since they come after
+        # the footer bytes.
         for i in range(0,10):
             out = bytes(self.amdc.ser.read_all())
             dump_data += out
 
-        # print("magic_header_idx:", magic_header_idx)
-        # print("magic_footer_idx:", magic_footer_idx)
+        if debug:
+            print("DEBUG:", "all data:", binascii.hexlify(bytearray(dump_data)), len(dump_data))
 
-        
+        if debug:
+            print("DEBUG:", "magic_header_idx:", magic_header_idx)
+            print("DEBUG:", "magic_footer_idx:", magic_footer_idx)
+
+            foot_data = dump_data[magic_footer_idx:magic_footer_idx+16]
+            print("DEBUG:", "FOOTER:", binascii.hexlify(bytearray(foot_data)), len(foot_data))
+
+        # Calculate CRC-32 over data we got and make sure it is valid!
+        crc_data = dump_data[magic_header_idx:magic_footer_idx+16]
+
+        if debug:
+            print("DEBUG:", "full data length:", len(crc_data))
+            print("DEBUG:", "HEADER:", binascii.hexlify(bytearray(crc_data[0:16])))
+            print("DEBUG:", "full data:", binascii.hexlify(bytearray(dump_data[magic_header_idx:magic_footer_idx+16+4])))
+
+        crc_calculated_python = binascii.crc32(crc_data, 0) & 0xffffffff
+
+        if debug:
+            print("DEBUG:", "crc_calculated_python:", hex(crc_calculated_python))
+
+        # Extract the CRC that the AMDC sent
+        crc_from_amdc = dump_data[magic_footer_idx+16:magic_footer_idx+20]
+        crc_from_amdc = struct.unpack('<I', crc_from_amdc)[0]
+
+        if debug:
+            print("DEBUG:", "crc_from_amdc:", hex(crc_from_amdc))
+
+        # Check to make AMDC CRC matches Python CRC
+        if crc_calculated_python != crc_from_amdc:
+            raise Exception("ERROR: CRC doesn't match:", hex(crc_calculated_python), hex(crc_from_amdc))
+
         N = len(dump_data)
         bout = bytes(dump_data)
 
@@ -347,11 +395,14 @@ class AMDC_Logger():
         sample_interval_usec = unpacked_header[1]
         data_type            = unpacked_header[2]
 
-        print("Num samples:", num_samples)
-        print("Dump took:", '{:.2f}'.format(end_time - start_time), " sec\n")
-        # print("data type:", hex(data_type), data_type)
-        
-        dump_samples_idx = metadata_start_idx+s.size+1
+        if print_output:
+            print("Dump took:", '{:.3f}'.format(end_time - start_time), " sec")
+            print("Dump rate:", '{:.3f}'.format(num_samples / (end_time - start_time)), " sps")
+
+        if debug:
+            print("DEBUG:", "data type:", hex(data_type), data_type)
+
+        dump_samples_idx = metadata_start_idx+s.size
 
         if data_type == 1:
             s = struct.Struct('<i')
@@ -370,15 +421,19 @@ class AMDC_Logger():
             ts  = time_sec
             val = sample[0]
 
+            samples.append([ts, val])
+
             time_sec += sample_interval_usec / 1e6
 
-            # FIXME(NP): we shouldn't need to do this.... :(
-            if i != 0:
-                samples.append([ts, val])
-        
-        # Convert to DataFrame
+        if print_output:        
+            print("Num samples:", num_samples, "\n")
 
+        # Convert to DataFrame
         arr = np.array(samples)
+
+        # Round all timesteps to nearest 1usec
+        arr[:,0] = arr[:,0].round(6)
+
         df = pd.DataFrame(data = arr, columns = ['t', var[4::]])
         df['t'] = df['t'] - df['t'].min()
         df.set_index('t', inplace = True)
@@ -514,6 +569,9 @@ class AMDC_Logger():
         old_state = self.amdc.printOutput
         self.amdc.printOutput = False
         
+        oldDelay = self.amdc.cmdDelay
+        self.amdc.cmdDelay = 0.5
+        
         out = self.amdc.cmd('log info')
         self.amdc.printOutput = old_state
 
@@ -547,6 +605,8 @@ class AMDC_Logger():
                 
             if 'Num samples' in line:
                 num_samples.append(int(line.split()[-1]))
+                
+        self.amdc.cmdDelay = oldDelay
                 
         return max_slots, names, types, indices, sample_rates, num_samples
         
