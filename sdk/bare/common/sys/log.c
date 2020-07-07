@@ -179,7 +179,12 @@ int log_var_unregister(int idx)
         return FAILURE;
     }
 
+    // Mark as unregistered, this allows slot to be reused
     vars[idx].is_registered = false;
+
+    // Also, empty slot so when variable is rereg the next time,
+    // previous samples aren't still stored.
+    log_var_empty(idx);
 
     return SUCCESS;
 }
