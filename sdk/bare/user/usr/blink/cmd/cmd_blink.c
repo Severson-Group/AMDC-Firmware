@@ -99,24 +99,30 @@ int cmd_blink(int argc, char **argv)
     }
 
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
-        task_blink_init();
-        return SUCCESS;
+        if (task_blink_init() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
     }
 
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
-        task_blink_deinit();
-        return SUCCESS;
+        if (task_blink_deinit() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
     }
 
     if (argc >= 2 && strcmp("stats", argv[1]) == 0) {
         if (argc == 3 && strcmp("print", argv[2]) == 0) {
             task_blink_stats_print();
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
         if (argc == 3 && strcmp("reset", argv[2]) == 0) {
             task_blink_stats_reset();
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 

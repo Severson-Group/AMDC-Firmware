@@ -1,6 +1,7 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "sys/defines.h"
@@ -26,7 +27,7 @@ typedef void (*task_callback_t)(void *);
 typedef struct task_control_block_t {
     int id;
     const char *name;
-    uint8_t registered;
+    bool is_registered;
     task_callback_t callback;
     void *callback_arg;
     uint32_t interval_usec;
@@ -42,9 +43,9 @@ void scheduler_run(void);
 
 void scheduler_tcb_init(
     task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec);
-void scheduler_tcb_register(task_control_block_t *tcb);
-void scheduler_tcb_unregister(task_control_block_t *tcb);
-uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb);
+int scheduler_tcb_register(task_control_block_t *tcb);
+int scheduler_tcb_unregister(task_control_block_t *tcb);
+bool scheduler_tcb_is_registered(task_control_block_t *tcb);
 
 uint32_t scheduler_get_elapsed_usec(void);
 
