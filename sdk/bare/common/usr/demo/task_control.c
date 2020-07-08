@@ -1,4 +1,3 @@
-
 #ifdef APP_DEMO
 
 #include "usr/demo/task_control.h"
