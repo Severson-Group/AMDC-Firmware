@@ -42,5 +42,4 @@ vec_dq_t cc_update(cc_ctx_t *ctx, vec_dq_t Idq, double omega_e)
     return ctx->__Vdq_star;
 }
 
-
 #endif // APP_DEMO

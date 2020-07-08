@@ -2,16 +2,16 @@
 #ifdef APP_DEMO
 
 #include "usr/demo/task_control.h"
-#include "usr/demo/cc.h"
-#include "usr/vector_types.h"
-#include "sys/scheduler.h"
-#include "sys/transform.h"
 #include "drv/analog.h"
 #include "drv/pwm.h"
+#include "sys/scheduler.h"
+#include "sys/transform.h"
+#include "usr/demo/cc.h"
+#include "usr/vector_types.h"
 //#include "drv/led.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct pwm_config_t {
     uint8_t pwm_chnl;
@@ -43,10 +43,10 @@ typedef struct control_context_t {
 } control_context_t;
 
 // Period between controller updates
-const double Ts =  1.0 / TASK_CONTROL_UPDATES_PER_SEC;
+const double Ts = 1.0 / TASK_CONTROL_UPDATES_PER_SEC;
 
 #define MAX_NUM_CTRL_CTXS (8)
-static control_context_t ctrl_ctxs[MAX_NUM_CTRL_CTXS] = {0};
+static control_context_t ctrl_ctxs[MAX_NUM_CTRL_CTXS] = { 0 };
 
 static vec_dq_t my_transform_dq(vec_abc_t Fabc, double theta);
 static vec_abc_t my_transform_dq_inverse(vec_dq_t Fdq, double theta);
@@ -54,15 +54,17 @@ inline static int saturate(double min, double max, double *value);
 
 void task_control_callback(void *arg)
 {
-	// Cast scheduler-supplied "arg" into the controller context
-	// NOTE: We can do this because of how we inited our callback,
-	//       see task_control_init() below
+    // Cast scheduler-supplied "arg" into the controller context
+    // NOTE: We can do this because of how we inited our callback,
+    //       see task_control_init() below
     control_context_t *ctx = (control_context_t *) arg;
 
     // Update position based on user specified speed command
     ctx->__theta_e += ctx->omega_e_star * Ts;
-    while (ctx->__theta_e >  PI2) ctx->__theta_e -= PI2;
-    while (ctx->__theta_e < -PI2) ctx->__theta_e += PI2;
+    while (ctx->__theta_e > PI2)
+        ctx->__theta_e -= PI2;
+    while (ctx->__theta_e < -PI2)
+        ctx->__theta_e += PI2;
 
     // Read ADCs
     vec_abc_t Iabc;
@@ -82,14 +84,15 @@ void task_control_callback(void *arg)
     vec_abc_t Vabc_star = my_transform_dq_inverse(Vdq_star, ctx->__theta_e);
 
     // Saturate Vabc* to 1/2 inverter bus voltage
-    if (ctx->inverter_ctx.Vdc < 1.0) ctx->inverter_ctx.Vdc = 1.0;
+    if (ctx->inverter_ctx.Vdc < 1.0)
+        ctx->inverter_ctx.Vdc = 1.0;
     double Vdc = ctx->inverter_ctx.Vdc;
     for (size_t i = 0; i < 3; i++) {
         if (saturate(-Vdc / 2.0, Vdc / 2.0, &Vabc_star.elems[i]) != 0) {
             // Saturated!
-            //led_set_color_bytes(0, 10, 0, 0);
+            // led_set_color_bytes(0, 10, 0, 0);
         } else {
-            //led_set_color_bytes(0, 0, 10, 0);
+            // led_set_color_bytes(0, 0, 10, 0);
         }
     }
 
@@ -102,7 +105,8 @@ void task_control_callback(void *arg)
 
 void task_control_init(int ctrl_idx)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     if (!scheduler_tcb_is_registered(&ctx->tcb)) {
@@ -113,7 +117,8 @@ void task_control_init(int ctrl_idx)
 
 void task_control_deinit(int ctrl_idx)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     if (scheduler_tcb_is_registered(&ctx->tcb)) {
@@ -128,7 +133,8 @@ void task_control_deinit(int ctrl_idx)
 
 void task_control_vdc_set(int ctrl_idx, double vdc)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     ctx->inverter_ctx.Vdc = vdc;
@@ -136,7 +142,8 @@ void task_control_vdc_set(int ctrl_idx, double vdc)
 
 void task_control_pwm(int ctrl_idx, uint8_t phase, uint8_t pwm_chnl)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     ctx->pwm_config[phase].pwm_chnl = pwm_chnl;
@@ -144,7 +151,8 @@ void task_control_pwm(int ctrl_idx, uint8_t phase, uint8_t pwm_chnl)
 
 void task_control_adc(int ctrl_idx, uint8_t phase, uint8_t adc_chnl, double adc_gain, double adc_offset)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     ctx->adc_config[phase].adc_chnl = adc_chnl;
@@ -154,7 +162,8 @@ void task_control_adc(int ctrl_idx, uint8_t phase, uint8_t adc_chnl, double adc_
 
 void task_control_tune(int ctrl_idx, double Rs_hat, double Ld_hat, double Lq_hat, double bandwidth_hz)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     cc_init(&ctx->cc_ctx, Ts, Rs_hat, Ld_hat, Lq_hat, bandwidth_hz);
@@ -162,7 +171,8 @@ void task_control_tune(int ctrl_idx, double Rs_hat, double Ld_hat, double Lq_hat
 
 void task_control_set(int ctrl_idx, double Id_star, double Iq_star, double omega_e)
 {
-    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS) return;
+    if (ctrl_idx < 0 || ctrl_idx >= MAX_NUM_CTRL_CTXS)
+        return;
     control_context_t *ctx = &ctrl_ctxs[ctrl_idx];
 
     ctx->cc_ctx.Idq_star.d = Id_star;
@@ -208,7 +218,8 @@ static vec_abc_t my_transform_dq_inverse(vec_dq_t Fdq, double theta)
     return ret;
 }
 
-inline static int saturate(double min, double max, double *value) {
+inline static int saturate(double min, double max, double *value)
+{
     if (*value < min) {
         // Lower bound saturation
         *value = min;

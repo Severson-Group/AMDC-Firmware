@@ -1,13 +1,13 @@
 #ifdef APP_DEMO
 
 #include "usr/demo/cmd/cmd_cc.h"
-#include "usr/demo/task_control.h"
 #include "drv/analog.h"
 #include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
+#include "usr/demo/task_control.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -114,8 +114,8 @@ int cmd_cc(int argc, char **argv)
         task_control_pwm(1, 1, 2); // SB
         task_control_pwm(1, 2, 0); // SC
 
-        task_control_tune(0, 0.6, 0.0025, 0.0025, 6283.0); //Torque
-        task_control_tune(1, 2.4, 0.010, 0.010, 6283.0); //Suspension
+        task_control_tune(0, 0.6, 0.0025, 0.0025, 6283.0); // Torque
+        task_control_tune(1, 2.4, 0.010, 0.010, 6283.0);   // Suspension
 
         return CMD_SUCCESS;
     }

@@ -2,9 +2,9 @@
 #ifdef APP_DEMO
 
 #include "usr/demo/app_demo.h"
-#include "usr/demo/task_control.h"
-#include "usr/demo/cmd/cmd_cc.h"
 #include "drv/pwm.h"
+#include "usr/demo/cmd/cmd_cc.h"
+#include "usr/demo/task_control.h"
 
 void app_demo_init(void)
 {

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #define TASK_CONTROL_UPDATES_PER_SEC (10000)
-#define TASK_CONTROL_INTERVAL_USEC (USEC_IN_SEC / TASK_CONTROL_UPDATES_PER_SEC)
+#define TASK_CONTROL_INTERVAL_USEC   (USEC_IN_SEC / TASK_CONTROL_UPDATES_PER_SEC)
 
 void task_control_callback(void *arg);
 

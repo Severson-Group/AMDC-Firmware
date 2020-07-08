@@ -20,9 +20,9 @@ typedef union vec_dqz {
 
 typedef union vec_abc {
     struct {
-    	double a;
-    	double b;
-    	double c;
+        double a;
+        double b;
+        double c;
     };
     double elems[3];
 } vec_abc_t;
