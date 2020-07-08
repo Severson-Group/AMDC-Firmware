@@ -29,8 +29,8 @@ typedef struct task_control_block_t {
     uint8_t registered;
     task_callback_t callback;
     void *callback_arg;
-    uint64_t interval_usec;
-    uint64_t last_run_usec;
+    uint32_t interval_usec;
+    uint32_t last_run_usec;
 
     task_stats_t stats;
 
@@ -46,6 +46,6 @@ void scheduler_tcb_register(task_control_block_t *tcb);
 void scheduler_tcb_unregister(task_control_block_t *tcb);
 uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb);
 
-uint64_t scheduler_get_elapsed_usec(void);
+uint32_t scheduler_get_elapsed_usec(void);
 
 #endif // SCHEDULER_H

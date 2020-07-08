@@ -18,7 +18,7 @@ static task_control_block_t *tasks = NULL;
 static task_control_block_t *running_task = NULL;
 
 // Incremented every SysTick interrupt to track time
-static uint64_t elapsed_usec = 0;
+static uint32_t elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
@@ -45,7 +45,7 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     scheduler_idle = false;
 }
 
-uint64_t scheduler_get_elapsed_usec(void)
+uint32_t scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
 }
@@ -155,7 +155,7 @@ void scheduler_run(void)
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint64_t usec_since_last_run = elapsed_usec - t->last_run_usec;
+            uint32_t usec_since_last_run = elapsed_usec - t->last_run_usec;
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
