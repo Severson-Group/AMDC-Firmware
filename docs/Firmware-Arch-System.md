@@ -1,9 +1,9 @@
 # Firmware Architecture - System
 
-[Firmware Architecture](00-Firmware-Architecture.md)
-- [Drivers](00a-Firmware-Arch-Drivers.md)
+[Firmware Architecture](Firmware-Architecture.md)
+- [Drivers](Firmware-Arch-Drivers.md)
 - **System**
-- [User Applications](00c-Firmware-Arch-UserApps.md)
+- [User Applications](Firmware-Arch-UserApps.md)
 
 ## Background
 

@@ -4,7 +4,8 @@
 #include <stdint.h>
 
 #include "sys/defines.h"
-#include "usr/user_defines.h"
+#include "sys/task_stats.h"
+#include "usr/user_config.h"
 
 // SysTick
 //
@@ -14,9 +15,9 @@
 // we will have 66.6k cycles per time slice, meaning all tasks
 // combined have to consume <= 66.6k cycles
 #ifndef SYS_TICK_FREQ
-#define SYS_TICK_FREQ   (10000) // Hz
+#define SYS_TICK_FREQ (10000) // Hz
 #endif
-#define SYS_TICK_USEC   (SEC_TO_USEC(1) / SYS_TICK_FREQ)
+#define SYS_TICK_USEC (SEC_TO_USEC(1) / SYS_TICK_FREQ)
 
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
@@ -30,15 +31,17 @@ typedef struct task_control_block_t {
     void *callback_arg;
     uint64_t interval_usec;
     uint64_t last_run_usec;
+
+    task_stats_t stats;
+
     struct task_control_block_t *next;
 } task_control_block_t;
-
 
 void scheduler_init(void);
 void scheduler_run(void);
 
-void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
-        void *callback_arg, const char *name, uint32_t interval_usec);
+void scheduler_tcb_init(
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec);
 void scheduler_tcb_register(task_control_block_t *tcb);
 void scheduler_tcb_unregister(task_control_block_t *tcb);
 uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb);

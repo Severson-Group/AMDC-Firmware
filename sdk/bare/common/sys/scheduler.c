@@ -1,8 +1,9 @@
 #include "sys/scheduler.h"
-#include "usr/user_defines.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
+#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -24,19 +25,21 @@ static volatile bool scheduler_idle = false;
 
 void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
 {
-#if 0
+#if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
         color.r = 255;
         color.g = 0;
         color.b = 0;
         io_led_set(&color);
+#endif // USER_CONFIG_HARDWARE_TARGET
         HANG;
     }
-#endif
+#endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
 
     elapsed_usec += SYS_TICK_USEC;
     scheduler_idle = false;
@@ -56,9 +59,8 @@ void scheduler_init(void)
     printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
-void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
-                        void *callback_arg, const char *name,
-                        uint32_t interval_usec)
+void scheduler_tcb_init(
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec)
 {
     tcb->id = next_tcb_id++;
     tcb->name = name;
@@ -66,6 +68,12 @@ void scheduler_tcb_init(task_control_block_t *tcb, task_callback_t callback,
     tcb->callback_arg = callback_arg;
     tcb->interval_usec = interval_usec;
     tcb->last_run_usec = 0;
+
+#if USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT == 1
+    tcb->stats.enabled = true;
+#else
+    tcb->stats.enabled = false;
+#endif // USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT
 }
 
 void scheduler_tcb_register(task_control_block_t *tcb)
@@ -87,7 +95,8 @@ void scheduler_tcb_register(task_control_block_t *tcb)
 
     // Find end of list
     task_control_block_t *curr = tasks;
-    while (curr->next != NULL) curr = curr->next;
+    while (curr->next != NULL)
+        curr = curr->next;
 
     // Append new tcb to end of list
     curr->next = tcb;
@@ -131,7 +140,8 @@ void scheduler_tcb_unregister(task_control_block_t *tcb)
     prev->next = curr->next;
 }
 
-uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb) {
+uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb)
+{
     return tcb->registered;
 }
 
@@ -149,9 +159,11 @@ void scheduler_run(void)
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
+                task_stats_pre_task(&t->stats);
                 running_task = t;
                 t->callback(t->callback_arg);
                 running_task = NULL;
+                task_stats_post_task(&t->stats);
 
                 t->last_run_usec = elapsed_usec;
             }
@@ -164,10 +176,11 @@ void scheduler_run(void)
 
         // Wait here until unpaused (i.e. when SysTick fires)
         scheduler_idle = true;
-        while (scheduler_idle);
+        while (scheduler_idle) {
+        }
 
+#if USER_CONFIG_ENABLE_WATCHDOG == 1
         // Reset the watchdog timer after SysTick fires
-#ifdef ENABLE_WATCHDOG
         watchdog_reset();
 #endif
     }

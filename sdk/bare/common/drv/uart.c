@@ -1,12 +1,12 @@
 #include "drv/uart.h"
 #include "sys/defines.h"
-#include "xuartps.h"
 #include "xparameters.h"
+#include "xuartps.h"
 #include <stdio.h>
 
-#define UART_DEVICE_ID      XPAR_XUARTPS_0_DEVICE_ID
+#define UART_DEVICE_ID XPAR_XUARTPS_0_DEVICE_ID
 
-#define TEST_BUFFER_SIZE    (26)
+#define TEST_BUFFER_SIZE (26)
 
 // Instance of the UART Device
 XUartPs UartPs;
@@ -25,7 +25,6 @@ int TotalErrorCount;
 int uart_init(void)
 {
     printf("UART:\tInitializing...\n");
-
 
     XUartPs *UartInstPtr = &UartPs;
     u16 DeviceId = UART_DEVICE_ID;
@@ -70,13 +69,11 @@ int uart_init(void)
         RecvBuffer[Index] = 0;
     }
 
-
     /* Block sending the buffer. */
     SentCount = XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
     if (SentCount != TEST_BUFFER_SIZE) {
         return FAILURE;
     }
-
 
     /*
      * Wait while the UART is sending the data so that we are guaranteed
@@ -87,13 +84,11 @@ int uart_init(void)
         LoopCount++;
     }
 
-
     /* Block receiving the buffer. */
     ReceivedCount = 0;
     while (ReceivedCount < TEST_BUFFER_SIZE) {
         ReceivedCount += XUartPs_Recv(UartInstPtr, &RecvBuffer[ReceivedCount], (TEST_BUFFER_SIZE - ReceivedCount));
     }
-
 
     /*
      * Check the receive buffer against the send buffer and verify the
@@ -113,10 +108,10 @@ int uart_init(void)
 
 int uart_send(char *msg, int len)
 {
-    return XUartPs_Send(&UartPs, (uint8_t*) msg, len);
+    return XUartPs_Send(&UartPs, (uint8_t *) msg, len);
 }
 
 int uart_recv(char *msg, int len)
 {
-    return XUartPs_Recv(&UartPs, (uint8_t*) msg, len);
+    return XUartPs_Recv(&UartPs, (uint8_t *) msg, len);
 }
