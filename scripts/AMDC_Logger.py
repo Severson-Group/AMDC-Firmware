@@ -14,7 +14,7 @@ import binascii
 # Date:        06/30/2020
 #########################################################
 
-LogVar = namedtuple(typename = 'LogVar', field_names = 'name index var_type samples_per_sec memmory_addr')
+LogVar = namedtuple(typename = 'LogVar', field_names = 'name index var_type samples_per_sec memory_addr')
 
 class AMDC_Logger():
     
@@ -56,7 +56,7 @@ class AMDC_Logger():
         self._reset()
         
         #we don't actually register the variables because they are already registered
-        for var, idx, tp, sps in zip(names, indices):
+        for var, idx, tp, sps in zip(names, indices, types, sample_rates):
             self._create_log_var(name = var, samples_per_sec = sps, var_type = tp, manual_index = idx)
             
     def register(self, log_vars, samples_per_sec = 1000, var_type = 'double'):
@@ -69,8 +69,8 @@ class AMDC_Logger():
                 
                 try:
                     LV = self._create_log_var(name, samples_per_sec, var_type)
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
                 else:
                     #send command to AMDC
                     cmd = f'log reg {LV.index} {LV.name} {LV.memory_addr} {LV.samples_per_sec} {LV.var_type}'
