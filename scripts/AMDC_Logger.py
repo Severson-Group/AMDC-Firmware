@@ -81,15 +81,15 @@ class AMDC_Logger():
             if len(self.available_indices) > 0:
 
                 try:
-                    LV = self._create_log_var(name, samples_per_sec, var_type)
+                    lv = self._create_log_var(name, samples_per_sec, var_type)
                 except Exception as e:
                     print(e)
                 else:
                     #send command to AMDC
-                    cmd = f'log reg {LV.index} {LV.name} {LV.memory_addr} {LV.samples_per_sec} {LV.var_type}'
+                    cmd = f'log reg {lv.index} {lv.name} {lv.memory_addr} {lv.samples_per_sec} {lv.var_type}'
                     out = self.amdc.cmd(cmd)
                     if out[1] == 'FAILURE':
-                        self._pop(LV)
+                        self._pop(lv)
 
             else:
                 print(
@@ -118,11 +118,11 @@ class AMDC_Logger():
 
         for var in variables:
             try:
-                LV = self._pop(var)
+                lv = self._pop(var)
             except:
                 print('ERROR: Invalid variable name')
             else:
-                self.amdc.cmd(f'log unreg {LV.index}')
+                self.amdc.cmd(f'log unreg {lv.index}')
 
     def unregister_all(self):
 
@@ -312,14 +312,14 @@ class AMDC_Logger():
                     idx = self.available_indices.pop(loc)
 
                 #create LogVar object and append it to logvars
-                LV = LogVar(name=name,
+                lv = LogVar(name=name,
                             index=idx,
                             var_type=var_type,
                             samples_per_sec=samples_per_sec,
                             memory_addr=memory_addr)
-                self.log_vars[name] = LV
+                self.log_vars[name] = lv
 
-                return LV
+                return lv
 
             else:
                 raise Exception('Error: Variable already exists')
@@ -328,18 +328,18 @@ class AMDC_Logger():
 
         if log_var in self.log_vars.keys():
 
-            LV = self.log_vars.pop(log_var)
-            self.available_indices.append(LV.index)
+            lv = self.log_vars.pop(log_var)
+            self.available_indices.append(lv.index)
             self.available_indices.sort(reverse=True)
-            return LV
+            return lv
 
     def _dump_single_bin(self, var, print_output=True):
         # Function level debugging (for print statements)
         debug = False
 
         var = self._sanitize_inputs(var)[0]
-        LV = self.log_vars[var]
-        log_var_idx = LV.index
+        lv = self.log_vars[var]
+        log_var_idx = lv.index
 
         # Don't automatically capture binary output data!
         old_state_captureOutput = self.amdc.captureOutput
@@ -524,8 +524,8 @@ class AMDC_Logger():
     def _dump_single_text(self, var):
 
         var = self._sanitize_inputs(var)[0]
-        LV = self.log_vars[var]
-        log_var_idx = LV.index
+        lv = self.log_vars[var]
+        log_var_idx = lv.index
 
         #we want to set the print state to false so we don't
         #print all of our data to the screen
