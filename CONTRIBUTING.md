@@ -21,7 +21,7 @@ The intended work flow (using auto-formating tools) is as follows:
 5. **Review the changes from the auto formatting tool to ensure they are appropriate.**
 6. If there are strange / awkward changes, revise your code and repeat steps 2-5.
 
-### C Code
+### C Code Formatting
 
 The C code within this repository (`/sdk/bare/`) is formatted using an auto-formatting tool.  The coding style closely follows the [Webkit guidelines](https://webkit.org/code-style-guidelines/), with minor modifications. The formatting style file resides in the root of this repository (`/.clang-format`). This defines the style rules.
 
