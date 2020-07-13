@@ -30,7 +30,6 @@ try:
 except ImportError:
     DEVNULL = open(os.devnull, "wb")
 
-
 DEFAULT_EXTENSIONS = 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
 DEFAULT_CLANG_FORMAT_IGNORE = '.clang-format-ignore'
 
@@ -39,6 +38,7 @@ class ExitStatus:
     SUCCESS = 0
     DIFF = 1
     TROUBLE = 2
+
 
 def excludes_from_file(ignore_file):
     excludes = []
@@ -56,7 +56,8 @@ def excludes_from_file(ignore_file):
     except EnvironmentError as e:
         if e.errno != errno.ENOENT:
             raise
-    return excludes;
+    return excludes
+
 
 def list_files(files, recursive=False, extensions=None, exclude=None):
     if extensions is None:
@@ -74,8 +75,7 @@ def list_files(files, recursive=False, extensions=None, exclude=None):
                     # by modifying it in-place,
                     # to avoid unnecessary directory listings.
                     dnames[:] = [
-                        x for x in dnames
-                        if
+                        x for x in dnames if
                         not fnmatch.fnmatch(os.path.join(dirpath, x), pattern)
                     ]
                     fpaths = [
@@ -92,12 +92,11 @@ def list_files(files, recursive=False, extensions=None, exclude=None):
 
 def make_diff(file, original, reformatted):
     return list(
-        difflib.unified_diff(
-            original,
-            reformatted,
-            fromfile='{}\t(original)'.format(file),
-            tofile='{}\t(reformatted)'.format(file),
-            n=3))
+        difflib.unified_diff(original,
+                             reformatted,
+                             fromfile='{}\t(original)'.format(file),
+                             tofile='{}\t(reformatted)'.format(file),
+                             n=3))
 
 
 class DiffError(Exception):
@@ -120,8 +119,8 @@ def run_clang_format_diff_wrapper(args, file):
     except DiffError:
         raise
     except Exception as e:
-        raise UnexpectedError('{}: {}: {}'.format(file, e.__class__.__name__,
-                                                  e), e)
+        raise UnexpectedError(
+            '{}: {}: {}'.format(file, e.__class__.__name__, e), e)
 
 
 def run_clang_format_diff(args, file):
@@ -155,18 +154,14 @@ def run_clang_format_diff(args, file):
         encoding_py3['encoding'] = 'utf-8'
 
     try:
-        proc = subprocess.Popen(
-            invocation,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            **encoding_py3)
+        proc = subprocess.Popen(invocation,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                universal_newlines=True,
+                                **encoding_py3)
     except OSError as exc:
-        raise DiffError(
-            "Command '{}' failed to start: {}".format(
-                subprocess.list2cmdline(invocation), exc
-            )
-        )
+        raise DiffError("Command '{}' failed to start: {}".format(
+            subprocess.list2cmdline(invocation), exc))
     proc_stdout = proc.stdout
     proc_stderr = proc.stderr
     if sys.version_info[0] < 3:
@@ -182,8 +177,7 @@ def run_clang_format_diff(args, file):
     if proc.returncode:
         raise DiffError(
             "Command '{}' returned non-zero exit status {}".format(
-                subprocess.list2cmdline(invocation), proc.returncode
-            ),
+                subprocess.list2cmdline(invocation), proc.returncode),
             errs,
         )
     return make_diff(file, original, outs), errs
@@ -237,39 +231,34 @@ def print_trouble(prog, message, use_colors):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        '--clang-format-executable',
-        metavar='EXECUTABLE',
-        help='path to the clang-format executable',
-        default='clang-format')
+    parser.add_argument('--clang-format-executable',
+                        metavar='EXECUTABLE',
+                        help='path to the clang-format executable',
+                        default='clang-format')
     parser.add_argument(
         '--extensions',
         help='comma separated list of file extensions (default: {})'.format(
             DEFAULT_EXTENSIONS),
         default=DEFAULT_EXTENSIONS)
-    parser.add_argument(
-        '-r',
-        '--recursive',
-        action='store_true',
-        help='run recursively over directories')
+    parser.add_argument('-r',
+                        '--recursive',
+                        action='store_true',
+                        help='run recursively over directories')
     parser.add_argument('files', metavar='file', nargs='+')
-    parser.add_argument(
-        '-q',
-        '--quiet',
-        action='store_true',
-        help="disable output, useful for the exit code")
-    parser.add_argument(
-        '-j',
-        metavar='N',
-        type=int,
-        default=0,
-        help='run N clang-format jobs in parallel'
-        ' (default number of cpus + 1)')
-    parser.add_argument(
-        '--color',
-        default='auto',
-        choices=['auto', 'always', 'never'],
-        help='show colored diff (default: auto)')
+    parser.add_argument('-q',
+                        '--quiet',
+                        action='store_true',
+                        help="disable output, useful for the exit code")
+    parser.add_argument('-j',
+                        metavar='N',
+                        type=int,
+                        default=0,
+                        help='run N clang-format jobs in parallel'
+                        ' (default number of cpus + 1)')
+    parser.add_argument('--color',
+                        default='auto',
+                        choices=['auto', 'always', 'never'],
+                        help='show colored diff (default: auto)')
     parser.add_argument(
         '-e',
         '--exclude',
@@ -311,8 +300,7 @@ def main():
         print_trouble(
             parser.prog,
             "Command '{}' failed to start: {}".format(
-                subprocess.list2cmdline(version_invocation), e
-            ),
+                subprocess.list2cmdline(version_invocation), e),
             use_colors=colored_stderr,
         )
         return ExitStatus.TROUBLE
@@ -322,11 +310,10 @@ def main():
     excludes = excludes_from_file(DEFAULT_CLANG_FORMAT_IGNORE)
     excludes.extend(args.exclude)
 
-    files = list_files(
-        args.files,
-        recursive=args.recursive,
-        exclude=excludes,
-        extensions=args.extensions.split(','))
+    files = list_files(args.files,
+                       recursive=args.recursive,
+                       exclude=excludes,
+                       extensions=args.extensions.split(','))
 
     if not files:
         return
@@ -343,8 +330,8 @@ def main():
         pool = None
     else:
         pool = multiprocessing.Pool(njobs)
-        it = pool.imap_unordered(
-            partial(run_clang_format_diff_wrapper, args), files)
+        it = pool.imap_unordered(partial(run_clang_format_diff_wrapper, args),
+                                 files)
     while True:
         try:
             outs, errs = next(it)

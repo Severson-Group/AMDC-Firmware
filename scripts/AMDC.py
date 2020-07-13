@@ -1,14 +1,21 @@
 import serial
 import time
-    
+
+
 class AMDC:
-    def __init__(self, port, baudrate = '115200',
-                            cmdDelay = 0.2, cmdDelayChar = 0.001,
-                            cmdEcho = True, cmdEchoPrepend = "\t> ",
-                            printOutput = True, outputPrepend = "",
-                            captureOutput = True):
+    def __init__(self,
+                 port,
+                 baudrate='115200',
+                 cmdDelay=0.2,
+                 cmdDelayChar=0.001,
+                 cmdEcho=True,
+                 cmdEchoPrepend="\t> ",
+                 printOutput=True,
+                 outputPrepend="",
+                 captureOutput=True):
+
         # Serial port configuration
-        self.ser = serial.Serial(timeout = 0)
+        self.ser = serial.Serial(timeout=0)
         self.ser.baudrate = baudrate
         self.ser.port = port
 
@@ -26,7 +33,7 @@ class AMDC:
 
     def disconnect(self):
         self.ser.close()
-        
+
     def __enter__(self):
         self.connect()
         return self
@@ -39,33 +46,36 @@ class AMDC:
         to_send_bytes = str.encode(to_send_str)
         for b in to_send_bytes:
             self.ser.write(bytes([b]))
-            
+
             # Pause between letters so we don't send data too fast
             time.sleep(self.cmdDelayChar)
-        
+
         # Wait for cmd to execute on AMDC
         time.sleep(self.cmdDelay)
-        
+
         # Print log for user
         if self.cmdEcho:
             print(f"{self.cmdEchoPrepend}{cmd_str}")
 
         if self.captureOutput:
             #Print out any feedback from command
-            output = [] #empty array for output that's returned from command
+            output = []  #empty array for output that's returned from command
             count_empty = 0  #number of empty lines in a row
-            allowed_empty = 10 #the code will keep reading lines until it reaches 
-                                #this many consecutive blank lines
+            allowed_empty = 10  #the code will keep reading lines until it reaches
+            #this many consecutive blank lines
             while count_empty < allowed_empty:
 
-                line = self.ser.readline().decode() #read in line and decode
+                line = self.ser.readline().decode()  #read in line and decode
 
-                if len(line)>0 and line != '\n': #if line is not empty and not just new line
-                    line = line.strip('\n\r') #remove newline and carriage returns
-                    output.append(line) #append line to output list
+                if len(
+                        line
+                ) > 0 and line != '\n':  #if line is not empty and not just new line
+                    line = line.strip(
+                        '\n\r')  #remove newline and carriage returns
+                    output.append(line)  #append line to output list
                     count_empty = 0
                 else:
-                    count_empty +=1
+                    count_empty += 1
 
             if self.printOutput:
                 print(f"{self.outputPrepend}{output}")
@@ -73,9 +83,9 @@ class AMDC:
             return output
 
 
-
 def main():
-    
-    pass    
-    
+
+    pass
+
+
 if __name__ == '__main__': main()
