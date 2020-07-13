@@ -10,11 +10,24 @@ the source distribution.
 
 ## Code Formatting
 
-The C code within this repository (`/sdk/bare/`) is formatted using an auto-formatting tool. This is done to keep a consistent style across all source files regardless of author. The coding style closely follows the [Webkit guidelines](https://webkit.org/code-style-guidelines/), with minor modifications.
+The source code in this repository is formatted using auto-formatting tools. This is done to keep a consistent style across all source files regardless of author. Furthermore, during code reviews, this minimizes arguments about code styling between developers.
 
-To run the auto-formatting tool on your code, make sure you have installed version 10 or later of `clang-format`. Then, run the `/scripts/format.sh` from the root directory of the repository. This script will format your code inline. After formatting, look at the changes using `git diff` to ensure they are reasonable.
+The intended work flow (using auto-formating tools) is as follows:
 
-The formatting style file resides in the root of this repository (`/.clang-format`).
+1. Write code.
+2. Commit to git like usual.
+3. **After committing to git**, run the auto format tool.
+4. Run `git diff`.
+5. **Review the changes from the auto formatting tool to ensure they are appropriate.**
+6. If there are strange / awkward changes, revise your code and repeat steps 2-5.
+
+### C Code
+
+The C code within this repository (`/sdk/bare/`) is formatted using an auto-formatting tool.  The coding style closely follows the [Webkit guidelines](https://webkit.org/code-style-guidelines/), with minor modifications. The formatting style file resides in the root of this repository (`/.clang-format`). This defines the style rules.
+
+To run the auto-formatting tool on your code, make sure you have installed version 10 or later of `clang-format`. To simply check your code for style correctness **and not change the code**, run `scripts/check-format.sh` from the root of this repository. This script will output the required changes to adhere to style rules.
+
+The auto-format tool can also change your code inline to adhere to the style rules. To do this, run `/scripts/format.sh` from the root directory of this repository. **This script will format your code inline. These changes cannot be undone.** After formatting, look at the changes using `git diff` to ensure they are reasonable.
 
 ## How to Use GitHub Issues
 
