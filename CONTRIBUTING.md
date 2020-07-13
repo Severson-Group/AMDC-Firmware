@@ -25,7 +25,13 @@ The intended work flow (using auto-formating tools) is as follows:
 
 The C code within this repository (`/sdk/bare/`) is formatted using an auto-formatting tool.  The coding style closely follows the [Webkit guidelines](https://webkit.org/code-style-guidelines/), with minor modifications. The formatting style file resides in the root of this repository (`/.clang-format`). This defines the style rules.
 
-To run the auto-formatting tool on your code, make sure you have installed version 10 or later of `clang-format`. To simply check your code for style correctness **and not change the code**, run `scripts/check-format.sh` from the root of this repository. This script will output the required changes to adhere to style rules.
+To run the auto-formatting tool on your code, make sure you have installed version 10 or later of `clang-format`. The following scripts are designed to run on Linux. Using these on Windows or Mac will require some adjustment. 
+
+#### Check Formatting
+
+To simply check your code for style correctness **and not change the code**, run `scripts/check-format.sh` from the root of this repository. This script will output the required changes to adhere to style rules.
+
+#### Format Inline
 
 The auto-format tool can also change your code inline to adhere to the style rules. To do this, run `/scripts/format.sh` from the root directory of this repository. **This script will format your code inline. These changes cannot be undone.** After formatting, look at the changes using `git diff` to ensure they are reasonable.
 
