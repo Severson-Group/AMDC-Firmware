@@ -916,7 +916,7 @@
 	// PWM duty ratio regs
 	reg [15:0] D_L[23:0];
 	
-	wire pwm_en = slv_reg31[0] == 1'b1;
+	wire pwm_en = slv_reg31[0];
 	
 	// Assign duty ratios from regs received
 	always @(posedge S_AXI_ACLK) begin
