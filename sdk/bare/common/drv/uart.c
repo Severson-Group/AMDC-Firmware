@@ -24,8 +24,6 @@ int TotalErrorCount;
 
 int uart_init(void)
 {
-    printf("UART:\tInitializing...\n");
-
     XUartPs *UartInstPtr = &UartPs;
     u16 DeviceId = UART_DEVICE_ID;
 
