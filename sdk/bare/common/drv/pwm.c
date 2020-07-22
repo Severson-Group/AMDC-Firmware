@@ -8,6 +8,10 @@
 
 #define PWM_BASE_ADDR (0x43C20000)
 
+static int pwm_set_carrier_divisor(uint8_t divisor);
+static int pwm_set_carrier_max(uint16_t max);
+static int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value);
+
 static uint8_t carrier_divisor;
 static uint16_t carrier_max;
 static uint16_t deadtime;
@@ -20,14 +24,26 @@ void pwm_init(void)
 {
     printf("PWM:\tInitializing...\n");
 
+    // Default to no switching (all PWM outputs are logic LOW)
+    // Opens all switches...
+    pwm_disable();
+
     pwm_toggle_reset();
 
     pwm_set_switching_freq(PWM_DEFAULT_SWITCHING_FREQ_HZ);
     pwm_set_deadtime_ns(PWM_DEFAULT_DEADTIME_NS);
 
-    // Turn off all PWM outputs
+    // Initialize all PWMs to 50% duty output.
+    // Since PWM is disabled, this has no effect now,
+    // but if user enables PWM without updating registers,
+    // 50% will appear at outputs.
+    pwm_set_all_duty_midscale();
+}
+
+void pwm_set_all_duty_midscale(void)
+{
     for (int i = 0; i < PWM_NUM_CHANNELS; i++) {
-        pwm_set_duty_raw(i, 0);
+        pwm_set_duty(i, 0.5);
     }
 }
 
@@ -49,8 +65,45 @@ void pwm_toggle_reset(void)
 #endif // USER_CONFIG_HARDWARE_TARGET
 }
 
+int pwm_enable(void)
+{
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    // Write to slave reg 31 LSB to enable PWM switching
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000001);
+
+    return SUCCESS;
+}
+
+int pwm_disable(void)
+{
+    if (!pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    // Write to slave reg 31 LSB to enable PWM switching
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000000);
+
+    return SUCCESS;
+}
+
+bool pwm_is_enabled(void)
+{
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // LSB of reg 31 is enable bit for PWM
+    return reg31 & 0x00000001;
+}
+
 int pwm_set_switching_freq(double freq_hz)
 {
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
     // Based on FPGA, freq_hz can be in range: 1526Hz ... ~100MHz
     // For sanity, we limit this to: 2kHz to 2MHz
     if (freq_hz < 2e3 || freq_hz > 2e6) {
@@ -63,6 +116,34 @@ int pwm_set_switching_freq(double freq_hz)
     // Calculate what the carrier_max should be to achieve the right switching freq
     carrier_max = (uint16_t)(((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
     pwm_set_carrier_max(carrier_max);
+
+    return SUCCESS;
+}
+
+int pwm_set_deadtime_ns(uint16_t time_ns)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    // FPGA only supports deadtime reg value from 5 to 2^16 - 1 (naturally supported using uint16_t)
+    // Deadtime in ns is just reg value * 5. So, minimum deadtime is 25ns.
+
+    // Ensure requested deadtime is >= 25 ns
+    if (time_ns < 25) {
+        // Throw error so user knows this didn't work!
+        return FAILURE;
+    }
+
+    // Convert time in ns to FPGA clock cycles
+    deadtime = time_ns / 5;
+
+    // NOTE: FPGA enforces minimum register value of 5
+    // This should help prevent shoot-through events.
+
+    // Write to slave reg 26 to set deadtime value
+    Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
 
     return SUCCESS;
 }
@@ -84,7 +165,7 @@ int pwm_set_duty(pwm_channel_e channel, double duty)
     return SUCCESS;
 }
 
-int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value)
+static int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value)
 {
     if (!pwm_is_valid_channel(channel)) {
         return FAILURE;
@@ -96,8 +177,13 @@ int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value)
     return SUCCESS;
 }
 
-int pwm_set_carrier_divisor(uint8_t divisor)
+static int pwm_set_carrier_divisor(uint8_t divisor)
 {
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
     // FPGA only supports divisor from 0 to 255 (naturally supported using uint8_t)
 
     carrier_divisor = divisor;
@@ -108,8 +194,13 @@ int pwm_set_carrier_divisor(uint8_t divisor)
     return SUCCESS;
 }
 
-int pwm_set_carrier_max(uint16_t max)
+static int pwm_set_carrier_max(uint16_t max)
 {
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
     // FPGA only supports carrier max from 0 to 2^16 - 1 (naturally supported using uint16_t)
 
     carrier_max = max;
@@ -117,28 +208,8 @@ int pwm_set_carrier_max(uint16_t max)
     // Write to slave reg 25 to set triangle carrier max value
     Xil_Out32(PWM_BASE_ADDR + (25 * sizeof(uint32_t)), max);
 
-    return SUCCESS;
-}
-
-int pwm_set_deadtime_ns(uint16_t time_ns)
-{
-    // FPGA only supports deadtime reg value from 5 to 2^16 - 1 (naturally supported using uint16_t)
-    // Deadtime in ns is just reg value * 5. So, minimum deadtime is 25ns.
-
-    // Ensure requested deadtime is >= 25 ns
-    if (time_ns < 25) {
-        // Throw error so user knows this didn't work!
-        return FAILURE;
-    }
-
-    // Convert time in ns to FPGA clock cycles
-    deadtime = time_ns / 5;
-
-    // NOTE: FPGA enforces minimum register value of 5
-    // This should help prevent shoot-through events.
-
-    // Write to slave reg 26 to set deadtime value
-    Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
+    // Since we updated carrier max value, reset PWMs to new 50%
+    pwm_set_all_duty_midscale();
 
     return SUCCESS;
 }

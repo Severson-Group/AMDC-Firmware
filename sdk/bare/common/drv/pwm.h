@@ -59,14 +59,16 @@ void pwm_init(void);
 
 void pwm_toggle_reset(void);
 
-int pwm_set_switching_freq(double freq_hz);
+int pwm_enable(void);
+int pwm_disable(void);
+bool pwm_is_enabled(void);
 
-int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value);
+int pwm_set_switching_freq(double freq_hz);
+int pwm_set_deadtime_ns(uint16_t deadtime);
+
 int pwm_set_duty(pwm_channel_e channel, double duty);
 
-int pwm_set_carrier_divisor(uint8_t divisor);
-int pwm_set_carrier_max(uint16_t max);
-int pwm_set_deadtime_ns(uint16_t deadtime);
+void pwm_set_all_duty_midscale(void);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 

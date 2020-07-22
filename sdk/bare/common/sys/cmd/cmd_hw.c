@@ -20,6 +20,7 @@
 static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
+    { "pwm <on|off>", "Turn on/off PWM switching" },
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
@@ -47,6 +48,22 @@ int cmd_hw(int argc, char **argv)
 {
     // Handle 'pwm' sub-command
     if (argc >= 2 && STR_EQ("pwm", argv[1])) {
+        if (argc == 3 && STR_EQ("on", argv[2])) {
+            if (pwm_enable() != SUCCESS) {
+                return CMD_FAILURE;
+            }
+
+            return CMD_SUCCESS;
+        }
+
+        if (argc == 3 && STR_EQ("off", argv[2])) {
+            if (pwm_disable() != SUCCESS) {
+                return CMD_FAILURE;
+            }
+
+            return CMD_SUCCESS;
+        }
+
         if (argc == 5 && STR_EQ("sw", argv[2])) {
             // Parse out switching freq arg
             double fsw = strtod(argv[3], NULL);
