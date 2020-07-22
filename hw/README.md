@@ -7,5 +7,4 @@ This folder contains the FPGA design resources needed to build the Xilinx Vivado
 ## File Description
 
 - `constraints_amdc_rev*.xdc` &mdash; stores the Vivado FPGA constraints (pin voltage levels + pin mappings to HDL netlist)
-- `design_1.bd` &mdash; main block diagram used in Vivado (stores logical structure of full FPGA contents)
-- `design_1_wrapper.v` &mdash; Verilog wrapper for the block diagram file. Generated based upon the block diagram.
+- `amdc_rev*.bd` &mdash; main block diagram used in Vivado (stores logical structure of full FPGA contents)
