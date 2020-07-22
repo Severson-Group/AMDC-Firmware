@@ -19,8 +19,7 @@ static command_help_t cmd_help[] = {
 
 void cmd_test_register(void)
 {
-    commands_cmd_init(
-        &cmd_entry, "test", "Test commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_test);
+    commands_cmd_init(&cmd_entry, "test", "Test commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_test);
 
     // Register the command with the system
     commands_cmd_register(&cmd_entry);
@@ -35,11 +34,11 @@ int cmd_test(int argc, char **argv)
 {
     if (argc == 2 && STREQ("analog", argv[1])) {
         // Print analog voltages
-    	for (int i = 0; i < ANALOG_NUM_CHANNELS; i++) {
-    		float voltage;
-    		analog_getf(i, &voltage);
-    		debug_printf("%d: %0.4f\r\n", i, voltage);
-    	}
+        for (int i = 0; i < ANALOG_NUM_CHANNELS; i++) {
+            float voltage;
+            analog_getf(i, &voltage);
+            debug_printf("%d: %0.4f\r\n", i, voltage);
+        }
 
         return CMD_SUCCESS;
     }

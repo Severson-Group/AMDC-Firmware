@@ -125,7 +125,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // FPGA only supports deadtime reg value from 5 to 2^16 - 1 (naturally supported using uint16_t)
     // Deadtime in ns is just reg value * 5. So, minimum deadtime is 25ns.
 
-	// Ensure requested deadtime is >= 25 ns
+    // Ensure requested deadtime is >= 25 ns
     if (time_ns < 25) {
         // Throw error so user knows this didn't work!
         return FAILURE;
