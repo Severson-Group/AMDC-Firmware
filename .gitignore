@@ -34,9 +34,9 @@ sdk/RemoteSystemsTempFiles/
 sdk/system.hdf_expanded/
 sdk/RemoteSystemsTempFiles/
 
-sdk/amdc_bsp/
+sdk/*_bsp/
 sdk/fsbl/
-sdk/design_1_wrapper_hw_platform_*/
+sdk/*wrapper_hw_platform_*/
 
 sdk/**/Debug/
 sdk/**/Release/
