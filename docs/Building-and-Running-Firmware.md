@@ -73,10 +73,16 @@ Only source files and IP is version controlled which mean you must generate a lo
 
 1. Open Vivado Application
 2. `Tools` > `Run Tcl Script...`
-3. Select `$REPO_DIR\import.tcl` script
+3. Select `$REPO_DIR\import_rev*.tcl` script (use appropriate script for the target AMDC hardware)
 4. `OK`
 
-Upon successful project generation, the block diagram will open. If the block diagram does not open, fix the errors and try reimporting project.
+Upon successful project generation, the block diagram will open. If the block diagram does not open, fix the errors and try reimporting project. See the errors by opening the `Tcl Console` pane in Vivado.
+
+#### Common Errors
+
+Having spaces in the file system path for the Vivado project is not supported. For example, if your repo is located in your user directory and your username has a space in it: `C:\Users\**John Doe**\Documents\GitHub\AMDC-Firmare`. If this is the case, the project import will fail. Move the repo elsewhere and try again.
+
+The import script **will not** overwrite the `amdc/` Vivado project folder on disk. If you are trying to regenerate the Vivado project, you must delete the old `amdc/` folder before running the script.
 
 ### Generating Bitstream
 
