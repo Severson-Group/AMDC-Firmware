@@ -23,6 +23,7 @@ static command_help_t cmd_help[] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },

@@ -20,7 +20,6 @@ static command_help_t cmd_help[] = {
     { "deinit", "Stop task" },
     { "stats print", "Print stats" },
     { "stats reset", "Reset stats" },
-
 };
 
 void cmd_blink_register(void)
@@ -100,23 +99,23 @@ int cmd_blink(int argc, char **argv)
 
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
         task_blink_init();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
         task_blink_deinit();
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc >= 2 && strcmp("stats", argv[1]) == 0) {
         if (argc == 3 && strcmp("print", argv[2]) == 0) {
             task_blink_stats_print();
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
 
         if (argc == 3 && strcmp("reset", argv[2]) == 0) {
             task_blink_stats_reset();
-            return SUCCESS;
+            return CMD_SUCCESS;
         }
     }
 
