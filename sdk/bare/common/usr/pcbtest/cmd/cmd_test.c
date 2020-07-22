@@ -37,7 +37,7 @@ int cmd_test(int argc, char **argv)
         for (int i = 0; i < ANALOG_NUM_CHANNELS; i++) {
             float voltage;
             analog_getf(i, &voltage);
-            debug_printf("%d: %0.4f\r\n", i, voltage);
+            debug_printf("%d: %8.4f\r\n", i, voltage);
         }
 
         return CMD_SUCCESS;
