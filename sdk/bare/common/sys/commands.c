@@ -1,22 +1,23 @@
 #include "sys/commands.h"
+#include "drv/encoder.h"
+#include "drv/uart.h"
+#include "sys/cmd/cmd_help.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
-#include "sys/cmd/cmd_help.h"
-#include "drv/encoder.h"
-#include "drv/uart.h"
-#include <string.h>
-#include <stdlib.h>
+#include "sys/util.h"
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define RECV_BUFFER_LENGTH (4 * 1024)
-static char recv_buffer[RECV_BUFFER_LENGTH] = {0};
+static char recv_buffer[RECV_BUFFER_LENGTH] = { 0 };
 static int recv_buffer_idx = 0;
 
-#define CMD_MAX_ARGC        (16) // # of args accepted
-#define CMD_MAX_ARG_LENGTH  (16) // max chars of any arg
+#define CMD_MAX_ARGC       (16) // # of args accepted
+#define CMD_MAX_ARG_LENGTH (16) // max chars of any arg
 typedef struct pending_cmd_t {
     int argc;
     char *argv[CMD_MAX_ARGC];
@@ -40,14 +41,14 @@ typedef struct pending_cmd_t {
 // execute the previous command
 //
 #define MAX_PENDING_CMDS (8)
-static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = {0};
+static pending_cmd_t pending_cmds[MAX_PENDING_CMDS] = { 0 };
 static int pending_cmd_write_idx = 0;
 static int pending_cmd_read_idx = 0;
 
 static int _command_handler(int argc, char **argv);
 
 // Head of linked list of commands
-command_entry_t *cmds = NULL;
+static command_entry_t *cmds = NULL;
 
 static task_control_block_t tcb_parse;
 static task_control_block_t tcb_exec;
@@ -67,12 +68,7 @@ void commands_init(void)
     cmd_help_register();
 }
 
-
-typedef enum state_e {
-    BEGIN = 1,
-    LOOKING_FOR_SPACE,
-    LOOKING_FOR_CHAR
-} state_e;
+typedef enum state_e { BEGIN = 1, LOOKING_FOR_SPACE, LOOKING_FOR_CHAR } state_e;
 
 state_e state = BEGIN;
 
@@ -89,7 +85,7 @@ void _create_pending_cmds(char *buffer, int length)
 
             // Set error flag if this arg was too long
             if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
-                p->err = INPUT_TOO_LONG;
+                p->err = CMD_INPUT_TOO_LONG;
             }
 
             // Put a NULL at the end of the last cmd arg
@@ -102,7 +98,8 @@ void _create_pending_cmds(char *buffer, int length)
             p->ready = 1;
 
             // Update current pending cmd slot
-            if (++pending_cmd_write_idx >= MAX_PENDING_CMDS) pending_cmd_write_idx = 0;
+            if (++pending_cmd_write_idx >= MAX_PENDING_CMDS)
+                pending_cmd_write_idx = 0;
             p = &pending_cmds[pending_cmd_write_idx];
             p->ready = 0;
 
@@ -122,7 +119,7 @@ void _create_pending_cmds(char *buffer, int length)
                 // Populate first argument
                 p->argc = 1;
                 p->argv[0] = &buffer[i];
-                p->err = SUCCESS; // Assume the parsing will work!
+                p->err = CMD_SUCCESS; // Assume the parsing will work!
                 p->curr_arg_length = 1;
                 state = LOOKING_FOR_SPACE;
             }
@@ -138,7 +135,7 @@ void _create_pending_cmds(char *buffer, int length)
 
                 // Set error flag if this arg was too long
                 if (p->curr_arg_length > CMD_MAX_ARG_LENGTH) {
-                    p->err = INPUT_TOO_LONG;
+                    p->err = CMD_INPUT_TOO_LONG;
                 }
 
                 // Put NULL at end of arg (replaces ' ')
@@ -155,7 +152,7 @@ void _create_pending_cmds(char *buffer, int length)
 
                 // Check if argc too big!
                 if (p->argc > CMD_MAX_ARGC) {
-                    p->err = INPUT_TOO_LONG;
+                    p->err = CMD_INPUT_TOO_LONG;
 
                     // Put argc back to zero...
                     // NOTE: this ensure no buffer overruns,
@@ -198,7 +195,6 @@ void commands_callback_parse(void *arg)
     }
 }
 
-
 void commands_callback_exec(void *arg)
 {
     int err;
@@ -211,33 +207,33 @@ void commands_callback_exec(void *arg)
 
         // Don't run a cmd that has errors
         err = p->err;
-        if (err == SUCCESS) {
+        if (err == CMD_SUCCESS) {
             err = _command_handler(p->argc, p->argv);
         }
 
         // Display command status to user
         switch (err) {
-        case SUCCESS_QUIET:
+        case CMD_SUCCESS_QUIET:
             // Don't print anything
             break;
 
-        case SUCCESS:
+        case CMD_SUCCESS:
             debug_printf("SUCCESS\r\n\n");
             break;
 
-        case FAILURE:
+        case CMD_FAILURE:
             debug_printf("FAILURE\r\n\n");
             break;
 
-        case INVALID_ARGUMENTS:
+        case CMD_INVALID_ARGUMENTS:
             debug_printf("INVALID ARGUMENTS\r\n\n");
             break;
 
-        case INPUT_TOO_LONG:
+        case CMD_INPUT_TOO_LONG:
             debug_printf("INPUT TOO LONG\r\n\n");
             break;
 
-        case UNKNOWN_CMD:
+        case CMD_UNKNOWN_CMD:
             debug_printf("UNKNOWN CMD\r\n\n");
             break;
 
@@ -256,10 +252,11 @@ void commands_callback_exec(void *arg)
 }
 
 void commands_cmd_init(command_entry_t *cmd_entry,
-        const char *cmd, const char *desc,
-        command_help_t *help, int num_help_cmds,
-        int (*cmd_function)(int, char**)
-)
+                       const char *cmd,
+                       const char *desc,
+                       command_help_t *help,
+                       int num_help_cmds,
+                       int (*cmd_function)(int, char **))
 {
     cmd_entry->cmd = cmd;
     cmd_entry->desc = desc;
@@ -280,7 +277,8 @@ void commands_cmd_register(command_entry_t *cmd_entry)
 
     // Find end of list
     command_entry_t *curr = cmds;
-    while (curr->next != NULL) curr = curr->next;
+    while (curr->next != NULL)
+        curr = curr->next;
 
     // Append new cmd to end of list
     curr->next = cmd_entry;
@@ -311,7 +309,7 @@ int _command_handler(int argc, char **argv)
         c = c->next;
     }
 
-    return UNKNOWN_CMD;
+    return CMD_UNKNOWN_CMD;
 }
 
 // ****************
@@ -320,14 +318,7 @@ int _command_handler(int argc, char **argv)
 // the help messages
 // ****************
 
-typedef enum sm_states_e {
-    TITLE1 = 1,
-    TITLE2,
-    TITLE3,
-    CMD_HEADER,
-    SUB_CMD,
-    REMOVE_TASK
-} sm_states_e;
+typedef enum sm_states_e { TITLE1 = 1, TITLE2, TITLE3, CMD_HEADER, SUB_CMD, REMOVE_TASK } sm_states_e;
 
 typedef struct sm_ctx_t {
     sm_states_e state;
@@ -336,8 +327,8 @@ typedef struct sm_ctx_t {
     task_control_block_t tcb;
 } sm_ctx_t;
 
-#define SM_UPDATES_PER_SEC      (10000)
-#define SM_INTERVAL_USEC        (USEC_IN_SEC / SM_UPDATES_PER_SEC)
+#define SM_UPDATES_PER_SEC (10000)
+#define SM_INTERVAL_USEC   (USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
 void help_state_machine_callback(void *arg)
 {

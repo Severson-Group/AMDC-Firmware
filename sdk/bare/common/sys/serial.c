@@ -1,11 +1,12 @@
 #include "sys/serial.h"
-#include "sys/scheduler.h"
 #include "drv/uart.h"
+#include "sys/scheduler.h"
+#include "sys/util.h"
 #include <string.h>
 
-#define OUTPUT_BUFFER_LENGTH    (32 * 1024)
+#define OUTPUT_BUFFER_LENGTH (32 * 1024)
 
-static char output_buffer[OUTPUT_BUFFER_LENGTH] = {0};
+static char output_buffer[OUTPUT_BUFFER_LENGTH] = { 0 };
 static int output_idx = 0;
 
 // Used to mark position in `output_buffer` of char which needs to output

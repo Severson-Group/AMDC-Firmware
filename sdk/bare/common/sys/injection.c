@@ -1,15 +1,15 @@
-#include "usr/user_defines.h"
+#include "usr/user_config.h"
 
-#ifndef DISABLE_INJECTION
+#if USER_CONFIG_ENABLE_INJECTION == 1
 
-#include "sys/injection.h"
-#include "sys/debug.h"
-#include "sys/scheduler.h"
-#include "sys/defines.h"
 #include "sys/cmd/cmd_inj.h"
-#include <string.h>
-#include <stdlib.h>
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/injection.h"
+#include "sys/scheduler.h"
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Linked list of all registered injection contexts
 static inj_ctx_t *inj_ctxs = NULL;
@@ -31,7 +31,6 @@ static inline double _chirp(double w1, double w2, double A, double M, double tim
     out = A * cos(w1 * time + (w2 - w1) * time * time / (2 * M));
     return out;
 }
-
 
 static inline double _triangle(double min, double max, double period, double time)
 {
@@ -113,7 +112,8 @@ void injection_ctx_register(inj_ctx_t *ctx)
 
     // Find end of list
     inj_ctx_t *curr = inj_ctxs;
-    while (curr->next != NULL) curr = curr->next;
+    while (curr->next != NULL)
+        curr = curr->next;
 
     // Append new ctx to end of list
     curr->next = ctx;
@@ -178,7 +178,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
         double r = (double) rand() / (double) RAND_MAX;
 
         // Make between -1.0 .. 1.0
-        r = (2.0  * r) - 1.0;
+        r = (2.0 * r) - 1.0;
 
         value = ctx->noise.gain * r;
         value += ctx->noise.offset;
@@ -193,12 +193,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
         }
 
         value = _chirp(
-                PI2 * ctx->chirp.freqMin,
-                PI2 * ctx->chirp.freqMax,
-                ctx->chirp.gain,
-                ctx->chirp.period,
-                ctx->curr_time
-                );
+            PI2 * ctx->chirp.freqMin, PI2 * ctx->chirp.freqMax, ctx->chirp.gain, ctx->chirp.period, ctx->curr_time);
         break;
     }
 
@@ -209,12 +204,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
             ctx->curr_time = 0.0;
         }
 
-        value = _triangle(
-                ctx->triangle.valueMin,
-                ctx->triangle.valueMax,
-                ctx->triangle.period,
-                ctx->curr_time
-                );
+        value = _triangle(ctx->triangle.valueMin, ctx->triangle.valueMax, ctx->triangle.period, ctx->curr_time);
         break;
     }
 
@@ -262,7 +252,8 @@ void injection_ctx_clear(inj_ctx_t *inj_ctx)
     inj_ctx->inj_func = NONE;
 }
 
-void injection_clear(void) {
+void injection_clear(void)
+{
     inj_ctx_t *curr = inj_ctxs;
 
     // Operate on all registered contexts
@@ -275,14 +266,16 @@ void injection_clear(void) {
     }
 }
 
-void injection_const(inj_ctx_t *ctx, inj_op_e op, double value) {
+void injection_const(inj_ctx_t *ctx, inj_op_e op, double value)
+{
     ctx->inj_func = CONST;
     ctx->operation = op;
     ctx->curr_time = 0.0;
     ctx->constant.value = value;
 }
 
-void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset) {
+void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset)
+{
     ctx->inj_func = NOISE;
     ctx->operation = op;
     ctx->curr_time = 0.0;
@@ -290,7 +283,8 @@ void injection_noise(inj_ctx_t *ctx, inj_op_e op, double gain, double offset) {
     ctx->noise.offset = offset;
 }
 
-void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, double freqMax, double period) {
+void injection_chirp(inj_ctx_t *ctx, inj_op_e op, double gain, double freqMin, double freqMax, double period)
+{
     ctx->inj_func = CHIRP;
     ctx->operation = op;
     ctx->curr_time = 0.0;
@@ -310,18 +304,13 @@ void injection_triangle(inj_ctx_t *ctx, inj_op_e op, double valueMin, double val
     ctx->triangle.period = period;
 }
 
-
-
 // ***************************
 // Code for running the state machine to
 // list the registered injection contexts
 // to the UART
 // ***************************
 
-typedef enum sm_states_list_e {
-    LISTING = 1,
-    REMOVE_TASK
-} sm_states_list_e;
+typedef enum sm_states_list_e { LISTING = 1, REMOVE_TASK } sm_states_list_e;
 
 typedef struct sm_ctx_list_t {
     sm_states_list_e state;
@@ -330,9 +319,8 @@ typedef struct sm_ctx_list_t {
     inj_ctx_t *curr;
 } sm_ctx_list_t;
 
-
-#define SM_LIST_UPDATES_PER_SEC     (10000)
-#define SM_LIST_INTERVAL_USEC       (USEC_IN_SEC / SM_LIST_UPDATES_PER_SEC)
+#define SM_LIST_UPDATES_PER_SEC (10000)
+#define SM_LIST_INTERVAL_USEC   (USEC_IN_SEC / SM_LIST_UPDATES_PER_SEC)
 
 void state_machine_list_callback(void *arg)
 {
@@ -345,7 +333,8 @@ void state_machine_list_callback(void *arg)
 
         // Move to next entry
         ctx->curr = ctx->curr->next;
-        if (ctx->curr == NULL) ctx->state = REMOVE_TASK;
+        if (ctx->curr == NULL)
+            ctx->state = REMOVE_TASK;
         break;
 
     case REMOVE_TASK:
@@ -378,4 +367,4 @@ void injection_list(void)
     scheduler_tcb_register(&ctx_list.tcb);
 }
 
-#endif // DISABLE_INJECTION
+#endif // USER_CONFIG_ENABLE_INJECTION

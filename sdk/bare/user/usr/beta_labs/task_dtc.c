@@ -1,32 +1,32 @@
 #ifdef APP_BETA_LABS
 
 #include "usr/beta_labs/task_dtc.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/scheduler.h"
 #include "usr/beta_labs/inverter.h"
 #include "usr/beta_labs/machine.h"
-#include "sys/scheduler.h"
-#include "sys/defines.h"
-#include "sys/debug.h"
 #include <math.h>
 
 #define L_HAT ((Ld_HAT + Lq_HAT) / 2.0)
 #define R_HAT (Rs_HAT)
 
-#define Wb  (DTC_BANDWIDTH * PI2) // rad/s
-#define Ts  (1.0 / TASK_DTC_UPDATES_PER_SEC)
-#define Kp  (Wb * L_HAT)
-#define Ki  ((R_HAT / L_HAT) * Kp)
+#define Wb (DTC_BANDWIDTH * PI2) // rad/s
+#define Ts (1.0 / TASK_DTC_UPDATES_PER_SEC)
+#define Kp (Wb * L_HAT)
+#define Ki ((R_HAT / L_HAT) * Kp)
 
 // Global variables for logging
-double LOG_Ia         = 0.0;
-double LOG_Vab_star   = 0.0;
+double LOG_Ia = 0.0;
+double LOG_Vab_star = 0.0;
 
 // Set by command
-static double I_mag_star  = 0.0;
+static double I_mag_star = 0.0;
 static double I_freq_star = 0.0;
 
 // Used by controller
-static double I_star      = 0.0;
-static double I_err_acc   = 0.0;
+static double I_star = 0.0;
+static double I_err_acc = 0.0;
 static double theta = 0.0;
 
 static task_control_block_t tcb;
@@ -71,13 +71,11 @@ void task_dtc_callback(void *arg)
     _get_Iabc(Iabc);
     double Ia = Iabc[0];
 
-
     // ------------------------------------
     // Calculate I_star based on commanded I_mag and I_freq
     // ------------------------------------
     theta += (PI2 * I_freq_star * Ts);
     I_star = I_mag_star * cos(theta);
-
 
     // ------------------------------------
     // PI stationary frame current regulator Ia
@@ -90,7 +88,6 @@ void task_dtc_callback(void *arg)
     Va_star = (Kp * I_err) + (Ki * Ts * I_err_acc);
     Vb_star = -Va_star;
 
-
     // ------------------------------------
     // Write commanded voltages to inverter
     // ------------------------------------
@@ -101,12 +98,11 @@ void task_dtc_callback(void *arg)
     inverter_set_voltage(CC_PHASE_A_PWM_LEG_IDX, Va_star, Iabc[0]);
     inverter_set_voltage(CC_PHASE_B_PWM_LEG_IDX, Vb_star, Iabc[1]);
 
-
     // ------------------------------------
     // Update log variables
     // ------------------------------------
 
-    LOG_Ia       = Iabc[0];
+    LOG_Ia = Iabc[0];
     LOG_Vab_star = Va_star - Vb_star;
 }
 

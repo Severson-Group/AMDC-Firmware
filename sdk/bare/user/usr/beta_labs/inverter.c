@@ -11,7 +11,8 @@ static double dtc_currLimit = 0.0;
 // Don't init to 0 since we divide by this! (User should override this value)
 static double inverter_Vdc = 1.0;
 
-inline static int saturate(double min, double max, double *value) {
+inline static int saturate(double min, double max, double *value)
+{
     if (*value < min) {
         // Lower bound saturation
         *value = min;
@@ -28,8 +29,9 @@ inline static int saturate(double min, double max, double *value) {
 
 void inverter_saturate_to_Vdc(double *voltage)
 {
-    io_led_color_t color = {0, 0, 0};
-    if (saturate(-inverter_Vdc, inverter_Vdc, voltage) != 0) color.g = 255;
+    io_led_color_t color = { 0, 0, 0 };
+    if (saturate(-inverter_Vdc, inverter_Vdc, voltage) != 0)
+        color.g = 255;
     io_led_set_c(0, 1, 0, &color);
 }
 

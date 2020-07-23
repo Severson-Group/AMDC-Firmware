@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #define TASK_CC_UPDATES_PER_SEC (10000)
-#define TASK_CC_INTERVAL_USEC (USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
+#define TASK_CC_INTERVAL_USEC   (USEC_IN_SEC / TASK_CC_UPDATES_PER_SEC)
 
 void task_cc_callback(void *arg);
 

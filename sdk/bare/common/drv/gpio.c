@@ -1,6 +1,11 @@
+#include "drv/hardware_targets.h"
+#include "usr/user_config.h"
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+
 #include "drv/gpio.h"
-#include <stdio.h>
 #include "xgpiops.h"
+#include <stdio.h>
 
 #define GPIO_DIR_1_MIO_PIN (40)
 #define GPIO_DIR_2_MIO_PIN (49)
@@ -21,7 +26,8 @@ void gpio_init(void)
     Status = XGpioPs_CfgInitialize(&Gpio, GPIOConfigPtr, GPIOConfigPtr->BaseAddr);
     if (Status != XST_SUCCESS) {
         // Just hang here if error...
-        while (1);
+        while (1) {
+        }
     }
 
     // Set GPIO dir pins as outputs
@@ -45,22 +51,18 @@ void gpio_init(void)
 
 void gpio_pin_read(uint8_t port, uint8_t pin, uint8_t *value)
 {
-
 }
 
 void gpio_pin_write(uint8_t port, uint8_t pin, uint8_t value)
 {
-
 }
 
 void gpio_port_read(uint8_t port, uint16_t *value)
 {
-
 }
 
 void gpio_port_write(uint8_t port, uint16_t value)
 {
-
 }
 
 void gpio_set_dir(uint8_t group, uint8_t dir)
@@ -80,3 +82,5 @@ void gpio_set_dir(uint8_t group, uint8_t dir)
 
     XGpioPs_WritePin(&Gpio, pin, dir);
 }
+
+#endif // USER_CONFIG_HARDWARE_TARGET

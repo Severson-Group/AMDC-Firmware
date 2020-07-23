@@ -1,9 +1,9 @@
 # Firmware Architecture - Drivers
 
-[Firmware Architecture](00-Firmware-Architecture.md)
+[Firmware Architecture](Firmware-Architecture.md)
 - **Drivers**
-- [System](00b-Firmware-Arch-System.md)
-- [User Applications](00c-Firmware-Arch-UserApps.md)
+- [System](Firmware-Arch-System.md)
+- [User Applications](Firmware-Arch-UserApps.md)
 
 ## Purpose of Drivers
 
@@ -11,7 +11,7 @@ Why does the code base use "drivers"? What are these things?
 
 ## Under the Hood
 
-At a highish level, what does a driver under the hood? How does it interface with the FPGA?
+At a highish level, what does a driver do under the hood? How does it interface with the FPGA?
 
 ## Examples
 
