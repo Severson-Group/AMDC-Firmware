@@ -12,9 +12,14 @@ static int pwm_set_carrier_divisor(uint8_t divisor);
 static int pwm_set_carrier_max(uint16_t max);
 static int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value);
 
+// Store current state of FPGA registers
 static uint8_t carrier_divisor;
 static uint16_t carrier_max;
 static uint16_t deadtime;
+
+// Store current state of user params
+static uint16_t now_deadtime;
+static double now_fsw;
 
 // switching_freq = (200e6 / divisor) / (2*carrier_max)
 // or
@@ -106,7 +111,7 @@ int pwm_set_switching_freq(double freq_hz)
 
     // Based on FPGA, freq_hz can be in range: 1526Hz ... ~100MHz
     // For sanity, we limit this to: 2kHz to 2MHz
-    if (freq_hz < 2e3 || freq_hz > 2e6) {
+    if (freq_hz < PWM_MIN_SWITCHING_FREQ_HZ || freq_hz > PWM_MAX_SWITCHING_FREQ_HZ) {
         return FAILURE;
     }
 
@@ -116,6 +121,9 @@ int pwm_set_switching_freq(double freq_hz)
     // Calculate what the carrier_max should be to achieve the right switching freq
     carrier_max = (uint16_t)(((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
     pwm_set_carrier_max(carrier_max);
+
+    // Store current freq so we can access later
+    now_fsw = freq_hz;
 
     return SUCCESS;
 }
@@ -131,7 +139,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // Deadtime in ns is just reg value * 5. So, minimum deadtime is 25ns.
 
     // Ensure requested deadtime is >= 25 ns
-    if (time_ns < 25) {
+    if (time_ns < PWM_MIN_DEADTIME_NS) {
         // Throw error so user knows this didn't work!
         return FAILURE;
     }
@@ -145,7 +153,20 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // Write to slave reg 26 to set deadtime value
     Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
 
+    // Store current deadtime so we can access later
+    now_deadtime = time_ns;
+
     return SUCCESS;
+}
+
+double pwm_get_switching_freq(void)
+{
+	return now_fsw;
+}
+
+uint16_t pwm_get_deadtime_ns(void)
+{
+	return now_deadtime;
 }
 
 int pwm_set_duty(pwm_channel_e channel, double duty)
