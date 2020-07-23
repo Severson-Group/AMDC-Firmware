@@ -17,7 +17,7 @@ static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
     { "analog", "Print all analog voltages" },
-    { "auto <#[T|B]>", "Perform automated test of specified power stack (e.g. 1T is top-left port)" },
+    { "auto <#[T|B]> <VDRIVE>", "Perform automated test of specified power stack (e.g. 1T is top-left port)" },
 };
 
 void cmd_test_register(void)
@@ -41,7 +41,7 @@ int cmd_test(int argc, char **argv)
         return CMD_SUCCESS;
     }
 
-    if (argc == 3 && STREQ("auto", argv[1])) {
+    if (argc == 4 && STREQ("auto", argv[1])) {
         if (strlen(argv[2]) == 2) {
             // Parse stack number
             int stack = argv[2][0] - '0';
@@ -56,7 +56,13 @@ int cmd_test(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            if (sm_test_start_auto_test(stack, tb) != SUCCESS) {
+            // Parse VDRIVE voltage
+            double vdrive = strtod(argv[3], NULL);
+            if (vdrive < 5.0 || vdrive > 18.0) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (sm_test_start_auto_test(stack, tb, vdrive) != SUCCESS) {
                 return CMD_FAILURE;
             }
 

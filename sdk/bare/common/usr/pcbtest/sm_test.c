@@ -6,9 +6,12 @@
 #include "drv/pwm.h"
 #include "sys/debug.h"
 #include "sys/scheduler.h"
+#include "sys/util.h"
 #include "usr/user_config.h"
 #include <math.h>
 #include <stdint.h>
+
+static bool test_check_voltage(analog_channel_e channel, float *voltage_out, float goal, float tol);
 
 typedef enum sm_states_e {
     PRINT_HEADER = 0,
@@ -18,6 +21,9 @@ typedef enum sm_states_e {
     TEST1_POS_10V_RAIL,
     TEST1_NEG_10V_RAIL,
 
+    TEST2,
+    TEST2_VOUT,
+
     END_TESTING,
     REMOVE_TASK,
 } sm_states_e;
@@ -26,9 +32,10 @@ typedef struct sm_ctx_t {
     sm_states_e state;
     task_control_block_t tcb;
 
-    // User data
+    // Top level test config
     int stack;
     char tb;
+    float vdrive;
 
     // Old PWM info
     bool old_pwm_en;
@@ -37,8 +44,10 @@ typedef struct sm_ctx_t {
 
     // Test stats
     int num_completed_tests;
-    int num_total_tests;
     int num_passed_tests;
+
+    // TEST2 data
+    int curr_vout;
 } sm_ctx_t;
 
 #define SM_UPDATES_PER_SEC (1000)
@@ -60,21 +69,14 @@ static void state_machine_callback(void *arg)
     case TEST1_POS_10V_RAIL:
     {
         float voltage;
-        analog_getf(ANALOG_IN7, &voltage);
-
-        float goal = 10.0;
-        float tol = 0.100; // V
-        if (fabsf((voltage - goal) / goal) > tol) {
-            // FAIL
-            debug_printf("\tFAIL: +10V rail reads %8.4fV\r\n", voltage);
-            ctx->state = END_TESTING;
-        } else {
-            // PASS
+        bool pass = test_check_voltage(ANALOG_IN7, &voltage, 10.0, 0.050);
+        if (pass) {
             ctx->num_passed_tests++;
-            debug_printf("\tPASS: +10V rail reads %8.4fV\r\n", voltage);
-            ctx->state = TEST1_NEG_10V_RAIL;
         }
 
+        debug_printf("+10V rail reads %8.4fV\r\n", voltage);
+
+        ctx->state = TEST1_NEG_10V_RAIL;
         ctx->num_completed_tests++;
         break;
     }
@@ -82,32 +84,64 @@ static void state_machine_callback(void *arg)
     case TEST1_NEG_10V_RAIL:
     {
         float voltage;
-        analog_getf(ANALOG_IN8, &voltage);
-
-        float goal = -10.0; // V
-        float tol = 0.100;  // V
-        if (fabsf((voltage - goal) / goal) > tol) {
-            // FAIL
-            debug_printf("\tFAIL: -10V rail reads %8.4fV\r\n", voltage);
-            ctx->state = END_TESTING;
-        } else {
-            // PASS
+        bool pass = test_check_voltage(ANALOG_IN8, &voltage, -10.0, 0.050);
+        if (pass) {
             ctx->num_passed_tests++;
-            debug_printf("\tPASS: -10V rail reads %8.4fV\r\n", voltage);
+        }
+
+        debug_printf("-10V rail reads %8.4fV\r\n", voltage);
+
+        ctx->state = TEST2;
+        ctx->num_completed_tests++;
+        break;
+    }
+
+    case TEST2:
+    {
+        // Initialize PWM for TEST2
+        int base = 6 * ctx->stack;
+        if (ctx->tb == 'B') {
+            base += 3;
+        }
+
+        pwm_set_duty(base + PWM_OUT1, 0.5);
+        pwm_set_duty(base + PWM_OUT2, 0.5);
+        pwm_set_duty(base + PWM_OUT3, 0.5);
+
+        ctx->curr_vout = 0;
+        ctx->state = TEST2_VOUT;
+        break;
+    }
+
+    case TEST2_VOUT:
+    {
+        float goal = 0.5 * ctx->vdrive;
+        if (ctx->curr_vout % 2 == 1) {
+            goal *= -1;
+        }
+
+        float voltage;
+        bool pass = test_check_voltage(ctx->curr_vout, &voltage, goal, 0.100);
+        if (pass) {
+            ctx->num_passed_tests++;
+        }
+
+        debug_printf("VOUT%d: goal = %8.4fV, meas = %8.4f\r\n", ctx->curr_vout, goal, voltage);
+
+        ctx->num_completed_tests++;
+
+        ctx->curr_vout++;
+        if (ctx->curr_vout >= 6) {
             ctx->state = END_TESTING;
         }
 
-        ctx->num_completed_tests++;
         break;
     }
 
     case END_TESTING:
     {
         // Print status message to user
-        debug_printf("Completed %d of %d tests, %d passed\r\n\n",
-                     ctx->num_completed_tests,
-                     ctx->num_total_tests,
-                     ctx->num_passed_tests);
+        debug_printf("Done testing: %d of %d tests passed\r\n\n", ctx->num_passed_tests, ctx->num_completed_tests);
 
         // Restore old PWM settings
         pwm_disable();
@@ -132,7 +166,7 @@ static void state_machine_callback(void *arg)
 
 static sm_ctx_t ctx;
 
-int sm_test_start_auto_test(int stack, char tb)
+int sm_test_start_auto_test(int stack, char tb, double vdrive)
 {
     // Ensure test is not already running
     if (scheduler_tcb_is_registered(&ctx.tcb)) {
@@ -147,7 +181,8 @@ int sm_test_start_auto_test(int stack, char tb)
     // Update PWM to as fast as possible
     pwm_disable();
 
-    if (pwm_set_switching_freq(PWM_MAX_SWITCHING_FREQ_HZ) != SUCCESS) {
+    double fsw = MIN(400e3, PWM_MAX_SWITCHING_FREQ_HZ);
+    if (pwm_set_switching_freq(fsw) != SUCCESS) {
         return FAILURE;
     }
 
@@ -161,7 +196,7 @@ int sm_test_start_auto_test(int stack, char tb)
     ctx.state = PRINT_HEADER;
     ctx.stack = stack;
     ctx.tb = tb;
-    ctx.num_total_tests = 2;
+    ctx.vdrive = vdrive;
     ctx.num_completed_tests = 0;
     ctx.num_passed_tests = 0;
 
@@ -170,6 +205,29 @@ int sm_test_start_auto_test(int stack, char tb)
     int err = scheduler_tcb_register(&ctx.tcb);
 
     return err;
+}
+
+// Helper function
+
+static bool test_check_voltage(analog_channel_e channel, float *voltage_out, float goal, float tol)
+{
+    float voltage;
+    analog_getf(channel, &voltage);
+
+    *voltage_out = voltage;
+
+    bool is_pass = false;
+    if (fabsf(voltage - goal) <= tol) {
+        is_pass = true;
+    }
+
+    if (is_pass) {
+        debug_printf("\tPASS: ");
+    } else {
+        debug_printf("\tFAIL: ");
+    }
+
+    return is_pass;
 }
 
 #endif // APP_PCBTEST
