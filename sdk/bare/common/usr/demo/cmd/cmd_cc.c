@@ -59,11 +59,6 @@ void cmd_cc_register(void)
     commands_cmd_register(&cmd_entry);
 }
 
-static inline bool STREQ(char *in1, char *in2)
-{
-    return (strcmp(in1, in2) == 0) ? true : false;
-}
-
 int cmd_cc(int argc, char **argv)
 {
     if (argc == 3 && STREQ("init", argv[2])) {
