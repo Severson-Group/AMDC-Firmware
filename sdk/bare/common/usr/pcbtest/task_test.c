@@ -34,7 +34,6 @@ void task_test_deinit(void)
 
 void task_test_callback(void *arg)
 {
-
 }
 
 #endif // APP_PCBTEST

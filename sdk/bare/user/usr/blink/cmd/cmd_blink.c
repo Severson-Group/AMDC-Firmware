@@ -98,12 +98,18 @@ int cmd_blink(int argc, char **argv)
     }
 
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
-        task_blink_init();
+        if (task_blink_init() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
         return CMD_SUCCESS;
     }
 
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
-        task_blink_deinit();
+        if (task_blink_deinit() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
         return CMD_SUCCESS;
     }
 

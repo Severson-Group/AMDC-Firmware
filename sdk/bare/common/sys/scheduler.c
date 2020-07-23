@@ -1,6 +1,7 @@
 #include "sys/scheduler.h"
 #include "drv/hardware_targets.h"
 #include "drv/io.h"
+#include "drv/led.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
 #include "usr/user_config.h"
@@ -18,7 +19,7 @@ static task_control_block_t *tasks = NULL;
 static task_control_block_t *running_task = NULL;
 
 // Incremented every SysTick interrupt to track time
-static uint64_t elapsed_usec = 0;
+static uint32_t elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
@@ -29,6 +30,7 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
+        // Use raw printf so this goes directly to the UART device
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
         io_led_color_t color;
@@ -36,8 +38,17 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
         color.g = 0;
         color.b = 0;
         io_led_set(&color);
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+        led_set_color(0, LED_COLOR_RED);
+        led_set_color(1, LED_COLOR_RED);
+        led_set_color(2, LED_COLOR_RED);
+        led_set_color(3, LED_COLOR_RED);
 #endif // USER_CONFIG_HARDWARE_TARGET
-        HANG;
+
+        // Hang here so the user can debug why the code took so long
+        // and overran the time slice! See the `running_task` variable.
+        while (1) {
+        }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
 
@@ -45,7 +56,7 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     scheduler_idle = false;
 }
 
-uint64_t scheduler_get_elapsed_usec(void)
+uint32_t scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
 }
@@ -76,52 +87,54 @@ void scheduler_tcb_init(
 #endif // USER_CONFIG_ENABLE_TASK_STATISTICS_BY_DEFAULT
 }
 
-void scheduler_tcb_register(task_control_block_t *tcb)
+int scheduler_tcb_register(task_control_block_t *tcb)
 {
     // Don't let clients re-register their tcb
-    if (tcb->registered) {
-        HANG;
+    if (tcb->is_registered) {
+        return FAILURE;
     }
 
     // Mark as registered
-    tcb->registered = 1;
+    tcb->is_registered = true;
 
-    // Base case: there are no tasks in linked list
     if (tasks == NULL) {
+        // There are no tasks in linked list
         tasks = tcb;
         tasks->next = NULL;
-        return;
+    } else {
+        // Find end of list
+        task_control_block_t *curr = tasks;
+        while (curr->next != NULL) {
+            curr = curr->next;
+        }
+
+        // Append new tcb to end of list
+        curr->next = tcb;
+        tcb->next = NULL;
     }
 
-    // Find end of list
-    task_control_block_t *curr = tasks;
-    while (curr->next != NULL)
-        curr = curr->next;
-
-    // Append new tcb to end of list
-    curr->next = tcb;
-    tcb->next = NULL;
+    return SUCCESS;
 }
 
-void scheduler_tcb_unregister(task_control_block_t *tcb)
+int scheduler_tcb_unregister(task_control_block_t *tcb)
 {
     // Don't let clients unregister their already unregistered tcb
-    if (!tcb->registered) {
-        HANG;
+    if (!tcb->is_registered) {
+        return FAILURE;
     }
-
-    // Mark as unregistered
-    tcb->registered = 0;
 
     // Make sure list isn't empty
     if (tasks == NULL) {
-        HANG;
+        return FAILURE;
     }
+
+    // Mark as unregistered
+    tcb->is_registered = false;
 
     // Special case: trying to remove the head of the list
     if (tasks->id == tcb->id) {
         tasks = tasks->next;
-        return;
+        return SUCCESS;
     }
 
     // Now we know that 'tcb' to remove is NOT first node
@@ -138,11 +151,13 @@ void scheduler_tcb_unregister(task_control_block_t *tcb)
     // 'curr' is now the one we want to remove!
 
     prev->next = curr->next;
+
+    return SUCCESS;
 }
 
-uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb)
+bool scheduler_tcb_is_registered(task_control_block_t *tcb)
 {
-    return tcb->registered;
+    return tcb->is_registered;
 }
 
 void scheduler_run(void)
@@ -155,7 +170,7 @@ void scheduler_run(void)
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint64_t usec_since_last_run = elapsed_usec - t->last_run_usec;
+            uint32_t usec_since_last_run = elapsed_usec - t->last_run_usec;
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
