@@ -1,4 +1,3 @@
-
 #ifdef APP_PCBTEST
 
 #include "usr/pcbtest/cmd/cmd_test.h"
