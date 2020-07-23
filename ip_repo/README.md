@@ -14,11 +14,15 @@ There are three types of AXI4 interfaces:
 
 The AMDC platform makes extensive use of the IP blocks to interface with the hardware peripherals on the circuit board. This includes PWM outputs, ADC inputs, encoders, SPIs, UARTs, and serially-addressable LEDs. These IP cores and their associated C drivers allow user applications, written in C, to easily control and interface to hardware. The AXI4-Lite interface is generally used for hardware interfacing on the AMDC. AXI4-Lite enables development of simple register-based peripherals.
 
-### `amdc_analog`
+### [`amdc_adc`](amdc_adc_1.0/README.md)
 
-This IP core is responsible for driving the external ADC on the AMDC hardware. The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
+This IP core is responsible for driving the external ADC on the AMDC hardware (supports one ADC device). The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
 
-### `amdc_dac`
+### [`amdc_analog`](amdc_analog_1.0/README.md) [unsupported]
+
+Unsupported IP used on REV C hardware. Drives two ADC devices together to create an effective 16 channel synchronous ADC.
+
+### `amdc_dac` [unsupported]
 
 This IP core is responsible for driving a DAC expansion board plugged into the GPIO port on the AMDC hardware (REV C only). The core initially configures the external DAC device, then continously updates the digital values in the DAC based upon memory-mapped registers. These registers are settable via the C driver functions.
 
