@@ -1,76 +1,67 @@
 #include "drv/analog.h"
+#include "drv/analog_defs.h"
 #include "sys/defines.h"
-#include "xil_io.h"
 #include <stdbool.h>
-#include <stdio.h>
 
-#define ANALOG_BASE_ADDR (0x43C00000)
+static volatile uint32_t *m_adc;
 
-void analog_init(void)
+void analog_init(uint32_t base_addr)
 {
-    printf("ANLG:\tInitializing...\n");
+    // Store base address for IP
+    m_adc = (volatile uint32_t *) base_addr;
 
     // Set SCK to 50MHz (200MHz / 4)
     analog_set_clkdiv(ANALOG_CLKDIV4);
 
     // Set PWM sync to both high and low of triangle carrier
-    analog_set_pwm_sync(1, 1);
+    bool sync_to_carrier_high = true;
+    bool sync_to_carrier_low = true;
+    analog_set_pwm_sync(sync_to_carrier_high, sync_to_carrier_low);
 }
 
 int analog_set_clkdiv(analog_clkdiv_e div)
 {
-    printf("ANLG:\tSetting clkdiv to %d...\n", div);
-
     // Make sure the divisor is valid
     if (!analog_is_valid_clkdiv(div)) {
         return FAILURE;
     }
 
-    // Register 16 is read/write clkdiv value
-
-    // NOTE: this code updates the register value using read / modify / write semantics.
-    // This allows the other bits of the register to be used for other things (which they are!)
-
-    // Read in reg
-    uint32_t reg16 = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * 16));
+    // Read in CONTROL register
+    uint32_t reg = m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4];
 
     // Clear lower 2 bits
-    reg16 &= ~(0x00000003);
+    reg &= ~ANALOG_DEFS_CONTROL_CLKDIV_MASK;
 
     // Set lower 2 bits
-    reg16 |= (div & 0x00000003);
+    reg |= (div & ANALOG_DEFS_CONTROL_CLKDIV_MASK);
 
-    // Write out reg
-    Xil_Out32(ANALOG_BASE_ADDR + (16 * sizeof(uint32_t)), reg16);
+    // Write out CONTROL register
+    m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4] = reg;
 
     return SUCCESS;
 }
 
 void analog_get_clkdiv(analog_clkdiv_e *out_div)
 {
-    // Register 16 is read/write clkdiv value
-    uint32_t tmp = Xil_In32(ANALOG_BASE_ADDR + (16 * sizeof(uint32_t)));
+    // Read in CONTROL register
+    uint32_t reg = m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4];
 
     // Make sure we only look at lower 2 bits
-    uint32_t value = tmp & 0x00000003;
+    uint32_t value = reg & ANALOG_DEFS_CONTROL_CLKDIV_MASK;
 
     *out_div = value;
 }
 
 int analog_getf(analog_channel_e channel, float *out_value)
 {
-    // Make sure channel in valid
-    if (!analog_is_valid_channel(channel)) {
+    // Read raw binary value from ADC
+    int16_t val;
+    if (analog_geti(channel, &val) != SUCCESS) {
         return FAILURE;
     }
 
-    // Registers 0..15 are read-only values from ADC
-    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * channel));
-
-    // Conversion from raw bits to input voltage
-    float tmp = (float) ((int16_t) out) / 400.0;
-
-    *out_value = tmp;
+    // Conversion from raw bits to voltage
+    *out_value = (float) (val) / 400.0;
 
     return SUCCESS;
 }
@@ -82,33 +73,31 @@ int analog_geti(analog_channel_e channel, int16_t *out_value)
         return FAILURE;
     }
 
-    // Registers 0..15 are read-only values from ADC
-    uint32_t out = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * channel));
+    // Read in ADC data register
+    uint32_t reg = m_adc[channel];
 
-    *out_value = (int16_t) out;
+    *out_value = (int16_t) reg;
 
     return SUCCESS;
 }
 
 void analog_set_pwm_sync(bool sync_to_carrier_high, bool sync_to_carrier_low)
 {
-    // Read in reg
-    uint32_t reg16 = Xil_In32(ANALOG_BASE_ADDR + (sizeof(uint32_t) * 16));
+    // Read in CONTROL register
+    uint32_t reg = m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4];
 
-    // Set bit reg16[2] high for `pwm_sync_high`
     if (sync_to_carrier_high) {
-        reg16 |= 0x00000004;
+        reg |= (1 << ANALOG_DEFS_CONTROL_PWM_SYNC_HIGH_SHIFT);
     } else {
-        reg16 &= ~(0x00000004);
+        reg &= ~(1 << ANALOG_DEFS_CONTROL_PWM_SYNC_HIGH_SHIFT);
     }
 
-    // Set bit reg16[3] high for `pwm_sync_low`
     if (sync_to_carrier_low) {
-        reg16 |= 0x00000008;
+        reg |= (1 << ANALOG_DEFS_CONTROL_PWM_SYNC_LOW_SHIFT);
     } else {
-        reg16 &= ~(0x00000008);
+        reg &= ~(1 << ANALOG_DEFS_CONTROL_PWM_SYNC_LOW_SHIFT);
     }
 
-    // Write out reg
-    Xil_Out32(ANALOG_BASE_ADDR + (16 * sizeof(uint32_t)), reg16);
+    // Write out CONTROL register
+    m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4] = reg;
 }

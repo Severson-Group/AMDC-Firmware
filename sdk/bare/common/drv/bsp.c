@@ -70,7 +70,7 @@ void bsp_init(void)
     printf("BSP:\tInitializing...\n");
 
     encoder_init();
-    analog_init();
+    analog_init(ANALOG_BASE_ADDR);
     pwm_init();
 
     fpga_timer_init();
