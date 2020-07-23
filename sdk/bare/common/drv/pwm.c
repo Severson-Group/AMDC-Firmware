@@ -161,12 +161,12 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
 
 double pwm_get_switching_freq(void)
 {
-	return now_fsw;
+    return now_fsw;
 }
 
 uint16_t pwm_get_deadtime_ns(void)
 {
-	return now_deadtime;
+    return now_deadtime;
 }
 
 int pwm_set_duty(pwm_channel_e channel, double duty)
