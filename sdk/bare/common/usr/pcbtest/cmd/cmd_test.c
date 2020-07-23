@@ -1,3 +1,4 @@
+
 #ifdef APP_PCBTEST
 
 #include "usr/pcbtest/cmd/cmd_test.h"
@@ -7,6 +8,7 @@
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
+#include "usr/pcbtest/sm_test.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +17,7 @@ static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
     { "analog", "Print all analog voltages" },
+    { "auto <#[T|B]>", "Perform automated test of specified power stack (e.g. 1T is top-left port)" },
 };
 
 void cmd_test_register(void)
@@ -36,6 +39,29 @@ int cmd_test(int argc, char **argv)
         }
 
         return CMD_SUCCESS;
+    }
+
+    if (argc == 3 && STREQ("auto", argv[1])) {
+        if (strlen(argv[2]) == 2) {
+            // Parse stack number
+            int stack = argv[2][0] - '0';
+            if (stack < 1 || stack > 4) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            // Parse top or bottom (T or B)
+            char tb = argv[2][1];
+            bool valid = (tb == 'T') | (tb == 'B');
+            if (!valid) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (sm_test_start_auto_test(stack, tb) != SUCCESS) {
+                return CMD_FAILURE;
+            }
+
+            return CMD_SUCCESS;
+        }
     }
 
     return CMD_INVALID_ARGUMENTS;
