@@ -32,7 +32,7 @@ typedef struct log_var_t {
     var_type_e type;
 
     uint32_t log_interval_usec;
-    uint64_t last_logged_usec;
+    uint32_t last_logged_usec;
 
     int num_samples;
     buffer_entry_t buffer[LOG_VARIABLE_SAMPLE_DEPTH];
@@ -94,7 +94,7 @@ void log_callback(void *arg)
         return;
     }
 
-    uint64_t elapsed_usec = scheduler_get_elapsed_usec();
+    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
 
     for (uint8_t i = 0; i < LOG_MAX_NUM_VARS; i++) {
         log_var_t *v = &vars[i];
@@ -104,7 +104,7 @@ void log_callback(void *arg)
             continue;
         }
 
-        uint64_t usec_since_last_run = elapsed_usec - v->last_logged_usec;
+        uint32_t usec_since_last_run = elapsed_usec - v->last_logged_usec;
 
         if (usec_since_last_run >= v->log_interval_usec) {
             // Time to log this variable!

@@ -39,24 +39,17 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
 
-void task_blink_init(void)
+int task_blink_init(void)
 {
     // Fill TCB with parameters
     scheduler_tcb_init(&tcb, task_blink_callback, NULL, "blink", TASK_BLINK_INTERVAL_USEC);
 
     // Register task with scheduler
-    scheduler_tcb_register(&tcb);
+    return scheduler_tcb_register(&tcb);
 }
 
-void task_blink_deinit(void)
+int task_blink_deinit(void)
 {
-    if (!scheduler_tcb_is_registered(&tcb)) {
-        return;
-    }
-
-    // Register task with scheduler
-    scheduler_tcb_unregister(&tcb);
-
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     // Turn off all LEDs
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
@@ -67,6 +60,9 @@ void task_blink_deinit(void)
     led_pos = 0;
     led_color_idx = 0;
 #endif // USER_CONFIG_HARDWARE_TARGET
+
+    // Unregister task with scheduler
+    return scheduler_tcb_unregister(&tcb);
 }
 
 void task_blink_callback(void *arg)
