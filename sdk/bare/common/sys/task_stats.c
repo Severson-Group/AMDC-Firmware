@@ -85,7 +85,7 @@ typedef struct sm_ctx_t {
 #define SM_UPDATES_PER_SEC (200)
 #define SM_INTERVAL_USEC   (USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
-void state_machine_callback(void *arg)
+static void state_machine_callback(void *arg)
 {
     sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
