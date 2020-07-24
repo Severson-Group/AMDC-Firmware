@@ -3,7 +3,7 @@
 #include "usr/demo/app_demo.h"
 #include "drv/pwm.h"
 #include "usr/demo/cmd/cmd_cc.h"
-#include "usr/demo/task_cc.h"
+#include "usr/demo/task_control.h"
 
 void app_demo_init(void)
 {
