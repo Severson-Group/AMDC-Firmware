@@ -119,9 +119,9 @@ void task_cc_callback(void *arg)
         cc_idx++;
 
     // ---------------------
-    // Update position
+    // Update position based on user specified speed
     // ---------------------
-    if (ctx->mode == MODE_SPEED){     				// Update position based on user specified speed
+    if (ctx->mode == MODE_SPEED){
         ctx->theta_e += ctx->omega_e * Ts;
     }
     if (ctx->theta_e > PI2)
@@ -154,8 +154,7 @@ void task_cc_callback(void *arg)
     Iabc1[2] = Iabc.c;
     double Ixyz[3]; // alpha beta gamma currents
     double Idq0[3]; // d q 0 currents
-    transform_clarke(TRANS_DQZ_C_INVARIANT_AMPLITUDE, Iabc1, Ixyz);
-    transform_park(ctx->theta_e, Ixyz, Idq0);
+    transform_dqz(TRANS_DQZ_C_INVARIANT_AMPLITUDE, ctx->theta_e, Iabc1, Idq0);
 
     // -----------------------------
     // Run through block diagram of CVCR to get Vdq*
@@ -248,7 +247,19 @@ void task_cc_tune(int cc_idx, double Rs, double Ld, double Lq, double bw)
     ctx->Ki.q = ctx->Kp.q * (Rs / Lq);
 }
 
-void task_cc_set_speed(int cc_idx, double Id_star, double Iq_star, double omega_e)
+void task_cc_set_currents(int cc_idx, double Id_star, double Iq_star)
+{
+    if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
+        return;
+    }
+
+    cc_context_t *ctx = &cc_ctxs[cc_idx];
+
+    ctx->Id_star = Id_star;
+    ctx->Iq_star = Iq_star;
+}
+
+void task_cc_set_omega(int cc_idx, double omega_e)
 {
     if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
         return;
@@ -258,28 +269,23 @@ void task_cc_set_speed(int cc_idx, double Id_star, double Iq_star, double omega_
 
     if (ctx->mode == MODE_SPEED)
     {
-        ctx->Id_star = Id_star;
-        ctx->Iq_star = Iq_star;
         ctx->omega_e = omega_e;
-
         if (ctx->omega_e == 0.0) {
             ctx->theta_e = 0.0;
         }
     }
-
 }
 
-void task_cc_set_angle(int cc_idx, double Id_star, double Iq_star, double theta_e)
+void task_cc_set_theta(int cc_idx, double theta_e)
 {
     if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
         return;
     }
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
+
     if (ctx->mode == MODE_ANGLE)
     {
-		ctx->Id_star = Id_star;
-		ctx->Iq_star = Iq_star;
 		ctx->theta_e = theta_e;
     }
 
