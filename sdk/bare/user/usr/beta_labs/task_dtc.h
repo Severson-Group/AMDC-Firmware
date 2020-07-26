@@ -2,7 +2,7 @@
 #define TASK_DTC_H
 
 #include "drv/analog.h"
-#include "sys/defines.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
 
 #define TASK_DTC_UPDATES_PER_SEC (10000)

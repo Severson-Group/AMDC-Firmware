@@ -1,7 +1,7 @@
 #ifndef TASK_CC_H
 #define TASK_CC_H
 
-#include "sys/defines.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
 #include <stdlib.h>
 

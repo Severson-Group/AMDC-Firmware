@@ -1,7 +1,7 @@
 #ifndef TASK_VSI_H
 #define TASK_VSI_H
 
-#include "sys/defines.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
 
 #define TASK_VSI_UPDATES_PER_SEC (10000)
