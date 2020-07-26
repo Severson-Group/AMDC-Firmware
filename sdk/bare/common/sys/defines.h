@@ -5,21 +5,9 @@
 
 #define UNUSED(x) (void) (x)
 
-#define USEC_IN_SEC (1000000)
-
-#define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
-#define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
-
 #define HANG                                                                                                           \
     printf("HANG!!!\n");                                                                                               \
     while (1)
-
-#define CMD_SUCCESS           (0)
-#define CMD_FAILURE           (1)
-#define CMD_SUCCESS_QUIET     (2)
-#define CMD_INVALID_ARGUMENTS (3)
-#define CMD_INPUT_TOO_LONG    (4)
-#define CMD_UNKNOWN_CMD       (5)
 
 #define SUCCESS (0)
 #define FAILURE (1)

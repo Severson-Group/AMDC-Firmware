@@ -8,6 +8,11 @@
 #include "sys/task_stats.h"
 #include "usr/user_config.h"
 
+// Utility defines for time conversions
+#define USEC_IN_SEC       (1000000)
+#define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
+#define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
+
 // SysTick
 //
 // The basic time quantum is defined to be SYS_TICK_FREQ.
