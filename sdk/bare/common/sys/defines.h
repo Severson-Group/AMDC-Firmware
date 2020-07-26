@@ -5,11 +5,6 @@
 
 #define UNUSED(x) (void) (x)
 
-#define USEC_IN_SEC (1000000)
-
-#define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
-#define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
-
 #define HANG                                                                                                           \
     printf("HANG!!!\n");                                                                                               \
     while (1)
