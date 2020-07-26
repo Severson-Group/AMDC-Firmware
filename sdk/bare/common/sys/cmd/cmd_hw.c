@@ -1,5 +1,6 @@
 #include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
+#include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/hardware_targets.h"
@@ -27,7 +28,7 @@ static command_help_t cmd_help[] = {
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
-    { "timer now", "Read value from FPGA timer" },
+    { "timer <fpga|cpu> now", "Read value from hardware timer" },
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
@@ -156,10 +157,24 @@ int cmd_hw(int argc, char **argv)
 
     // Handle 'timer' sub-command
     if (argc >= 2 && STREQ("timer", argv[1])) {
-        if (argc == 3 && STREQ("now", argv[2])) {
-            uint32_t counts = fpga_timer_now();
+        if (argc == 4 && STREQ("fpga", argv[2]) && STREQ("now", argv[3])) {
+            uint32_t counts1 = fpga_timer_now();
+            uint32_t counts2 = fpga_timer_now();
 
-            debug_printf("counts: %lu\r\n", counts);
+            debug_printf("counts1: %lu\r\n", counts1);
+            debug_printf("counts2: %lu\r\n", counts2);
+            debug_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
+
+            return CMD_SUCCESS;
+        }
+
+        if (argc == 4 && STREQ("cpu", argv[2]) && STREQ("now", argv[3])) {
+            uint32_t counts1 = cpu_timer_now();
+            uint32_t counts2 = cpu_timer_now();
+
+            debug_printf("counts1: %lu\r\n", counts1);
+            debug_printf("counts2: %lu\r\n", counts2);
+            debug_printf("time delta = %8.3f ns\r\n", 1e3 * cpu_timer_ticks_to_usec(counts2 - counts1));
 
             return CMD_SUCCESS;
         }

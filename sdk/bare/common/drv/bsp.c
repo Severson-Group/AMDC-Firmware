@@ -11,6 +11,7 @@
 
 #include "drv/analog.h"
 #include "drv/bsp.h"
+#include "drv/cpu_timer.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
@@ -74,6 +75,7 @@ void bsp_init(void)
     pwm_init();
 
     fpga_timer_init();
+    cpu_timer_init();
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     led_init();
