@@ -10,8 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-
 
 typedef struct pwm_config_t {
     uint8_t pwm_chnl;
@@ -53,7 +51,7 @@ typedef struct cc_context_t {
     vec_dq_t Idq_err;
     vec_dq_t Idq_err_acc;
     double theta_e;
-    enum setmode {MODE_ANGLE, MODE_SPEED} mode;
+    enum setmode { MODE_ANGLE, MODE_SPEED } mode;
 } cc_context_t;
 
 // Period between controller updates
@@ -107,9 +105,10 @@ void task_cc_setmode(int cc_idx, char *argMode)
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
 
-    if (STREQ("angle", argMode)) ctx->mode = MODE_ANGLE;
-    else if (STREQ("speed", argMode)) ctx->mode = MODE_SPEED;
-
+    if (STREQ("angle", argMode))
+        ctx->mode = MODE_ANGLE;
+    else if (STREQ("speed", argMode))
+        ctx->mode = MODE_SPEED;
 }
 void task_cc_callback(void *arg)
 {
@@ -121,7 +120,7 @@ void task_cc_callback(void *arg)
     // ---------------------
     // Update position based on user specified speed
     // ---------------------
-    if (ctx->mode == MODE_SPEED){
+    if (ctx->mode == MODE_SPEED) {
         ctx->theta_e += ctx->omega_e * Ts;
     }
     if (ctx->theta_e > PI2)
@@ -267,8 +266,7 @@ void task_cc_set_omega(int cc_idx, double omega_e)
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
 
-    if (ctx->mode == MODE_SPEED)
-    {
+    if (ctx->mode == MODE_SPEED) {
         ctx->omega_e = omega_e;
         if (ctx->omega_e == 0.0) {
             ctx->theta_e = 0.0;
@@ -284,11 +282,9 @@ void task_cc_set_theta(int cc_idx, double theta_e)
 
     cc_context_t *ctx = &cc_ctxs[cc_idx];
 
-    if (ctx->mode == MODE_ANGLE)
-    {
-		ctx->theta_e = theta_e;
+    if (ctx->mode == MODE_ANGLE) {
+        ctx->theta_e = theta_e;
     }
-
 }
 
 #endif // APP_DEMO

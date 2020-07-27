@@ -47,10 +47,10 @@ static command_help_t cmd_help[] = {
     { "<cc_idx> pwm <a|b|c> <pwm_chnl>", "Configure PWM outputs per phase" },
     { "<cc_idx> adc <a|b|c> <adc_chnl> <adc_gain> <adc_offset>", "Configure ADC input per phase" },
     { "<cc_idx> tune <Rs> <Ld> <Lq> <bw>", "Tune with Rs [ohms], Ldq [H], and bandwidth [rad/s]" },
-	{ "<cc_idx> setmode <angle|speed>", "Set mode to control angle or speed directly" },
+    { "<cc_idx> setmode <angle|speed>", "Set mode to control angle or speed directly" },
     { "<cc_idx> set <Id*> <Iq*>", "Set operating point for Idq* [Adq]" },
-	{ "<cc_idx> omega <omega_e>", "Set omega_e [rad/s]"},
-	{ "<cc_idx> theta <theta_e>", "Set theta_e [degrees]"},
+    { "<cc_idx> omega <omega_e>", "Set omega_e [rad/s]" },
+    { "<cc_idx> theta <theta_e>", "Set theta_e [degrees]" },
 };
 
 void cmd_cc_register(void)
@@ -224,14 +224,13 @@ int cmd_cc(int argc, char **argv)
     }
 
     if (argc == 4 && STREQ("setmode", argv[2])) {
-    	int cc_idx = atoi(argv[1]);
+        int cc_idx = atoi(argv[1]);
 
-    	// Extract arguments
-        if (STREQ("angle", argv[3])){
-        	task_cc_setmode(cc_idx, "angle");
-        }
-        else if (STREQ("speed", argv[3])){
-        	task_cc_setmode(cc_idx, "speed");
+        // Extract arguments
+        if (STREQ("angle", argv[3])) {
+            task_cc_setmode(cc_idx, "angle");
+        } else if (STREQ("speed", argv[3])) {
+            task_cc_setmode(cc_idx, "speed");
         }
 
         return CMD_SUCCESS;
@@ -258,33 +257,35 @@ int cmd_cc(int argc, char **argv)
     }
 
     if (argc == 4 && STREQ("omega", argv[2])) {
-    	int cc_idx = atoi(argv[1]);
+        int cc_idx = atoi(argv[1]);
 
-        //extract arguments
+        // extract arguments
         double omega_e;
         omega_e = strtod(argv[3], NULL);
 
-        //sanitize inputs
-        if (omega_e <= -1e6 || omega_e >= 1e6) return CMD_INVALID_ARGUMENTS;
+        // sanitize inputs
+        if (omega_e <= -1e6 || omega_e >= 1e6)
+            return CMD_INVALID_ARGUMENTS;
 
-        //set omega
+        // set omega
         task_cc_set_omega(cc_idx, omega_e);
 
         return CMD_SUCCESS;
     }
 
     if (argc == 4 && STREQ("theta", argv[2])) {
-    	int cc_idx = atoi(argv[1]);
+        int cc_idx = atoi(argv[1]);
 
-        //extract arguments
+        // extract arguments
         double theta_e;
         theta_e = strtod(argv[3], NULL);
-        theta_e = theta_e*PI/180; //degree to radians
+        theta_e = theta_e * PI / 180; // degree to radians
 
-        //sanitize inputs
-        if (theta_e <= -PI2 || theta_e >= PI2) return CMD_INVALID_ARGUMENTS;
+        // sanitize inputs
+        if (theta_e <= -PI2 || theta_e >= PI2)
+            return CMD_INVALID_ARGUMENTS;
 
-        //set theta
+        // set theta
         task_cc_set_theta(cc_idx, theta_e);
 
         return CMD_SUCCESS;
