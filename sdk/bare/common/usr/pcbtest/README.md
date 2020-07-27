@@ -120,7 +120,7 @@ No hardware issues found! :)
 
 Once again, the test passes. However, you can see that a few test cases failed. This is okay and the test application smartly ignores the irrelevant failures (failures are due to analog noise).
 
-### Example output (borken hardware)
+### Example output (broken hardware)
 
 The automated test is run in `quiet` mode on failed hardware: `test auto quiet 500 4T 5`
 
