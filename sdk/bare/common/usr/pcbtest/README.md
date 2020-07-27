@@ -13,7 +13,7 @@ This application is designed for a specific hardware set-up. The TestBoard must 
 1. All eight AMDC analog inputs must be connected using four Ethernet cables to the TestBoard. When looking straight at the 2x2 RJ45 connector, the cable locations match on the TestBoard and the AMDC.
 2. One DB15 cable must be plugged into the AMDC PowerStack ports as well as the TestBoard "Inverter Link" port.
 
-![TestBoard wiring diagram](docs/testboard-wiring.svg)
+<img src="docs/testboard-wiring.svg" width="30%" />
 
 On the TestBoard, `PWM[1..6]` from the power stack port are connected across first-order RC filters. The filtered PWM voltage then goes back into the AMDC analog inputs on `ANALOG IN[1..6]`. This creates a "loop-back" topology. The TestBoard also supplies +/- 10V to the AMDC on channels `ANALOG IN[7..8]`.
 
