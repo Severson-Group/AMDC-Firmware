@@ -20,7 +20,6 @@ static command_help_t cmd_help[] = {
     { "deinit", "Stop task" },
     { "stats print", "Print stats" },
     { "stats reset", "Reset stats" },
-
 };
 
 void cmd_blink_register(void)

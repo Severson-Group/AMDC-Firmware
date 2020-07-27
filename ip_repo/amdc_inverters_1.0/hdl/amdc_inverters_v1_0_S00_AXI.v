@@ -916,9 +916,11 @@
 	// PWM duty ratio regs
 	reg [15:0] D_L[23:0];
 	
+	wire pwm_en = slv_reg31[0];
+	
 	// Assign duty ratios from regs received
 	always @(posedge S_AXI_ACLK) begin
-		if (S_AXI_ARESETN == 1'b0) begin
+		if (S_AXI_ARESETN == 1'b0 | ~pwm_en) begin
 			D_L[0] = 16'b0;
 			D_L[1] = 16'b0;
 			D_L[2] = 16'b0;
@@ -948,7 +950,7 @@
 		else begin
 			// Only latch in the requested duty ratios
 			// when the carrier is low
-			if (carrier_low) begin
+			if (carrier_low & pwm_en) begin
 				D_L[0] = slv_reg0[15:0];
 				D_L[1] = slv_reg1[15:0];
 				D_L[2] = slv_reg2[15:0];

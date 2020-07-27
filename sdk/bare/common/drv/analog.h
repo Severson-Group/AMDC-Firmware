@@ -6,6 +6,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#define ANALOG_BASE_ADDR (0x43C00000)
+#endif
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#define ANALOG_BASE_ADDR (0x43C00000)
+#endif
+
 typedef enum {
     // Keep first channel index at 0!
     ANALOG_IN1 = 0,
@@ -17,7 +25,7 @@ typedef enum {
     ANALOG_IN7,
     ANALOG_IN8,
 
-// REV C hardware is the only hardware
+// REV C target hardware is the only platform
 // which supports more than 8 analog inputs.
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     ANALOG_IN9,
@@ -59,7 +67,7 @@ static inline bool analog_is_valid_clkdiv(analog_clkdiv_e div)
     return false;
 }
 
-void analog_init(void);
+void analog_init(uint32_t base_addr);
 
 int analog_set_clkdiv(analog_clkdiv_e div);
 void analog_get_clkdiv(analog_clkdiv_e *out_div);

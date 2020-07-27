@@ -11,6 +11,7 @@
 
 #include "drv/analog.h"
 #include "drv/bsp.h"
+#include "drv/cpu_timer.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
@@ -33,20 +34,48 @@
 
 void bsp_init(void)
 {
-    printf("BSP:\tInitializing...\n");
-
-    int err;
-
-    err = uart_init();
-    if (err != SUCCESS) {
-        HANG;
+    if (uart_init() != SUCCESS) {
+        printf("ERROR: UART init failed!\n");
+        while (1) {
+        };
     }
 
+    // Busy loop to wait for UART to warm up... :)
+    volatile int i;
+    for (i = 0; i < 10e6; i++) {
+        asm("nop");
+    }
+
+    // Print welcome message to user
+    printf("Advanced Motor Drive Controller\n");
+
+    switch (USER_CONFIG_HARDWARE_TARGET) {
+    case AMDC_REV_C:
+        printf("Hardware Target: REV C\n");
+        break;
+
+    case AMDC_REV_D:
+        printf("Hardware Target: REV D\n");
+        break;
+
+    default:
+        printf("ERROR: Unknown AMDC hardware revision\n");
+        while (1) {
+        }
+    }
+
+    printf("(C) 2020 Severson Research Group\n");
+    printf("--------------------------------\n");
+    printf("\n");
+
+    printf("BSP:\tInitializing...\n");
+
     encoder_init();
-    analog_init();
+    analog_init(ANALOG_BASE_ADDR);
     pwm_init();
 
     fpga_timer_init();
+    cpu_timer_init();
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     led_init();

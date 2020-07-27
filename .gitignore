@@ -14,9 +14,10 @@ amdc/
 
 # Keep only base source files
 hw/*
-!hw/design_1.bd
-!hw/design_1_wrapper.v
+!hw/amdc_revc.bd
+!hw/amdc_revd.bd
 !hw/constraints_amdc_revc.xdc
+!hw/constraints_amdc_revd.xdc
 
 
 #######
@@ -33,9 +34,9 @@ sdk/RemoteSystemsTempFiles/
 sdk/system.hdf_expanded/
 sdk/RemoteSystemsTempFiles/
 
-sdk/amdc_bsp/
+sdk/*_bsp/
 sdk/fsbl/
-sdk/design_1_wrapper_hw_platform_*/
+sdk/*wrapper_hw_platform_*/
 
 sdk/**/Debug/
 sdk/**/Release/

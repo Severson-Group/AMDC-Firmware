@@ -41,6 +41,10 @@ static task_control_block_t tcb;
 
 int task_blink_init(void)
 {
+    if (scheduler_tcb_is_registered(&tcb)) {
+        return FAILURE;
+    }
+
     // Fill TCB with parameters
     scheduler_tcb_init(&tcb, task_blink_callback, NULL, "blink", TASK_BLINK_INTERVAL_USEC);
 

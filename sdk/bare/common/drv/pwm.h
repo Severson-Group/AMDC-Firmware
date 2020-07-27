@@ -9,6 +9,12 @@
 #define PWM_DEFAULT_SWITCHING_FREQ_HZ (100000.0)
 #define PWM_DEFAULT_DEADTIME_NS       (100.0)
 
+#define PWM_MAX_SWITCHING_FREQ_HZ (2e6)
+#define PWM_MIN_SWITCHING_FREQ_HZ (2e3)
+
+#define PWM_MAX_DEADTIME_NS ((1 << 16) - 1)
+#define PWM_MIN_DEADTIME_NS (25)
+
 typedef enum {
     // Keep first channel index at 0!
     PWM_OUT1 = 0,
@@ -59,14 +65,19 @@ void pwm_init(void);
 
 void pwm_toggle_reset(void);
 
-int pwm_set_switching_freq(double freq_hz);
+int pwm_enable(void);
+int pwm_disable(void);
+bool pwm_is_enabled(void);
 
-int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value);
+int pwm_set_switching_freq(double freq_hz);
+int pwm_set_deadtime_ns(uint16_t deadtime);
+
+double pwm_get_switching_freq(void);
+uint16_t pwm_get_deadtime_ns(void);
+
 int pwm_set_duty(pwm_channel_e channel, double duty);
 
-int pwm_set_carrier_divisor(uint8_t divisor);
-int pwm_set_carrier_max(uint16_t max);
-int pwm_set_deadtime_ns(uint16_t deadtime);
+void pwm_set_all_duty_midscale(void);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
