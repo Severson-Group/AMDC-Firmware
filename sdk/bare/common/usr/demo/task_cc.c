@@ -7,7 +7,9 @@
 #include "usr/demo/inverter.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct pwm_config_t {
     uint8_t pwm_chnl;
@@ -49,6 +51,7 @@ typedef struct cc_context_t {
     vec_dq_t Idq_err;
     vec_dq_t Idq_err_acc;
     double theta_e;
+    enum setmode { MODE_ANGLE, MODE_SPEED } mode;
 } cc_context_t;
 
 // Period between controller updates
@@ -56,6 +59,11 @@ const double Ts = 1.0 / TASK_CC_UPDATES_PER_SEC;
 
 #define MAX_NUM_CC_CTXS (8)
 static cc_context_t cc_ctxs[MAX_NUM_CC_CTXS] = { 0 };
+
+static inline bool STREQ(char *in1, char *in2)
+{
+    return (strcmp(in1, in2) == 0) ? true : false;
+}
 
 void task_cc_init(int cc_idx)
 {
@@ -69,6 +77,7 @@ void task_cc_init(int cc_idx)
         scheduler_tcb_init(&ctx->tcb, task_cc_callback, ctx, "cc", TASK_CC_INTERVAL_USEC);
         scheduler_tcb_register(&ctx->tcb);
     }
+    ctx->mode = MODE_SPEED;
 }
 
 void task_cc_deinit(int cc_idx)
@@ -88,6 +97,19 @@ void task_cc_deinit(int cc_idx)
     inverter_set_voltage(cc_idx, ctx->pwm_config[2].pwm_chnl, 0.0);
 }
 
+void task_cc_setmode(int cc_idx, char *argMode)
+{
+    if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
+        return;
+    }
+
+    cc_context_t *ctx = &cc_ctxs[cc_idx];
+
+    if (STREQ("angle", argMode))
+        ctx->mode = MODE_ANGLE;
+    else if (STREQ("speed", argMode))
+        ctx->mode = MODE_SPEED;
+}
 void task_cc_callback(void *arg)
 {
     cc_context_t *ctx = (cc_context_t *) arg;
@@ -98,7 +120,9 @@ void task_cc_callback(void *arg)
     // ---------------------
     // Update position based on user specified speed
     // ---------------------
-    ctx->theta_e += ctx->omega_e * Ts;
+    if (ctx->mode == MODE_SPEED) {
+        ctx->theta_e += ctx->omega_e * Ts;
+    }
     if (ctx->theta_e > PI2)
         ctx->theta_e -= PI2;
     if (ctx->theta_e < -PI2)
@@ -129,8 +153,7 @@ void task_cc_callback(void *arg)
     Iabc1[2] = Iabc.c;
     double Ixyz[3]; // alpha beta gamma currents
     double Idq0[3]; // d q 0 currents
-    transform_clarke(TRANS_DQZ_C_INVARIANT_AMPLITUDE, Iabc1, Ixyz);
-    transform_park(ctx->theta_e, Ixyz, Idq0);
+    transform_dqz(TRANS_DQZ_C_INVARIANT_AMPLITUDE, ctx->theta_e, Iabc1, Idq0);
 
     // -----------------------------
     // Run through block diagram of CVCR to get Vdq*
@@ -223,7 +246,7 @@ void task_cc_tune(int cc_idx, double Rs, double Ld, double Lq, double bw)
     ctx->Ki.q = ctx->Kp.q * (Rs / Lq);
 }
 
-void task_cc_set(int cc_idx, double Id_star, double Iq_star, double omega_e)
+void task_cc_set_currents(int cc_idx, double Id_star, double Iq_star)
 {
     if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
         return;
@@ -233,10 +256,34 @@ void task_cc_set(int cc_idx, double Id_star, double Iq_star, double omega_e)
 
     ctx->Id_star = Id_star;
     ctx->Iq_star = Iq_star;
-    ctx->omega_e = omega_e;
+}
 
-    if (ctx->omega_e == 0.0) {
-        ctx->theta_e = 0.0;
+void task_cc_set_omega(int cc_idx, double omega_e)
+{
+    if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
+        return;
+    }
+
+    cc_context_t *ctx = &cc_ctxs[cc_idx];
+
+    if (ctx->mode == MODE_SPEED) {
+        ctx->omega_e = omega_e;
+        if (ctx->omega_e == 0.0) {
+            ctx->theta_e = 0.0;
+        }
+    }
+}
+
+void task_cc_set_theta(int cc_idx, double theta_e)
+{
+    if (cc_idx < 0 || cc_idx >= MAX_NUM_CC_CTXS) {
+        return;
+    }
+
+    cc_context_t *ctx = &cc_ctxs[cc_idx];
+
+    if (ctx->mode == MODE_ANGLE) {
+        ctx->theta_e = theta_e;
     }
 }
 
