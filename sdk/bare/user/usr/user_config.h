@@ -6,7 +6,7 @@
 // This file is used to override system defines.
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
-#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_C
+#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_D
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here.
@@ -33,5 +33,9 @@
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_INJECTION (0)
+
+// Enable SensorCard platform motherboard support
+// set to 1 for enabled, 0 for disabled
+#define USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT (1)
 
 #endif // USER_CONFIG_H
