@@ -4,6 +4,7 @@
 #include "drv/led.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
+#include "drv/motherboard.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -197,6 +198,11 @@ void scheduler_run(void)
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
         // Reset the watchdog timer after SysTick fires
         watchdog_reset();
+#endif
+
+#if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
+        // Request motherboard to send its latest ADC sample data back to the AMDC
+        motherboard_request_new_data();
 #endif
     }
 }

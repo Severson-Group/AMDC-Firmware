@@ -36,6 +36,10 @@
 
 // Enable SensorCard platform motherboard support
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT (0)
+#define USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT (1)
+
+// Enable SensorCard platform motherboard auto request new ADC sample data
+// set to 1 for enabled, 0 for disabled
+#define USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX (1)
 
 #endif // USER_CONFIG_H
