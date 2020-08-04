@@ -17,3 +17,5 @@ If you run into low-level issues (i.e. strange restart issues), consider using t
 ## [Low-Level Debugging](Low-Level-Debugging.md)
 
 ## [Logging](Firmware-Logging.md)
+
+## [AMDC TestBoard Usage](TestBoard-Usage.md)
