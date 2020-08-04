@@ -1020,37 +1020,37 @@
 
 	
 	// Single Leg Switches
-	single_leg_switch leg1 (CLK_PWM, sL[0], inverter1_pwm[0], inverter1_pwm[1], deadtime);
-	single_leg_switch leg2 (CLK_PWM, sL[1], inverter1_pwm[2], inverter1_pwm[3], deadtime);
-	single_leg_switch leg3 (CLK_PWM, sL[2], inverter1_pwm[4], inverter1_pwm[5], deadtime);
+	single_leg_switch leg1 (CLK_PWM, pwm_en, sL[0], inverter1_pwm[0], inverter1_pwm[1], deadtime);
+	single_leg_switch leg2 (CLK_PWM, pwm_en, sL[1], inverter1_pwm[2], inverter1_pwm[3], deadtime);
+	single_leg_switch leg3 (CLK_PWM, pwm_en, sL[2], inverter1_pwm[4], inverter1_pwm[5], deadtime);
 	
-	single_leg_switch leg4 (CLK_PWM, sL[3], inverter2_pwm[0], inverter2_pwm[1], deadtime);
-    single_leg_switch leg5 (CLK_PWM, sL[4], inverter2_pwm[2], inverter2_pwm[3], deadtime);
-    single_leg_switch leg6 (CLK_PWM, sL[5], inverter2_pwm[4], inverter2_pwm[5], deadtime);
+	single_leg_switch leg4 (CLK_PWM, pwm_en, sL[3], inverter2_pwm[0], inverter2_pwm[1], deadtime);
+    single_leg_switch leg5 (CLK_PWM, pwm_en, sL[4], inverter2_pwm[2], inverter2_pwm[3], deadtime);
+    single_leg_switch leg6 (CLK_PWM, pwm_en, sL[5], inverter2_pwm[4], inverter2_pwm[5], deadtime);
     
-    single_leg_switch leg7 (CLK_PWM, sL[6], inverter3_pwm[0], inverter3_pwm[1], deadtime);
-    single_leg_switch leg8 (CLK_PWM, sL[7], inverter3_pwm[2], inverter3_pwm[3], deadtime);
-    single_leg_switch leg9 (CLK_PWM, sL[8], inverter3_pwm[4], inverter3_pwm[5], deadtime);
+    single_leg_switch leg7 (CLK_PWM, pwm_en, sL[6], inverter3_pwm[0], inverter3_pwm[1], deadtime);
+    single_leg_switch leg8 (CLK_PWM, pwm_en, sL[7], inverter3_pwm[2], inverter3_pwm[3], deadtime);
+    single_leg_switch leg9 (CLK_PWM, pwm_en, sL[8], inverter3_pwm[4], inverter3_pwm[5], deadtime);
    
-    single_leg_switch leg10 (CLK_PWM, sL[9], inverter4_pwm[0], inverter4_pwm[1], deadtime);
-    single_leg_switch leg11 (CLK_PWM, sL[10], inverter4_pwm[2], inverter4_pwm[3], deadtime);
-    single_leg_switch leg12 (CLK_PWM, sL[11], inverter4_pwm[4], inverter4_pwm[5], deadtime);
+    single_leg_switch leg10 (CLK_PWM, pwm_en, sL[9], inverter4_pwm[0], inverter4_pwm[1], deadtime);
+    single_leg_switch leg11 (CLK_PWM, pwm_en, sL[10], inverter4_pwm[2], inverter4_pwm[3], deadtime);
+    single_leg_switch leg12 (CLK_PWM, pwm_en, sL[11], inverter4_pwm[4], inverter4_pwm[5], deadtime);
     
-    single_leg_switch leg13 (CLK_PWM, sL[12], inverter5_pwm[0], inverter5_pwm[1], deadtime);
-    single_leg_switch leg14 (CLK_PWM, sL[13], inverter5_pwm[2], inverter5_pwm[3], deadtime);
-    single_leg_switch leg15 (CLK_PWM, sL[14], inverter5_pwm[4], inverter5_pwm[5], deadtime);
+    single_leg_switch leg13 (CLK_PWM, pwm_en, sL[12], inverter5_pwm[0], inverter5_pwm[1], deadtime);
+    single_leg_switch leg14 (CLK_PWM, pwm_en, sL[13], inverter5_pwm[2], inverter5_pwm[3], deadtime);
+    single_leg_switch leg15 (CLK_PWM, pwm_en, sL[14], inverter5_pwm[4], inverter5_pwm[5], deadtime);
     
-    single_leg_switch leg16 (CLK_PWM, sL[15], inverter6_pwm[0], inverter6_pwm[1], deadtime);
-    single_leg_switch leg17 (CLK_PWM, sL[16], inverter6_pwm[2], inverter6_pwm[3], deadtime);
-    single_leg_switch leg18 (CLK_PWM, sL[17], inverter6_pwm[4], inverter6_pwm[5], deadtime);
+    single_leg_switch leg16 (CLK_PWM, pwm_en, sL[15], inverter6_pwm[0], inverter6_pwm[1], deadtime);
+    single_leg_switch leg17 (CLK_PWM, pwm_en, sL[16], inverter6_pwm[2], inverter6_pwm[3], deadtime);
+    single_leg_switch leg18 (CLK_PWM, pwm_en, sL[17], inverter6_pwm[4], inverter6_pwm[5], deadtime);
     
-    single_leg_switch leg19 (CLK_PWM, sL[18], inverter7_pwm[0], inverter7_pwm[1], deadtime);
-    single_leg_switch leg20 (CLK_PWM, sL[19], inverter7_pwm[2], inverter7_pwm[3], deadtime);
-    single_leg_switch leg21 (CLK_PWM, sL[20], inverter7_pwm[4], inverter7_pwm[5], deadtime);
+    single_leg_switch leg19 (CLK_PWM, pwm_en, sL[18], inverter7_pwm[0], inverter7_pwm[1], deadtime);
+    single_leg_switch leg20 (CLK_PWM, pwm_en, sL[19], inverter7_pwm[2], inverter7_pwm[3], deadtime);
+    single_leg_switch leg21 (CLK_PWM, pwm_en, sL[20], inverter7_pwm[4], inverter7_pwm[5], deadtime);
     
-    single_leg_switch leg22 (CLK_PWM, sL[21], inverter8_pwm[0], inverter8_pwm[1], deadtime);
-    single_leg_switch leg23 (CLK_PWM, sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
-    single_leg_switch leg24 (CLK_PWM, sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
+    single_leg_switch leg22 (CLK_PWM, pwm_en, sL[21], inverter8_pwm[0], inverter8_pwm[1], deadtime);
+    single_leg_switch leg23 (CLK_PWM, pwm_en, sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
+    single_leg_switch leg24 (CLK_PWM, pwm_en, sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
 
     assign rst[7:0] = slv_reg27[7:0];
     
