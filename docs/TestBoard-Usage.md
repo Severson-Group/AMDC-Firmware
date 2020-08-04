@@ -32,7 +32,11 @@ Ensure the DIP switches are in the OFF position (i.e. the switches are open).
 
 Ensure only one jumper (or no jumper) is installed across JP1 to JP6. This jumper connects the `VOUT` analog voltage to the BNC jack on the TestBoard. If you are not using the BNC jack, this jumper is optional.
 
-## Use Case #1: TestBoard as DAC
+## Use Case #1: PCB Hardware Validation
+
+[See documentation about this here...](https://github.com/Severson-Group/AMDC-Firmware/tree/develop/sdk/bare/common/usr/pcbtest)
+
+## Use Case #2: TestBoard as DAC
 
 One of the features of the TestBoard is that it has RC filters attached to each of the six PWM outputs from the PowerStack port. These RC filters convert the digital PWM signals to analog voltages based on the duty ratios which the AMDC is outputting as well as the `VDRIVE` voltage level which the user has supplied the AMDC.
 
@@ -108,4 +112,3 @@ _VOUT = cos(10*t)_
 _VOUT = cos(1000*t)_
 
 ![](images/testboard/pwm-enabled-20kHz-25ns-sine-1000rad.png)
-
