@@ -73,7 +73,7 @@ VDRIVE is 5V.
 
 #### PWM Disabled
 
-![](no-pwm.png)
+![](images/testboard/no-pwm.png)
 
 #### PWM Enabled (50% Duty Ratio)
 
@@ -81,15 +81,15 @@ VDRIVE is 5V.
 
 ##### Fsw = 2kHz, Tdt = 25ns
 
-![](pwm-enabled-2kHz-25ns-50d.png)
+![](images/testboard/pwm-enabled-2kHz-25ns-50d.png)
 
 ##### Fsw = 100kHz, Tdt = 100ns
 
-![](pwm-enabled-100kHz-100ns-50d.png)
+![](images/testboard/pwm-enabled-100kHz-100ns-50d.png)
 
 ##### Fsw = 2MHz, Tdt = 25ns
 
-![](pwm-enabled-2MHz-25ns-50d.png)
+![](images/testboard/pwm-enabled-2MHz-25ns-50d.png)
 
 #### Sinusoid Generation
 
@@ -99,11 +99,11 @@ Firmware task updating PWM duty ratios to create three-phase sinusoidal output o
 
 _VOUT = cos(10*t)_
 
-![](pwm-enabled-2MHz-25ns-sine-10rad.png)
+![](images/testboard/pwm-enabled-2MHz-25ns-sine-10rad.png)
 
 ##### Fsw = 20kHz, Tdt = 25ns
 
 _VOUT = cos(1000*t)_
 
-![](pwm-enabled-20kHz-25ns-sine-1000rad.png)
+![](images/testboard/pwm-enabled-20kHz-25ns-sine-1000rad.png)
 
