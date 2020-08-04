@@ -10,6 +10,8 @@ To use the TestBoard, you will need to plug it into the AMDC. This requires four
 
 If you need to buy cables, see some recommended options [here](https://github.com/Severson-Group/AMDC-Hardware/tree/develop/Accessories/TestBoard/REV20200624A#recommended-cables).
 
+<img src="images/testboard/setup.jpg" width="50%" />
+
 #### AMDC Analog Port Connections
 
 The AMDC has a 2x2 RJ45 jack which the analog input voltages are read from. The TestBoard has the same jack. Use the four ethernet cables to connection these two jacks together.
