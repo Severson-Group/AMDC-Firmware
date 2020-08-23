@@ -46,7 +46,7 @@ int cmd_log(int argc, char **argv)
 
         // Parse arg1: log_var_idx
         int log_var_idx = atoi(argv[2]);
-        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+        if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
@@ -94,7 +94,7 @@ int cmd_log(int argc, char **argv)
 
         // Parse log_var_idx arg
         int log_var_idx = atoi(argv[2]);
-        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+        if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
@@ -148,7 +148,7 @@ int cmd_log(int argc, char **argv)
 
         // Parse log_var_idx
         int log_var_idx = atoi(argv[3]);
-        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+        if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
@@ -180,7 +180,7 @@ int cmd_log(int argc, char **argv)
 
         // Parse arg1: log_var_idx
         int log_var_idx = atoi(argv[2]);
-        if (log_var_idx >= LOG_MAX_NUM_VARS || log_var_idx < 0) {
+        if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }

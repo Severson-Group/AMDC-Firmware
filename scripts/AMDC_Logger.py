@@ -27,7 +27,7 @@ class AMDC_Logger():
         self.log_var_indices = []
         
     def info(self):
-        max_slots, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
+        max_slots, max_sample_depth, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
         
         N = 15
         
@@ -48,8 +48,9 @@ class AMDC_Logger():
         #the AMDC is the source of truth so calling sync will synchronize python
         #with the amdc. this is useful if the python kernel is restarted
         
-        max_slots, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
+        max_slots, max_sample_depth, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
         self.max_slots = max_slots
+        self.max_sample_depth = max_sample_depth
 
         self._reset()
         
@@ -280,7 +281,9 @@ class AMDC_Logger():
         self.amdc.cmdDelay = 0.010
 
         start_time = time.time()
-        timeout_sec = 55 # dump is at 2kSPS, so this could wait for max 110k samples
+
+        # Dump is at ~2kSPS, wait for max of full sample depth (plus margin)
+        timeout_sec = 1.1 * (self.max_sample_depth / 1800)
 
         # Start dumping to host
         self.amdc.cmd(f"log dump bin {log_var_idx}") 
@@ -573,6 +576,7 @@ class AMDC_Logger():
         self.amdc.printOutput = old_state
 
         max_slots = int(out[4].split()[-1])
+        max_sample_depth = int(out[5].split()[-1])
         
         names = []
         types = []
@@ -605,7 +609,7 @@ class AMDC_Logger():
                 
         self.amdc.cmdDelay = oldDelay
                 
-        return max_slots, names, types, indices, sample_rates, num_samples
+        return max_slots, max_sample_depth, names, types, indices, sample_rates, num_samples
         
 def find_mapfile(root):
     
