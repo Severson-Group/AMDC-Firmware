@@ -2,9 +2,9 @@
 #include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/led.h"
+#include "drv/motherboard.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
-#include "drv/motherboard.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
