@@ -6,7 +6,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define PWM_BASE_ADDR (0x43C20000)
+#define PWM_BASE_ADDR     (0x43C20000)
+#define PWM_MUX_BASE_ADDR (0x43C40000)
 
 static int pwm_set_carrier_divisor(uint8_t divisor);
 static int pwm_set_carrier_max(uint16_t max);
@@ -43,6 +44,13 @@ void pwm_init(void)
     // but if user enables PWM without updating registers,
     // 50% will appear at outputs.
     pwm_set_all_duty_midscale();
+
+    // Initialize the PWM mux block in the FPGA to basic pass-through
+    uint32_t mux_config_data[48];
+    for (int i = 0; i < 48; i++) {
+    	mux_config_data[i] = i;
+    }
+    pwm_mux_set_all_pins(mux_config_data);
 }
 
 void pwm_set_all_duty_midscale(void)
@@ -233,6 +241,37 @@ static int pwm_set_carrier_max(uint16_t max)
     pwm_set_all_duty_midscale();
 
     return SUCCESS;
+}
+
+// NOTE: we assume config is an array of length >= 48
+int pwm_mux_set_all_pins(uint32_t *config)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    for (int i = 0; i < (PWM_NUM_CHANNELS * 2); i++) {
+        Xil_Out32(PWM_MUX_BASE_ADDR + (i * sizeof(uint32_t)), config[i]);
+    }
+
+	return SUCCESS;
+}
+
+int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    if (pwm_pin_idx < 0 || pwm_pin_idx >= 48) {
+    	return FAILURE;
+    }
+
+    Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
+
+	return SUCCESS;
 }
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
