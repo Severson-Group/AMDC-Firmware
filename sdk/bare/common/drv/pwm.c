@@ -48,7 +48,7 @@ void pwm_init(void)
     // Initialize the PWM mux block in the FPGA to basic pass-through
     uint32_t mux_config_data[48];
     for (int i = 0; i < 48; i++) {
-    	mux_config_data[i] = i;
+        mux_config_data[i] = i;
     }
     pwm_mux_set_all_pins(mux_config_data);
 }
@@ -255,7 +255,7 @@ int pwm_mux_set_all_pins(uint32_t *config)
         Xil_Out32(PWM_MUX_BASE_ADDR + (i * sizeof(uint32_t)), config[i]);
     }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
@@ -266,12 +266,12 @@ int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
     }
 
     if (pwm_pin_idx < 0 || pwm_pin_idx >= 48) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
