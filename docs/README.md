@@ -19,3 +19,5 @@ If you run into low-level issues (i.e. strange restart issues), consider using t
 ## [Logging](Firmware-Logging.md)
 
 ## [AMDC TestBoard Usage](TestBoard-Usage.md)
+
+## [Firmware Upgrades Per Hardware Target](Firmware-Upgrades-Per-Hardware-Target.md)

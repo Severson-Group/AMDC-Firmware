@@ -3,13 +3,13 @@
 
 #include "drv/hardware_targets.h"
 
-// This file is used to override system defines.
+// This file is used to override system defines and conditionally enable
+// various system-level firmware features.
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
-#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_C
+#define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_C)
 
-// Override the default scheduler elementary
-// frequency by defining SYS_TICK_FREQ here.
+// Override the default scheduler elementary frequency by defining SYS_TICK_FREQ here.
 // System uses 10kHz by default
 //#define SYS_TICK_FREQ (20000) // Hz
 
@@ -29,6 +29,14 @@
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_LOGGING (0)
+
+// Override default number of available logging variables
+// when defined, this takes precedence over system default of 32
+//#define USER_CONFIG_LOGGING_MAX_NUM_VARIABLES (150)
+
+// Override default logging sample depth per variable
+// when defined, this takes precedence over system default of 100k
+//#define USER_CONFIG_LOGGING_SAMPLE_DEPTH_PER_VARIABLE (50000)
 
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled
