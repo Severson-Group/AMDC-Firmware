@@ -6,7 +6,7 @@
 // This file is used to override system defines.
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
-#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_C
+#define USER_CONFIG_HARDWARE_TARGET AMDC_REV_D
 
 // Override the default scheduler elementary
 // frequency by defining SYS_TICK_FREQ here.

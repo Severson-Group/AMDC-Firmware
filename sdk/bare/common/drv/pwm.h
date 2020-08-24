@@ -65,9 +65,38 @@ void pwm_init(void);
 
 void pwm_toggle_reset(void);
 
+// ===============================
+// Global PWM enabling / disabling
+//
+// NOTE: the user must individually
+// turn on each output they are using
+// by calling the pwm...mask() functions.
+// ===============================
+
+// Enable or disable all PWM outputs.
+// This call takes precedence over the
+// mask function calls.
 int pwm_enable(void);
 int pwm_disable(void);
+
+// Returns true if PWM is enabled
 bool pwm_is_enabled(void);
+
+// ===============================
+// Fine-grain PWM enable / disable
+// ===============================
+
+// Enable or disable mask of PWM outputs where:
+// mask & 0x1 = PWM_OUT1,
+// mask & 0x2 = PWM_OUT2,
+// mask & 0x4 = PWM_OUT3,
+// ...
+int pwm_enable_mask(uint32_t mask);
+int pwm_disable_mask(uint32_t mask);
+
+// Returns true if any of the PWM outputs
+// in the mask are enabled.
+bool pwm_is_enabled_mask(uint32_t mask);
 
 int pwm_set_switching_freq(double freq_hz);
 int pwm_set_deadtime_ns(uint16_t deadtime);

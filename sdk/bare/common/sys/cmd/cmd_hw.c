@@ -21,7 +21,8 @@
 static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
-    { "pwm <on|off>", "Turn on/off PWM switching" },
+	{ "pwm <on|off>", "Turn on/off global PWM switching ability" },
+	{ "pwm mask <on|off> <mask>", "Turn on/off channel PWM switching" },
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
@@ -63,6 +64,27 @@ int cmd_hw(int argc, char **argv)
             }
 
             return CMD_SUCCESS;
+        }
+
+        if (argc == 5 && STREQ("mask", argv[2])) {
+        	bool on_arg = false;
+        	if (STREQ("on", argv[3])) {
+        		on_arg = true;
+        	} else if (STREQ("off", argv[3])) {
+        		on_arg = false;
+        	} else {
+        		return CMD_INVALID_ARGUMENTS;
+        	}
+
+        	uint32_t mask = atoi(argv[4]);
+
+        	if (on_arg) {
+        		pwm_enable_mask(mask);
+        	} else {
+        		pwm_disable_mask(mask);
+        	}
+
+        	return CMD_SUCCESS;
         }
 
         if (argc == 5 && STREQ("sw", argv[2])) {

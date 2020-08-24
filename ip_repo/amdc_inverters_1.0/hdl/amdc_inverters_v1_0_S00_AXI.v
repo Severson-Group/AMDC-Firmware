@@ -916,65 +916,66 @@
 	// PWM duty ratio regs
 	reg [15:0] D_L[23:0];
 	
-	wire pwm_en = slv_reg31[0];
+	wire [23:0] pwm_en = slv_reg31[23:0];
+	wire global_pwm_en = slv_reg31[24];
 	
 	// Assign duty ratios from regs received
 	always @(posedge S_AXI_ACLK) begin
-		if (S_AXI_ARESETN == 1'b0 | ~pwm_en) begin
-			D_L[0] = 16'b0;
-			D_L[1] = 16'b0;
-			D_L[2] = 16'b0;
-			D_L[3] = 16'b0;
-			D_L[4] = 16'b0;
-			D_L[5] = 16'b0;
-			D_L[6] = 16'b0;
-			D_L[7] = 16'b0;
-			D_L[8] = 16'b0;
-			D_L[9] = 16'b0;
-			D_L[10] = 16'b0;
-			D_L[11] = 16'b0;
-			D_L[12] = 16'b0;
-			D_L[13] = 16'b0;
-			D_L[14] = 16'b0;
-			D_L[15] = 16'b0;
-			D_L[16] = 16'b0;
-			D_L[17] = 16'b0;
-			D_L[18] = 16'b0;
-			D_L[19] = 16'b0;
-			D_L[20] = 16'b0;
-			D_L[21] = 16'b0;
-			D_L[22] = 16'b0;
-			D_L[23] = 16'b0;
+		if (S_AXI_ARESETN == 1'b0 | ~global_pwm_en) begin
+			D_L[0] <= 16'b0;
+			D_L[1] <= 16'b0;
+			D_L[2] <= 16'b0;
+			D_L[3] <= 16'b0;
+			D_L[4] <= 16'b0;
+			D_L[5] <= 16'b0;
+			D_L[6] <= 16'b0;
+			D_L[7] <= 16'b0;
+			D_L[8] <= 16'b0;
+			D_L[9] <= 16'b0;
+			D_L[10] <= 16'b0;
+			D_L[11] <= 16'b0;
+			D_L[12] <= 16'b0;
+			D_L[13] <= 16'b0;
+			D_L[14] <= 16'b0;
+			D_L[15] <= 16'b0;
+			D_L[16] <= 16'b0;
+			D_L[17] <= 16'b0;
+			D_L[18] <= 16'b0;
+			D_L[19] <= 16'b0;
+			D_L[20] <= 16'b0;
+			D_L[21] <= 16'b0;
+			D_L[22] <= 16'b0;
+			D_L[23] <= 16'b0;
 		end
 		
 		else begin
 			// Only latch in the requested duty ratios
 			// when the carrier is low
-			if (carrier_low & pwm_en) begin
-				D_L[0] = slv_reg0[15:0];
-				D_L[1] = slv_reg1[15:0];
-				D_L[2] = slv_reg2[15:0];
-				D_L[3] = slv_reg3[15:0];
-				D_L[4] = slv_reg4[15:0];
-				D_L[5] = slv_reg5[15:0];
-				D_L[6] = slv_reg6[15:0];
-				D_L[7] = slv_reg7[15:0];
-				D_L[8] = slv_reg8[15:0];
-				D_L[9] = slv_reg9[15:0];
-				D_L[10] = slv_reg10[15:0];
-				D_L[11] = slv_reg11[15:0];
-				D_L[12] = slv_reg12[15:0];
-				D_L[13] = slv_reg13[15:0];
-				D_L[14] = slv_reg14[15:0];
-				D_L[15] = slv_reg15[15:0];
-				D_L[16] = slv_reg16[15:0];
-				D_L[17] = slv_reg17[15:0];
-				D_L[18] = slv_reg18[15:0];
-				D_L[19] = slv_reg19[15:0];
-				D_L[20] = slv_reg20[15:0];
-				D_L[21] = slv_reg21[15:0];
-				D_L[22] = slv_reg22[15:0];
-				D_L[23] = slv_reg23[15:0];
+			if ((carrier_low | carrier_high) & global_pwm_en) begin
+				D_L[0] <= slv_reg0[15:0];
+				D_L[1] <= slv_reg1[15:0];
+				D_L[2] <= slv_reg2[15:0];
+				D_L[3] <= slv_reg3[15:0];
+				D_L[4] <= slv_reg4[15:0];
+				D_L[5] <= slv_reg5[15:0];
+				D_L[6] <= slv_reg6[15:0];
+				D_L[7] <= slv_reg7[15:0];
+				D_L[8] <= slv_reg8[15:0];
+				D_L[9] <= slv_reg9[15:0];
+				D_L[10] <= slv_reg10[15:0];
+				D_L[11] <= slv_reg11[15:0];
+				D_L[12] <= slv_reg12[15:0];
+				D_L[13] <= slv_reg13[15:0];
+				D_L[14] <= slv_reg14[15:0];
+				D_L[15] <= slv_reg15[15:0];
+				D_L[16] <= slv_reg16[15:0];
+				D_L[17] <= slv_reg17[15:0];
+				D_L[18] <= slv_reg18[15:0];
+				D_L[19] <= slv_reg19[15:0];
+				D_L[20] <= slv_reg20[15:0];
+				D_L[21] <= slv_reg21[15:0];
+				D_L[22] <= slv_reg22[15:0];
+				D_L[23] <= slv_reg23[15:0];
 			end
 		end
 	end
@@ -1020,37 +1021,37 @@
 
 	
 	// Single Leg Switches
-	single_leg_switch leg1 (CLK_PWM, pwm_en, sL[0], inverter1_pwm[0], inverter1_pwm[1], deadtime);
-	single_leg_switch leg2 (CLK_PWM, pwm_en, sL[1], inverter1_pwm[2], inverter1_pwm[3], deadtime);
-	single_leg_switch leg3 (CLK_PWM, pwm_en, sL[2], inverter1_pwm[4], inverter1_pwm[5], deadtime);
+	single_leg_switch leg1 (CLK_PWM, global_pwm_en & pwm_en[0], sL[0], inverter1_pwm[0], inverter1_pwm[1], deadtime);
+	single_leg_switch leg2 (CLK_PWM, global_pwm_en & pwm_en[1], sL[1], inverter1_pwm[2], inverter1_pwm[3], deadtime);
+	single_leg_switch leg3 (CLK_PWM, global_pwm_en & pwm_en[2], sL[2], inverter1_pwm[4], inverter1_pwm[5], deadtime);
 	
-	single_leg_switch leg4 (CLK_PWM, pwm_en, sL[3], inverter2_pwm[0], inverter2_pwm[1], deadtime);
-    single_leg_switch leg5 (CLK_PWM, pwm_en, sL[4], inverter2_pwm[2], inverter2_pwm[3], deadtime);
-    single_leg_switch leg6 (CLK_PWM, pwm_en, sL[5], inverter2_pwm[4], inverter2_pwm[5], deadtime);
+	single_leg_switch leg4 (CLK_PWM, global_pwm_en & pwm_en[3], sL[3], inverter2_pwm[0], inverter2_pwm[1], deadtime);
+    single_leg_switch leg5 (CLK_PWM, global_pwm_en & pwm_en[4], sL[4], inverter2_pwm[2], inverter2_pwm[3], deadtime);
+    single_leg_switch leg6 (CLK_PWM, global_pwm_en & pwm_en[5], sL[5], inverter2_pwm[4], inverter2_pwm[5], deadtime);
     
-    single_leg_switch leg7 (CLK_PWM, pwm_en, sL[6], inverter3_pwm[0], inverter3_pwm[1], deadtime);
-    single_leg_switch leg8 (CLK_PWM, pwm_en, sL[7], inverter3_pwm[2], inverter3_pwm[3], deadtime);
-    single_leg_switch leg9 (CLK_PWM, pwm_en, sL[8], inverter3_pwm[4], inverter3_pwm[5], deadtime);
+    single_leg_switch leg7 (CLK_PWM, global_pwm_en & pwm_en[6], sL[6], inverter3_pwm[0], inverter3_pwm[1], deadtime);
+    single_leg_switch leg8 (CLK_PWM, global_pwm_en & pwm_en[7], sL[7], inverter3_pwm[2], inverter3_pwm[3], deadtime);
+    single_leg_switch leg9 (CLK_PWM, global_pwm_en & pwm_en[8], sL[8], inverter3_pwm[4], inverter3_pwm[5], deadtime);
    
-    single_leg_switch leg10 (CLK_PWM, pwm_en, sL[9], inverter4_pwm[0], inverter4_pwm[1], deadtime);
-    single_leg_switch leg11 (CLK_PWM, pwm_en, sL[10], inverter4_pwm[2], inverter4_pwm[3], deadtime);
-    single_leg_switch leg12 (CLK_PWM, pwm_en, sL[11], inverter4_pwm[4], inverter4_pwm[5], deadtime);
+    single_leg_switch leg10 (CLK_PWM, global_pwm_en & pwm_en[9], sL[9], inverter4_pwm[0], inverter4_pwm[1], deadtime);
+    single_leg_switch leg11 (CLK_PWM, global_pwm_en & pwm_en[10], sL[10], inverter4_pwm[2], inverter4_pwm[3], deadtime);
+    single_leg_switch leg12 (CLK_PWM, global_pwm_en & pwm_en[11], sL[11], inverter4_pwm[4], inverter4_pwm[5], deadtime);
     
-    single_leg_switch leg13 (CLK_PWM, pwm_en, sL[12], inverter5_pwm[0], inverter5_pwm[1], deadtime);
-    single_leg_switch leg14 (CLK_PWM, pwm_en, sL[13], inverter5_pwm[2], inverter5_pwm[3], deadtime);
-    single_leg_switch leg15 (CLK_PWM, pwm_en, sL[14], inverter5_pwm[4], inverter5_pwm[5], deadtime);
+    single_leg_switch leg13 (CLK_PWM, global_pwm_en & pwm_en[12], sL[12], inverter5_pwm[0], inverter5_pwm[1], deadtime);
+    single_leg_switch leg14 (CLK_PWM, global_pwm_en & pwm_en[13], sL[13], inverter5_pwm[2], inverter5_pwm[3], deadtime);
+    single_leg_switch leg15 (CLK_PWM, global_pwm_en & pwm_en[14], sL[14], inverter5_pwm[4], inverter5_pwm[5], deadtime);
     
-    single_leg_switch leg16 (CLK_PWM, pwm_en, sL[15], inverter6_pwm[0], inverter6_pwm[1], deadtime);
-    single_leg_switch leg17 (CLK_PWM, pwm_en, sL[16], inverter6_pwm[2], inverter6_pwm[3], deadtime);
-    single_leg_switch leg18 (CLK_PWM, pwm_en, sL[17], inverter6_pwm[4], inverter6_pwm[5], deadtime);
+    single_leg_switch leg16 (CLK_PWM, global_pwm_en & pwm_en[15], sL[15], inverter6_pwm[0], inverter6_pwm[1], deadtime);
+    single_leg_switch leg17 (CLK_PWM, global_pwm_en & pwm_en[16], sL[16], inverter6_pwm[2], inverter6_pwm[3], deadtime);
+    single_leg_switch leg18 (CLK_PWM, global_pwm_en & pwm_en[17], sL[17], inverter6_pwm[4], inverter6_pwm[5], deadtime);
     
-    single_leg_switch leg19 (CLK_PWM, pwm_en, sL[18], inverter7_pwm[0], inverter7_pwm[1], deadtime);
-    single_leg_switch leg20 (CLK_PWM, pwm_en, sL[19], inverter7_pwm[2], inverter7_pwm[3], deadtime);
-    single_leg_switch leg21 (CLK_PWM, pwm_en, sL[20], inverter7_pwm[4], inverter7_pwm[5], deadtime);
+    single_leg_switch leg19 (CLK_PWM, global_pwm_en & pwm_en[18], sL[18], inverter7_pwm[0], inverter7_pwm[1], deadtime);
+    single_leg_switch leg20 (CLK_PWM, global_pwm_en & pwm_en[19], sL[19], inverter7_pwm[2], inverter7_pwm[3], deadtime);
+    single_leg_switch leg21 (CLK_PWM, global_pwm_en & pwm_en[20], sL[20], inverter7_pwm[4], inverter7_pwm[5], deadtime);
     
-    single_leg_switch leg22 (CLK_PWM, pwm_en, sL[21], inverter8_pwm[0], inverter8_pwm[1], deadtime);
-    single_leg_switch leg23 (CLK_PWM, pwm_en, sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
-    single_leg_switch leg24 (CLK_PWM, pwm_en, sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
+    single_leg_switch leg22 (CLK_PWM, global_pwm_en & pwm_en[21], sL[21], inverter8_pwm[0], inverter8_pwm[1], deadtime);
+    single_leg_switch leg23 (CLK_PWM, global_pwm_en & pwm_en[22], sL[22], inverter8_pwm[2], inverter8_pwm[3], deadtime);
+    single_leg_switch leg24 (CLK_PWM, global_pwm_en & pwm_en[23], sL[23], inverter8_pwm[4], inverter8_pwm[5], deadtime);
 
     assign rst[7:0] = slv_reg27[7:0];
     

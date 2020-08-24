@@ -76,8 +76,12 @@ int pwm_enable(void)
         return FAILURE;
     }
 
-    // Write to slave reg 31 LSB to enable PWM switching
-    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000001);
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // Write 1 to bit slave_reg31[24] to enable PWM switching
+    reg31 |= (1 << 24);
+
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), reg31);
 
     return SUCCESS;
 }
@@ -88,8 +92,12 @@ int pwm_disable(void)
         return FAILURE;
     }
 
-    // Write to slave reg 31 LSB to enable PWM switching
-    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000000);
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // Write 0 to bit slave_reg31[24] to disable PWM switching
+    reg31 &= ~(1 << 24);
+
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), reg31);
 
     return SUCCESS;
 }
@@ -98,8 +106,40 @@ bool pwm_is_enabled(void)
 {
     uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
 
-    // LSB of reg 31 is enable bit for PWM
-    return reg31 & 0x00000001;
+    // Bit 24 of reg 31 is enable bit for PWM
+    return reg31 & (1 << 24);
+}
+
+int pwm_enable_mask(uint32_t mask)
+{
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // Write to lower 24 bits of slave_reg31 to enable channel's PWM
+    reg31 |= (mask & 0x00FFFFFF);
+
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), reg31);
+
+	return SUCCESS;
+}
+
+int pwm_disable_mask(uint32_t mask)
+{
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // Write to lower 24 bits of slave_reg31 to disable channel's PWM
+    reg31 &= ~(mask & 0x00FFFFFF);
+
+    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), reg31);
+
+	return SUCCESS;
+}
+
+bool pwm_is_enabled_mask(uint32_t mask)
+{
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+
+    // Return true if any PWM outputs are on
+    return reg31 & 0x00FFFFFF;
 }
 
 int pwm_set_switching_freq(double freq_hz)
