@@ -87,7 +87,7 @@ void task_dac_callback(void *arg)
 			divider = 0;
 
 	    // Reset the step for the next cycle
-		if (step > 8192) step = 0;
+		if (step > TASK_DAC_UPDATES_PER_SEC) step = 0;
 
 		// Generates a 3-phase +/- 10V output on channels 0, 1, and 2
 		for (int i = 0; i < 3; i++) {

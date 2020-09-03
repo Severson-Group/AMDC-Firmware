@@ -8,7 +8,7 @@
 // Must be less than or equal to scheduler updates per second
 // This value is defined in sys/scheduler.h and defaults to 10kHz.
 // Note that it can be overridden via usr/user_config.h
-#define TASK_DAC_UPDATES_PER_SEC (8192)
+#define TASK_DAC_UPDATES_PER_SEC (10000)
 
 // Microseconds interval between when task is called
 //
