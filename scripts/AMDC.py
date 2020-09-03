@@ -37,6 +37,16 @@ class AMDC:
     def __enter__(self):
         self.connect()
         return self
+    
+    def print_outputs(self, val = True):
+        self.printOutput = val
+        
+    def print_cmds(self, val = True):
+        self.cmdEcho = val
+        
+    def print_all(self, val = True):
+        self.print_outputs(val)
+        self.print_cmds(val)
 
     def __exit__(self, type, value, traceback):
         self.disconnect()
