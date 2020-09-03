@@ -15,6 +15,10 @@
 // This is what scheduler actually uses to run task,
 // but is generated via define above
 #define TASK_DAC_INTERVAL_USEC (USEC_IN_SEC / TASK_DAC_UPDATES_PER_SEC)
+
+// The minimum phase step between each time the task is called
+// The default output of the any channel updated in the callback will
+// always be 1Hz regardless of the task updates per second.
 #define TASK_DAC_MIN_PHASE (2 * PI) / (TASK_DAC_UPDATES_PER_SEC)
 
 // Called in app init function to set up task (or via command)

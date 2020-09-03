@@ -1,6 +1,6 @@
 # FPGA Pin Mapping for AMDC REV D
-#
-# Please keep this document in sync with
+# 
+# Please keep this document in sync with 
 # the documentation in the AMDC-Hardware
 # repo: docs/PinMappingRevD.md
 
@@ -9,1442 +9,319 @@
 # RGB LED #
 ###########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {user_led_din[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports user_led_din];
 
-set_property PACKAGE_PIN R8 [get_ports {user_led_din[0]}]
+set_property PACKAGE_PIN R8 [get_ports user_led_din]; # JX2-14
 
 
 ###########
 # ENCODER #
 ###########
 
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_1a]
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_1b]
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_1z]
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_2a]
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_2b]
-set_property IOSTANDARD LVCMOS18 [get_ports encoder_2z]
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_1a];
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_1b];
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_1z];
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_2a];
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_2b];
+set_property IOSTANDARD LVCMOS18 [get_ports encoder_2z];
 
-set_property PACKAGE_PIN A2 [get_ports encoder_1a]
-set_property PACKAGE_PIN A1 [get_ports encoder_1b]
-set_property PACKAGE_PIN D7 [get_ports encoder_1z]
-set_property PACKAGE_PIN D6 [get_ports encoder_2a]
-set_property PACKAGE_PIN A5 [get_ports encoder_2b]
-set_property PACKAGE_PIN A4 [get_ports encoder_2z]
+set_property PACKAGE_PIN A2  [get_ports encoder_1a]; # JX1-54
+set_property PACKAGE_PIN A1  [get_ports encoder_1b]; # JX1-56
+set_property PACKAGE_PIN D7  [get_ports encoder_1z]; # JX1-62
+set_property PACKAGE_PIN D6  [get_ports encoder_2a]; # JX1-64
+set_property PACKAGE_PIN A5  [get_ports encoder_2b]; # JX1-68
+set_property PACKAGE_PIN A4  [get_ports encoder_2z]; # JX1-70
 
 
 #########
 #  ADC  #
 #########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[5]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[6]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {adc_sdo[7]}]
-set_property IOSTANDARD LVCMOS18 [get_ports adc_sck]
-set_property IOSTANDARD LVCMOS18 [get_ports adc_cnv]
-set_property IOSTANDARD LVCMOS18 [get_ports adc_clkout]
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[5]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[6]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sdo[7]];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_sck];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_cnv];
+set_property IOSTANDARD LVCMOS18 [get_ports adc_clkout];
 
-set_property PACKAGE_PIN H6 [get_ports adc_cnv]
-set_property PACKAGE_PIN D8 [get_ports adc_sck]
-set_property PACKAGE_PIN G4 [get_ports adc_clkout]
-set_property PACKAGE_PIN H4 [get_ports {adc_sdo[0]}]
-set_property PACKAGE_PIN H3 [get_ports {adc_sdo[1]}]
-set_property PACKAGE_PIN G3 [get_ports {adc_sdo[2]}]
-set_property PACKAGE_PIN G2 [get_ports {adc_sdo[3]}]
-set_property PACKAGE_PIN F4 [get_ports {adc_sdo[4]}]
-set_property PACKAGE_PIN G6 [get_ports {adc_sdo[5]}]
-set_property PACKAGE_PIN F6 [get_ports {adc_sdo[6]}]
-set_property PACKAGE_PIN E8 [get_ports {adc_sdo[7]}]
+set_property PACKAGE_PIN H6 [get_ports adc_cnv];    # JX1-9 
+set_property PACKAGE_PIN D8 [get_ports adc_sck];    # JX1-37 
+set_property PACKAGE_PIN G4 [get_ports adc_clkout]; # JX1-23
+set_property PACKAGE_PIN H4 [get_ports adc_sdo[0]]; # JX1-11                                                              
+set_property PACKAGE_PIN H3 [get_ports adc_sdo[1]]; # JX1-13
+set_property PACKAGE_PIN G3 [get_ports adc_sdo[2]]; # JX1-17
+set_property PACKAGE_PIN G2 [get_ports adc_sdo[3]]; # JX1-19
+set_property PACKAGE_PIN F4 [get_ports adc_sdo[4]]; # JX1-25
+set_property PACKAGE_PIN G6 [get_ports adc_sdo[5]]; # JX1-29
+set_property PACKAGE_PIN F6 [get_ports adc_sdo[6]]; # JX1-31
+set_property PACKAGE_PIN E8 [get_ports adc_sdo[7]]; # JX1-35
 
 
 ########
 # SPI1 #
 ########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {spi1_sclk[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_miso]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi1_mosi[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi1_nss[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_in]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi1_out[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_sclk];
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_miso];
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_mosi];
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_nss];
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_in];
+set_property IOSTANDARD LVCMOS18 [get_ports spi1_out];
 
-set_property PACKAGE_PIN B4 [get_ports {spi1_sclk[0]}]
-set_property PACKAGE_PIN C6 [get_ports spi1_miso]
-set_property PACKAGE_PIN B3 [get_ports {spi1_mosi[0]}]
-set_property PACKAGE_PIN C5 [get_ports {spi1_nss[0]}]
-set_property PACKAGE_PIN Y14 [get_ports spi1_in]
-set_property PACKAGE_PIN A7 [get_ports {spi1_out[0]}]
+set_property PACKAGE_PIN B4  [get_ports spi1_sclk]; # JX1-47
+set_property PACKAGE_PIN C6  [get_ports spi1_miso]; # JX1-41
+set_property PACKAGE_PIN B3  [get_ports spi1_mosi]; # JX1-49
+set_property PACKAGE_PIN C5  [get_ports spi1_nss];  # JX1-43
+set_property PACKAGE_PIN Y14 [get_ports spi1_in];   # JX1-88
+set_property PACKAGE_PIN A7  [get_ports spi1_out];  # JX1-74
 
 
 ########
 # SPI2 #
 ########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {spi2_sclk[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_miso]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi2_mosi[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi2_nss[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_in]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi2_out[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_sclk];
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_miso];
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_mosi];
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_nss];
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_in];
+set_property IOSTANDARD LVCMOS18 [get_ports spi2_out];
 
-set_property PACKAGE_PIN E2 [get_ports {spi2_sclk[0]}]
-set_property PACKAGE_PIN D1 [get_ports spi2_miso]
-set_property PACKAGE_PIN D2 [get_ports {spi2_mosi[0]}]
-set_property PACKAGE_PIN C1 [get_ports {spi2_nss[0]}]
-set_property PACKAGE_PIN Y15 [get_ports spi2_in]
-set_property PACKAGE_PIN A6 [get_ports {spi2_out[0]}]
+set_property PACKAGE_PIN E2  [get_ports spi2_sclk]; # JX1-61
+set_property PACKAGE_PIN D1  [get_ports spi2_miso]; # JX1-53
+set_property PACKAGE_PIN D2  [get_ports spi2_mosi]; # JX1-63
+set_property PACKAGE_PIN C1  [get_ports spi2_nss];  # JX1-55
+set_property PACKAGE_PIN Y15 [get_ports spi2_in];   # JX1-90
+set_property PACKAGE_PIN A6  [get_ports spi2_out];  # JX1-76
 
 
 ########
 # SPI3 #
 ########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {spi3_sclk[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_miso]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi3_mosi[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi3_nss[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_in]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi3_out[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_sclk];
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_miso];
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_mosi];
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_nss];
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_in];
+set_property IOSTANDARD LVCMOS18 [get_ports spi3_out];
 
-set_property PACKAGE_PIN G8 [get_ports {spi3_sclk[0]}]
-set_property PACKAGE_PIN F7 [get_ports spi3_miso]
-set_property PACKAGE_PIN G7 [get_ports {spi3_mosi[0]}]
-set_property PACKAGE_PIN E7 [get_ports {spi3_nss[0]}]
-set_property PACKAGE_PIN V18 [get_ports spi3_in]
-set_property PACKAGE_PIN C8 [get_ports {spi3_out[0]}]
+set_property PACKAGE_PIN G8  [get_ports spi3_sclk]; # JX1-73
+set_property PACKAGE_PIN F7  [get_ports spi3_miso]; # JX1-67
+set_property PACKAGE_PIN G7  [get_ports spi3_mosi]; # JX1-75
+set_property PACKAGE_PIN E7  [get_ports spi3_nss];  # JX1-69
+set_property PACKAGE_PIN V18 [get_ports spi3_in];   # JX1-92
+set_property PACKAGE_PIN C8  [get_ports spi3_out];  # JX1-82
 
 
 ########
 # SPI4 #
 ########
 
-set_property IOSTANDARD LVCMOS18 [get_ports {spi4_sclk[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_miso]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi4_mosi[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi4_nss[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_in]
-set_property IOSTANDARD LVCMOS18 [get_ports {spi4_out[0]}]
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_sclk];
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_miso];
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_mosi];
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_nss];
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_in];
+set_property IOSTANDARD LVCMOS18 [get_ports spi4_out];
 
-set_property PACKAGE_PIN AA14 [get_ports {spi4_sclk[0]}]
-set_property PACKAGE_PIN B7 [get_ports spi4_miso]
-set_property PACKAGE_PIN AA15 [get_ports {spi4_mosi[0]}]
-set_property PACKAGE_PIN B6 [get_ports {spi4_nss[0]}]
-set_property PACKAGE_PIN W18 [get_ports spi4_in]
-set_property PACKAGE_PIN B8 [get_ports {spi4_out[0]}]
+set_property PACKAGE_PIN AA14 [get_ports spi4_sclk]; # JX1-87
+set_property PACKAGE_PIN B7   [get_ports spi4_miso]; # JX1-81
+set_property PACKAGE_PIN AA15 [get_ports spi4_mosi]; # JX1-89
+set_property PACKAGE_PIN B6   [get_ports spi4_nss];  # JX1-83
+set_property PACKAGE_PIN W18  [get_ports spi4_in];   # JX1-94
+set_property PACKAGE_PIN B8   [get_ports spi4_out];  # JX1-84
 
 
 #############
 # INVERTERS #
 #############
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter1_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter1_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter2_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter2_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter3_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter3_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter4_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter4_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter5_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter5_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter6_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter6_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter7_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter7_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter8_pwm[5]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter8_pwm[5]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[5]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[6]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_a[7]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[5]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[6]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_a[7]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[5]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[6]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_b[7]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[5]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[6]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_b[7]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[5]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[6]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_c[7]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[5]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[6]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_c[7]];
 
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[2]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[3]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[4]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[5]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[6]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {inverter_sts_d[7]}]
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[3]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[4]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[5]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[6]];
+set_property IOSTANDARD LVCMOS18 [get_ports inverter_sts_d[7]];
 
-set_property PACKAGE_PIN J1 [get_ports {inverter1_pwm[0]}]
-set_property PACKAGE_PIN J2 [get_ports {inverter1_pwm[1]}]
-set_property PACKAGE_PIN M1 [get_ports {inverter1_pwm[2]}]
-set_property PACKAGE_PIN M2 [get_ports {inverter1_pwm[3]}]
-set_property PACKAGE_PIN H8 [get_ports {inverter1_pwm[4]}]
-set_property PACKAGE_PIN M4 [get_ports {inverter1_pwm[5]}]
+set_property PACKAGE_PIN J1 [get_ports inverter1_pwm[0]]; # JX2-20
+set_property PACKAGE_PIN J2 [get_ports inverter1_pwm[1]]; # JX2-18
+set_property PACKAGE_PIN M1 [get_ports inverter1_pwm[2]]; # JX2-43
+set_property PACKAGE_PIN M2 [get_ports inverter1_pwm[3]]; # JX2-41
+set_property PACKAGE_PIN H8 [get_ports inverter1_pwm[4]]; # JX2-13
+set_property PACKAGE_PIN M4 [get_ports inverter1_pwm[5]]; # JX2-17
 
-set_property PACKAGE_PIN R7 [get_ports {inverter2_pwm[0]}]
-set_property PACKAGE_PIN P7 [get_ports {inverter2_pwm[1]}]
-set_property PACKAGE_PIN L7 [get_ports {inverter2_pwm[2]}]
-set_property PACKAGE_PIN K7 [get_ports {inverter2_pwm[3]}]
-set_property PACKAGE_PIN M3 [get_ports {inverter2_pwm[4]}]
-set_property PACKAGE_PIN N4 [get_ports {inverter2_pwm[5]}]
+set_property PACKAGE_PIN R7 [get_ports inverter2_pwm[0]]; # JX2-31
+set_property PACKAGE_PIN P7 [get_ports inverter2_pwm[1]]; # JX2-29
+set_property PACKAGE_PIN L7 [get_ports inverter2_pwm[2]]; # JX2-25
+set_property PACKAGE_PIN K7 [get_ports inverter2_pwm[3]]; # JX2-23
+set_property PACKAGE_PIN M3 [get_ports inverter2_pwm[4]]; # JX2-19
+set_property PACKAGE_PIN N4 [get_ports inverter2_pwm[5]]; # JX2-35
 
-set_property PACKAGE_PIN U1 [get_ports {inverter3_pwm[0]}]
-set_property PACKAGE_PIN U2 [get_ports {inverter3_pwm[1]}]
-set_property PACKAGE_PIN L4 [get_ports {inverter3_pwm[2]}]
-set_property PACKAGE_PIN L5 [get_ports {inverter3_pwm[3]}]
-set_property PACKAGE_PIN P1 [get_ports {inverter3_pwm[4]}]
-set_property PACKAGE_PIN N1 [get_ports {inverter3_pwm[5]}]
+set_property PACKAGE_PIN U1 [get_ports inverter3_pwm[0]]; # JX2-56
+set_property PACKAGE_PIN U2 [get_ports inverter3_pwm[1]]; # JX2-54
+set_property PACKAGE_PIN L4 [get_ports inverter3_pwm[2]]; # JX2-50
+set_property PACKAGE_PIN L5 [get_ports inverter3_pwm[3]]; # JX2-48
+set_property PACKAGE_PIN P1 [get_ports inverter3_pwm[4]]; # JX2-44
+set_property PACKAGE_PIN N1 [get_ports inverter3_pwm[5]]; # JX2-42
 
-set_property PACKAGE_PIN K2 [get_ports {inverter4_pwm[0]}]
-set_property PACKAGE_PIN L2 [get_ports {inverter4_pwm[1]}]
-set_property PACKAGE_PIN L1 [get_ports {inverter4_pwm[2]}]
-set_property PACKAGE_PIN P3 [get_ports {inverter4_pwm[3]}]
-set_property PACKAGE_PIN P2 [get_ports {inverter4_pwm[4]}]
-set_property PACKAGE_PIN J3 [get_ports {inverter4_pwm[5]}]
+set_property PACKAGE_PIN K2 [get_ports inverter4_pwm[0]]; # JX2-26
+set_property PACKAGE_PIN L2 [get_ports inverter4_pwm[1]]; # JX2-30
+set_property PACKAGE_PIN L1 [get_ports inverter4_pwm[2]]; # JX2-32
+set_property PACKAGE_PIN P3 [get_ports inverter4_pwm[3]]; # JX2-36
+set_property PACKAGE_PIN P2 [get_ports inverter4_pwm[4]]; # JX2-38
+set_property PACKAGE_PIN J3 [get_ports inverter4_pwm[5]]; # JX2-24
 
-set_property PACKAGE_PIN N8 [get_ports {inverter5_pwm[0]}]
-set_property PACKAGE_PIN P8 [get_ports {inverter5_pwm[1]}]
-set_property PACKAGE_PIN N6 [get_ports {inverter5_pwm[2]}]
-set_property PACKAGE_PIN N5 [get_ports {inverter5_pwm[3]}]
-set_property PACKAGE_PIN K5 [get_ports {inverter5_pwm[4]}]
-set_property PACKAGE_PIN J5 [get_ports {inverter5_pwm[5]}]
+set_property PACKAGE_PIN N8 [get_ports inverter5_pwm[0]]; # JX2-88
+set_property PACKAGE_PIN P8 [get_ports inverter5_pwm[1]]; # JX2-90
+set_property PACKAGE_PIN N6 [get_ports inverter5_pwm[2]]; # JX2-82
+set_property PACKAGE_PIN N5 [get_ports inverter5_pwm[3]]; # JX2-84
+set_property PACKAGE_PIN K5 [get_ports inverter5_pwm[4]]; # JX2-69
+set_property PACKAGE_PIN J5 [get_ports inverter5_pwm[5]]; # JX2-67
 
-set_property PACKAGE_PIN M6 [get_ports {inverter6_pwm[0]}]
-set_property PACKAGE_PIN R5 [get_ports {inverter6_pwm[1]}]
-set_property PACKAGE_PIN R4 [get_ports {inverter6_pwm[2]}]
-set_property PACKAGE_PIN P6 [get_ports {inverter6_pwm[3]}]
-set_property PACKAGE_PIN P5 [get_ports {inverter6_pwm[4]}]
-set_property PACKAGE_PIN L6 [get_ports {inverter6_pwm[5]}]
+set_property PACKAGE_PIN M6 [get_ports inverter6_pwm[0]]; # JX2-64
+set_property PACKAGE_PIN R5 [get_ports inverter6_pwm[1]]; # JX2-68
+set_property PACKAGE_PIN R4 [get_ports inverter6_pwm[2]]; # JX2-70
+set_property PACKAGE_PIN P6 [get_ports inverter6_pwm[3]]; # JX2-74
+set_property PACKAGE_PIN P5 [get_ports inverter6_pwm[4]]; # JX2-76
+set_property PACKAGE_PIN L6 [get_ports inverter6_pwm[5]]; # JX2-62
 
-set_property PACKAGE_PIN J8 [get_ports {inverter7_pwm[0]}]
-set_property PACKAGE_PIN K8 [get_ports {inverter7_pwm[1]}]
-set_property PACKAGE_PIN M8 [get_ports {inverter7_pwm[2]}]
-set_property PACKAGE_PIN M7 [get_ports {inverter7_pwm[3]}]
-set_property PACKAGE_PIN AB21 [get_ports {inverter7_pwm[4]}]
-set_property PACKAGE_PIN AB22 [get_ports {inverter7_pwm[5]}]
+set_property PACKAGE_PIN J8   [get_ports inverter7_pwm[0]]; # JX2-81
+set_property PACKAGE_PIN K8   [get_ports inverter7_pwm[1]]; # JX2-83
+set_property PACKAGE_PIN M8   [get_ports inverter7_pwm[2]]; # JX2-87
+set_property PACKAGE_PIN M7   [get_ports inverter7_pwm[3]]; # JX2-89
+set_property PACKAGE_PIN AB21 [get_ports inverter7_pwm[4]]; # JX2-93
+set_property PACKAGE_PIN AB22 [get_ports inverter7_pwm[5]]; # JX2-95
 
-set_property PACKAGE_PIN AB18 [get_ports {inverter8_pwm[0]}]
-set_property PACKAGE_PIN T16 [get_ports {inverter8_pwm[1]}]
-set_property PACKAGE_PIN J6 [get_ports {inverter8_pwm[2]}]
-set_property PACKAGE_PIN AA20 [get_ports {inverter8_pwm[3]}]
-set_property PACKAGE_PIN AA19 [get_ports {inverter8_pwm[4]}]
-set_property PACKAGE_PIN AB19 [get_ports {inverter8_pwm[5]}]
+set_property PACKAGE_PIN AB18 [get_ports inverter8_pwm[0]]; # JX2-94
+set_property PACKAGE_PIN T16  [get_ports inverter8_pwm[1]]; # JX2-100
+set_property PACKAGE_PIN J6   [get_ports inverter8_pwm[2]]; # JX2-75
+set_property PACKAGE_PIN AA20 [get_ports inverter8_pwm[3]]; # JX2-99
+set_property PACKAGE_PIN AA19 [get_ports inverter8_pwm[4]]; # JX2-97
+set_property PACKAGE_PIN AB19 [get_ports inverter8_pwm[5]]; # JX2-96
 
-set_property PACKAGE_PIN B2 [get_ports {inverter_sts_a[0]}]
-set_property PACKAGE_PIN E3 [get_ports {inverter_sts_a[1]}]
-set_property PACKAGE_PIN E4 [get_ports {inverter_sts_a[2]}]
-set_property PACKAGE_PIN F1 [get_ports {inverter_sts_a[3]}]
-set_property PACKAGE_PIN F2 [get_ports {inverter_sts_a[4]}]
-set_property PACKAGE_PIN E5 [get_ports {inverter_sts_a[5]}]
-set_property PACKAGE_PIN F5 [get_ports {inverter_sts_a[6]}]
-set_property PACKAGE_PIN H5 [get_ports {inverter_sts_a[7]}]
+set_property PACKAGE_PIN B2 [get_ports inverter_sts_a[0]]; # JX1-30
+set_property PACKAGE_PIN E3 [get_ports inverter_sts_a[1]]; # JX1-26
+set_property PACKAGE_PIN E4 [get_ports inverter_sts_a[2]]; # JX1-24
+set_property PACKAGE_PIN F1 [get_ports inverter_sts_a[3]]; # JX1-20
+set_property PACKAGE_PIN F2 [get_ports inverter_sts_a[4]]; # JX1-18
+set_property PACKAGE_PIN E5 [get_ports inverter_sts_a[5]]; # JX1-14
+set_property PACKAGE_PIN F5 [get_ports inverter_sts_a[6]]; # JX1-12
+set_property PACKAGE_PIN H5 [get_ports inverter_sts_a[7]]; # JX1-10
 
-set_property PACKAGE_PIN W15 [get_ports {inverter_sts_b[0]}]
-set_property PACKAGE_PIN C3 [get_ports {inverter_sts_b[1]}]
-set_property PACKAGE_PIN D3 [get_ports {inverter_sts_b[2]}]
-set_property PACKAGE_PIN C4 [get_ports {inverter_sts_b[3]}]
-set_property PACKAGE_PIN D5 [get_ports {inverter_sts_b[4]}]
-set_property PACKAGE_PIN G1 [get_ports {inverter_sts_b[5]}]
-set_property PACKAGE_PIN H1 [get_ports {inverter_sts_b[6]}]
-set_property PACKAGE_PIN B1 [get_ports {inverter_sts_b[7]}]
+set_property PACKAGE_PIN W15 [get_ports inverter_sts_b[0]]; # JX3-99
+set_property PACKAGE_PIN C3  [get_ports inverter_sts_b[1]]; # JX1-50
+set_property PACKAGE_PIN D3  [get_ports inverter_sts_b[2]]; # JX1-48
+set_property PACKAGE_PIN C4  [get_ports inverter_sts_b[3]]; # JX1-44
+set_property PACKAGE_PIN D5  [get_ports inverter_sts_b[4]]; # JX1-42
+set_property PACKAGE_PIN G1  [get_ports inverter_sts_b[5]]; # JX1-38
+set_property PACKAGE_PIN H1  [get_ports inverter_sts_b[6]]; # JX1-36
+set_property PACKAGE_PIN B1  [get_ports inverter_sts_b[7]]; # JX1-32
 
-set_property PACKAGE_PIN Y19 [get_ports {inverter_sts_c[0]}]
-set_property PACKAGE_PIN AA11 [get_ports {inverter_sts_c[1]}]
-set_property PACKAGE_PIN AB11 [get_ports {inverter_sts_c[2]}]
-set_property PACKAGE_PIN V11 [get_ports {inverter_sts_c[3]}]
-set_property PACKAGE_PIN W11 [get_ports {inverter_sts_c[4]}]
-set_property PACKAGE_PIN W12 [get_ports {inverter_sts_c[5]}]
-set_property PACKAGE_PIN W13 [get_ports {inverter_sts_c[6]}]
-set_property PACKAGE_PIN V15 [get_ports {inverter_sts_c[7]}]
+set_property PACKAGE_PIN Y19  [get_ports inverter_sts_c[0]]; # JX3-75
+set_property PACKAGE_PIN AA11 [get_ports inverter_sts_c[1]]; # JX3-79
+set_property PACKAGE_PIN AB11 [get_ports inverter_sts_c[2]]; # JX3-81
+set_property PACKAGE_PIN V11  [get_ports inverter_sts_c[3]]; # JX3-85
+set_property PACKAGE_PIN W11  [get_ports inverter_sts_c[4]]; # JX3-87
+set_property PACKAGE_PIN W12  [get_ports inverter_sts_c[5]]; # JX3-91
+set_property PACKAGE_PIN W13  [get_ports inverter_sts_c[6]]; # JX3-93
+set_property PACKAGE_PIN V15  [get_ports inverter_sts_c[7]]; # JX3-97
 
-set_property PACKAGE_PIN Y12 [get_ports {inverter_sts_d[0]}]
-set_property PACKAGE_PIN Y13 [get_ports {inverter_sts_d[1]}]
-set_property PACKAGE_PIN V13 [get_ports {inverter_sts_d[2]}]
-set_property PACKAGE_PIN V14 [get_ports {inverter_sts_d[3]}]
-set_property PACKAGE_PIN R17 [get_ports {inverter_sts_d[4]}]
-set_property PACKAGE_PIN T17 [get_ports {inverter_sts_d[5]}]
-set_property PACKAGE_PIN V16 [get_ports {inverter_sts_d[6]}]
-set_property PACKAGE_PIN W16 [get_ports {inverter_sts_d[7]}]
-
-connect_debug_port u_ila_0/probe4 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/div_cnt_reg[2]_0}]]
-
-connect_debug_port u_ila_0/probe0 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[7]}]]
-connect_debug_port u_ila_0/probe4 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/trigger]]
-connect_debug_port u_ila_0/probe5 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/amdc_cs]]
-connect_debug_port u_ila_0/probe6 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/amdc_mosi]]
-connect_debug_port u_ila_0/probe7 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/amdc_sclk]]
-connect_debug_port u_ila_0/probe8 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/CS_i_1_n_0]]
-connect_debug_port u_ila_0/probe9 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/MOSI_reg_0]]
-
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[22]}]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/write]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[14]}]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/dac_cs]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/dac_mosi]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/dac_sclk]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[26]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[30]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[28]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[29]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg8[27]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg13[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[31]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg9[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg15[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0[25]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg5[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg1[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg2[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg7[24]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg14[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg10[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg12[18]}]
-connect_debug_port u_ila_0/probe19 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[0]}]]
-connect_debug_port u_ila_0/probe20 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[1]}]]
-connect_debug_port u_ila_0/probe21 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[2]}]]
-connect_debug_port u_ila_0/probe22 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[3]}]]
-connect_debug_port u_ila_0/probe23 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[4]}]]
-connect_debug_port u_ila_0/probe24 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[5]}]]
-connect_debug_port u_ila_0/probe25 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[6]}]]
-connect_debug_port u_ila_0/probe26 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[7]}]]
-connect_debug_port u_ila_0/probe27 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[8]}]]
-connect_debug_port u_ila_0/probe28 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[9]}]]
-connect_debug_port u_ila_0/probe29 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[10]}]]
-connect_debug_port u_ila_0/probe30 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[11]}]]
-connect_debug_port u_ila_0/probe31 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[12]}]]
-connect_debug_port u_ila_0/probe32 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[13]}]]
-connect_debug_port u_ila_0/probe33 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[14]}]]
-connect_debug_port u_ila_0/probe34 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[15]}]]
-connect_debug_port u_ila_0/probe35 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[16]}]]
-connect_debug_port u_ila_0/probe36 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[17]}]]
-connect_debug_port u_ila_0/probe37 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[18]}]]
-connect_debug_port u_ila_0/probe38 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[19]}]]
-connect_debug_port u_ila_0/probe39 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[20]}]]
-connect_debug_port u_ila_0/probe40 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[21]}]]
-connect_debug_port u_ila_0/probe41 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[22]}]]
-connect_debug_port u_ila_0/probe42 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[23]}]]
-
-
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg6__0[20]}]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg_wren__0]
-
-
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg_rden__0]
-
-
-connect_debug_port u_ila_0/probe23 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[0]}]]
-connect_debug_port u_ila_0/probe24 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[1]}]]
-connect_debug_port u_ila_0/probe25 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[2]}]]
-connect_debug_port u_ila_0/probe43 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[20]}]]
-connect_debug_port u_ila_0/probe44 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[21]}]]
-connect_debug_port u_ila_0/probe45 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[22]}]]
-connect_debug_port u_ila_0/probe46 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[23]}]]
-
-connect_debug_port u_ila_0/probe15 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[3]}]]
-connect_debug_port u_ila_0/probe16 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[4]}]]
-connect_debug_port u_ila_0/probe17 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[5]}]]
-connect_debug_port u_ila_0/probe18 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[6]}]]
-connect_debug_port u_ila_0/probe19 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[7]}]]
-connect_debug_port u_ila_0/probe20 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[8]}]]
-connect_debug_port u_ila_0/probe21 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[9]}]]
-connect_debug_port u_ila_0/probe22 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[10]}]]
-connect_debug_port u_ila_0/probe23 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[11]}]]
-connect_debug_port u_ila_0/probe24 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[12]}]]
-connect_debug_port u_ila_0/probe25 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[13]}]]
-connect_debug_port u_ila_0/probe26 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[14]}]]
-connect_debug_port u_ila_0/probe27 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[15]}]]
-connect_debug_port u_ila_0/probe28 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[16]}]]
-connect_debug_port u_ila_0/probe29 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[17]}]]
-connect_debug_port u_ila_0/probe30 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[18]}]]
-connect_debug_port u_ila_0/probe31 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/tx_data_reg_n_0_[19]}]]
-
-connect_debug_port u_ila_0/probe0 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_addr_reg[3]}]]
-
-set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
-set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
-set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets clk]
-
-set_property MARK_DEBUG false [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/write_i_2_n_0]
-set_property MARK_DEBUG false [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/write_i_1_n_0]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/slv_reg_wren__0]
-set_property MARK_DEBUG true [get_nets amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/write]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[11]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[19]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[12]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_6[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[3]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[7]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[22]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[16]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_2[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[23]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[15]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_1[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[6]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_7[5]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[14]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[8]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_0[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[10]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[20]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_5[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_6[4]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_3[9]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[13]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_1[1]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_4[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_3_5[21]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_0[17]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_2[2]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_4[18]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_3[0]}]
-set_property MARK_DEBUG true [get_nets {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/shift_reg[23]_i_4_7[9]}]
-
-
-connect_debug_port u_ila_0/probe39 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/slv_reg_wren__0]]
-
-
-
-
-connect_debug_port u_ila_0/probe5 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[7]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[8]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[9]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[10]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[11]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[12]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[13]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[14]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[15]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[16]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[17]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[18]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[19]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[20]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[21]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[22]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[23]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[24]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[25]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[26]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[27]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[28]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[29]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[30]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[31]}]]
-
-
-connect_debug_port u_ila_0/probe0 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_addr[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_addr[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_addr[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_addr[3]}]]
-connect_debug_port u_ila_0/probe1 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/cntr_reg[7]}]]
-connect_debug_port u_ila_0/probe12 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3_w_reg_0]]
-connect_debug_port u_ila_0/probe13 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg3_w_reg_1]]
-connect_debug_port u_ila_0/probe14 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11_w_reg_0]]
-connect_debug_port u_ila_0/probe15 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11_w_reg_1]]
-connect_debug_port u_ila_0/probe16 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iSPI/write]]
-connect_debug_port u_ila_0/probe17 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0_w_reg_0]]
-connect_debug_port u_ila_0/probe18 [get_nets [list amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg0_w_reg_1]]
-
-
-create_debug_core u_ila_0 ila
-set_property ALL_PROBE_SAME_MU true [get_debug_cores u_ila_0]
-set_property ALL_PROBE_SAME_MU_CNT 1 [get_debug_cores u_ila_0]
-set_property C_ADV_TRIGGER false [get_debug_cores u_ila_0]
-set_property C_DATA_DEPTH 1024 [get_debug_cores u_ila_0]
-set_property C_EN_STRG_QUAL false [get_debug_cores u_ila_0]
-set_property C_INPUT_PIPE_STAGES 0 [get_debug_cores u_ila_0]
-set_property C_TRIGIN_EN false [get_debug_cores u_ila_0]
-set_property C_TRIGOUT_EN false [get_debug_cores u_ila_0]
-set_property port_width 1 [get_debug_ports u_ila_0/clk]
-connect_debug_port u_ila_0/clk [get_nets [list amdc_revd_i/processing_system7_0/inst/FCLK_CLK0]]
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
-set_property port_width 16 [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[16]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[17]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[18]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[19]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[20]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[21]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[22]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[23]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[24]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[25]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[26]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[27]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[28]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[29]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[30]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4__0[31]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe1]
-set_property port_width 16 [get_debug_ports u_ila_0/probe1]
-connect_debug_port u_ila_0/probe1 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[7]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[8]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[9]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[10]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[11]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[12]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[13]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[14]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg4[15]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe2]
-set_property port_width 16 [get_debug_ports u_ila_0/probe2]
-connect_debug_port u_ila_0/probe2 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[7]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[8]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[9]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[10]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[11]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[12]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[13]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[14]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11[15]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe3]
-set_property port_width 16 [get_debug_ports u_ila_0/probe3]
-connect_debug_port u_ila_0/probe3 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[16]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[17]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[18]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[19]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[20]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[21]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[22]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[23]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[24]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[25]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[26]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[27]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[28]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[29]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[30]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/slv_reg11__0[31]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe4]
-set_property port_width 4 [get_debug_ports u_ila_0/probe4]
-connect_debug_port u_ila_0/probe4 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/return_state[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/return_state[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/return_state[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/return_state[3]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe5]
-set_property port_width 20 [get_debug_ports u_ila_0/probe5]
-connect_debug_port u_ila_0/probe5 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[3]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[4]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[5]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[6]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[7]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[8]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[9]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[10]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[11]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[12]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[13]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[14]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[15]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[16]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[17]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[18]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/tx_data[19]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe6]
-set_property port_width 4 [get_debug_ports u_ila_0/probe6]
-connect_debug_port u_ila_0/probe6 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/next_state[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/next_state[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/next_state[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/next_state[3]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe7]
-set_property port_width 4 [get_debug_ports u_ila_0/probe7]
-connect_debug_port u_ila_0/probe7 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/reg_w_reg[13]_2[0]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/reg_w_reg[13]_2[1]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/reg_w_reg[13]_2[2]} {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/iDAC/reg_w_reg[13]_2[3]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe8]
-set_property port_width 1 [get_debug_ports u_ila_0/probe8]
-connect_debug_port u_ila_0/probe8 [get_nets [list amdc_revd_i/amdc_dac_0/inst/dac_cs]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe9]
-set_property port_width 1 [get_debug_ports u_ila_0/probe9]
-connect_debug_port u_ila_0/probe9 [get_nets [list amdc_revd_i/amdc_dac_0/inst/dac_mosi]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe10]
-set_property port_width 1 [get_debug_ports u_ila_0/probe10]
-connect_debug_port u_ila_0/probe10 [get_nets [list amdc_revd_i/amdc_dac_0/inst/dac_sclk]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe11]
-set_property port_width 1 [get_debug_ports u_ila_0/probe11]
-connect_debug_port u_ila_0/probe11 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_w_reg[4]}]]
-create_debug_port u_ila_0 probe
-set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe12]
-set_property port_width 1 [get_debug_ports u_ila_0/probe12]
-connect_debug_port u_ila_0/probe12 [get_nets [list {amdc_revd_i/amdc_dac_0/inst/amdc_dac_v2_0_S00_AXI_inst/reg_w_reg[11]}]]
-set_property C_CLK_INPUT_FREQ_HZ 300000000 [get_debug_cores dbg_hub]
-set_property C_ENABLE_CLK_DIVIDER false [get_debug_cores dbg_hub]
-set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
-connect_debug_port dbg_hub/clk [get_nets u_ila_0_FCLK_CLK0]
+set_property PACKAGE_PIN Y12 [get_ports inverter_sts_d[0]]; # JX3-80
+set_property PACKAGE_PIN Y13 [get_ports inverter_sts_d[1]]; # JX3-82
+set_property PACKAGE_PIN V13 [get_ports inverter_sts_d[2]]; # JX3-86
+set_property PACKAGE_PIN V14 [get_ports inverter_sts_d[3]]; # JX3-88
+set_property PACKAGE_PIN R17 [get_ports inverter_sts_d[4]]; # JX3-92
+set_property PACKAGE_PIN T17 [get_ports inverter_sts_d[5]]; # JX3-94
+set_property PACKAGE_PIN V16 [get_ports inverter_sts_d[6]]; # JX3-98
+set_property PACKAGE_PIN W16 [get_ports inverter_sts_d[7]]; # JX3-100

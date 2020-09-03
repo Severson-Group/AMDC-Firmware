@@ -16,7 +16,7 @@ void dac_init(void)
 	printf("DAC:\tInitializing...\n");
 
 	dac_set_raw(GAIN, 0x0401FF); // Default Reference divider and each channel Gain to 2/2
-	dac_set_broadcast(0, 10, -10); // Defualt all channel values
+	dac_set_broadcast(0, 10, -10); // Default all channel values to 0 (redundant to power on reset)
 }
 
 void dac_set_voltage(uint8_t ch, double voltage, double max, double min)

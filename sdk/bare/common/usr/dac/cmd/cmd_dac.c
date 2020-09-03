@@ -17,7 +17,7 @@ static command_entry_t cmd_entry;
 static command_help_t cmd_help[] = {
     { "init", "Start task" },
     { "deinit", "Stop task" },
-	{ "freq <frequency>", "Set Frequency"},
+	{ "freq <frequency(Hz)>", "Set Frequency"},
 	{ "ch <channel> <voltage>", "Set channel to voltage"},
 	{ "reg <register> <value(in hex)>", "Write value to register"},
 	{ "trigger", "Trigger synchronous channels"},
@@ -28,7 +28,7 @@ void cmd_dac_register(void)
 {
     // Populate the command entry block
     //
-    // Here is where you define the base command string: "blink"
+    // Here is where you define the base command string: "dac"
     // and what function is called to handle command
     commands_cmd_init(&cmd_entry, "dac", "DAC application commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_dac);
 
@@ -38,37 +38,13 @@ void cmd_dac_register(void)
 
 int cmd_dac(int argc, char **argv)
 {
-    // This function is called every time the user types "blink"
+    // This function is called every time the user types "dac"
     // followed by a space and any number of characters.
-    //
-    // Example user input: blink foo 123
-    //
-    // It is up to the application developer to handle this
-    // incoming command in a manner that reflects this command's
-    // help message, as to not confuse the user.
-    //
-    // The arguments passed into this function (argc & argv)
-    // follow standard C convention for main() programs called
-    // via command line interface (CLI).
-    //
-    // 'argc' is the number of CLI arguments, including the base command
-    // For above example: argc = 3
-    //
-    // 'argv' is an array of char strings which contain the CLI arguments
-    // For above example:
-    // - argv[0] => "blink"
-    // - argv[1] => "foo"
-    // - argv[2] => "123"
-    //
-    // NOTE: The system constrains user CLI input to ensure responsive
-    // behavior for arbitrary commands. This involves limiting individual
-    // command argument length as well as the total number of arguments
-    // (this is defined in sys/commands.c)
 
-    // Handle 'hello' sub-command
-    //
+    // Handle 'init' sub-command
+	//
     // First, verify correct number of arguments (2)
-    // Second, verify second argument is "hello"
+    // Second, verify second argument is "init"
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
         if (task_dac_init() != SUCCESS) {
             return CMD_FAILURE;
@@ -77,6 +53,10 @@ int cmd_dac(int argc, char **argv)
         return CMD_SUCCESS;
     }
 
+    // Handle 'deinit' sub-command
+    	//
+        // First, verify correct number of arguments (2)
+        // Second, verify second argument is "deinit"
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
         if (task_dac_deinit() != SUCCESS) {
             return CMD_FAILURE;
@@ -85,6 +65,11 @@ int cmd_dac(int argc, char **argv)
         return CMD_SUCCESS;
     }
 
+    // Handle 'freq' sub-command
+	//
+	// First, verify correct number of arguments (3)
+	// Second, verify second argument is "freq"
+    // Third, scan for a double
     if (argc == 3 && strcmp("freq", argv[1]) == 0) {
     	double frequency;
     	sscanf(argv[2],"%lf",&frequency);
@@ -92,6 +77,11 @@ int cmd_dac(int argc, char **argv)
     	return CMD_SUCCESS;
     }
 
+    // Handle 'broadcast' sub-command
+	//
+	// First, verify correct number of arguments (3)
+	// Second, verify second argument is "broadcast"
+    // Third, scan for a double
     if (argc == 3 && strcmp("broadcast", argv[1]) == 0) {
 		double voltage;
 		sscanf(argv[2],"%lf",&voltage);
@@ -99,11 +89,21 @@ int cmd_dac(int argc, char **argv)
 		return CMD_SUCCESS;
     }
 
+    // Handle 'trigger' sub-command
+	//
+	// First, verify correct number of arguments (2)
+	// Second, verify second argument is "trigger"
     if (argc == 2 && strcmp("trigger", argv[1]) == 0) {
 		task_dac_trigger();
 		return CMD_SUCCESS;
     }
 
+    // Handle 'ch' sub-command
+	//
+	// First, verify correct number of arguments (4)
+	// Second, verify second argument is "ch"
+    // Third, scan for an int
+    // Fourth, scan for a double
     if (argc == 4 && strcmp("ch", argv[1]) == 0) {
     	int ch;
     	sscanf(argv[2], "%i", &ch);
@@ -116,6 +116,12 @@ int cmd_dac(int argc, char **argv)
     	return CMD_SUCCESS;
     }
 
+    // Handle 'reg' sub-command
+	//
+	// First, verify correct number of arguments (4)
+	// Second, verify second argument is "reg"
+	// Third, scan for an int
+	// Fourth, scan for a hex string (uint32_t)
     if (argc == 4 && strcmp("reg", argv[1]) == 0) {
 		int reg;
 		sscanf(argv[2], "%i", &reg);

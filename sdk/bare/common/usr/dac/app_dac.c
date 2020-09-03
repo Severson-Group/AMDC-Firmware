@@ -6,10 +6,10 @@
 
 void app_dac_init(void)
 {
-    // Register "blink" command with system
+    // Registers the "dac" command with the system
     cmd_dac_register();
 
-    // Initialize blink task with system
+    // Initialize the dac task with the system
     task_dac_init();
 }
 

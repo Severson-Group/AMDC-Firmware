@@ -552,6 +552,15 @@
     reg slv_reg14_w;
     reg slv_reg15_w;
     
+    // Assigns the trigger pin to an external connection of external triggering is enabled
+    wire ext_trigger_en;
+    wire trigger;
+    wire [15:0] trigger_data;
+    
+    assign ext_trigger_en = slv_reg0[0];
+    assign trigger = ext_trigger_en ? ext_trigger : slv_reg5[4];
+    assign trigger_data = {slv_reg5[15:5], trigger, slv_reg5[3:0]};
+    
 	/////////////////////////////////////
 	/// Instantiate DAC60508MC module ///
 	/////////////////////////////////////
@@ -559,11 +568,10 @@
 	drv_DAC60508MC iDAC(
         .clk(S_AXI_ACLK), 
         .rst_n(S_AXI_ARESETN), 
-        .sample_rate(),  
         .SYNC_data(slv_reg2[15:0]), 
         .CONFIG_data(slv_reg3[15:0]), 
         .GAIN_data(slv_reg4[15:0]), 
-        .TRIGGER_data(slv_reg5[15:0]), 
+        .TRIGGER_data(trigger_data), 
         .BRDCAST_data(slv_reg6[15:0]), 
         .DAC0_data(slv_reg8[15:0]), 
         .DAC1_data(slv_reg9[15:0]), 
@@ -660,6 +668,9 @@
                    slv_reg15_w <= 1'b1;
                 end
             endcase
+        end
+        else if (ext_trigger_en && ext_trigger) begin
+            slv_reg5_w <=1'b1;
         end
     end    
 	// User logic ends

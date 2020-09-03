@@ -27,9 +27,13 @@ typedef enum {
 #define DAC_MAX_CODE      (4095)
 
 void dac_init(void);
+
 void dac_set_voltage(uint8_t ch, double voltage, double max, double min);
+
 void dac_set_broadcast(double voltage, double max, double min);
+
 void dac_set_trigger(void);
+
 void dac_set_raw(dac_reg_t reg, uint32_t value);
 
 #endif // DAC_H

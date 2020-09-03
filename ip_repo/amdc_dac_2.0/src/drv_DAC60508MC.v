@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////
 
 module drv_DAC60508MC(
-    clk, rst_n, sample_rate, 
+    clk, rst_n, 
     SYNC_data, CONFIG_data, GAIN_data, TRIGGER_data, BRDCAST_data, 
     DAC0_data, DAC1_data, DAC2_data, DAC3_data, DAC4_data, DAC5_data, DAC6_data, DAC7_data,
     SYNC_w, CONFIG_w, GAIN_w, TRIGGER_w, BRDCAST_w,
@@ -45,7 +45,6 @@ module drv_DAC60508MC(
 
     /// Inputs ///
     input wire clk, rst_n;  // Clock freq @ 200MHz
-    input wire [7:0] sample_rate; // 60KSps and less
 
     /// DAC Registers ///
     input wire [15:0] SYNC_data;     // Data registers written to by the AXIlite bus from the C driver
@@ -245,6 +244,13 @@ module drv_DAC60508MC(
         else if(save_data) tx_data <= tx_reg_data;
     end
 
+    // Round Robin style state machine where every regiseter is
+    // given a chance to tx before the same register may tx twice
+    // A write flag set on any register begins a linear search through
+    // the registers and all registers waiting with valid tx data
+    // will be transmitted. The search completes when there are
+    // no register write flags set
+    
     always @(*) begin
         next_state = IDLE;
         return_state = IDLE;
