@@ -29,8 +29,9 @@
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-#include "drv/led.h"
 #include "drv/dac.h"
+#include "drv/led.h"
+
 #endif
 
 void bsp_init(void)
