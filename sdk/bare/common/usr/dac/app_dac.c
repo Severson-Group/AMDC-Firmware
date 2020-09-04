@@ -14,4 +14,3 @@ void app_dac_init(void)
 }
 
 #endif // APP_DAC
-

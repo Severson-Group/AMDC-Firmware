@@ -9,22 +9,22 @@
 #include <stdint.h>
 
 typedef enum {
-    SYNC = 2,
-    CONFIG = 3,
-    GAIN = 4,
-    TRIGGER = 5,
-    BRDCAST = 6,
-	DAC0 = 8,
-	DAC1 = 9,
-	DAC2 = 10,
-	DAC3 = 11,
-	DAC4 = 12,
-	DAC5 = 13,
-	DAC6 = 14,
-	DAC7 = 15,
+    DAC_REG_SYNC = 2,
+    DAC_REG_CONFIG = 3,
+    DAC_REG_GAIN = 4,
+    DAC_REG_TRIGGER = 5,
+    DAC_REG_BRDCAST = 6,
+    DAC_REG_DAC0 = 8,
+    DAC_REG_DAC1 = 9,
+    DAC_REG_DAC2 = 10,
+    DAC_REG_DAC3 = 11,
+    DAC_REG_DAC4 = 12,
+    DAC_REG_DAC5 = 13,
+    DAC_REG_DAC6 = 14,
+    DAC_REG_DAC7 = 15,
 } dac_reg_t;
 
-#define DAC_MAX_CODE      (4095)
+#define DAC_MAX_CODE (4095)
 
 void dac_init(void);
 

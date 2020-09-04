@@ -43,7 +43,7 @@ dac/
 
 - This is the top level application file that registers the user application and commands with the scheduler
 
-### [`task_dac.c`](task_dacc.c)
+### [`task_dac.c`](task_dac.c)
 
 - This task generates a 3-phase +/- 10V signal on DAC channels 0-2 updates at 1Hz
 
@@ -53,7 +53,7 @@ dac/
 
 ### Configuring the Function Generator
 
-The callback function in [`task_dac.c`](task_dacc.c) can be supplied any wafeform or function desired. In the 3-phase example, a sinusoid is implemented. The frequency of the output signal is determined by FREQ parameter. The callback frequency is 10KHz by default but will always output a 1Hz signal multiplied by FREQ. The frequency can be set to any value however as the frequency increases the resolution of the DAC channels will decrease. The exact resolution can be determined by the following equation:
+The callback function in [`task_dac.c`](task_dac.c) can be supplied any wafeform or function desired. In the 3-phase example, a sinusoid is implemented. The frequency of the output signal is determined by FREQ parameter. The callback frequency is 10KHz by default but will always output a 1Hz signal multiplied by FREQ. The frequency can be set to any value however as the frequency increases the resolution of the DAC channels will decrease. The exact resolution can be determined by the following equation:
 
 Resolution (bits) = log <sub>2</sub>( Callback Frequency / Desired Frequency )
 

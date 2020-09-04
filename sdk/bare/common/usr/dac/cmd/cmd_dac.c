@@ -17,11 +17,11 @@ static command_entry_t cmd_entry;
 static command_help_t cmd_help[] = {
     { "init", "Start task" },
     { "deinit", "Stop task" },
-	{ "freq <frequency(Hz)>", "Set Frequency"},
-	{ "ch <channel> <voltage>", "Set channel to voltage"},
-	{ "reg <register> <value(in hex)>", "Write value to register"},
-	{ "trigger", "Trigger synchronous channels"},
-	{ "broadcast <voltage>", "Broadcast voltage"},
+    { "freq <frequency(Hz)>", "Set Frequency" },
+    { "ch <channel> <voltage>", "Set channel to voltage" },
+    { "reg <register> <value(in hex)>", "Write value to register" },
+    { "trigger", "Trigger synchronous channels" },
+    { "broadcast <voltage>", "Broadcast voltage" },
 };
 
 void cmd_dac_register(void)
@@ -42,7 +42,7 @@ int cmd_dac(int argc, char **argv)
     // followed by a space and any number of characters.
 
     // Handle 'init' sub-command
-	//
+    //
     // First, verify correct number of arguments (2)
     // Second, verify second argument is "init"
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
@@ -54,9 +54,9 @@ int cmd_dac(int argc, char **argv)
     }
 
     // Handle 'deinit' sub-command
-    	//
-        // First, verify correct number of arguments (2)
-        // Second, verify second argument is "deinit"
+    //
+    // First, verify correct number of arguments (2)
+    // Second, verify second argument is "deinit"
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
         if (task_dac_deinit() != SUCCESS) {
             return CMD_FAILURE;
@@ -66,74 +66,86 @@ int cmd_dac(int argc, char **argv)
     }
 
     // Handle 'freq' sub-command
-	//
-	// First, verify correct number of arguments (3)
-	// Second, verify second argument is "freq"
+    //
+    // First, verify correct number of arguments (3)
+    // Second, verify second argument is "freq"
     // Third, scan for a double
     if (argc == 3 && strcmp("freq", argv[1]) == 0) {
-    	double frequency;
-    	sscanf(argv[2],"%lf",&frequency);
-    	task_dac_frequency(frequency);
-    	return CMD_SUCCESS;
+        double frequency;
+        sscanf(argv[2], "%lf", &frequency);
+        task_dac_frequency(frequency);
+        return CMD_SUCCESS;
     }
 
     // Handle 'broadcast' sub-command
-	//
-	// First, verify correct number of arguments (3)
-	// Second, verify second argument is "broadcast"
+    //
+    // First, verify correct number of arguments (3)
+    // Second, verify second argument is "broadcast"
     // Third, scan for a double
     if (argc == 3 && strcmp("broadcast", argv[1]) == 0) {
-		double voltage;
-		sscanf(argv[2],"%lf",&voltage);
-		task_dac_broadcast(voltage);
-		return CMD_SUCCESS;
+        double voltage;
+        sscanf(argv[2], "%lf", &voltage);
+
+        if (abs(voltage) > 10)
+            return CMD_INVALID_ARGUMENTS;
+
+        task_dac_broadcast(voltage);
+        return CMD_SUCCESS;
     }
 
     // Handle 'trigger' sub-command
-	//
-	// First, verify correct number of arguments (2)
-	// Second, verify second argument is "trigger"
+    //
+    // First, verify correct number of arguments (2)
+    // Second, verify second argument is "trigger"
     if (argc == 2 && strcmp("trigger", argv[1]) == 0) {
-		task_dac_trigger();
-		return CMD_SUCCESS;
+        task_dac_trigger();
+        return CMD_SUCCESS;
     }
 
     // Handle 'ch' sub-command
-	//
-	// First, verify correct number of arguments (4)
-	// Second, verify second argument is "ch"
+    //
+    // First, verify correct number of arguments (4)
+    // Second, verify second argument is "ch"
     // Third, scan for an int
     // Fourth, scan for a double
     if (argc == 4 && strcmp("ch", argv[1]) == 0) {
-    	int ch;
-    	sscanf(argv[2], "%i", &ch);
+        int ch;
+        sscanf(argv[2], "%i", &ch);
 
-    	double voltage;
-    	sscanf(argv[3],"%lf",&voltage);
+        if (ch < 0 || ch > 7)
+            return CMD_INVALID_ARGUMENTS;
 
-    	task_dac_set_voltage((uint8_t)ch, voltage);
+        double voltage;
+        sscanf(argv[3], "%lf", &voltage);
 
-    	return CMD_SUCCESS;
+        if (abs(voltage) > 10)
+            return CMD_INVALID_ARGUMENTS;
+
+        task_dac_set_voltage((uint8_t) ch, voltage);
+
+        return CMD_SUCCESS;
     }
 
     // Handle 'reg' sub-command
-	//
-	// First, verify correct number of arguments (4)
-	// Second, verify second argument is "reg"
-	// Third, scan for an int
-	// Fourth, scan for a hex string (uint32_t)
+    //
+    // First, verify correct number of arguments (4)
+    // Second, verify second argument is "reg"
+    // Third, scan for an int
+    // Fourth, scan for a hex string (uint32_t)
     if (argc == 4 && strcmp("reg", argv[1]) == 0) {
-		int reg;
-		sscanf(argv[2], "%i", &reg);
+        int reg;
+        sscanf(argv[2], "%i", &reg);
 
-		uint32_t value;
-		sscanf(argv[3],"%lX",&value);
+        if (reg < 0 || reg > 15)
+            return CMD_INVALID_ARGUMENTS;
 
-		task_dac_set_reg((uint8_t)reg, value);
+        uint32_t value;
+        sscanf(argv[3], "%lX", &value);
 
-		return CMD_SUCCESS;
-	}
+        task_dac_set_reg((uint8_t) reg, value);
 
+        return CMD_SUCCESS;
+    }
 
     // At any point, if an error is detected in given input command,
     // simply return an error code (defined in sys/defines.h)
