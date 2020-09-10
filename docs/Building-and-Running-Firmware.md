@@ -123,7 +123,7 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 
 ### Open SDK
 
-1. Open Xilinx SDK 2017.2
+1. Open Xilinx SDK 2019.1
 2. Set workspace to: `$REPO_DIR\sdk`
 3. Once open, close the Welcome tab
 
