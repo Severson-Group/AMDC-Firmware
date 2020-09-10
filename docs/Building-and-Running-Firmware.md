@@ -112,7 +112,7 @@ This is an important step. The first time you generate the FPGA hardware configu
 2. Select `$REPO_DIR\sdk` for both "Exported location" and "Workspace"
 3. `OK`
 4. SDK will open
-5. Ensure the project `design_1_wrapper_hw_platform_0` is in `Project Explorer`
+5. Ensure the project `amdc_rev*_wrapper_hw_platform_0` is in `Project Explorer`
 
 You may now close Vivado if you do not plan on changing the FPGA HDL. Also, you may now close the SDK. You will need to open it in the next section, but practice opening it directly -- not from Vivado.
 
@@ -140,7 +140,7 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 
 ### Import Projects into SDK
 
-The SDK workspace will initially be empty (except for `design_1_wrapper...` from above and new `amdc_bsp`). You need to import the projects you want to use.
+The SDK workspace will initially be empty (except for `amdc_rev*_wrapper...` from above and new `amdc_bsp`). You need to import the projects you want to use.
 
 #### Open-source example applications:
 
@@ -251,7 +251,7 @@ Ensure the AMDC JTAG / UART is plugged into your PC and AMDC main power is suppl
     2. A new panel should appear on the right half of popup
 4. Ensure the `Target Setup` tab is open
 5. Select `Browse...` for `Bitstream File`
-    1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+    1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\amdc_rev*_wrapper.bit`) and click `Open`
 7. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
 8. Click `Apply`
 9. Click `Close`
