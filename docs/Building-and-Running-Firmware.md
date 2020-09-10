@@ -157,13 +157,15 @@ The SDK workspace will initially be empty (except for `design_1_wrapper...` from
 3. Select: `your master user repo` / `my-AMDC-private-C-code`
 5. `Finish`
 
-Building the private user application may fail. If it does (see the `Console` pane for info), fix by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
+Building the private user application should fail. If it does (see the `Console` pane for info), fix by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
+
+If the build does not fail, this most likely indicates you have not imported the private user application project correctly. Delete the `bare` project from the SDK and try again.
 
 ### Fix `common` code compilation
 
 This section explains how to configure the SDK build system to correctly use the AMDC `common` code from the submodule.
 
-**Only complete these steps if the build failed after you imported the user project!!!** If there were no errors, skip this section.
+**Only complete these steps if the build failed after you imported the user project!!!** If there were no errors, skip this section. There should be no errors if you have imported the `bare` project as an open-source project (i.e. not a private user application).
 
 Link `common` folder to project:
 1. In the `Project Explorer`, delete `common` folder from `bare` project (if present)
