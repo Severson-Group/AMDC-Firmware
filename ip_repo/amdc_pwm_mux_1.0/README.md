@@ -6,7 +6,9 @@ This IP core is a simple mux for the PWM output pins. It allows remapping of the
 
 - Configurable at run-time
 - Remap PWM signals to any PWM output pin
-    
+
+<img src="docs/pwm_mux_ip_block_diagram.svg" />
+
 ## IP Interface
 
 The IP is accessed via the AXI4-Lite register-based interface from the DSP.
