@@ -79,6 +79,10 @@ int pwm_set_duty(pwm_channel_e channel, double duty);
 
 void pwm_set_all_duty_midscale(void);
 
+// Mux for PWM output pins
+int pwm_mux_set_all_pins(uint32_t *config);
+int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
+
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 int pwm_get_status(pwm_channel_e channel, pwm_status_t *status);
