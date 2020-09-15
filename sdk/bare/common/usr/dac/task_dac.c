@@ -102,11 +102,9 @@ void task_dac_callback(void *arg)
             step = 0;
 
         // Generates a 3-phase +/- 10V output on channels 0, 1, and 2
-        for (int i = 0; i < 1; i++)
-        {
-            dac_set_voltage(i, 10 * sin(TASK_DAC_MIN_PHASE * step + ((double) i / 3 * 2 * PI)), 10, -10);
+        for (int i = 0; i < 3; i++) {
+            dac_set_voltage(i * 2, 10 * sin(TASK_DAC_MIN_PHASE * step + ((double) i / 3 * 2 * PI)), 10, -10);
         }
-
 
         // Send all channel updates through
         dac_set_trigger();

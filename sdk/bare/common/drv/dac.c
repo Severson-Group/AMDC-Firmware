@@ -24,7 +24,6 @@ void dac_init(void)
     dac_set_raw(DAC_REG_SYNC, 0x02FFFF); // Default all channels to be synchronously triggered
 
     dac_set_broadcast(0, 10, -10); // Default all channel values to 0V (redundant to power on reset)
-
 }
 
 void dac_set_voltage(uint8_t ch, double voltage, double max, double min)
