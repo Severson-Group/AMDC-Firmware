@@ -15,9 +15,7 @@
 	)
 	(
 		// Users to add ports here
-        output wire dac_cs,
-        output wire dac_sclk,
-        output wire dac_mosi,
+        output wire [3:0] dac_sts,
         input wire ext_trigger,
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -560,6 +558,7 @@
     assign ext_trigger_en = slv_reg0[0];
     assign trigger = ext_trigger_en ? ext_trigger : slv_reg5[4];
     assign trigger_data = {slv_reg5[15:5], trigger, slv_reg5[3:0]};
+    assign dac_sts[3] = 1'b0;
     
 	/////////////////////////////////////
 	/// Instantiate DAC60508MC module ///
@@ -594,9 +593,9 @@
         .DAC5_w(slv_reg13_w), 
         .DAC6_w(slv_reg14_w), 
         .DAC7_w(slv_reg15_w),   
-        .CS(dac_cs), 
-        .SCLK(dac_sclk), 
-        .MOSI(dac_mosi)
+        .CS(dac_sts[0]), 
+        .SCLK(dac_sts[1]), 
+        .MOSI(dac_sts[2])
     );
         
     always @(*) begin
