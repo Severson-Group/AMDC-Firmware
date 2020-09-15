@@ -27,8 +27,6 @@
         output [7:0] sts_d_int,
         
         // Device I/O
-        output [3:0] device0_in,
-        input [3:0] device0_out,       
         output [3:0] device1_in,
         input [3:0] device1_out, 
         output [3:0] device2_in,
@@ -43,6 +41,8 @@
         input [3:0] device6_out,   
         output [3:0] device7_in,
         input [3:0] device7_out,
+        output [3:0] device8_in,
+        input [3:0] device8_out, 
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -782,35 +782,35 @@
 	wire status_c_out;
 	wire status_d_out;
 	
-	wire [7:0] device_all_a_out;
-	wire [7:0] device_all_b_out;
-	wire [7:0] device_all_c_out;
-	wire [7:0] device_all_d_out;
+	wire [8:0] device_all_a_out;
+	wire [8:0] device_all_b_out;
+	wire [8:0] device_all_c_out;
+	wire [8:0] device_all_d_out;
 	
 	assign status_a_out = slv_reg35[0];
 	assign status_b_out = slv_reg35[1];
 	assign status_c_out = slv_reg35[2];
 	assign status_d_out = slv_reg35[3];
 	
-	assign device_all_a_out = { device7_out[0],device6_out[0],
-	                            device5_out[0],device4_out[0],
-	                            device3_out[0],device2_out[0],
-	                            device1_out[0],device0_out[0]};
+	assign device_all_a_out = { device8_out[0], device7_out[0], device6_out[0],
+	                            device5_out[0], device4_out[0], device3_out[0],
+	                            device2_out[0], device1_out[0], 1'b0
+	                            };
 	                            
-	assign device_all_b_out = { device7_out[1],device6_out[1],
-	                            device5_out[1],device4_out[1],
-	                            device3_out[1],device2_out[1],
-	                            device1_out[1],device0_out[1]};       
+	assign device_all_b_out = { device8_out[1], device7_out[1], device6_out[1],
+	                            device5_out[1], device4_out[1], device3_out[1],
+	                            device2_out[1], device1_out[1], 1'b0
+	                            };
 	                                                
-	assign device_all_c_out = { device7_out[2],device6_out[2],
-	                            device5_out[2],device4_out[2],
-	                            device3_out[2],device2_out[2],
-	                            device1_out[2],device0_out[2]};
+	assign device_all_c_out = { device8_out[2], device7_out[2], device6_out[1],
+	                            device5_out[2], device4_out[2], device3_out[1],
+	                            device2_out[2], device1_out[2], 1'b0
+	                            };
 	                            	                            
-	assign device_all_d_out = { device7_out[3],device6_out[3],
-	                            device5_out[3],device4_out[3],
-	                            device3_out[3],device2_out[3],
-	                            device1_out[3],device0_out[3]};
+	assign device_all_d_out = { device8_out[3], device7_out[3], device6_out[1],
+	                            device5_out[3], device4_out[3], device3_out[1],
+	                            device2_out[3], device1_out[3], 1'b0
+	                            };
 	                            
     ////////////////////////////////////////////////////////////////////////////
     /// OUTPUTS
@@ -854,41 +854,44 @@
     ////////////////////////////////////////////////////////////////////////////
     /// INPUTS
     ////////////////////////////////////////////////////////////////////////////
-    assign device0_in[0] = !status_a_out ? sts_a_ext[slv_reg0] : 1'b0;
-    assign device1_in[0] = !status_a_out ? sts_a_ext[slv_reg1] : 1'b0;
-    assign device2_in[0] = !status_a_out ? sts_a_ext[slv_reg2] : 1'b0;
-    assign device3_in[0] = !status_a_out ? sts_a_ext[slv_reg3] : 1'b0;
-    assign device4_in[0] = !status_a_out ? sts_a_ext[slv_reg4] : 1'b0;
-    assign device5_in[0] = !status_a_out ? sts_a_ext[slv_reg5] : 1'b0;
-    assign device6_in[0] = !status_a_out ? sts_a_ext[slv_reg6] : 1'b0;
-    assign device7_in[0] = !status_a_out ? sts_a_ext[slv_reg7] : 1'b0;
+    assign device1_in[0] = !status_a_out ? sts_a_ext[slv_reg0] : 1'b0;
+    assign device2_in[0] = !status_a_out ? sts_a_ext[slv_reg1] : 1'b0;
+    assign device3_in[0] = !status_a_out ? sts_a_ext[slv_reg2] : 1'b0;
+    assign device4_in[0] = !status_a_out ? sts_a_ext[slv_reg3] : 1'b0;
+    assign device5_in[0] = !status_a_out ? sts_a_ext[slv_reg4] : 1'b0;
+    assign device6_in[0] = !status_a_out ? sts_a_ext[slv_reg5] : 1'b0;
+    assign device7_in[0] = !status_a_out ? sts_a_ext[slv_reg6] : 1'b0;
+    assign device8_in[0] = !status_a_out ? sts_a_ext[slv_reg7] : 1'b0;
     
-    assign device0_in[1] = !status_b_out ? sts_b_ext[slv_reg8] : 1'b0;
-    assign device1_in[1] = !status_b_out ? sts_b_ext[slv_reg9] : 1'b0;
-    assign device2_in[1] = !status_b_out ? sts_b_ext[slv_reg10] : 1'b0;
-    assign device3_in[1] = !status_b_out ? sts_b_ext[slv_reg11] : 1'b0;
-    assign device4_in[1] = !status_b_out ? sts_b_ext[slv_reg12] : 1'b0;
-    assign device5_in[1] = !status_b_out ? sts_b_ext[slv_reg13] : 1'b0;
-    assign device6_in[1] = !status_b_out ? sts_b_ext[slv_reg14] : 1'b0;
-    assign device7_in[1] = !status_b_out ? sts_b_ext[slv_reg15] : 1'b0;
-    
-    assign device0_in[2] = !status_c_out ? sts_c_ext[slv_reg16] : 1'b0;
-    assign device1_in[2] = !status_c_out ? sts_c_ext[slv_reg17] : 1'b0;
-    assign device2_in[2] = !status_c_out ? sts_c_ext[slv_reg18] : 1'b0;
-    assign device3_in[2] = !status_c_out ? sts_c_ext[slv_reg19] : 1'b0;
-    assign device4_in[2] = !status_c_out ? sts_c_ext[slv_reg20] : 1'b0;
-    assign device5_in[2] = !status_c_out ? sts_c_ext[slv_reg21] : 1'b0;
-    assign device6_in[2] = !status_c_out ? sts_c_ext[slv_reg22] : 1'b0;
-    assign device7_in[2] = !status_c_out ? sts_c_ext[slv_reg23] : 1'b0;
-   
-    assign device0_in[3] = !status_d_out ? sts_d_ext[slv_reg24] : 1'b0;
-    assign device1_in[3] = !status_d_out ? sts_d_ext[slv_reg25] : 1'b0;
-    assign device2_in[3] = !status_d_out ? sts_d_ext[slv_reg26] : 1'b0;
-    assign device3_in[3] = !status_d_out ? sts_d_ext[slv_reg27] : 1'b0;
-    assign device4_in[3] = !status_d_out ? sts_d_ext[slv_reg28] : 1'b0;
-    assign device5_in[3] = !status_d_out ? sts_d_ext[slv_reg29] : 1'b0;
-    assign device6_in[3] = !status_d_out ? sts_d_ext[slv_reg30] : 1'b0;
-    assign device7_in[3] = !status_d_out ? sts_d_ext[slv_reg31] : 1'b0;
+
+    assign device1_in[1] = !status_b_out ? sts_b_ext[slv_reg8] : 1'b0;
+    assign device2_in[1] = !status_b_out ? sts_b_ext[slv_reg9] : 1'b0;
+    assign device3_in[1] = !status_b_out ? sts_b_ext[slv_reg10] : 1'b0;
+    assign device4_in[1] = !status_b_out ? sts_b_ext[slv_reg11] : 1'b0;
+    assign device5_in[1] = !status_b_out ? sts_b_ext[slv_reg12] : 1'b0;
+    assign device6_in[1] = !status_b_out ? sts_b_ext[slv_reg13] : 1'b0;
+    assign device7_in[1] = !status_b_out ? sts_b_ext[slv_reg14] : 1'b0;
+    assign device8_in[1] = !status_b_out ? sts_b_ext[slv_reg15] : 1'b0;
+        
+
+    assign device1_in[2] = !status_c_out ? sts_c_ext[slv_reg16] : 1'b0;
+    assign device2_in[2] = !status_c_out ? sts_c_ext[slv_reg17] : 1'b0;
+    assign device3_in[2] = !status_c_out ? sts_c_ext[slv_reg18] : 1'b0;
+    assign device4_in[2] = !status_c_out ? sts_c_ext[slv_reg19] : 1'b0;
+    assign device5_in[2] = !status_c_out ? sts_c_ext[slv_reg20] : 1'b0;
+    assign device6_in[2] = !status_c_out ? sts_c_ext[slv_reg21] : 1'b0;
+    assign device7_in[2] = !status_c_out ? sts_c_ext[slv_reg22] : 1'b0;
+    assign device8_in[2] = !status_c_out ? sts_c_ext[slv_reg23] : 1'b0;
+  
+
+    assign device1_in[3] = !status_d_out ? sts_d_ext[slv_reg24] : 1'b0;
+    assign device2_in[3] = !status_d_out ? sts_d_ext[slv_reg25] : 1'b0;
+    assign device3_in[3] = !status_d_out ? sts_d_ext[slv_reg26] : 1'b0;
+    assign device4_in[3] = !status_d_out ? sts_d_ext[slv_reg27] : 1'b0;
+    assign device5_in[3] = !status_d_out ? sts_d_ext[slv_reg28] : 1'b0;
+    assign device6_in[3] = !status_d_out ? sts_d_ext[slv_reg29] : 1'b0;
+    assign device7_in[3] = !status_d_out ? sts_d_ext[slv_reg30] : 1'b0;
+    assign device8_in[3] = !status_d_out ? sts_d_ext[slv_reg31] : 1'b0;
 	// User logic ends
 
 	endmodule

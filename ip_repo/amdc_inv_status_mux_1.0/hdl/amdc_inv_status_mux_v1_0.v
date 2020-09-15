@@ -26,9 +26,7 @@
         output [7:0] sts_c_int,
         output [7:0] sts_d_int,
         
-        // Device I/O
-        output [3:0] device0_in,
-        input [3:0] device0_out,       
+        // Device I/O      
         output [3:0] device1_in,
         input [3:0] device1_out, 
         output [3:0] device2_in,
@@ -43,6 +41,8 @@
         input [3:0] device6_out,   
         output [3:0] device7_in,
         input [3:0] device7_out,
+        output [3:0] device8_in,
+        input [3:0] device8_out, 
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -104,8 +104,6 @@
 		.sts_b_int(sts_b_int),
 		.sts_c_int(sts_c_int),
 		.sts_d_int(sts_d_int),
-		.device0_in(device0_in),
-		.device0_out(device0_out),
 		.device1_in(device1_in),
 		.device1_out(device1_out),
 		.device2_in(device2_in),
@@ -119,7 +117,9 @@
 		.device6_in(device6_in),
 		.device6_out(device6_out),
 		.device7_in(device7_in),
-		.device7_out(device7_out)
+		.device7_out(device7_out),
+	    .device8_in(device8_in),
+		.device8_out(device8_out)
 	);
 
 	// Add user logic here

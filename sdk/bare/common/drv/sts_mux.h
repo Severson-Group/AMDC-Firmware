@@ -16,7 +16,8 @@ typedef enum {
 	STS_MUX_DEVICE4 = 4,
 	STS_MUX_DEVICE5 = 5,
 	STS_MUX_DEVICE6 = 6,
-	STS_MUX_DEVICE7 = 7
+	STS_MUX_DEVICE7 = 7,
+	STS_MUX_DEVICE8 = 8 // DAC expansion board
 } sts_mux_device_t;
 
 typedef enum {
@@ -26,8 +27,8 @@ typedef enum {
 	STS_MUX_D
 } sts_mux_line_t;
 
-#define INVERTER_PORT1 STS_MUX_DEVICE1
-#define INVERTER_PORT2 STS_MUX_DEVICE1
+#define INVERTER_PORT1 STS_MUX_DEVICE8
+#define INVERTER_PORT2 STS_MUX_UNUSED
 #define INVERTER_PORT3 STS_MUX_UNUSED
 #define INVERTER_PORT4 STS_MUX_UNUSED
 #define INVERTER_PORT5 STS_MUX_UNUSED
