@@ -1,4 +1,5 @@
 import time
+from collections import namedtuple
 import numpy as np
 import pandas as pd
 import pathlib as pl
@@ -13,6 +14,8 @@ import binascii
 # Date:        06/30/2020
 #########################################################
 
+LogVar = namedtuple(typename = 'LogVar', field_names = 'name index var_type samples_per_sec memory_addr')
+
 class AMDC_Logger():
     
     default_max_slots = 32
@@ -23,8 +26,7 @@ class AMDC_Logger():
         self.mapfile = Mapfile(mapfile)
         
         self.available_indices = list(range(AMDC_Logger.default_max_slots))[-1::-1]
-        self.log_vars = []
-        self.log_var_indices = []
+        self.log_vars = {}
         
     def info(self):
         max_slots, max_sample_depth, names, types, indices, sample_rates, num_samples = self._get_amdc_state()
@@ -55,14 +57,9 @@ class AMDC_Logger():
         self._reset()
         
         #we don't actually register the variables because they are already registered
-        for var, idx in zip(names, indices):
-            self.log_vars.append(var)
-            self.log_var_indices.append(idx)
+        for var, idx, tp, sps in zip(names, indices, types, sample_rates):
+            self._create_log_var(name = var, samples_per_sec = sps, var_type = tp, manual_index = idx)
             
-            #remove index from list of available indices
-            loc = self.available_indices.index(idx)
-            self.available_indices.pop(loc)
-        
     def register(self, log_vars, samples_per_sec = 1000, var_type = 'double'):
         
         names = self._sanitize_inputs(log_vars)
@@ -71,25 +68,21 @@ class AMDC_Logger():
             
             if len(self.available_indices) > 0:
                 
-                memory_addr = int(self.mapfile.address(name), 0)
-                
-                if memory_addr == 0:
-                    print(f"ERROR: couldn't find memory address for '{name}'")
-                
+                try:
+                    LV = self._create_log_var(name, samples_per_sec, var_type)
+                except Exception as e:
+                    print(e)
                 else:
-                    if not (name in self.log_vars):
-                        self.log_vars.append(name)
-                        idx = self.available_indices.pop() #extract next available index
-                        self.log_var_indices.append(idx)
-                        cmd = f'log reg {idx} {name} {memory_addr} {samples_per_sec} {var_type}'
-                        out = self.amdc.cmd(cmd)
-                        if out[1] == 'FAILURE':
-                            self.unregister(name, send_cmd = False)
+                    #send command to AMDC
+                    cmd = f'log reg {LV.index} {LV.name} {LV.memory_addr} {LV.samples_per_sec} {LV.var_type}'
+                    out = self.amdc.cmd(cmd)
+                    if out[1] == 'FAILURE':
+                        self._pop(LV)
             
             else:
                 print(f'Did not register, cannot exceed maximum of {self.max_slots} logged variables')
                 print(f'Logged variables are:\n{self.log_vars}')
-                
+            
     def auto_register(self, root, samples_per_sec = 1000):
         
         #provide path to root of C code for which you want the logger to search for variables
@@ -109,31 +102,31 @@ class AMDC_Logger():
         
         for var in variables:
             try:
-                loc = self.log_vars.index(var) #find location of var in list of vars
+                LV = self._pop(var)
             except:
                 print('ERROR: Invalid variable name')
             else:
-                self.log_vars.pop(loc)
-                idx = self.log_var_indices.pop(loc)
-                self.available_indices.append(idx)
-                self.available_indices.sort(reverse = True)
-                
-                if send_cmd:
-                    self.amdc.cmd(f'log unreg {idx}')
+                self.amdc.cmd(f'log unreg {LV.index}')
     
     def unregister_all(self):
         
         #we have to put log_vars into a local variable because self.log_vars changes
         #as we iterate over it
-        variables = self.log_vars.copy()
+        variables = list(self.log_vars.keys())
         
         for var in variables:
             self.unregister(var)    
                 
-    def clear(self, var):
+    def clear(self, log_vars):
         
-        log_var_idx = self._get_index(var)
-        self.amdc.cmd(f'log empty {log_var_idx}')
+        variables = self._sanitize_inputs(log_vars)
+        
+        for var in variables:
+            try:
+                log_var_idx = self.log_vars[var].index
+                self.amdc.cmd(f'log empty {log_var_idx}')
+            except:
+                pass
         
     def clear_all(self):
         
@@ -180,7 +173,7 @@ class AMDC_Logger():
         if log_vars is not None:
             variables = self._sanitize_inputs(log_vars)
         else:
-            variables = self.log_vars
+            variables = self.log_vars.keys()
             
         binary = 0
         
@@ -197,7 +190,7 @@ class AMDC_Logger():
         if len(variables) > 0:
             for i, var in enumerate(variables):
                 
-                if var in self.log_vars:
+                if var in self.log_vars.keys():
                     
                     #try multiple times to load data if it fails
                     while tries < max_tries:
@@ -266,13 +259,49 @@ class AMDC_Logger():
         out = pd.read_csv(p, comment = '#', index_col = 't')
         
         return out
+    
+    def _create_log_var(self, name, samples_per_sec, var_type, manual_index = None):
+        
+        memory_addr = int(self.mapfile.address(name), 0)
+        
+        if memory_addr == 0:
+            raise Exception(f"ERROR: couldn't find memory address for '{name}'")
+            
+        else:
+            if name not in self.log_vars.keys(): #check if variable name already registered
+
+                if manual_index is None:
+                    idx = self.available_indices.pop() #extract next available index
+                else:
+                    #remove index from list of available indices
+                    loc = self.available_indices.index(manual_index)
+                    idx = self.available_indices.pop(loc)
+                
+                #create LogVar object and append it to logvars
+                LV = LogVar(name = name, index = idx, var_type = var_type, samples_per_sec = samples_per_sec, memory_addr = memory_addr)
+                self.log_vars[name] = LV
+                
+                return LV
+            
+            else:
+                raise Exception('Error: Variable already exists')
+            
+    def _pop(self, log_var):
+        
+        if log_var in self.log_vars.keys():
+            
+            LV = self.log_vars.pop(log_var)
+            self.available_indices.append(LV.index)
+            self.available_indices.sort(reverse = True)
+            return LV
         
     def _dump_single_bin(self, var, print_output = True):
         # Function level debugging (for print statements)
         debug = False
         
         var = self._sanitize_inputs(var)[0]
-        log_var_idx = self._get_index(var)
+        LV = self.log_vars[var]
+        log_var_idx = LV.index
         
         # Don't automatically capture binary output data! 
         old_state_captureOutput = self.amdc.captureOutput
@@ -443,7 +472,8 @@ class AMDC_Logger():
     def _dump_single_text(self, var):
         
         var = self._sanitize_inputs(var)[0]
-        log_var_idx = self._get_index(var)
+        LV = self.log_vars[var]
+        log_var_idx = LV.index
         
         #we want to set the print state to false so we don't
         #print all of our data to the screen
@@ -488,21 +518,10 @@ class AMDC_Logger():
 
         return df
     
-    def _get_index(self, var):
-        
-        try:
-            loc = self.log_vars.index(var) #find location of var in list of vars
-        except:
-            raise Exception('ERROR: Invalid variable name')
-        else:
-            log_var_idx = self.log_var_indices[loc] #use location to get 
-            return log_var_idx
-    
     def _reset(self):
         
         self.available_indices = list(range(self.max_slots))[-1::-1]
-        self.log_vars = []
-        self.log_var_indices = []      
+        self.log_vars = {}
             
     @staticmethod   
     def _process_line(line):
