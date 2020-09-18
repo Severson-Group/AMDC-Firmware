@@ -144,6 +144,8 @@ The SDK workspace will initially be empty (except for `amdc_rev*_wrapper...` fro
 
 #### Open-source example applications:
 
+Follow these steps to import projects directly from the core `AMDC-Firmware` repo (i.e. open-source example applications):
+
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
 3. Select: `$REPO_DIR\sdk`
@@ -152,16 +154,22 @@ The SDK workspace will initially be empty (except for `amdc_rev*_wrapper...` fro
 
 #### Private user applications:
 
+Follow these steps to import projects from your private user repo:
+
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
 3. Select: `your master user repo` / `my-AMDC-private-C-code`
-5. `Finish`
+4. `Finish`
 
-Building the private user application will fail. Fix this by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
+After clicking `Finish`, the SDK will attempt to build the new private user applications. The compilation will fail. If it doesn't, you did not import your private user application project correctly -- delete the project from the SDK and try again until it fails to build.
+
+Once it fails to build your new imported project, follow the steps below to fix the compilation. This will restructure the compiler / linker so they know where to find the appropriate files.
 
 ### Fix `common` code compilation
 
 This section explains how to configure the SDK build system to correctly use the AMDC `common` code from the submodule.
+
+**Only complete these steps if the build failed after you imported the user project!!!** If there were no errors, skip this section. There should be no errors if you have imported the `bare` project as an open-source project (i.e. not a private user application).
 
 Link `common` folder to project:
 1. In the `Project Explorer`, delete `common` folder from `bare` project (if present)
