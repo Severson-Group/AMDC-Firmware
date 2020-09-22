@@ -6,8 +6,9 @@
 #ifndef STS_MUX_H
 #define STS_MUX_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
+
 
 typedef enum {
     STS_MUX_UNUSED = 0,
@@ -22,7 +23,6 @@ typedef enum {
 } sts_mux_device_t;
 
 typedef enum { STS_MUX_A, STS_MUX_B, STS_MUX_C, STS_MUX_D } sts_mux_line_t;
-
 
 // These macros are used to map the connected devices in the FPGA IP to the desired port on the
 // AMDC. All ports are re-mapped to the defined device in the init function. The

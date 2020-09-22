@@ -27,8 +27,8 @@ void sts_mux_init(void)
 
     for (int i = 0; i < 8; i++) {
         if (ports[i]) {
-        	// Map the port status lines to the corresponding device defined in the header file
-            sts_mux_set_device(i,ports[i]);
+            // Map the port status lines to the corresponding device defined in the header file
+            sts_mux_set_device(i, ports[i]);
         }
     }
 }
@@ -40,17 +40,16 @@ void sts_mux_set_line(uint8_t port, sts_mux_device_t device, sts_mux_line_t line
 
 void sts_mux_set_output(sts_mux_line_t line, bool output)
 {
-	int dir = output ? 1 : 0;
-	Xil_Out32(STS_MUX_BASE_ADDR + ((32 + line) * sizeof(uint32_t)), dir);
+    int dir = output ? 1 : 0;
+    Xil_Out32(STS_MUX_BASE_ADDR + ((32 + line) * sizeof(uint32_t)), dir);
 }
 
 void sts_mux_set_device(uint8_t port, sts_mux_device_t device)
 {
-	sts_mux_set_line(port, device, STS_MUX_A);
-	sts_mux_set_line(port, device, STS_MUX_B);
-	sts_mux_set_line(port, device, STS_MUX_C);
-	sts_mux_set_line(port, device, STS_MUX_D);
+    sts_mux_set_line(port, device, STS_MUX_A);
+    sts_mux_set_line(port, device, STS_MUX_B);
+    sts_mux_set_line(port, device, STS_MUX_C);
+    sts_mux_set_line(port, device, STS_MUX_D);
 }
-
 
 #endif // USER_CONFIG_HARDWARE_TARGET
