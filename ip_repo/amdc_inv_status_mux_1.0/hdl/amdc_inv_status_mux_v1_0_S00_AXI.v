@@ -787,10 +787,10 @@
 	wire [8:0] device_all_c_out;
 	wire [8:0] device_all_d_out;
 	
-	assign status_a_out = slv_reg35[0];
-	assign status_b_out = slv_reg35[1];
-	assign status_c_out = slv_reg35[2];
-	assign status_d_out = slv_reg35[3];
+	assign status_a_out = slv_reg32[0];
+	assign status_b_out = slv_reg33[0];
+	assign status_c_out = slv_reg34[0];
+	assign status_d_out = slv_reg35[0];
 	
 	assign device_all_a_out = { device8_out[0], device7_out[0], device6_out[0],
 	                            device5_out[0], device4_out[0], device3_out[0],
@@ -813,16 +813,16 @@
 	                            };
 	                            
     ////////////////////////////////////////////////////////////////////////////
-    /// OUTPUTS
+    /// EXTERNAL AS OUTPUTS
     ////////////////////////////////////////////////////////////////////////////	                            	
-    assign sts_a_ext[0] = status_a_out ? device_all_a_out[slv_reg0] : 1'bz;
-    assign sts_a_ext[1] = status_a_out ? device_all_a_out[slv_reg1] : 1'bz;
-    assign sts_a_ext[2] = status_a_out ? device_all_a_out[slv_reg2] : 1'bz;
-    assign sts_a_ext[3] = status_a_out ? device_all_a_out[slv_reg3] : 1'bz;
-    assign sts_a_ext[4] = status_a_out ? device_all_a_out[slv_reg4] : 1'bz;
-    assign sts_a_ext[5] = status_a_out ? device_all_a_out[slv_reg5] : 1'bz;
-    assign sts_a_ext[6] = status_a_out ? device_all_a_out[slv_reg6] : 1'bz;
-    assign sts_a_ext[7] = status_a_out ? device_all_a_out[slv_reg7] : 1'bz;
+    assign sts_a_ext[0] = status_a_out ? slv_reg0 ? device_all_a_out[slv_reg0] : sts_a_int[0] : 1'bz;
+    assign sts_a_ext[1] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg1] : sts_a_int[1] : 1'bz;
+    assign sts_a_ext[2] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg2] : sts_a_int[2] : 1'bz;
+    assign sts_a_ext[3] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg3] : sts_a_int[3] : 1'bz;
+    assign sts_a_ext[4] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg4] : sts_a_int[4] : 1'bz;
+    assign sts_a_ext[5] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg5] : sts_a_int[5] : 1'bz;
+    assign sts_a_ext[6] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg6] : sts_a_int[6] : 1'bz;
+    assign sts_a_ext[7] = status_a_out ? slv_reg1 ? device_all_a_out[slv_reg7] : sts_a_int[7] : 1'bz;
     
     assign sts_b_ext[0] = status_b_out ? device_all_b_out[slv_reg8] : 1'bz;
     assign sts_b_ext[1] = status_b_out ? device_all_b_out[slv_reg9] : 1'bz;
@@ -852,7 +852,7 @@
     assign sts_d_ext[7] = status_d_out ? device_all_d_out[slv_reg31] : 1'bz;
     
     ////////////////////////////////////////////////////////////////////////////
-    /// INPUTS
+    /// EXTERNAL AS INPUTS
     ////////////////////////////////////////////////////////////////////////////
     assign device1_in[0] = !status_a_out ? sts_a_ext[slv_reg0] : 1'b0;
     assign device2_in[0] = !status_a_out ? sts_a_ext[slv_reg1] : 1'b0;
@@ -892,6 +892,37 @@
     assign device6_in[3] = !status_d_out ? sts_d_ext[slv_reg29] : 1'b0;
     assign device7_in[3] = !status_d_out ? sts_d_ext[slv_reg30] : 1'b0;
     assign device8_in[3] = !status_d_out ? sts_d_ext[slv_reg31] : 1'b0;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    /// DEFAULT INTERNAL MAPPING
+    ////////////////////////////////////////////////////////////////////////////
+    assign sts_b_int[0] = slv_reg8 ? 1'b0 : sts_b_ext[slv_reg8];
+    assign sts_b_int[1] = slv_reg9 ? 1'b0 : sts_b_ext[slv_reg9];
+    assign sts_b_int[2] = slv_reg10 ? 1'b0 : sts_b_ext[slv_reg10];
+    assign sts_b_int[3] = slv_reg11 ? 1'b0 : sts_b_ext[slv_reg11];
+    assign sts_b_int[4] = slv_reg12 ? 1'b0 : sts_b_ext[slv_reg12];
+    assign sts_b_int[5] = slv_reg13 ? 1'b0 : sts_b_ext[slv_reg13];
+    assign sts_b_int[6] = slv_reg14 ? 1'b0 : sts_b_ext[slv_reg14];
+    assign sts_b_int[7] = slv_reg15 ? 1'b0 : sts_b_ext[slv_reg15];
+    
+    assign sts_c_int[0] = slv_reg16 ? 1'b0 : sts_c_ext[slv_reg16];
+    assign sts_c_int[1] = slv_reg17 ? 1'b0 : sts_c_ext[slv_reg17];
+    assign sts_c_int[2] = slv_reg18 ? 1'b0 : sts_c_ext[slv_reg18];
+    assign sts_c_int[3] = slv_reg19 ? 1'b0 : sts_c_ext[slv_reg19];
+    assign sts_c_int[4] = slv_reg20 ? 1'b0 : sts_c_ext[slv_reg20];
+    assign sts_c_int[5] = slv_reg21 ? 1'b0 : sts_c_ext[slv_reg21];
+    assign sts_c_int[6] = slv_reg22 ? 1'b0 : sts_c_ext[slv_reg22];
+    assign sts_c_int[7] = slv_reg23 ? 1'b0 : sts_c_ext[slv_reg23];
+    
+    assign sts_d_int[0] = slv_reg24 ? 1'b0 : sts_d_ext[slv_reg24];
+    assign sts_d_int[1] = slv_reg25 ? 1'b0 : sts_d_ext[slv_reg25];
+    assign sts_d_int[2] = slv_reg26 ? 1'b0 : sts_d_ext[slv_reg26];
+    assign sts_d_int[3] = slv_reg27 ? 1'b0 : sts_d_ext[slv_reg27];
+    assign sts_d_int[4] = slv_reg28 ? 1'b0 : sts_d_ext[slv_reg28];
+    assign sts_d_int[5] = slv_reg29 ? 1'b0 : sts_d_ext[slv_reg29];
+    assign sts_d_int[6] = slv_reg30 ? 1'b0 : sts_d_ext[slv_reg30];
+    assign sts_d_int[7] = slv_reg31 ? 1'b0 : sts_d_ext[slv_reg31];
+    
 	// User logic ends
 
 	endmodule

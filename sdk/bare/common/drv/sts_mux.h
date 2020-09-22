@@ -7,6 +7,7 @@
 #define STS_MUX_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef enum {
     STS_MUX_UNUSED = 0,
@@ -33,7 +34,11 @@ typedef enum { STS_MUX_A, STS_MUX_B, STS_MUX_C, STS_MUX_D } sts_mux_line_t;
 
 void sts_mux_init(void);
 
-void sts_mux_set_line(uint8_t, uint8_t, sts_mux_line_t);
+void sts_mux_set_line(uint8_t, sts_mux_device_t, sts_mux_line_t);
+
+void sts_mux_set_device(uint8_t, sts_mux_device_t);
+
+void sts_mux_set_output(sts_mux_line_t, bool);
 
 #endif // STS_MUX_H
 
