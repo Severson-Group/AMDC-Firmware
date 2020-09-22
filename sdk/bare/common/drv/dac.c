@@ -8,22 +8,20 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define DAC_BASE_ADDR (0x43C40000)
+#define DAC_BASE_ADDR (0x43C60000)
 
 void dac_init(void)
 {
     printf("DAC:\tInitializing...\n");
 
-    /*
-    Xil_Out32(0x43C50000 + (0 * sizeof(uint32_t)), 0xFF000000);
-    Xil_Out32(0x43C50000 + (1 * sizeof(uint32_t)), 0xFF000000);
-    Xil_Out32(0x43C50000 + (2 * sizeof(uint32_t)), 0xFF000000);
-    */
+    // Default Reference divider and each channel Gain to 2/2
+    dac_set_raw(DAC_REG_GAIN, 0x000401FF);
 
-    dac_set_raw(DAC_REG_GAIN, 0x0401FF); // Default Reference divider and each channel Gain to 2/2
-    dac_set_raw(DAC_REG_SYNC, 0x02FFFF); // Default all channels to be synchronously triggered
+    // Default all channels to be synchronously triggered
+    dac_set_raw(DAC_REG_SYNC, 0x0002FFFF);
 
-    dac_set_broadcast(0, 10, -10); // Default all channel values to 0V (redundant to power on reset)
+    // Default all channel values to 0V (redundant to power on reset)
+    dac_set_broadcast(0, 10, -10);
 }
 
 void dac_set_voltage(uint8_t ch, double voltage, double max, double min)

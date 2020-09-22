@@ -19,6 +19,7 @@ void sts_mux_init(void)
 {
     printf("STATUS LINES:\tInitializing...\n");
 
+    // Set lines A, B, and C as outputs and D as input (CS, SCLK, MOSI, and MISO)
     sts_mux_set_output(STS_MUX_A, true);
     sts_mux_set_output(STS_MUX_B, true);
     sts_mux_set_output(STS_MUX_C, true);
@@ -26,6 +27,7 @@ void sts_mux_init(void)
 
     for (int i = 0; i < 8; i++) {
         if (ports[i]) {
+        	// Map the port status lines to the corresponding device defined in the header file
             sts_mux_set_device(i,ports[i]);
         }
     }
