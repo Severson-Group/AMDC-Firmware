@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
 typedef enum {
     STS_MUX_UNUSED = 0,
     STS_MUX_DEVICE1 = 1, // DAC expansion board by default
