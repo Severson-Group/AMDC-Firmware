@@ -48,4 +48,6 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP.
 | -- | -- | -- |
 | 0 | DIRECTION | Designates the direction of all status _x_ pins (0 for input, 1 for output) |
 
+## C drivers
 
+The drivers used to configure this IP core can be found [here](../../sdk/bare/common/drv/docs/Status-Mux.md). 

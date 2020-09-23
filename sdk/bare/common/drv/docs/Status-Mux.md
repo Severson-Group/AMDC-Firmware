@@ -3,7 +3,7 @@
 This driver is used to control and configure the inverter status mux IP core in the FPGA through the AXI4-Lite interface.
 
 ## Files
-All files for the inverter status mux driver are in the driver directory ([`common/drv/`](common/drv/)).
+All files for the inverter status mux driver are in the driver directory ([`common/drv/`](/sdk/bare/common/drv/)).
 
 ```
 drv/
@@ -11,8 +11,8 @@ drv/
 |-- sts_mux.h
 ```
 
-
-## Macros
+## Configuring the Mux
+### Macros
 
 The following macros are used to configure which device driver each inverter port is mapped to upon initialization. Each port is set to the `STS_MUX_UNUSED` macro by default which maps the port status lines directly to the inverter IP core. Each port can be mapped to a specific driver IP core by setting the port macro to one of the devices (`STS_MUX_DEVICE1` - `STS_MUX_DEVICE8`)
 
@@ -25,7 +25,7 @@ The following macros are used to configure which device driver each inverter por
 `#define INVERTER_PORT7 STS_MUX_UNUSED`<br />
 `#define INVERTER_PORT8 STS_MUX_UNUSED`
 
-## Functions
+### Functions
 `sts_mux_init(void)`
 
 Initializes the inverter status mux with default configurations. All status A lines are configured as outputs and all status B, C, and D lines are configured as inputs. Each inverter port in mapped to the device defined in its respective macro in `sts_mux.h`.
