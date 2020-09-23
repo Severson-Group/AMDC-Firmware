@@ -37,7 +37,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 0x38 | DAC_CHANNEL6 | W | Raw DAC channel 6 data register |
 | 0x3C | DAC_CHANNEL7 | W | Raw DAC channel 7 data register |
 
-## DAC_CONFIG1
+### DAC_CONFIG1
 | Bits | Name | Description |
 | -- | -- | -- |
 | 0 | EXT_TRIGGER_EN | Enables the DAC to trigger on an external source when 1 |

@@ -21,8 +21,8 @@ void sts_mux_init(void)
 
     // Set lines A, B, and C as outputs and D as input (CS, SCLK, MOSI, and MISO)
     sts_mux_set_output(STS_MUX_A, true);
-    sts_mux_set_output(STS_MUX_B, true);
-    sts_mux_set_output(STS_MUX_C, true);
+    sts_mux_set_output(STS_MUX_B, false);
+    sts_mux_set_output(STS_MUX_C, false);
     sts_mux_set_output(STS_MUX_D, false);
 
     for (int i = 0; i < 8; i++) {

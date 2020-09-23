@@ -27,7 +27,7 @@ typedef enum { STS_MUX_A, STS_MUX_B, STS_MUX_C, STS_MUX_D } sts_mux_line_t;
 // AMDC. All ports are re-mapped to the defined device in the init function. The
 // STS_MUX_UNUSED enum maps the port to the default connections from the inverter IP
 
-#define INVERTER_PORT1 STS_MUX_DEVICE1
+#define INVERTER_PORT1 STS_MUX_UNUSED
 #define INVERTER_PORT2 STS_MUX_UNUSED
 #define INVERTER_PORT3 STS_MUX_UNUSED
 #define INVERTER_PORT4 STS_MUX_UNUSED
