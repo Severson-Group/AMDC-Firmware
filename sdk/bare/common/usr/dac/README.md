@@ -1,6 +1,6 @@
 # DAC Expansion Board Application
 
-This user application implements commands executed via the CLI for the DAC expansion board Rev B. The commands act as a direct interface to the internal registers on the [DAC60508MC]() IC for configuration. In addition, a sample 3-phase +/- 10V signal on DAC channels 0, 2, and 4 is implemented as an example application for the DAC board.
+This user application implements commands executed via the CLI for the DAC expansion board Rev B. The commands act as a direct interface to the internal registers on the [DAC60508MC](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) IC for configuration. In addition, a sample 3-phase +/- 10V signal on DAC channels 0, 2, and 4 is implemented as an example application for the DAC board.
 
 ## Supported Commands
 `dac init` - *Initialize 3-phase signals*
@@ -31,7 +31,7 @@ dac trigger     // Flushes the buffered CODE to the output of the channels
 
 The `dac broadcast` command expects a voltage between -10V and +10V. By default, the DAC is initialized with broadcast enabled on all channels. Issuing the `dac broadcast` command will set the CODE in the BRDCAST data register and all channels outputs will update to the broadcast voltage.
 
-The `dac reg` command expects a register number between 0-15 and a hex value to be written to the register. Issuing the `dac reg` command will write the hex value to the given register offset. This can be used to write data to the configuration registers in the DAC. The register numbers and values directly mirror the registers in the [DAC60508MC](). More information about the registers can be found in the datasheet. The example below configures channels 4-7 to be asynchronous.
+The `dac reg` command expects a register number between 0-15 and a hex value to be written to the register. Issuing the `dac reg` command will write the hex value to the given register offset. This can be used to write data to the configuration registers in the DAC. The register numbers and values directly mirror the registers in the [DAC60508MC](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf). More information about the registers can be found in the datasheet. The example below configures channels 4-7 to be asynchronous.
 
 ```
 dac reg 2 FF0F   // Bits [7:4] correspond to channels 7-4 synchronous enable
@@ -66,7 +66,7 @@ dac/
 
 ## Configuring the DAC
 
-The [DAC60508MC]() has several configuration registers that can be used to change each channel to be synchronous or asynchronous, enable broadcasting, and change the gain of the output. In the initialization function in [`dac.c`](../drv/dac.c), two important configurations are made. 
+The [DAC60508MC](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) has several configuration registers that can be used to change each channel to be synchronous or asynchronous, enable broadcasting, and change the gain of the output. In the initialization function in [`dac.c`](../drv/dac.c), two important configurations are made. 
 
 The first configuration that is made must be performed for the DAC to operate properly. The GAIN register must be set to 0x01FF such that the direct output of each channel is between 0 and V<sub>REF</sub>. 
  

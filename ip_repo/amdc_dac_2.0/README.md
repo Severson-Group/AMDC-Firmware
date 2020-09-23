@@ -1,16 +1,16 @@
 # AMDC IP: `amdc_dac_2.0`
 
-This IP core is a driver for the DAC expansion board used on the AMDC hardware. The IP is designed to mirror the internal registers of the [DAC60508MC]() and act as a bridge between the AXI4-Lite interface and the SPI interface on the DAC IC. Functionally, it behaves as if the DSP is directly connected to the DAC60508MC.
+This IP core is a driver for the DAC expansion board used on the AMDC hardware. The IP is designed to mirror the internal registers of the [DAC60508MC](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) and act as a bridge between the AXI4-Lite interface and the SPI interface on the DAC IC. Functionally, it behaves as if the DSP is directly connected to the DAC60508MC.
 
 ## Features
 
 - 25MHz SPI clock rate
 - 80KSps maximum sample rate on all 8 channels
-- All Eight channels can be configured to synchronously update outputs. See [datasheet]() for more details
+- All Eight channels can be configured to synchronously update outputs. See [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) for more details
 - Eight 12-bit output channels at +/- 5V or +/- 10V
 - Configurable external trigger of synchronous channels
 
-More details specific to the DAC IC can be found in the [datasheet]()
+More details specific to the DAC IC can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
     
 ## IP Interface
 
@@ -22,11 +22,11 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | -- | -- | -- | -- |
 | 0x00 | DAC_CONFIG1 | W | Unused register |
 | 0x04 | DAC_UNUSED1 | W | Unused register |
-| 0x08 | SYNC_REGISTER | W | More information can be found in the [datasheet]() |
-| 0x0C | CONFIG_REGISTER | W | More information can be found in the [datasheet]() |
-| 0x10 | GAIN_REGISTER | W | More information can be found in the [datasheet]() |
-| 0x14 | TRIGGER_REGISTER | W | More information can be found in the [datasheet]() |
-| 0x18 | BROADCAST_REGISTER | W | More information can be found in the [datasheet]() |
+| 0x08 | SYNC_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
+| 0x0C | CONFIG_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
+| 0x10 | GAIN_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
+| 0x14 | TRIGGER_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
+| 0x18 | BROADCAST_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
 | 0x1C | DAC_UNUSED2 | W | Unused register |
 | 0x20 | DAC_CHANNEL0 | W | Raw DAC channel 0 data register |
 | 0x24 | DAC_CHANNEL1 | W | Raw DAC channel 1 data register |
