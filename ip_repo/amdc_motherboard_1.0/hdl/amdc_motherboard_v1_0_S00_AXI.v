@@ -86,7 +86,21 @@
 		input wire  S_AXI_RREADY
 	);
 
-	// AXI4LITE signals
+    // User registers    
+    reg [31:0] adc_dout0;
+    reg [31:0] adc_dout1;
+    reg [31:0] adc_dout2;
+    reg [31:0] adc_dout3;
+    reg [31:0] adc_dout4;
+    reg [31:0] adc_dout5;
+    reg [31:0] adc_dout6;
+    reg [31:0] adc_dout7;
+    reg [31:0] status_reg;
+    reg [31:0] valid_reg;
+    reg [31:0] corrupt_reg;
+    reg [31:0] timeout_reg;
+
+    // AXI4LITE signals
 	reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
 	reg  	axi_awready;
 	reg  	axi_wready;
@@ -495,19 +509,19 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        4'h0   : reg_data_out <= slv_reg0;
-	        4'h1   : reg_data_out <= slv_reg1;
-	        4'h2   : reg_data_out <= slv_reg2;
-	        4'h3   : reg_data_out <= slv_reg3;
-	        4'h4   : reg_data_out <= slv_reg4;
-	        4'h5   : reg_data_out <= slv_reg5;
-	        4'h6   : reg_data_out <= slv_reg6;
-	        4'h7   : reg_data_out <= slv_reg7;
+	        4'h0   : reg_data_out <= adc_dout0; // originally, this was just assigned "slv_reg0"
+	        4'h1   : reg_data_out <= adc_dout1; // originally, this was just assigned "slv_reg1"
+	        4'h2   : reg_data_out <= adc_dout2; // originally, this was just assigned "slv_reg2"
+	        4'h3   : reg_data_out <= adc_dout3; // originally, this was just assigned "slv_reg3"
+	        4'h4   : reg_data_out <= adc_dout4; // originally, this was just assigned "slv_reg4"
+	        4'h5   : reg_data_out <= adc_dout5; // originally, this was just assigned "slv_reg5"
+	        4'h6   : reg_data_out <= adc_dout6; // originally, this was just assigned "slv_reg6"
+	        4'h7   : reg_data_out <= adc_dout7; // originally, this was just assigned "slv_reg7"
 	        4'h8   : reg_data_out <= slv_reg8;
-	        4'h9   : reg_data_out <= slv_reg9;
-	        4'hA   : reg_data_out <= slv_reg10;
-	        4'hB   : reg_data_out <= slv_reg11;
-	        4'hC   : reg_data_out <= slv_reg12;
+	        4'h9   : reg_data_out <= status_reg; // was "slv_reg9"
+	        4'hA   : reg_data_out <= valid_reg;
+	        4'hB   : reg_data_out <= corrupt_reg;
+	        4'hC   : reg_data_out <= timeout_reg;
 	        4'hD   : reg_data_out <= slv_reg13;
 	        4'hE   : reg_data_out <= slv_reg14;
 	        4'hF   : reg_data_out <= slv_reg15;
@@ -587,8 +601,12 @@
     wire start_data_tx;
     assign start_data_tx = prev_sync_tx ^ sync_tx;
 
-    // TODO: implement state machine for reading DOUT1 and DOUT2 from motherboard...
+    // Implement state machine for reading DOUT1 and DOUT2 from motherboard...
     // for now, just toggle the sync_tx line which will start the transmission from the motherboard.
+    //
+    // i.e. these signals contain serial data of the ADC sampled values:
+    // - motherboard_dout1 <== DCs 1..4
+    // - motherboard_dout2 <== DCs 5..8
     
     reg sync_tx_out;
     always @(posedge S_AXI_ACLK) begin
@@ -602,6 +620,99 @@
     end
     
     assign motherboard_sync_tx = sync_tx_out;
+    
+    // This module listens to the two data inputs from the motherboard.
+    // When the sync_tx line toggles, this module knows to expect a new
+    // data packet transmission. Therefore, it will start a state machine
+    // internally to read each UART word.
+    wire is_dout_valid0;
+    wire is_dout_valid1;
+   
+    wire [15:0] my_adc_data0;
+    wire [15:0] my_adc_data1;
+    wire [15:0] my_adc_data2;
+    wire [15:0] my_adc_data3;
+    wire [15:0] my_adc_data4;
+    wire [15:0] my_adc_data5;
+    wire [15:0] my_adc_data6;
+    wire [15:0] my_adc_data7;
+    
+    // Debugging counters
+    wire [15:0] counter_data0_valid;
+    wire [15:0] counter_data0_corrupt;
+    wire [15:0] counter_data0_timeout;
+    wire [15:0] counter_data1_valid;
+    wire [15:0] counter_data1_corrupt;
+    wire [15:0] counter_data1_timeout;
+    
+    adc_uart_rx iADC_UART_RX0 (
+        .clk(S_AXI_ACLK),
+        .rst_n(S_AXI_ARESETN),
+        .start_rx(start_data_tx),
+        .din(motherboard_dout1),
+        .is_dout_valid(is_dout_valid0),
+        .adc_dout0(my_adc_data0),
+        .adc_dout1(my_adc_data1),
+        .adc_dout2(my_adc_data2),
+        .adc_dout3(my_adc_data3),
+        .counter_data_valid(counter_data0_valid),
+        .counter_data_corrupt(counter_data0_corrupt),
+        .counter_data_timeout(counter_data0_timeout)
+    );
+    
+    adc_uart_rx iADC_UART_RX1 (
+        .clk(S_AXI_ACLK),
+        .rst_n(S_AXI_ARESETN),
+        .start_rx(start_data_tx),
+        .din(motherboard_dout2),
+        .is_dout_valid(is_dout_valid1),
+        .adc_dout0(my_adc_data4),
+        .adc_dout1(my_adc_data5),
+        .adc_dout2(my_adc_data6),
+        .adc_dout3(my_adc_data7),
+        .counter_data_valid(counter_data1_valid),
+        .counter_data_corrupt(counter_data1_corrupt),
+        .counter_data_timeout(counter_data1_timeout)
+    );
+    
+    // Only latch in new data when we are told it is valid!
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN) begin
+            adc_dout0 <= 32'b0;
+            adc_dout1 <= 32'b0;
+            adc_dout2 <= 32'b0;
+            adc_dout3 <= 32'b0;
+            adc_dout4 <= 32'b0;
+            adc_dout5 <= 32'b0;
+            adc_dout6 <= 32'b0;
+            adc_dout7 <= 32'b0;
+            
+            status_reg <= 32'b0;
+        end
+    
+        else if (is_dout_valid0 & is_dout_valid1) begin
+            adc_dout0 <= {{16{my_adc_data0[15]}}, my_adc_data0};
+            adc_dout1 <= {{16{my_adc_data1[15]}}, my_adc_data1};
+            adc_dout2 <= {{16{my_adc_data2[15]}}, my_adc_data2};
+            adc_dout3 <= {{16{my_adc_data3[15]}}, my_adc_data3};
+            adc_dout4 <= {{16{my_adc_data4[15]}}, my_adc_data4};
+            adc_dout5 <= {{16{my_adc_data5[15]}}, my_adc_data5};
+            adc_dout6 <= {{16{my_adc_data6[15]}}, my_adc_data6};
+            adc_dout7 <= {{16{my_adc_data7[15]}}, my_adc_data7};
+            
+            status_reg[0] <= 1'b0;
+        end
+        
+        else begin
+            status_reg[0] <= 1'b1;
+        end
+    end
+    
+    always @(posedge S_AXI_ACLK) begin
+        valid_reg[31:0] <= {counter_data1_valid, counter_data0_valid};
+        corrupt_reg[31:0] <= {counter_data1_corrupt, counter_data0_corrupt};
+        timeout_reg[31:0] <= {counter_data1_timeout, counter_data0_timeout};
+    end
     
 	// User logic ends
 

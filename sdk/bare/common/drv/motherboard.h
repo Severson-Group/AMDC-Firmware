@@ -21,4 +21,7 @@ void motherboard_init(uint32_t base_addr);
 void motherboard_set_adc_sampling(bool enable);
 void motherboard_request_new_data(void);
 
+void motherboard_print_samples(void);
+void motherboard_print_counters(void);
+
 #endif // MOTHERBOARD_H

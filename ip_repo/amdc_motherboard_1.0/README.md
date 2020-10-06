@@ -33,10 +33,10 @@ This IP has no build-time configuration parameters. It expects a 200 MHz clock i
 | 0x18 | MB_ADC_CH7 | R | Raw ADC channel 7 data register |
 | 0x1C | MB_ADC_CH8 | R | Raw ADC channel 8 data register |
 | 0x20 | MB_CONTROL | RW | Configuration register |
-| 0x24 | MB_UNUSED1 | RW | Unused register |
-| 0x28 | MB_UNUSED2 | RW | Unused register |
-| 0x2C | MB_UNUSED3 | RW | Unused register |
-| 0x30 | MB_UNUSED4 | RW | Unused register |
+| 0x24 | MB_STATUS  | R  | Status register |
+| 0x28 | MB_COUNT_VALID | R | Number of valid data recieved over UART |
+| 0x2C | MB_COUNT_CORRUPT | R | Number of corrupt data recieved over UART |
+| 0x30 | MB_COUNT_TIMEOUT | R | Number of timeout data recieved over UART |
 | 0x34 | MB_UNUSED5 | RW | Unused register |
 | 0x38 | MB_UNUSED6 | RW | Unused register |
 | 0x3C | MB_UNUSED7 | RW | Unused register |
@@ -53,6 +53,33 @@ This IP has no build-time configuration parameters. It expects a 200 MHz clock i
 | -- | -- | -- |
 | 1 | SYNC_TX | Edge-triggered bit which starts the data transmission from the motherboard back to the AMDC. User driver should toggle this bit to request new data. |
 | 0 | SYNC_ADC_EN | Enables transmission of signal which synchronizes ADC sampling on motherboard to PWM carrier on AMDC |
+
+### Register: `MB_STATUS`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 0 | RX_IN_PROGRESS | 1: motherboard is currently sending data to AMDC, 0: data transmission is idle. NOTE: the data registers (`ADC_CH1..8`) will always contain valid data; when they are read, the latest valid data is returned. |
+
+### Register: `MB_COUNT_VALID`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 31:16 | VALID_RX1 | Unsigned count of valid bytes received over UART1 from motherboard |
+| 15:0  | VALID_RX0 | Unsigned count of valid bytes received over UART0 from motherboard |
+
+### Register: `MB_COUNT_CORRUPT`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 31:16 | CORRUPT_RX1 | Unsigned count of corrupt bytes received over UART1 from motherboard |
+| 15:0  | CORRUPT_RX0 | Unsigned count of corrupt bytes received over UART0 from motherboard |
+
+### Register: `MB_COUNT_TIMEOUT`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 31:16 | TIMEOUT_RX1 | Unsigned count of timeout bytes received over UART1 from motherboard |
+| 15:0  | TIMEOUT_RX0 | Unsigned count of timeout bytes received over UART0 from motherboard |
 
 ## Testing
 

@@ -7,6 +7,7 @@
 #include "drv/motherboard_defs.h"
 #include "sys/cmd/cmd_mb.h"
 #include "sys/util.h"
+#include "sys/debug.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -50,6 +51,21 @@ void motherboard_request_new_data(void)
 
     // Write register to FPGA
     m_motherboard[MOTHERBOARD_DEFS_OFFSET_CONTROL / 4] = reg;
+}
+
+void motherboard_print_samples(void)
+{
+	for (int i = 0; i < 8; i++) {
+		uint32_t val = m_motherboard[i];
+		debug_printf("%i: %04X\r\n", i, val);
+	}
+}
+
+void motherboard_print_counters(void)
+{
+	debug_printf("V: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4]);
+	debug_printf("C: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4]);
+	debug_printf("T: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4]);
 }
 
 #endif // USER_CONFIG_HARDWARE_TARGET

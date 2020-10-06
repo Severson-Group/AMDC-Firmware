@@ -15,6 +15,8 @@ static command_entry_t cmd_entry;
 static command_help_t cmd_help[] = {
     { "adc <on|off>", "Controls motherboard ADC sampling" },
     { "tx", "Manually trigger motherboard to send latest ADC samples" },
+    { "samples", "Display latest samples from MB" },
+    { "counters", "Display debug counters from MB UART RX" },
 };
 
 void cmd_mb_register(void)
@@ -42,6 +44,18 @@ int cmd_mb(int argc, char **argv)
     // Handle 'mb tx' command
     if (argc == 2 && STREQ("tx", argv[1])) {
         motherboard_request_new_data();
+        return CMD_SUCCESS;
+    }
+
+    // Handle 'mb samples' command
+    if (argc == 2 && STREQ("samples", argv[1])) {
+        motherboard_print_samples();
+        return CMD_SUCCESS;
+    }
+
+    // Handle 'mb counters' command
+    if (argc == 2 && STREQ("counters", argv[1])) {
+        motherboard_print_counters();
         return CMD_SUCCESS;
     }
 
