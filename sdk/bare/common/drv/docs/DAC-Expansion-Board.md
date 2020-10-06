@@ -1,4 +1,4 @@
-# Inverter Status Mux Driver
+# DAC Expansion Board Driver
 
 This driver is used to control and configure the DAC expansion board Rev B IP core in the FPGA through the AXI4-Lite interface.
 
