@@ -2,6 +2,15 @@
 
 This user application implements commands executed via the CLI for the DAC expansion board Rev B. The commands act as a direct interface to the internal registers on the [DAC60508MC](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) IC for configuration. In addition, a sample 3-phase +/- 10V signal on DAC channels 0, 2, and 4 is implemented as an example application for the DAC board.
 
+## Enabling the Application
+
+In order to enable the DAC Expansion Board Application, follow these steps to add the `APP_DAC` symbol to the project workspace:
+
+1. Open the `bare` project properties
+2. `C/C++ General` > `Paths and Symbols` > `Symbols`
+3. Click `Add...` and enter `APP_DAC` in `Name:`
+4. Click `OK`
+
 ## Supported Commands
 
 ### Function Generator Example Commands

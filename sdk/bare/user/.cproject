@@ -31,7 +31,6 @@
 								<option id="xilinx.gnu.compiler.symbols.defined.1897050119" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
 									<listOptionValue builtIn="false" value="APP_PCBTEST"/>
-									<listOptionValue builtIn="false" value="APP_DAC"/>
 								</option>
 								<option id="xilinx.gnu.compiler.dircategory.includes.1596529872" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
