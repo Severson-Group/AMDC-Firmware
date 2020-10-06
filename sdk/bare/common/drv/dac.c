@@ -21,13 +21,13 @@ void dac_init(void)
     dac_set_raw(DAC_REG_SYNC, 0x0002FFFF);
 
     // Default all channel values to 0V (redundant to power on reset)
-    dac_set_broadcast(0, 10, -10);
+    dac_set_broadcast(0);
 }
 
 void dac_set_voltage(uint8_t ch, double voltage)
 {
     double range = 20;
-    uint32_t value = (voltage - min) * DAC_MAX_CODE / range;
+    uint32_t value = (voltage + 10) * DAC_MAX_CODE / range;
 
     dac_set_raw(ch + 0x8, (ch + 0x8) << 16 | (value << 4 & 0xFFF0));
 }
@@ -35,7 +35,7 @@ void dac_set_voltage(uint8_t ch, double voltage)
 void dac_set_broadcast(double voltage)
 {
     double range = 20;
-    uint32_t value = (voltage - min) * DAC_MAX_CODE / range;
+    uint32_t value = (voltage + 10) * DAC_MAX_CODE / range;
 
     dac_set_raw(0x6, (0x6) << 16 | (value << 4 & 0xFFF0));
 }

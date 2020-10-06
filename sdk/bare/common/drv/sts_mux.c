@@ -19,7 +19,7 @@ void sts_mux_init(void)
 {
     printf("STATUS LINES:\tInitializing...\n");
 
-    // Set lines A, B, and C as outputs and D as input (CS, SCLK, MOSI, and MISO)
+    // Set line A as output and lines B, C, and D as inputs
     sts_mux_set_output(STS_MUX_A, true);
     sts_mux_set_output(STS_MUX_B, false);
     sts_mux_set_output(STS_MUX_C, false);
