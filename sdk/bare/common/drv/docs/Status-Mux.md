@@ -10,21 +10,46 @@ drv/
 |-- sts_mux.c
 |-- sts_mux.h
 ```
+## Default Connections and Operation
+
+The mux IP can be connected to 8 different IP drivers
 
 ## Configuring the Mux
 ### Macros
 
-The following macros are used to configure which device driver each inverter port is mapped to upon initialization. Each port is set to the `STS_MUX_UNUSED` macro by default which maps the port status lines directly to the inverter IP core. Each port can be mapped to a specific driver IP core by setting the port macro to one of the devices (`STS_MUX_DEVICE1` - `STS_MUX_DEVICE8`)
+The following macros are used to configure which device driver each inverter port is mapped to upon initialization and the direction of each status line. 
 
-`#define INVERTER_PORT1 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT2 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT3 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT4 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT5 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT6 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT7 STS_MUX_UNUSED`<br />
-`#define INVERTER_PORT8 STS_MUX_UNUSED`
+Each port is set to the `STS_MUX_UNUSED` macro by default which maps the port status lines directly to the inverter IP core. Each port can be mapped to a specific driver IP core by setting the port macro to one of the devices (`STS_MUX_DEVICE1` - `STS_MUX_DEVICE8`)
 
+```C
+#define INVERTER_PORT1 STS_MUX_UNUSED
+
+#define INVERTER_PORT2 STS_MUX_UNUSED
+
+#define INVERTER_PORT3 STS_MUX_UNUSED
+
+#define INVERTER_PORT4 STS_MUX_UNUSED
+
+#define INVERTER_PORT5 STS_MUX_UNUSED
+
+#define INVERTER_PORT6 STS_MUX_UNUSED
+
+#define INVERTER_PORT7 STS_MUX_UNUSED
+
+#define INVERTER_PORT8 STS_MUX_UNUSED
+```
+
+The status lines are set to the default directions described in the [AMDC Hardware](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/docs/PowerStack.md) documentation. Status A is an Output and Status B, C, and D are inputs.
+
+```C
+#define STS_MUX_A_DIR STS_MUX_OUTPUT
+
+#define STS_MUX_B_DIR STS_MUX_INPUT
+
+#define STS_MUX_C_DIR STS_MUX_INPUT
+
+#define STS_MUX_D_DIR STS_MUX_INPUT
+```
 ### Functions
 `sts_mux_init(void)`
 
