@@ -19,11 +19,11 @@ void sts_mux_init(void)
 {
     printf("STATUS LINES:\tInitializing...\n");
 
-    // Set line A as output and lines B, C, and D as inputs
-    sts_mux_set_output(STS_MUX_A, true);
-    sts_mux_set_output(STS_MUX_B, false);
-    sts_mux_set_output(STS_MUX_C, false);
-    sts_mux_set_output(STS_MUX_D, false);
+    // Set status line direction according to direction defined by the macros in the header file
+    sts_mux_set_output(STS_MUX_A, STS_MUX_A_DIR);
+    sts_mux_set_output(STS_MUX_B, STS_MUX_B_DIR);
+    sts_mux_set_output(STS_MUX_C, STS_MUX_C_DIR);
+    sts_mux_set_output(STS_MUX_D, STS_MUX_D_DIR);
 
     for (int i = 0; i < 8; i++) {
         if (ports[i]) {

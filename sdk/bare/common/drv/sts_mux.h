@@ -21,6 +21,9 @@ typedef enum {
     STS_MUX_DEVICE8 = 8
 } sts_mux_device_t;
 
+#define STS_MUX_OUTPUT true
+#define STS_MUX_INPUT  false
+
 typedef enum { STS_MUX_A, STS_MUX_B, STS_MUX_C, STS_MUX_D } sts_mux_line_t;
 
 // These macros are used to map the connected devices in the FPGA IP to the desired port on the
@@ -35,6 +38,13 @@ typedef enum { STS_MUX_A, STS_MUX_B, STS_MUX_C, STS_MUX_D } sts_mux_line_t;
 #define INVERTER_PORT6 STS_MUX_UNUSED
 #define INVERTER_PORT7 STS_MUX_UNUSED
 #define INVERTER_PORT8 STS_MUX_UNUSED
+
+// These macros are used to configure the direction of the status lines in the FPGA IP
+
+#define STS_MUX_A_DIR STS_MUX_OUTPUT
+#define STS_MUX_B_DIR STS_MUX_INPUT
+#define STS_MUX_C_DIR STS_MUX_INPUT
+#define STS_MUX_D_DIR STS_MUX_INPUT
 
 void sts_mux_init(void);
 

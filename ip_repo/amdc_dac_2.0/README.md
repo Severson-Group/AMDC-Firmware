@@ -20,13 +20,13 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 
 | Offset | Name | R/W | Description |
 | -- | -- | -- | -- |
-| 0x00 | DAC_CONFIG1 | W | Configuration Register |
+| 0x00 | DAC_CONFIG1 | W | IP Configuration Register |
 | 0x04 | DAC_UNUSED1 | W | Unused register |
-| 0x08 | SYNC_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
-| 0x0C | CONFIG_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
-| 0x10 | GAIN_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
-| 0x14 | TRIGGER_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
-| 0x18 | BROADCAST_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
+| 0x08 | SYNC_REGISTER | W | Device Configuration Register |
+| 0x0C | CONFIG_REGISTER | W | Device Configuration Register |
+| 0x10 | GAIN_REGISTER | W | Device Configuration Register |
+| 0x14 | TRIGGER_REGISTER | W | Device Configuration Register |
+| 0x18 | BROADCAST_REGISTER | W | Device Configuration Register |
 | 0x1C | DAC_UNUSED2 | W | Unused register |
 | 0x20 | DAC_CHANNEL0 | W | Raw DAC channel 0 data register |
 | 0x24 | DAC_CHANNEL1 | W | Raw DAC channel 1 data register |
@@ -42,3 +42,27 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | -- | -- | -- |
 | 0 | EXT_TRIGGER_EN | Enables the DAC to trigger on an external source when 1 |
 
+### SYNC_REGISTER
+
+This register is designed to mimic the `SYNC` register on the device exactly. More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
+
+### CONFIG_REGISTER
+
+This register is designed to mimic the `CONFIG` register on the device exactly. More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
+
+### GAIN_REGISTER
+
+This register is designed to mimic the `GAIN` register on the device exactly. More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
+
+### TRIGGER_REGISTER
+
+This register is designed to mimic the `TRIGGER` register on the device exactly. More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
+
+### BROADCAST_REGISTER
+
+This register is designed to mimic the `BRDCAST` register on the device exactly. More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf)
+
+### DAC_CHANNELN
+| Bits | Name | Description |
+| -- | -- | -- |
+| 15:0 | DATA | The `CODE` written to the channel register on the IC that determines the output voltage |
