@@ -13,6 +13,7 @@
 static task_control_block_t tcb;
 
 // Scales the minimum phase step each callback cycle
+// The minimum phase step is defined as 2 PI / callback frequency
 static double FREQ = 1;
 
 #define NUM_CHANNELS 3
@@ -53,7 +54,7 @@ void task_dac_broadcast(double voltage)
 {
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     // Initiate a broadcast
-    dac_set_broadcast(voltage, 10, -10);
+    dac_set_broadcast(voltage);
 #endif // USER_CONFIG_HARDWARE_TARGET
 }
 
@@ -61,7 +62,7 @@ void task_dac_set_voltage(uint8_t ch, double voltage)
 {
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     // Set the given channels voltage to given voltage
-    dac_set_voltage(ch, voltage, 10, -10);
+    dac_set_voltage(ch, voltage);
 #endif // USER_CONFIG_HARDWARE_TARGET
 }
 

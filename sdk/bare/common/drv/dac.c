@@ -24,17 +24,17 @@ void dac_init(void)
     dac_set_broadcast(0, 10, -10);
 }
 
-void dac_set_voltage(uint8_t ch, double voltage, double max, double min)
+void dac_set_voltage(uint8_t ch, double voltage)
 {
-    double range = max - min;
+    double range = 20;
     uint32_t value = (voltage - min) * DAC_MAX_CODE / range;
 
     dac_set_raw(ch + 0x8, (ch + 0x8) << 16 | (value << 4 & 0xFFF0));
 }
 
-void dac_set_broadcast(double voltage, double max, double min)
+void dac_set_broadcast(double voltage)
 {
-    double range = max - min;
+    double range = 20;
     uint32_t value = (voltage - min) * DAC_MAX_CODE / range;
 
     dac_set_raw(0x6, (0x6) << 16 | (value << 4 & 0xFFF0));

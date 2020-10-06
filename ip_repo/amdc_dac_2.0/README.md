@@ -20,7 +20,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 
 | Offset | Name | R/W | Description |
 | -- | -- | -- | -- |
-| 0x00 | DAC_CONFIG1 | W | Unused register |
+| 0x00 | DAC_CONFIG1 | W | Configuration Register |
 | 0x04 | DAC_UNUSED1 | W | Unused register |
 | 0x08 | SYNC_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |
 | 0x0C | CONFIG_REGISTER | W | More information can be found in the [datasheet](https://github.com/Severson-Group/AMDC-Hardware/blob/develop/Accessories/ExpansionBoard_DAC/REV20200720B/datasheets/dac60508.pdf) |

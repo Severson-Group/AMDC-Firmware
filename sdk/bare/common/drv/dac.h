@@ -28,9 +28,9 @@ typedef enum {
 
 void dac_init(void);
 
-void dac_set_voltage(uint8_t ch, double voltage, double max, double min);
+void dac_set_voltage(uint8_t ch, double voltage);
 
-void dac_set_broadcast(double voltage, double max, double min);
+void dac_set_broadcast(double voltage);
 
 void dac_set_trigger(void);
 
