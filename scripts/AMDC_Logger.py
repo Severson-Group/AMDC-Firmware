@@ -321,7 +321,7 @@ class AMDC_Logger():
         
         # Reset the previous state
         self.amdc.captureOutput = old_state_captureOutput
-        self.amdc.old_state_cmdDelay = old_state_cmdDelay
+        self.amdc.cmdDelay = old_state_cmdDelay
 
         # These are repeating 4 times in the binary stream!
         MAGIC_HEADER = 0x12345678
