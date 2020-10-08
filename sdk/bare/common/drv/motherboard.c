@@ -8,6 +8,7 @@
 #include "sys/cmd/cmd_mb.h"
 #include "sys/debug.h"
 #include "sys/util.h"
+#include "sys/defines.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -51,6 +52,16 @@ void motherboard_request_new_data(void)
 
     // Write register to FPGA
     m_motherboard[MOTHERBOARD_DEFS_OFFSET_CONTROL / 4] = reg;
+}
+
+int motherboard_get_data(mb_channel_e channel, int32_t *out)
+{
+	if (!motherboard_is_valid_channel(channel)) {
+		return FAILURE;
+	} else {
+		*out = (int32_t) m_motherboard[channel];
+		return SUCCESS;
+	}
 }
 
 void motherboard_print_samples(void)
