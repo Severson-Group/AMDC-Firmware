@@ -24,6 +24,10 @@
 #include "usr/demo/app_demo.h"
 #endif
 
+#ifdef APP_DAC
+#include "usr/dac/app_dac.h"
+#endif
+
 void user_apps_init(void)
 {
 #ifdef APP_PCBTEST
@@ -40,5 +44,9 @@ void user_apps_init(void)
 
 #ifdef APP_DEMO
     app_demo_init();
+#endif
+
+#ifdef APP_DAC
+    app_dac_init();
 #endif
 }
