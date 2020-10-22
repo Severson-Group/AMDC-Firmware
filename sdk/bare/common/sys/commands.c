@@ -17,7 +17,7 @@ static char recv_buffer[RECV_BUFFER_LENGTH] = { 0 };
 static int recv_buffer_idx = 0;
 
 #define CMD_MAX_ARGC       (16) // # of args accepted
-#define CMD_MAX_ARG_LENGTH (16) // max chars of any arg
+#define CMD_MAX_ARG_LENGTH (24) // max chars of any arg
 typedef struct pending_cmd_t {
     int argc;
     char *argv[CMD_MAX_ARGC];

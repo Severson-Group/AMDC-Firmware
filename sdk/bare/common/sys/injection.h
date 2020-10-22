@@ -39,7 +39,7 @@ typedef struct inj_func_triangle_t {
     double period;
 } inj_func_triangle_t;
 
-#define INJ_MAX_NAME_LENGTH (16)
+#define INJ_MAX_NAME_LENGTH (24)
 
 typedef struct inj_ctx_t {
     int id;
