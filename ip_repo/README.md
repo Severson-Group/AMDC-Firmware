@@ -22,9 +22,14 @@ This IP core is responsible for driving the external ADC on the AMDC hardware (s
 
 Unsupported IP used on REV C hardware. Drives two ADC devices together to create an effective 16 channel synchronous ADC.
 
+<!--->
 ### `amdc_dac` [unsupported]
 
 This IP core is responsible for driving a DAC expansion board plugged into the GPIO port on the AMDC hardware (REV C only). The core initially configures the external DAC device, then continously updates the digital values in the DAC based upon memory-mapped registers. These registers are settable via the C driver functions.
+<!--->
+### [`amdc_dac`](amdc_dac_2.0/README.md)
+
+This IP core is responsible for driving a DAC expansion board Rev B plugged into the inverter port on the AMDC hardware. The core mirrors the internal registers in the DAC IC. These registers are settable via the C driver functions. Writing to a register triggers a SPI transmission across the inverter status lines to the DAC expansion board.
 
 ### `amdc_encoder`
 
@@ -33,6 +38,14 @@ This IP core interfaces to an incremental quadrature encoder (i.e. ABZ signals) 
 ### `amdc_inverters`
 
 This IP core interfaces to the power stacks plugged into the AMDC hardware (up to 8x two-level three-phase inverters). Using the associated C driver, users can configure PWM switching characteristics (i.e. switching frequency and dead-time length). Duty ratios are set by users via memory-mapped registers. Four status lines per inverter are available via registers.
+
+### [`amdc_pwm_mux`](amdc_pwm_mux_1.0/README.md)
+
+This IP core allows the user to pin swap the PWM outputs to fit their application. This is helpful if the user is trying to use the AMDC with a pre-existing power stack such that the PWM signals need to fit the existing wiring.
+
+### [`amdc_inv_status_mux`](amdc_inv_status_mux_1.0/README.md)
+
+This IP core allows the user to map each individual status line on the inverters to other internally connected IP cores. This allows the user to define which drivers are connected to the status lines on each inverter port on the AMDC hardware through the C driver.
 
 ### [`amdc_leds`](amdc_leds_1.0/README.md)
 

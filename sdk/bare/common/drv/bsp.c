@@ -29,7 +29,10 @@
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#include "drv/dac.h"
 #include "drv/led.h"
+#include "drv/sts_mux.h"
+
 #endif
 
 void bsp_init(void)
@@ -79,6 +82,9 @@ void bsp_init(void)
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     led_init();
+    sts_mux_init();
+    dac_init();
+
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C

@@ -14,10 +14,10 @@
 #include <stdio.h>
 #include <string.h>
 
+// Used for debugging the logging system (preloads last slot with known data)
 #define LOG_DEBUG_ENABLE_PRELOAD_SLOT (0)
 
-#define LOG_BUFFER_LENGTH (LOG_VARIABLE_SAMPLE_DEPTH * sizeof(buffer_entry_t))
-
+// This ought to be larger than the `sys/commands.c` max char per argument
 #define LOG_VAR_NAME_MAX_CHARS (20)
 
 typedef struct buffer_entry_t {
@@ -35,11 +35,11 @@ typedef struct log_var_t {
     uint32_t last_logged_usec;
 
     int num_samples;
-    buffer_entry_t buffer[LOG_VARIABLE_SAMPLE_DEPTH];
+    buffer_entry_t buffer[LOG_SAMPLE_DEPTH_PER_VARIABLE];
     int buffer_idx;
 } log_var_t;
 
-static log_var_t vars[LOG_MAX_NUM_VARS] = { 0 };
+static log_var_t vars[LOG_MAX_NUM_VARIABLES] = { 0 };
 
 static bool is_log_running = false;
 
@@ -55,7 +55,7 @@ void log_init(void)
 
     // Initialize all the variables to NULL address,
     // which indicates they aren't active
-    for (int i = 0; i < LOG_MAX_NUM_VARS; i++) {
+    for (int i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
         vars[i].addr = NULL;
     }
 
@@ -96,7 +96,7 @@ void log_callback(void *arg)
 
     uint32_t elapsed_usec = scheduler_get_elapsed_usec();
 
-    for (uint8_t i = 0; i < LOG_MAX_NUM_VARS; i++) {
+    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
         log_var_t *v = &vars[i];
 
         if (!v->is_registered) {
@@ -124,11 +124,11 @@ void log_callback(void *arg)
             }
 
             v->buffer_idx++;
-            if (v->buffer_idx >= LOG_VARIABLE_SAMPLE_DEPTH) {
+            if (v->buffer_idx >= LOG_SAMPLE_DEPTH_PER_VARIABLE) {
                 v->buffer_idx = 0;
             }
 
-            if (v->num_samples < LOG_VARIABLE_SAMPLE_DEPTH) {
+            if (v->num_samples < LOG_SAMPLE_DEPTH_PER_VARIABLE) {
                 v->num_samples++;
             }
         }
@@ -153,7 +153,7 @@ bool log_is_logging(void)
 int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
 {
     // Sanity check variable idx
-    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -175,7 +175,7 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
 int log_var_unregister(int idx)
 {
     // Sanity check variable idx
-    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -192,7 +192,7 @@ int log_var_unregister(int idx)
 int log_var_is_registered(int idx, bool *is_registered)
 {
     // Sanity check variable idx
-    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -205,7 +205,7 @@ int log_var_is_registered(int idx, bool *is_registered)
 int log_var_empty(int idx)
 {
     // Sanity check variable idx
-    if (idx < 0 || idx >= LOG_MAX_NUM_VARS) {
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -319,7 +319,7 @@ static sm_ctx_dump_ascii_t ctx_dump_ascii;
 int log_var_dump_uart_ascii(int log_var_idx)
 {
     // Sanity check variable idx
-    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -520,7 +520,7 @@ static sm_ctx_dump_binary_t ctx_dump_binary;
 int log_var_dump_uart_binary(int log_var_idx)
 {
     // Sanity check variable idx
-    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARS) {
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
     }
 
@@ -596,14 +596,14 @@ void state_machine_info_callback(void *arg)
 
     case INFO_MAX_SLOTS:
     {
-        debug_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARS);
+        debug_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
         ctx->state = INFO_MAX_DEPTH;
         break;
     }
 
     case INFO_MAX_DEPTH:
     {
-        debug_printf("Max sample depth: %d\r\n", LOG_VARIABLE_SAMPLE_DEPTH);
+        debug_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
         ctx->state = INFO_MAX_SAMPLE_RATE;
         break;
     }
@@ -672,7 +672,7 @@ void state_machine_info_callback(void *arg)
     case INFO_NEXT_VAR:
     {
         ctx->var_idx++;
-        if (ctx->var_idx >= LOG_MAX_NUM_VARS) {
+        if (ctx->var_idx >= LOG_MAX_NUM_VARIABLES) {
             debug_printf("\r\n");
             ctx->state = INFO_REMOVE_TASK;
         } else {
