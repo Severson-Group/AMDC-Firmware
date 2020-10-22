@@ -7,8 +7,8 @@
 #include "drv/motherboard_defs.h"
 #include "sys/cmd/cmd_mb.h"
 #include "sys/debug.h"
-#include "sys/util.h"
 #include "sys/defines.h"
+#include "sys/util.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -56,12 +56,12 @@ void motherboard_request_new_data(void)
 
 int motherboard_get_data(mb_channel_e channel, int32_t *out)
 {
-	if (!motherboard_is_valid_channel(channel)) {
-		return FAILURE;
-	} else {
-		*out = (int32_t) m_motherboard[channel];
-		return SUCCESS;
-	}
+    if (!motherboard_is_valid_channel(channel)) {
+        return FAILURE;
+    } else {
+        *out = (int32_t) m_motherboard[channel];
+        return SUCCESS;
+    }
 }
 
 void motherboard_print_samples(void)

@@ -19,7 +19,7 @@
 typedef enum {
     // Keep first channel index at 0!
     MB_IN1 = 0,
-	MB_IN2,
+    MB_IN2,
     MB_IN3,
     MB_IN4,
     MB_IN5,
@@ -27,7 +27,7 @@ typedef enum {
     MB_IN7,
     MB_IN8,
 
-	// Keep this as last entry!
+    // Keep this as last entry!
     MB_NUM_CHANNELS,
 } mb_channel_e;
 
