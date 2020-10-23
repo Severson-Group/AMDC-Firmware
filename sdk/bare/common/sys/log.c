@@ -18,7 +18,7 @@
 #define LOG_DEBUG_ENABLE_PRELOAD_SLOT (0)
 
 // This ought to be larger than the `sys/commands.c` max char per argument
-#define LOG_VAR_NAME_MAX_CHARS (20)
+#define LOG_VAR_NAME_MAX_CHARS (40)
 
 typedef struct buffer_entry_t {
     uint32_t timestamp;

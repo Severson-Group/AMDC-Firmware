@@ -19,10 +19,13 @@ void motherboard_init(uint32_t base_addr)
     // Store base address for IP
     m_motherboard = (volatile uint32_t *) base_addr;
 
-    bool enabled = false;
-    motherboard_set_adc_sampling(enabled);
-
     cmd_mb_register();
+
+#if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
+    motherboard_set_adc_sampling(true);
+#else
+    motherboard_set_adc_sampling(false);
+#endif
 }
 
 void motherboard_set_adc_sampling(bool enable)
