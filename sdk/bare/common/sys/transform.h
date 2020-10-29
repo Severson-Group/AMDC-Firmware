@@ -10,4 +10,7 @@ void transform_dqz_inverse(double C, double theta, double *abc, double *dqz);
 void transform_clarke(double C, double *abc, double *xyz);
 void transform_park(double theta, double *xyz, double *dqz);
 
+void transform_clarke_inverse(double C, double *abc, double *xyz);
+void transform_park_inverse(double theta, double *xyz, double *dqz);
+
 #endif // TRANSFORM_H

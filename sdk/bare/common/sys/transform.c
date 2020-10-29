@@ -23,9 +23,29 @@ void transform_dqz(double C, double theta, double *abc, double *dqz)
     transform_park(theta, xyz, dqz);
 }
 
+void transform_clarke_inverse(double C, double *abc, double *xyz)
+{
+	if (C == TRANS_DQZ_C_INVARIANT_AMPLITUDE) {
+		abc[0] = 1 * xyz[0]      + 0 * xyz[1]         + xyz[2];
+		abc[1] = -1 / 2 * xyz[0] + SQRT3 / 2 * xyz[1] + xyz[2];
+		abc[2] = -1 / 2 * xyz[0] - SQRT3 / 2 * xyz[1] + xyz[2];
+	}
+	if (C == TRANS_DQZ_C_INVARIANT_POWER) {
+		abc[0] = C * (1 * xyz[0]      + 0 * xyz[1])         + xyz[2];
+		abc[1] = C * (-1 / 2 * xyz[0] + SQRT3 / 2 * xyz[1]) + xyz[2];
+		abc[2] = C * (-1 / 2 * xyz[0] - SQRT3 / 2 * xyz[1]) + xyz[2];
+	}
+}
+
+void transform_park_inverse(double theta, double *xyz, double *dqz)
+{
+	// Rotate backwards
+	transform_park(-theta, xyz, dqz);
+}
+
 void transform_dqz_inverse(double C, double theta, double *abc, double *dqz)
 {
-    abc[0] = C * (cos(theta) * dqz[0] - sin(theta) * dqz[1]) + dqz[2];
-    abc[1] = C * (cos(theta - PI23) * dqz[0] - sin(theta - PI23) * dqz[1]) + dqz[2];
-    abc[2] = C * (cos(theta + PI23) * dqz[0] - sin(theta + PI23) * dqz[1]) + dqz[2];
+    double xyz[3];
+    transform_park_inverse(theta, xyz, dqz);
+    transform_clarke_inverse(C, abc, xyz);
 }
