@@ -56,4 +56,3 @@ void transform_dqz_inverse(transform_dqz_type_e C, double theta, double *abc, do
     transform_park_inverse(theta, xyz, dqz);
     transform_clarke_inverse(C, abc, xyz);
 }
-
