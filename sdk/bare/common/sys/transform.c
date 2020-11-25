@@ -47,7 +47,7 @@ void transform_clarke_inverse(transform_dqz_type_e C, double *abc, double *xyz)
 void transform_park_inverse(double theta, double *xyz, double *dqz)
 {
     // Rotate backwards
-    transform_park(-theta, xyz, dqz);
+    transform_park(-theta, dqz, xyz);
 }
 
 void transform_dqz_inverse(transform_dqz_type_e C, double theta, double *abc, double *dqz)
@@ -56,3 +56,4 @@ void transform_dqz_inverse(transform_dqz_type_e C, double theta, double *abc, do
     transform_park_inverse(theta, xyz, dqz);
     transform_clarke_inverse(C, abc, xyz);
 }
+
