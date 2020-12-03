@@ -34,7 +34,6 @@
 #include "drv/led.h"
 #include "drv/sts_mux.h"
 
-
 #endif
 
 void bsp_init(void)
