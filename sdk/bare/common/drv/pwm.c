@@ -6,8 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define PWM_BASE_ADDR     (0x43C20000)
-#define PWM_MUX_BASE_ADDR (0x43C40000)
+#define PWM_BASE_ADDR (0x43C20000)
 
 static int pwm_set_carrier_divisor(uint8_t divisor);
 static int pwm_set_carrier_max(uint16_t max);
@@ -44,13 +43,6 @@ void pwm_init(void)
     // but if user enables PWM without updating registers,
     // 50% will appear at outputs.
     pwm_set_all_duty_midscale();
-
-    // Initialize the PWM mux block in the FPGA to basic pass-through
-    uint32_t mux_config_data[48];
-    for (int i = 0; i < 48; i++) {
-        mux_config_data[i] = i;
-    }
-    pwm_mux_set_all_pins(mux_config_data);
 }
 
 void pwm_set_all_duty_midscale(void)
@@ -62,7 +54,6 @@ void pwm_set_all_duty_midscale(void)
 
 void pwm_toggle_reset(void)
 {
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
     // Toggles RST on all inverter outputs for 1 ms
     pwm_set_all_rst(0xFF);
@@ -75,7 +66,15 @@ void pwm_toggle_reset(void)
     }
     pwm_set_all_rst(0xFF);
 
-#endif // USER_CONFIG_HARDWARE_TARGET
+}
+
+void pwm_set_all_rst(uint8_t rst)
+{
+    uint32_t value = 0;
+    value |= (uint32_t) rst;
+
+    // Offset 27 is rst output reg
+    Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
 int pwm_enable(void)
@@ -243,37 +242,6 @@ static int pwm_set_carrier_max(uint16_t max)
     return SUCCESS;
 }
 
-// NOTE: we assume config is an array of length >= 48
-int pwm_mux_set_all_pins(uint32_t *config)
-{
-    // Only allow PWM configuration changes when switching is off
-    if (pwm_is_enabled()) {
-        return FAILURE;
-    }
-
-    for (int i = 0; i < (PWM_NUM_CHANNELS * 2); i++) {
-        Xil_Out32(PWM_MUX_BASE_ADDR + (i * sizeof(uint32_t)), config[i]);
-    }
-
-    return SUCCESS;
-}
-
-int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
-{
-    // Only allow PWM configuration changes when switching is off
-    if (pwm_is_enabled()) {
-        return FAILURE;
-    }
-
-    if (pwm_pin_idx < 0 || pwm_pin_idx >= 48) {
-        return FAILURE;
-    }
-
-    Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
-
-    return SUCCESS;
-}
-
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 
 void pwm_get_all_flt_temp(uint8_t *flt_temp)
@@ -313,15 +281,6 @@ void pwm_get_all_rdy(uint8_t *rdy)
     value &= 0x000000FF;
 
     *rdy = (uint8_t) value;
-}
-
-void pwm_set_all_rst(uint8_t rst)
-{
-    uint32_t value = 0;
-    value |= (uint32_t) rst;
-
-    // Offset 27 is rst output reg
-    Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
 int pwm_get_status(pwm_channel_e channel, pwm_status_t *status)
