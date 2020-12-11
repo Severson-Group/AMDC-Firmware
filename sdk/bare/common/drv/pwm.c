@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define PWM_BASE_ADDR (0x43C20000)
+#define PWM_BASE_ADDR     (0x43C20000)
 #define PWM_MUX_BASE_ADDR (0x43C40000)
 
 static int pwm_set_carrier_divisor(uint8_t divisor);
