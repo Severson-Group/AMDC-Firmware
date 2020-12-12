@@ -62,8 +62,6 @@ void pwm_set_all_duty_midscale(void)
 
 void pwm_toggle_reset(void)
 {
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-
     // Toggles RST on all inverter outputs for 1 ms
     pwm_set_all_rst(0xFF);
     for (int i = 0; i < 83250; i++) {
@@ -74,8 +72,15 @@ void pwm_toggle_reset(void)
         asm("nop");
     }
     pwm_set_all_rst(0xFF);
+}
 
-#endif // USER_CONFIG_HARDWARE_TARGET
+void pwm_set_all_rst(uint8_t rst)
+{
+    uint32_t value = 0;
+    value |= (uint32_t) rst;
+
+    // Offset 27 is rst output reg
+    Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
 int pwm_enable(void)
@@ -313,15 +318,6 @@ void pwm_get_all_rdy(uint8_t *rdy)
     value &= 0x000000FF;
 
     *rdy = (uint8_t) value;
-}
-
-void pwm_set_all_rst(uint8_t rst)
-{
-    uint32_t value = 0;
-    value |= (uint32_t) rst;
-
-    // Offset 27 is rst output reg
-    Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
 int pwm_get_status(pwm_channel_e channel, pwm_status_t *status)
