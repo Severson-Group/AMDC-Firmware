@@ -29,30 +29,41 @@ In addition to the above, if the user desires to use any specialized functions /
 
 **Model Settings and Layout**
 The simulink model should be split into three distinct subsystems as follows:
-	1. Input / Output (I/O): This subsystem includes all Simulink I/O blocks such as signal inputs, scope, signal outputs etc. No C code should be generated for these blocks. 
-	2. Plant - All the blocks corresponding to the physical system (eg: motor, R-L load), whose parameters are to be controlled is called the plant. C code is not generated for the plant model.
-	3. Controller: The controller subsystem implements the logic necessary to affect the desired control action on the plant. The is the block to be implemented on the AMDC, and the C code is generated for using Simulink. 
-		As the digital controllers (such as the AMDC) are all discrete time, the blocks within the controller subsystem in Simulink should all be discrete time implementations. More information about the discrete time blocks in Simulink can be found [here](https://www.mathworks.com/help/simulink/discrete.html). 	
+1. Input / Output (I/O): This subsystem includes all Simulink I/O blocks such as signal inputs, scope, signal outputs etc. No C code should be generated for these blocks. 
+	
+2. Plant - All the blocks corresponding to the physical system (eg: motor, R-L load), whose parameters are to be controlled is called the plant. C code is not generated for the plant model.
+	
+3. Controller: The controller subsystem implements the logic necessary to affect the desired control action on the plant. The is the block to be implemented on the AMDC, and the C code is generated for using Simulink. As the digital controllers (such as the AMDC) are all discrete time, the blocks within the controller subsystem in Simulink should all be discrete time implementations. More information about the discrete time blocks in Simulink can be found [here](https://www.mathworks.com/help/simulink/discrete.html). 	
 
 Once the simulink model is separated into the distinct subsystems as described above, the following parameters are to be set:
+1. In `Model Settings -> Solver -> Solver selection`, the `type` should be set to `Fixed-step`. 
+2. The coder to be used for autogen should be selected. By default simulink generates code for a generic real-time target. This should be changed to the embedded coder as follows:	
 
-	1. In `Model Settings -> Solver -> Solver selection`, the `type` should be set to `Fixed-step` 
-	2. The coder to be used for autogen should be selected. By default simulink generates code for a generic real-time target. This should be changed to the embedded coder as follows:
-		i. Navigate to `Model Settings -> Code Generation`.
-		ii. Click on the `Browse` button under `Target selection`. A list will pop-up.
-		iii. From the list select `ert.tlc`. The description field for this will read `Embedded coder`.
-		iv. Click `OK` 
+	i. Navigate to `Model Settings -> Code Generation`.
+
+	ii. Click on the `Browse` button under `Target selection`. A list will pop-up.
+
+	iii. From the list select `ert.tlc`. The description field for this will read `Embedded coder`.
+
+	iv. Click `OK` 
 	
 ## Creating a Referenced Model
 The controller subsystem for which autogen code will be generated, is to be converted to a referenced model. For simulation and code generation, blocks within a referenced model execute together as a unit. More information about referenced models can be found [here](https://www.mathworks.com/help/simulink/model-reference.html).	
 The following steps must be followed to convert the controller subsystem to a referenced model:
-	1. The controller subsystem should first be made an atomic subsystem. This can be done by right clicking on the controller subsystem and going to `Block Parameters (Subsystem)` and checking the `Treat as atomic unit` checkbox.
-	2. The atomic subsystem can then be converted to a referenced model as follows:
-		i. Right click on the controller subsystem.
-		ii. Navigate to `Subsystem & Model Reference -> Convert to` and select `Referenced Model`.
-		iii. Simulink will load the `Model Reference Conversion Advisor` and a pop-up will appear.
-		iv. Keep the default options and click the `Convert` button.
-		v. Simulink will start running a few checks and begin conversion. If there are errors, Simulink will indicate what the errors are. Please fix them and repeat steps i-iv.
+
+1. The controller subsystem should first be made an atomic subsystem. This can be done by right clicking on the controller subsystem and going to `Block Parameters (Subsystem)` and checking the `Treat as atomic unit` checkbox.
+
+2. The atomic subsystem can then be converted to a referenced model as follows:
+
+	i. Right click on the controller subsystem.
+
+	ii. Navigate to `Subsystem & Model Reference -> Convert to` and select `Referenced Model`.
+
+	iii. Simulink will load the `Model Reference Conversion Advisor` and a pop-up will appear.
+
+	iv. Keep the default options and click the `Convert` button.
+
+	v. Simulink will start running a few checks and begin conversion. If there are errors, Simulink will indicate what the errors are. Please fix them and repeat steps i-iv.
 		
 Once the controller subsystem is successfully converted to a referenced model, it should appear as a distinct Simulink model (.slx file) in the same directory. The name of the model will be same as the controller subsystem name in the parent Simulink model.
 
