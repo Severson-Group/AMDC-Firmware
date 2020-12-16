@@ -22,18 +22,22 @@ This sections outlines the model configuration and settings to be made in Simuli
 
 **Pre-Requisites:** 
 To autogen code using Simulink, the user should have installed the latest version of MATLAB along with the following toolboxes / features:
-	- Simulink
-	- Embedded coder
-	- Simulink coder
+
+- Simulink
+
+- Embedded coder
+
+- Simulink coder
+
 In addition to the above, if the user desires to use any specialized functions / blocks, the corresponding toolboxes should be installed.
 
 **Model Settings and Layout**
 The simulink model should be split into three distinct subsystems as follows:
-1. Input / Output (I/O): This subsystem includes all Simulink I/O blocks such as signal inputs, scope, signal outputs etc. No C code should be generated for these blocks. 
+1. _Input / Output (I/O):_ This subsystem includes all Simulink I/O blocks such as signal inputs, scope, signal outputs etc. No C code should be generated for these blocks. 
 	
-2. Plant - All the blocks corresponding to the physical system (eg: motor, R-L load), whose parameters are to be controlled is called the plant. C code is not generated for the plant model.
+2. _Plant:_ All the blocks corresponding to the physical system (eg: motor, R-L load), whose parameters are to be controlled is called the plant. C code is not generated for the plant model.
 	
-3. Controller: The controller subsystem implements the logic necessary to affect the desired control action on the plant. The is the block to be implemented on the AMDC, and the C code is generated for using Simulink. As the digital controllers (such as the AMDC) are all discrete time, the blocks within the controller subsystem in Simulink should all be discrete time implementations. More information about the discrete time blocks in Simulink can be found [here](https://www.mathworks.com/help/simulink/discrete.html). 	
+3. _Controller:_ The controller subsystem implements the logic necessary to affect the desired control action on the plant. The is the block to be implemented on the AMDC, and the C code is generated for using Simulink. As the digital controllers (such as the AMDC) are all discrete time, the blocks within the controller subsystem in Simulink should all be discrete time implementations. More information about the discrete time blocks in Simulink can be found [here](https://www.mathworks.com/help/simulink/discrete.html). 	
 
 Once the simulink model is separated into the distinct subsystems as described above, the following parameters are to be set:
 1. In `Model Settings -> Solver -> Solver selection`, the `type` should be set to `Fixed-step`. 
