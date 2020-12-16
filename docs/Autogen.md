@@ -47,7 +47,7 @@ Once the simulink model is separated into the distinct subsystems as described a
 
 	iv. Click `OK` 
 	
-## Creating a Referenced Model
+### Creating a Referenced Model
 The controller subsystem for which autogen code will be generated, is to be converted to a referenced model. For simulation and code generation, blocks within a referenced model execute together as a unit. More information about referenced models can be found [here](https://www.mathworks.com/help/simulink/model-reference.html).	
 The following steps must be followed to convert the controller subsystem to a referenced model:
 
