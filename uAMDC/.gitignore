@@ -1,0 +1,16 @@
+ettings/language.settings.xml
+Debug/
+Release/
+scripts/__pycache__/
+*.o
+*.d
+*.ignore
+*.launch
+*.exe
+__pycache__
+*.pyc
+*.out
+.vscode/.*
+.venv
+.DS_Store
+venv
