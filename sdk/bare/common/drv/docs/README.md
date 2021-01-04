@@ -11,3 +11,7 @@ This driver is responsible for driving the DAC expansion board Rev B.
 ### [`Status-Mux`](Status-Mux.md)
 
 This driver is responsible for configuring the inverter status mux IP core
+
+### [`GPIO-Mux`](GPIO-Mux.md)
+
+This driver is responsible for configuring the IsoSPI GPIO mux IP core
