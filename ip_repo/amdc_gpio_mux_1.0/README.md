@@ -6,6 +6,8 @@ This IP core is a mux for the GPIO lines on the IsoSPI ports. It allows remappin
 - Remap IsoSPI ports GPIO lines
 - Configurable in real time using the CLI
 
+<img src="docs/gpio_mux_ip_block_diagram.svg" width="600">
+
 ## IP Interface
 
 The IP is accessed via the AXI4-Lite register-based interface from the DSP.
