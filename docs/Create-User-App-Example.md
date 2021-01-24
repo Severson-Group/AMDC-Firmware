@@ -21,7 +21,7 @@ In short our _application_ has some _task_ (where the work actually gets done) a
     6. Click _OK_, then click _OK_ in the lower right of the Build Properties window 
 2. Add the application in user_apps.c
     1. In the _Project Explorer_ pane locate user_apps.c under _bare -> usr -> user_apps.c_
-    2. Using `APP_BLINK` as an example copy the `#ifdef APP_BLINK` section and paste it below. replacing `BLINK` with `APPNAME`. Don't worry the folders and files don't exist yet, we'll be adding them shortly. 
+    2. Using `APP_BLINK` as an example copy the `#ifdef APP_BLINK` section and paste it below, replacing `BLINK` with `APPNAME.` Don't worry the folders and files don't exist yet, we'll be adding them shortly. 
         ```C
         #ifdef APP_APPNAME
         #include "usr/appName/app_appName.h"
