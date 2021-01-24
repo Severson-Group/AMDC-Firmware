@@ -62,7 +62,3 @@ In short our _application_ has some _task_ (where the work actually gets done) a
 ## Summary
 
 We now have a template file structure for adding custom user applications and task, and the framework to control these applications with the serial interface!
-        
-
-- [Optional] Create a new task
-- [Optional] Create a new command
