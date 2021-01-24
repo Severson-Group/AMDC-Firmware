@@ -1,6 +1,6 @@
 # Creating a Custom User App for AMDC
 
-**Guidelines for generating custom user app code for the AMDC**
+Guidelines for generating custom user app code for the AMDC
 
 ## Background
 
