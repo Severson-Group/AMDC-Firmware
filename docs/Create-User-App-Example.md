@@ -21,7 +21,7 @@ In short our _application_ has some _task_ (where the work actually gets done) a
     6. Click _OK_, then click _OK_ in the lower right of the Build Properties window 
 2. Add the application in user_apps.c
     1. In the _Project Explorer_ pane locate user_apps.c under _bare -> usr -> user_apps.c_
-    2. Using _APP_BLINK_ as an example copy the `#ifdef APP_BLINK` section and paste it below. replacing `BLINK` with `appName`. Don't worry the folders and files don't exist yet, we'll be adding them shortly. 
+    2. Using `APP_BLINK` as an example copy the `#ifdef APP_BLINK` section and paste it below. replacing `BLINK` with `APPNAME`. Don't worry the folders and files don't exist yet, we'll be adding them shortly. 
         ```C
         #ifdef APP_APPNAME
         #include "usr/appName/app_appName.h"
@@ -52,11 +52,11 @@ In short our _application_ has some _task_ (where the work actually gets done) a
     1. `task_appname_init()` is where you will place any initialization code for your task. This function will run once when we start the task. 
     1. `task_appname_callback()` will occur at the rate defined by `TASK_APPNAME_INTERNAL_USEC (#)` This is where we will place any code that needs to be run based on the task frequency. 
 1. Create the command files for control via serial interface
-    1. Create the folder _cmd_ under the _appName_ folder. See blink example file structure
-    1. Copy and paste the _cmd_blink.c_ and _cmd_blink.h_ files into the newly created _cmd_ folder and rename the files _cmd_appname.c and *.h_ respectively. 
+    1. Create the folder **cmd** under the **appName** folder. See blink example file structure
+    1. Copy and paste the _cmd_blink.c_ and _cmd_blink.h_ files into the newly created **cmd** folder and rename the files _cmd_appname.c and *.h_ respectively. 
     1. Replace all instances of `blink` with `appName`
-    1. See the _hello_ text parse sections of code for examples of multi level command parsing. 
-        1. Remove `hello` parse section within `cmd_appName()` and within the `cmd_help[]` struct. 
+    1. See the `hello` text parse sections of code for examples of multi level command parsing. 
+        1. Remove `hello` parse section from `cmd_appName()` and from the `cmd_help[]` struct. 
 1. Build the project. There should be no build errors, work through them if there are. 
 
 ## Summary
