@@ -1,10 +1,17 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "sys/defines.h"
-#include "usr/user_defines.h"
+#include "sys/task_stats.h"
+#include "usr/user_config.h"
+
+// Utility defines for time conversions
+#define USEC_IN_SEC       (1000000)
+#define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
+#define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
 // SysTick
 //
@@ -25,11 +32,14 @@ typedef void (*task_callback_t)(void *);
 typedef struct task_control_block_t {
     int id;
     const char *name;
-    uint8_t registered;
+    bool is_registered;
     task_callback_t callback;
     void *callback_arg;
-    uint64_t interval_usec;
-    uint64_t last_run_usec;
+    uint32_t interval_usec;
+    uint32_t last_run_usec;
+
+    task_stats_t stats;
+
     struct task_control_block_t *next;
 } task_control_block_t;
 
@@ -38,10 +48,10 @@ void scheduler_run(void);
 
 void scheduler_tcb_init(
     task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec);
-void scheduler_tcb_register(task_control_block_t *tcb);
-void scheduler_tcb_unregister(task_control_block_t *tcb);
-uint8_t scheduler_tcb_is_registered(task_control_block_t *tcb);
+int scheduler_tcb_register(task_control_block_t *tcb);
+int scheduler_tcb_unregister(task_control_block_t *tcb);
+bool scheduler_tcb_is_registered(task_control_block_t *tcb);
 
-uint64_t scheduler_get_elapsed_usec(void);
+uint32_t scheduler_get_elapsed_usec(void);
 
 #endif // SCHEDULER_H

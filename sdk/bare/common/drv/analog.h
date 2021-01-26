@@ -1,45 +1,84 @@
 #ifndef ANALOG_H
 #define ANALOG_H
 
+#include "drv/hardware_targets.h"
+#include "usr/user_config.h"
+#include <stdbool.h>
 #include <stdint.h>
 
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#define ANALOG_BASE_ADDR (0x43C00000)
+#endif
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#define ANALOG_BASE_ADDR (0x43C00000)
+#endif
+
 typedef enum {
-    ANLG_CHNL1 = 1,
-    ANLG_CHNL2,
-    ANLG_CHNL3,
-    ANLG_CHNL4,
-    ANLG_CHNL5,
-    ANLG_CHNL6,
-    ANLG_CHNL7,
-    ANLG_CHNL8,
-    ANLG_CHNL9,
-    ANLG_CHNL10,
-    ANLG_CHNL11,
-    ANLG_CHNL12,
-    ANLG_CHNL13,
-    ANLG_CHNL14,
-    ANLG_CHNL15,
-    ANLG_CHNL16,
+    // Keep first channel index at 0!
+    ANALOG_IN1 = 0,
+    ANALOG_IN2,
+    ANALOG_IN3,
+    ANALOG_IN4,
+    ANALOG_IN5,
+    ANALOG_IN6,
+    ANALOG_IN7,
+    ANALOG_IN8,
+
+// REV C target hardware is the only platform
+// which supports more than 8 analog inputs.
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+    ANALOG_IN9,
+    ANALOG_IN10,
+    ANALOG_IN11,
+    ANALOG_IN12,
+    ANALOG_IN13,
+    ANALOG_IN14,
+    ANALOG_IN15,
+    ANALOG_IN16,
+#endif // USER_CONFIG_HARDWARE_TARGET
+
+    // Keep this as last entry!
+    ANALOG_NUM_CHANNELS,
 } analog_channel_e;
 
 typedef enum {
-    ANLG_CLKDIV2 = 0,
-    ANLG_CLKDIV4,
-    ANLG_CLKDIV8,
-    ANLG_CLKDIV16,
+    ANALOG_CLKDIV2 = 0,
+    ANALOG_CLKDIV4,
+    ANALOG_CLKDIV8,
+    ANALOG_CLKDIV16,
 } analog_clkdiv_e;
 
-#define ANALOG_NUM_CHANNELS (16)
+static inline bool analog_is_valid_channel(analog_channel_e channel)
+{
+    if (channel >= ANALOG_IN1 && channel < ANALOG_NUM_CHANNELS) {
+        return true;
+    }
 
-void analog_init(void);
+    return false;
+}
 
-void analog_set_clkdiv(analog_clkdiv_e div);
-void analog_get_clkdiv(analog_clkdiv_e *div);
+static inline bool analog_is_valid_clkdiv(analog_clkdiv_e div)
+{
+    if (div == ANALOG_CLKDIV2 || div == ANALOG_CLKDIV4 || div == ANALOG_CLKDIV8 || div == ANALOG_CLKDIV16) {
+        return true;
+    }
 
-void analog_getf(analog_channel_e channel, float *value);
-void analog_geti(analog_channel_e channel, int16_t *value);
+    return false;
+}
 
+void analog_init(uint32_t base_addr);
+
+int analog_set_clkdiv(analog_clkdiv_e div);
+void analog_get_clkdiv(analog_clkdiv_e *out_div);
+
+int analog_getf(analog_channel_e channel, float *out_value);
+int analog_geti(analog_channel_e channel, int16_t *out_value);
+
+void analog_set_pwm_sync(bool sync_to_carrier_high, bool sync_to_carrier_low);
+
+// TODO(NP): Implement digital low-pass filtering in FPGA,
+//           then, implement C driver which looks like this:
 // void analog_set_filter(analog_channel_e channel, ...);
-void analog_set_pwm_sync(uint8_t carrier_high, uint8_t carrier_low);
 
 #endif // ANALOG_H

@@ -1,7 +1,7 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-#include "sys/defines.h"
+#include "sys/scheduler.h"
 
 #define SERIAL_UPDATES_PER_SEC (10000)
 #define SERIAL_INTERVAL_USEC   (USEC_IN_SEC / SERIAL_UPDATES_PER_SEC)

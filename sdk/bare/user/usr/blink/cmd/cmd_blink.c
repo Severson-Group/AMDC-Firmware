@@ -4,6 +4,7 @@
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/util.h"
 #include "usr/blink/task_blink.h"
 #include <stdlib.h>
 #include <string.h>
@@ -13,12 +14,12 @@ static command_entry_t cmd_entry;
 
 // Defines help content displayed for this command
 // when user types "help" at command prompt
-#define NUM_HELP_ENTRIES (3)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "hello <name>", "Print hello to screen" },
     { "init", "Start task" },
     { "deinit", "Stop task" },
-
+    { "stats print", "Print stats" },
+    { "stats reset", "Reset stats" },
 };
 
 void cmd_blink_register(void)
@@ -27,7 +28,7 @@ void cmd_blink_register(void)
     //
     // Here is where you define the base command string: "blink"
     // and what function is called to handle command
-    commands_cmd_init(&cmd_entry, "blink", "Blink application commands", cmd_help, NUM_HELP_ENTRIES, cmd_blink);
+    commands_cmd_init(&cmd_entry, "blink", "Blink application commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_blink);
 
     // Register the command with the system
     commands_cmd_register(&cmd_entry);
@@ -76,12 +77,12 @@ int cmd_blink(int argc, char **argv)
             debug_print("\r\n");
 
             // Indicate success, but hide SUCCESS message
-            return SUCCESS_QUIET;
+            return CMD_SUCCESS_QUIET;
 
         } else if (strcmp("fred", argv[2]) == 0) {
             // We don't want to talk to Fred... :(
             // Treat this case as an invalid command input from user
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         } else {
             // Normal hello for anyone else
@@ -89,21 +90,39 @@ int cmd_blink(int argc, char **argv)
             debug_print("\r\n");
 
             // Indicate success, but hide SUCCESS message
-            return SUCCESS_QUIET;
+            return CMD_SUCCESS_QUIET;
         }
 
         // If user typed a valid command, return SUCCESS
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 2 && strcmp("init", argv[1]) == 0) {
-        task_blink_init();
-        return SUCCESS;
+        if (task_blink_init() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
     }
 
     if (argc == 2 && strcmp("deinit", argv[1]) == 0) {
-        task_blink_deinit();
-        return SUCCESS;
+        if (task_blink_deinit() != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
+    }
+
+    if (argc >= 2 && strcmp("stats", argv[1]) == 0) {
+        if (argc == 3 && strcmp("print", argv[2]) == 0) {
+            task_blink_stats_print();
+            return CMD_SUCCESS;
+        }
+
+        if (argc == 3 && strcmp("reset", argv[2]) == 0) {
+            task_blink_stats_reset();
+            return CMD_SUCCESS;
+        }
     }
 
     // At any point, if an error is detected in given input command,
@@ -115,7 +134,7 @@ int cmd_blink(int argc, char **argv)
     // valid should you trust them.
     //
     // Common error return values are: FAILURE, INVALID_ARGUMENTS
-    return INVALID_ARGUMENTS;
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_BLINK

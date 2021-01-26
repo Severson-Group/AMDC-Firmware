@@ -4,6 +4,7 @@
 #include "xtmrctr.h"
 #include <stdio.h>
 
+// Get the TIMER_0 device from the FPGA
 // Parameter definitions
 #define TMR_DEVICE_ID                 XPAR_CONTROL_TIMER_0_DEVICE_ID
 #define INTC_TMR_INTERRUPT_ID         XPAR_FABRIC_CONTROL_TIMER_0_INTERRUPT_INTR

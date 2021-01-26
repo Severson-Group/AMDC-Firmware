@@ -1,3 +1,8 @@
+#include "drv/hardware_targets.h"
+#include "usr/user_config.h"
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+
 #include "drv/led.h"
 #include "xil_io.h"
 #include <stdint.h>
@@ -72,3 +77,5 @@ uint32_t led_get_raw(led_t idx)
 {
     return Xil_In32(LED_BASE_ADDR + (idx * sizeof(uint32_t)));
 }
+
+#endif // USER_CONFIG_HARDWARE_TARGET

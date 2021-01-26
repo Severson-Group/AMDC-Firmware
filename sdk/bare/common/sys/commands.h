@@ -1,10 +1,18 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "sys/defines.h"
+#include "sys/scheduler.h"
 
 #define COMMANDS_UPDATES_PER_SEC (10000)
 #define COMMANDS_INTERVAL_USEC   (USEC_IN_SEC / COMMANDS_UPDATES_PER_SEC)
+
+// Supported command handler return codes
+#define CMD_SUCCESS           (0)
+#define CMD_FAILURE           (1)
+#define CMD_SUCCESS_QUIET     (2)
+#define CMD_INVALID_ARGUMENTS (3)
+#define CMD_INPUT_TOO_LONG    (4)
+#define CMD_UNKNOWN_CMD       (5)
 
 // Forward declarations
 typedef struct command_entry_t command_entry_t;

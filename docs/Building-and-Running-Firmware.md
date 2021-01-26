@@ -73,10 +73,16 @@ Only source files and IP is version controlled which mean you must generate a lo
 
 1. Open Vivado Application
 2. `Tools` > `Run Tcl Script...`
-3. Select `$REPO_DIR\import.tcl` script
+3. Select `$REPO_DIR\import_rev*.tcl` script (use appropriate script for the target AMDC hardware)
 4. `OK`
 
-Upon successful project generation, the block diagram will open. If the block diagram does not open, fix the errors and try reimporting project.
+Upon successful project generation, the block diagram will open. If the block diagram does not open, fix the errors and try reimporting project. See the errors by opening the `Tcl Console` pane in Vivado.
+
+#### Common Errors
+
+Having spaces in the file system path for the Vivado project is not supported. For example, if your repo is located in your user directory and your username has a space in it: `C:\Users\**John Doe**\Documents\GitHub\AMDC-Firmare`. If this is the case, the project import will fail. Move the repo elsewhere and try again.
+
+The import script **will not** overwrite the `amdc/` Vivado project folder on disk. If you are trying to regenerate the Vivado project, you must delete the old `amdc/` folder before running the script.
 
 ### Generating Bitstream
 
@@ -106,7 +112,7 @@ This is an important step. The first time you generate the FPGA hardware configu
 2. Select `$REPO_DIR\sdk` for both "Exported location" and "Workspace"
 3. `OK`
 4. SDK will open
-5. Ensure the project `design_1_wrapper_hw_platform_0` is in `Project Explorer`
+5. Ensure the project `amdc_rev*_wrapper_hw_platform_0` is in `Project Explorer`
 
 You may now close Vivado if you do not plan on changing the FPGA HDL. Also, you may now close the SDK. You will need to open it in the next section, but practice opening it directly -- not from Vivado.
 
@@ -117,7 +123,7 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 
 ### Open SDK
 
-1. Open Xilinx SDK 2017.2
+1. Open Xilinx SDK 2019.1
 2. Set workspace to: `$REPO_DIR\sdk`
 3. Once open, close the Welcome tab
 
@@ -134,9 +140,11 @@ Xilinx SDK (referred to as just SDK) is used to program the DSPs on the Zynq-700
 
 ### Import Projects into SDK
 
-The SDK workspace will initially be empty (except for `design_1_wrapper...` from above and new `amdc_bsp`). You need to import the projects you want to use.
+The SDK workspace will initially be empty (except for `amdc_rev*_wrapper...` from above and new `amdc_bsp`). You need to import the projects you want to use.
 
 #### Open-source example applications:
+
+Follow these steps to import projects directly from the core `AMDC-Firmware` repo (i.e. open-source example applications):
 
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
@@ -146,16 +154,22 @@ The SDK workspace will initially be empty (except for `design_1_wrapper...` from
 
 #### Private user applications:
 
+Follow these steps to import projects from your private user repo:
+
 1. `File` > `Open Projects from File System...`
 2. `Directory...`
 3. Select: `your master user repo` / `my-AMDC-private-C-code`
-5. `Finish`
+4. `Finish`
 
-Building the private user application will fail. Fix this by doing the following. This restructures the compiler / linker so they know where to find the appropriate files.
+After clicking `Finish`, the SDK will attempt to build the new private user applications. The compilation will fail. If it doesn't, you did not import your private user application project correctly -- delete the project from the SDK and try again until it fails to build.
+
+Once it fails to build your new imported project, follow the steps below to fix the compilation. This will restructure the compiler / linker so they know where to find the appropriate files.
 
 ### Fix `common` code compilation
 
 This section explains how to configure the SDK build system to correctly use the AMDC `common` code from the submodule.
+
+**Only complete these steps if the build failed after you imported the user project!!!** If there were no errors, skip this section. There should be no errors if you have imported the `bare` project as an open-source project (i.e. not a private user application).
 
 Link `common` folder to project:
 1. In the `Project Explorer`, delete `common` folder from `bare` project (if present)
@@ -245,7 +259,7 @@ Ensure the AMDC JTAG / UART is plugged into your PC and AMDC main power is suppl
     2. A new panel should appear on the right half of popup
 4. Ensure the `Target Setup` tab is open
 5. Select `Browse...` for `Bitstream File`
-    1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\design_1_wrapper.bit`) and click `Open`
+    1. Find the bitstream which Vivado generated (should be at `$REPO_DIR\amdc\amdc.runs\impl_1\amdc_rev*_wrapper.bit`) and click `Open`
 7. Check the following boxes: `Reset entire system`, `Program FPGA`, `Run ps7_init`, `Run ps7_post_config`
 8. Click `Apply`
 9. Click `Close`

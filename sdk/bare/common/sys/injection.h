@@ -3,9 +3,19 @@
 
 #include <stdint.h>
 
-typedef enum inj_func_e { CONST = 1, NOISE, CHIRP, TRIANGLE, NONE } inj_func_e;
+typedef enum inj_func_e {
+    CONST = 1,
+    NOISE,
+    CHIRP,
+    TRIANGLE,
+    NONE,
+} inj_func_e;
 
-typedef enum inj_op_e { ADD = 1, SUB, SET } inj_op_e;
+typedef enum inj_op_e {
+    ADD = 1,
+    SUB,
+    SET,
+} inj_op_e;
 
 typedef struct inj_func_constant_t {
     double value;
@@ -29,7 +39,7 @@ typedef struct inj_func_triangle_t {
     double period;
 } inj_func_triangle_t;
 
-#define INJ_MAX_NAME_LENGTH (16)
+#define INJ_MAX_NAME_LENGTH (24)
 
 typedef struct inj_ctx_t {
     int id;

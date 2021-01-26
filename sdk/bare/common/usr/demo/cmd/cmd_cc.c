@@ -6,6 +6,7 @@
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/util.h"
 #include "usr/demo/task_cc.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -38,8 +39,7 @@ float value;
 
 static command_entry_t cmd_entry;
 
-#define NUM_HELP_ENTRIES (8)
-static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
+static command_help_t cmd_help[] = {
     { "setup [ashad|yusuke]", "Set-up specific bench configuration" },
     { "<cc_idx> init", "Initialize current controller" },
     { "<cc_idx> deinit", "Deinitialize current controller" },
@@ -47,20 +47,19 @@ static command_help_t cmd_help[NUM_HELP_ENTRIES] = {
     { "<cc_idx> pwm <a|b|c> <pwm_chnl>", "Configure PWM outputs per phase" },
     { "<cc_idx> adc <a|b|c> <adc_chnl> <adc_gain> <adc_offset>", "Configure ADC input per phase" },
     { "<cc_idx> tune <Rs> <Ld> <Lq> <bw>", "Tune with Rs [ohms], Ldq [H], and bandwidth [rad/s]" },
-    { "<cc_idx> set <Id*> <Iq*> <omega_e>", "Set operating point for Idq* [Adq] at omega_e [rad/s]" },
+    { "<cc_idx> setmode <angle|speed>", "Set mode to control angle or speed directly" },
+    { "<cc_idx> set <Id*> <Iq*>", "Set operating point for Idq* [Adq]" },
+    { "<cc_idx> omega <omega_e>", "Set omega_e [rad/s]" },
+    { "<cc_idx> theta <theta_e>", "Set theta_e [degrees]" },
 };
 
 void cmd_cc_register(void)
 {
-    commands_cmd_init(&cmd_entry, "cc", "Current control (D/Q) related commands", cmd_help, NUM_HELP_ENTRIES, cmd_cc);
+    commands_cmd_init(
+        &cmd_entry, "cc", "Current control (D/Q) related commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_cc);
 
     // Register the command with the system
     commands_cmd_register(&cmd_entry);
-}
-
-static inline bool STREQ(char *in1, char *in2)
-{
-    return (strcmp(in1, in2) == 0) ? true : false;
 }
 
 int cmd_cc(int argc, char **argv)
@@ -69,14 +68,14 @@ int cmd_cc(int argc, char **argv)
         // Enable current controller
         int cc_idx = atoi(argv[1]);
         task_cc_init(cc_idx);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("deinit", argv[2])) {
         // Disable current controller
         int cc_idx = atoi(argv[1]);
         task_cc_deinit(cc_idx);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("ashad", argv[2])) {
@@ -93,7 +92,7 @@ int cmd_cc(int argc, char **argv)
 
         task_cc_tune(0, 1.0, 0.0015, 0.0015, 628.0);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 3 && STREQ("setup", argv[1]) && STREQ("yusuke", argv[2])) {
@@ -118,7 +117,7 @@ int cmd_cc(int argc, char **argv)
         task_cc_tune(0, 0.6, 0.0025, 0.0025, 6283.0); // Torque
         task_cc_tune(1, 2.4, 0.010, 0.010, 6283.0);   // Suspension
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 4 && STREQ("vdc", argv[2])) {
@@ -129,10 +128,10 @@ int cmd_cc(int argc, char **argv)
 
         // Sanitize inputs
         if (vdc <= 0.0 || vdc > 1000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_vdc_set(cc_idx, vdc);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 5 && STREQ("pwm", argv[2])) {
@@ -147,17 +146,17 @@ int cmd_cc(int argc, char **argv)
         } else if (STREQ("c", argv[3])) {
             phase = 2;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         uint8_t pwm_chnl = atoi(argv[4]);
         if (pwm_chnl >= 24) {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         task_cc_pwm(cc_idx, phase, pwm_chnl);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 7 && STREQ("adc", argv[2])) {
@@ -172,25 +171,25 @@ int cmd_cc(int argc, char **argv)
         } else if (STREQ("c", argv[3])) {
             phase = 2;
         } else {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         uint8_t adc_chnl = atoi(argv[4]);
         if (adc_chnl <= 0 || adc_chnl >= ANALOG_NUM_CHANNELS) {
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         }
 
         double adc_gain = strtod(argv[5], NULL);
         double adc_offset = strtod(argv[6], NULL);
 
         if (adc_gain <= -1e6 || adc_gain >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (adc_offset <= -1e6 || adc_offset >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_adc(cc_idx, phase, adc_chnl, adc_gain, adc_offset);
 
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
     if (argc == 7 && STREQ("tune", argv[2])) {
@@ -207,42 +206,87 @@ int cmd_cc(int argc, char **argv)
 
         // Sanitize inputs
         if (Rs <= 0.0 || Rs > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Ld <= 0.0 || Ld > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Lq <= 0.0 || Lq > 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (bw <= 0.0 || bw > 100000.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
         task_cc_tune(cc_idx, Rs, Ld, Lq, bw);
-        return SUCCESS;
+        return CMD_SUCCESS;
     }
 
-    if (argc == 6 && STREQ("set", argv[2])) {
+    if (argc == 4 && STREQ("setmode", argv[2])) {
+        int cc_idx = atoi(argv[1]);
+
+        // Extract arguments
+        if (STREQ("angle", argv[3])) {
+            task_cc_setmode(cc_idx, "angle");
+        } else if (STREQ("speed", argv[3])) {
+            task_cc_setmode(cc_idx, "speed");
+        }
+
+        return CMD_SUCCESS;
+    }
+
+    if (argc == 5 && STREQ("set", argv[2])) {
         int cc_idx = atoi(argv[1]);
 
         // Tune current controller
-        double Id_star, Iq_star, omega_e;
+        double Id_star, Iq_star;
 
         // Extract arguments
         Id_star = strtod(argv[3], NULL);
         Iq_star = strtod(argv[4], NULL);
-        omega_e = strtod(argv[5], NULL);
 
         // Sanitize inputs
         if (Id_star <= -100.0 || Id_star >= 100.0)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
         if (Iq_star <= -100.0 || Iq_star >= 100.0)
-            return INVALID_ARGUMENTS;
-        if (omega_e <= -1e6 || omega_e >= 1e6)
-            return INVALID_ARGUMENTS;
+            return CMD_INVALID_ARGUMENTS;
 
-        task_cc_set(cc_idx, Id_star, Iq_star, omega_e);
-        return SUCCESS;
+        task_cc_set_currents(cc_idx, Id_star, Iq_star);
+        return CMD_SUCCESS;
     }
 
-    return INVALID_ARGUMENTS;
+    if (argc == 4 && STREQ("omega", argv[2])) {
+        int cc_idx = atoi(argv[1]);
+
+        // extract arguments
+        double omega_e;
+        omega_e = strtod(argv[3], NULL);
+
+        // sanitize inputs
+        if (omega_e <= -1e6 || omega_e >= 1e6)
+            return CMD_INVALID_ARGUMENTS;
+
+        // set omega
+        task_cc_set_omega(cc_idx, omega_e);
+
+        return CMD_SUCCESS;
+    }
+
+    if (argc == 4 && STREQ("theta", argv[2])) {
+        int cc_idx = atoi(argv[1]);
+
+        // extract arguments
+        double theta_e;
+        theta_e = strtod(argv[3], NULL);
+        theta_e = theta_e * PI / 180; // degree to radians
+
+        // sanitize inputs
+        if (theta_e <= -PI2 || theta_e >= PI2)
+            return CMD_INVALID_ARGUMENTS;
+
+        // set theta
+        task_cc_set_theta(cc_idx, theta_e);
+
+        return CMD_SUCCESS;
+    }
+
+    return CMD_INVALID_ARGUMENTS;
 }
 
 #endif // APP_DEMO

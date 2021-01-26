@@ -1,8 +1,10 @@
 #ifdef APP_DEMO
 
 #include "usr/demo/inverter.h"
+#include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/pwm.h"
+#include "usr/user_config.h"
 #include <math.h>
 
 typedef struct inverter_ctx_t {
@@ -41,10 +43,12 @@ void inverter_saturate_to_Vdc(int inv_idx, double *phase_voltage)
         ctx->Vdc = 1.0;
     }
 
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     io_led_color_t color = { 0, 0, 0 };
     if (saturate(-ctx->Vdc / 2.0, ctx->Vdc / 2.0, phase_voltage) != 0)
         color.g = 255;
     io_led_set_c(0, 1, 0, &color);
+#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void inverter_set_voltage(int inv_idx, uint8_t pwm_idx, double phase_voltage)

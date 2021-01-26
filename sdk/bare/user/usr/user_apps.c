@@ -8,6 +8,10 @@
 //
 // Also, conditionally call the app's init function.
 
+#ifdef APP_PCBTEST
+#include "usr/pcbtest/app_pcbtest.h"
+#endif
+
 #ifdef APP_BLINK
 #include "usr/blink/app_blink.h"
 #endif
@@ -20,8 +24,16 @@
 #include "usr/demo/app_demo.h"
 #endif
 
+#ifdef APP_DAC
+#include "usr/dac/app_dac.h"
+#endif
+
 void user_apps_init(void)
 {
+#ifdef APP_PCBTEST
+    app_pcbtest_init();
+#endif
+
 #ifdef APP_BLINK
     app_blink_init();
 #endif
@@ -32,5 +44,9 @@ void user_apps_init(void)
 
 #ifdef APP_DEMO
     app_demo_init();
+#endif
+
+#ifdef APP_DAC
+    app_dac_init();
 #endif
 }

@@ -1,3 +1,8 @@
+#include "drv/hardware_targets.h"
+#include "usr/user_config.h"
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+
 #ifndef LED_H
 #define LED_H
 
@@ -38,3 +43,5 @@ led_color_t led_get_color(led_t idx);
 uint32_t led_get_raw(led_t idx);
 
 #endif // LED_H
+
+#endif // USER_CONFIG_HARDWARE_TARGET

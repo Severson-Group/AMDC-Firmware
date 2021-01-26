@@ -1,18 +1,41 @@
+#include "drv/hardware_targets.h"
+#include "usr/user_config.h"
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+
 #ifndef DAC_H
 #define DAC_H
 
 #include <stdint.h>
 
-#define DAC_FULL_SCALE      (4095)
-#define DAC_HALF_FULL_SCALE (2047)
+typedef enum {
+    DAC_REG_SYNC = 2,
+    DAC_REG_CONFIG = 3,
+    DAC_REG_GAIN = 4,
+    DAC_REG_TRIGGER = 5,
+    DAC_REG_BRDCAST = 6,
+    DAC_REG_DAC0 = 8,
+    DAC_REG_DAC1 = 9,
+    DAC_REG_DAC2 = 10,
+    DAC_REG_DAC3 = 11,
+    DAC_REG_DAC4 = 12,
+    DAC_REG_DAC5 = 13,
+    DAC_REG_DAC6 = 14,
+    DAC_REG_DAC7 = 15,
+} dac_reg_t;
+
+#define DAC_MAX_CODE (4095)
 
 void dac_init(void);
 
-void dac_set_sclk_div(uint32_t div);
+void dac_set_voltage(uint8_t ch, double voltage);
 
-void dac_set_output(uint8_t idx, double value, double min, double max);
+void dac_set_broadcast(double voltage);
 
-void dac_set_voltage_raw(uint8_t idx, uint16_t value);
-void dac_set_led(uint8_t idx, uint8_t state);
+void dac_set_trigger(void);
+
+void dac_set_raw(dac_reg_t reg, uint32_t value);
 
 #endif // DAC_H
+
+#endif // USER_CONFIG_HARDWARE_TARGET
