@@ -135,10 +135,11 @@ int cmd_hw(int argc, char **argv)
 
     // Handle 'ild' sub-command
     // hw ild read
-    if (argc == 3 && strcmp("ild", argv[1]) == 0) {
+    if (argc == 4 && strcmp("ild", argv[1]) == 0) {
         if (strcmp("read", argv[2]) == 0) {
-            ild1420_packet_t packet = ild1420_get_latest_packet();
-            debug_printf("dist:  %X\r\n", packet.distance);
+        	int sensor = atoi(argv[3]);
+            ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
+            debug_printf("dist:  %x\r\n", packet.distance);
             debug_printf("err:   %X\r\n", packet.error);
             debug_printf("fresh: %X\r\n", packet.fresh);
 
