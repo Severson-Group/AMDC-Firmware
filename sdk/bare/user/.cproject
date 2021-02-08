@@ -26,9 +26,12 @@
 							</builder>
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
 								<option id="xilinx.gnu.both.asm.option.include.paths.565012057" name="Include Paths (-I)" superClass="xilinx.gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="../bare/amdc_bsp/ps7_cortexa9_0/include"/>
+									<listOptionValue builtIn="false" value="C:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/sdk/bare/user/bare/common"/>
+									<listOptionValue builtIn="false" value="../bare/bare"/>
 									<listOptionValue builtIn="false" value="../bare/common"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/bare}&quot;"/>
+									<listOptionValue builtIn="false" value="../amdc_bsp/ps7_cortexa9_0/include"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -45,7 +48,7 @@
 								<option id="xilinx.gnu.compiler.dircategory.includes.1596529872" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_0/ps7_cortexa9_0/include}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1322043513" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -72,7 +75,7 @@
 									<listOptionValue builtIn="false" value="-M &gt; mapfile.txt"/>
 								</option>
 								<option id="xilinx.gnu.c.link.option.paths.1313998286" name="Library search path (-L)" superClass="xilinx.gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_0/ps7_cortexa9_0/lib}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.linker.input.1470010392" superClass="xilinx.gnu.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

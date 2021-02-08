@@ -33,6 +33,7 @@
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/sts_mux.h"
+#include "drv/eddy_current_sensor.h"
 
 #endif
 
@@ -86,7 +87,7 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
-
+    eddy_current_sensor_init();
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
