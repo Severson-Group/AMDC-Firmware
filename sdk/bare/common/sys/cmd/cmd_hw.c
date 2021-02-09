@@ -138,6 +138,10 @@ int cmd_hw(int argc, char **argv)
     if (argc == 4 && strcmp("ild", argv[1]) == 0) {
         if (strcmp("read", argv[2]) == 0) {
         	int sensor = atoi(argv[3]);
+
+        	if (sensor < 0 || sensor > 2)
+        		return CMD_INVALID_ARGUMENTS;
+
             ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
             debug_printf("dist:  %x\r\n", packet.distance);
             debug_printf("err:   %X\r\n", packet.error);
