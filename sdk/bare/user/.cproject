@@ -26,12 +26,9 @@
 							</builder>
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
 								<option id="xilinx.gnu.both.asm.option.include.paths.565012057" name="Include Paths (-I)" superClass="xilinx.gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../bare/amdc_bsp/ps7_cortexa9_0/include"/>
-									<listOptionValue builtIn="false" value="C:/Users/mayberry2-admin/Documents/AMDC-Firmware/sdk/bare/user/bare/common"/>
-									<listOptionValue builtIn="false" value="../bare/bare"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
 									<listOptionValue builtIn="false" value="../bare/common"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/bare}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -46,9 +43,6 @@
 									<listOptionValue builtIn="false" value="APP_PCBTEST"/>
 								</option>
 								<option id="xilinx.gnu.compiler.dircategory.includes.1596529872" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
-									<listOptionValue builtIn="false" value="../bare/amdc_bsp/ps7_cortexa9_0/include"/>
-									<listOptionValue builtIn="false" value="C:/Users/mayberry2-admin/Documents/AMDC-Firmware/sdk/bare/user/bare/common"/>
-									<listOptionValue builtIn="false" value="../bare/bare"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
