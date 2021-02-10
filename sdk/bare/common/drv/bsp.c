@@ -30,10 +30,11 @@
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #include "drv/dac.h"
+#include "drv/eddy_current_sensor.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/sts_mux.h"
-#include "drv/eddy_current_sensor.h"
+
 
 #endif
 
