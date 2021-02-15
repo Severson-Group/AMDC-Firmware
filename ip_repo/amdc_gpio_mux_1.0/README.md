@@ -26,6 +26,9 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP.
 | -- | -- | -- |
 | 31:0 | DATA | Unsigned number from 0 to 4<br> - indicates which device drivers are connected IsoSPI port _n_ <br> - Value of 0 designates port _n_ as unused and all outputs will be held to logic low
 
+## Connecting IP Block
+
+User IP blocks must be connected to the GPIO mux IP in the block diagram. The connections should be made to the `device_in_n` and `device_out_n` ports on the GPIO mux IP block. All input ports that are unused must be connect to logic 0 in the block diagram therefore some `device_out_n` ports may be connected to logic 0. These connections can be replaced with a connection to the user IP block. If only a single pin is being used on the GPIO port, a specific bit can be ripped from the port by using the built-in [Slice](https://www.xilinx.com/support/documentation/ip_documentation/xilinx_com_ip_xlslice/v1_0/pb042-xilinx-com-ip-xlslice.pdf) Vivado IP block. Likewise, user IP blocks that share the same GPIO port can be merged together using the [Concat](https://www.xilinx.com/support/documentation/ip_documentation/xilinx_com_ip_xlconcat/v2_1/pb041-xilinx-com-ip-xlconcat.pdf) Vivado IP block. 
 
 ## C drivers
 
