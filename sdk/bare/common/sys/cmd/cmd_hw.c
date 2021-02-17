@@ -3,8 +3,10 @@
 #include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
+#include "drv/gpio_mux.h"
 #include "drv/hardware_targets.h"
 #include "drv/pwm.h"
+#include "drv/sts_mux.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
@@ -32,6 +34,7 @@ static command_help_t cmd_help[] = {
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+    { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
 #endif // USER_CONFIG_HARDWARE_TARGET
 };
 
@@ -201,6 +204,38 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
 
             led_set_color_bytes(led_idx, r, g, b);
+
+            return CMD_SUCCESS;
+        }
+    }
+
+    // Handle 'mux' sub-command
+    // mux gpio <port#> <device#>
+    if (argc >= 2 && STREQ("mux", argv[1])) {
+        if (argc == 5 && STREQ("gpio", argv[2])) {
+            int gpio_port = atoi(argv[3]);
+            int device = atoi(argv[4]);
+
+            if (gpio_port < 1 || gpio_port > 2)
+                return CMD_INVALID_ARGUMENTS;
+            if (device < 0 || device > 4)
+                return CMD_INVALID_ARGUMENTS;
+
+            gpio_mux_set_device(gpio_port - 1, device);
+
+            return CMD_SUCCESS;
+        }
+
+        if (argc == 5 && STREQ("sts", argv[2])) {
+            int sts_port = atoi(argv[3]);
+            int device = atoi(argv[4]);
+
+            if (sts_port < 1 || sts_port > 8)
+                return CMD_INVALID_ARGUMENTS;
+            if (device < 0 || device > 8)
+                return CMD_INVALID_ARGUMENTS;
+
+            sts_mux_set_device(sts_port - 1, device);
 
             return CMD_SUCCESS;
         }
