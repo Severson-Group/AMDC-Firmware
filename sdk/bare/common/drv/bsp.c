@@ -86,16 +86,12 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
-
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     io_init();
     gpio_init();
 #endif
-
-    // The DAC driver is current not supported on any hardware
-    // dac_init();
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();
