@@ -23,5 +23,6 @@
 #define DEG_TO_RAD(deg)         (deg * PI / 180.0)
 #define RAD_TO_DEG(rad)         (rad * 180.0 / PI)
 #define RPM_TO_RAD_PER_SEC(rpm) (rpm * PI2 / 60.0)
+#define RAD_PER_SEC_TO_RPM(rps) (rps * 60.0 / PI2)
 
 #endif // DEFINES_H
