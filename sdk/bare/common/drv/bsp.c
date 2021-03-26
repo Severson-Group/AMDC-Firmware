@@ -94,9 +94,6 @@ void bsp_init(void)
     gpio_init();
 #endif
 
-    // The DAC driver is current not supported on any hardware
-    // dac_init();
-
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();
 #endif
