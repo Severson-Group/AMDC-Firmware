@@ -11,6 +11,7 @@
 
 #include "drv/analog.h"
 #include "drv/bsp.h"
+# include "drv/can.h"
 #include "drv/cpu_timer.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
@@ -86,6 +87,7 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
+    can_init();
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C

@@ -16,6 +16,10 @@
 #include "usr/blink/app_blink.h"
 #endif
 
+#ifdef APP_CAN
+#include "usr/can/app_can.h"
+#endif
+
 #ifdef APP_BETA_LABS
 #include "usr/beta_labs/app_beta_labs.h"
 #endif
@@ -36,6 +40,10 @@ void user_apps_init(void)
 
 #ifdef APP_BLINK
     app_blink_init();
+#endif
+
+#ifdef APP_CAN
+	app_can_init();
 #endif
 
 #ifdef APP_BETA_LABS

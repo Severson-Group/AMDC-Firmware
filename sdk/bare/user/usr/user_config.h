@@ -7,7 +7,7 @@
 // various system-level firmware features.
 
 // Specify hardware revision (i.e. REV C, REV D, etc)
-#define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_C)
+#define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_D)
 
 // Override the default scheduler elementary frequency by defining SYS_TICK_FREQ here.
 // System uses 10kHz by default
@@ -15,7 +15,7 @@
 
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (1)
+#define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (0)
 
 // Enable task statistic collection by default
 // NOTE: The user can still go and enable the stats themselves if this is set to 0!
