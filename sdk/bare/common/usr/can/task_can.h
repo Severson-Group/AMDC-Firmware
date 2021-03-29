@@ -22,7 +22,9 @@ int task_can_deinit(void);
 
 int task_can_loopback_test(void);
 
-int task_can_sendframe();
+int task_can_sendmessage(uint8_t*, int);
+
+int task_can_print();
 
 int task_can_setmode(uint32_t);
 

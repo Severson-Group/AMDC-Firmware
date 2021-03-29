@@ -10,7 +10,7 @@ int can_setmode(uint32_t value);
 int can_setbaud(int rate);
 int can_set_btr(int jump_width, int first_time, int second_time);
 
-int can_send(XCanPs *InstancePtr);
+int can_send(uint8_t* packet, int num_bytes);
 int can_checkpacket(char *msg, int len);
 
 int can_loopback_test();

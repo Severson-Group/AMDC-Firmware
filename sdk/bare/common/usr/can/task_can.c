@@ -14,6 +14,10 @@ static task_control_block_t tcb;
 
 int task_can_init(void)
 {
+
+	// Initialize the can peripheral
+	can_init();
+
     if (scheduler_tcb_is_registered(&tcb)) {
         return FAILURE;
     }
@@ -40,11 +44,21 @@ int task_can_loopback_test(void) {
 	return SUCCESS;
 }
 
-int task_can_sendframe()
+int task_can_sendmessage(uint8_t* packet, int num_bytes)
 {
 	int Status;
 
-	Status = can_init();
+	Status = can_send(packet, num_bytes);
+	if (Status != SUCCESS) {
+		return FAILURE;
+	}
+	return SUCCESS;
+}
+
+int task_can_print()
+{
+	int Status;
+	Status = can_print();
 	if (Status != SUCCESS) {
 		return FAILURE;
 	}

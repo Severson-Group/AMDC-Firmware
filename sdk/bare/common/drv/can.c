@@ -156,6 +156,32 @@ int can_send(uint8_t* packet, int num_bytes)
 	return Status;
 }
 
+// Print latest can packet received
+int can_print()
+{
+	u8 *FramePtr;
+	int Status;
+	int Index;
+
+	XCanPs *CanInstPtr = &CanPs;
+
+	// Wait until a frame is received
+	while (XCanPs_IsRxEmpty(CanInstPtr) == TRUE);
+
+	// Receive a frame and verify its contents
+	Status = XCanPs_Recv(CanInstPtr, RxFrame);
+
+	if (Status == XST_SUCCESS) {
+		print("Latest CAN packet is: ");
+		FramePtr = (u8 *)(&RxFrame[2]);
+		for (Index = 0; Index < FRAME_DATA_LENGTH; Index++) {
+			print(*FramePtr);
+			FramePtr++;
+		}
+	}
+	return Status;
+}
+
 // Check packet received in loopback mode is correct
 int can_checkpacket()
 {
