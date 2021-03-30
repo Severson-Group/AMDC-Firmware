@@ -4,7 +4,8 @@
 #include "xcanps.h"
 #include <stdio.h>
 
-#define CAN_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
+#define CAN0_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
+#define CAN1_DEVICE_ID XPAR_XCANPS_1_DEVICE_ID
 
 /*
  * Maximum CAN frame length in words.
@@ -57,39 +58,51 @@ int can_setmode(uint32_t mode) {
 	XCanPs *CanInstPtr = &CanPs;
 	XCanPs_EnterMode(CanInstPtr, mode);
 	while(XCanPs_GetMode(CanInstPtr) != mode);
-	return XST_SUCCESS;
+	return SUCCESS;
 }
 
 // Set Baud Rate Prescalar Register (BRPR)
 int can_setbaud(int rate) {
+	int Status;
 	XCanPs *CanInstPtr = &CanPs;
 	// Initialize to default baud rate
 	if (!rate)
 		rate = TEST_BRPR_BAUD_PRESCALAR;
-	XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
-	return XST_SUCCESS;
+	Status = XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
+	if (Status != XST_SUCCESS)
+		return FAILURE;
+	return SUCCESS;
 }
 
 // Set Bit Timing Register (BTR)
 int can_set_btr(int jump_width, int first_time, int second_time) {
+	int Status;
 	XCanPs *CanInstPtr = &CanPs;
 	// Initialize to defaults provided by Xilinx
 	if (!jump_width && !first_time && !second_time)
-		XCanPs_SetBitTiming(CanInstPtr, TEST_BTR_SYNCJUMPWIDTH,
+		Status = XCanPs_SetBitTiming(CanInstPtr, TEST_BTR_SYNCJUMPWIDTH,
 						TEST_BTR_SECOND_TIMESEGMENT,
 						TEST_BTR_FIRST_TIMESEGMENT);
 	else
-		XCanPs_SetBitTiming(CanInstPtr, jump_width,
+		Status = XCanPs_SetBitTiming(CanInstPtr, jump_width,
 						first_time,
 						second_time);
-	return XST_SUCCESS;
+	if (Status != XST_SUCCESS)
+		return FAILURE;
+	return SUCCESS;
 }
 
 // Initialize the CAN device, default settings
-int can_init(void)
+int can_init(int device_id)
 {
 	XCanPs *CanInstPtr = &CanPs;
-	u16 DeviceId = CAN_DEVICE_ID;
+	u16 DeviceId;
+	if (device_id != 1 || device_id != 0)
+		return FAILURE;
+	else if(!device_id)
+		DeviceId = CAN0_DEVICE_ID;
+	else
+		DeviceId = CAN0_DEVICE_ID;
 
 	int Status;
 	XCanPs_Config *Config;
@@ -119,13 +132,19 @@ int can_init(void)
 
 	// Set Baud Rate Prescalar Register (BRPR) and
 	// Bit Timing Register (BTR)
-	can_setbaud(TEST_BRPR_BAUD_PRESCALAR);
-	can_set_btr(TEST_BTR_SYNCJUMPWIDTH, TEST_BTR_SECOND_TIMESEGMENT, TEST_BTR_FIRST_TIMESEGMENT);
+	Status = can_setbaud(TEST_BRPR_BAUD_PRESCALAR);
+	if (Status != XST_SUCCESS) {
+		return FAILURE;
+	}
+	Status = can_set_btr(TEST_BTR_SYNCJUMPWIDTH, TEST_BTR_SECOND_TIMESEGMENT, TEST_BTR_FIRST_TIMESEGMENT);
+	if (Status != XST_SUCCESS) {
+		return FAILURE;
+	}
 
 	// Enter Normal Mode to use CAN peripheral via API calls
 	can_setmode(XCANPS_MODE_NORMAL);
 
-	return XST_SUCCESS;
+	return SUCCESS;
 }
 
 // Send a CAN packet
@@ -144,6 +163,7 @@ int can_send(uint8_t* packet, int num_bytes)
 	FramePtr = (u8 *)(&TxFrame[2]);
 	for (Index = 0; Index < num_bytes; Index++) {
 		*FramePtr++ = (u8)*packet;
+		packet++;
 	}
 
 
@@ -152,8 +172,10 @@ int can_send(uint8_t* packet, int num_bytes)
 
 	// Send the frame
 	Status = XCanPs_Send(CanInstPtr, TxFrame);
+	if (Status != XST_SUCCESS)
+		return FAILURE;
 
-	return Status;
+	return SUCCESS;
 }
 
 // Print latest can packet received
@@ -178,12 +200,13 @@ int can_print()
 			print(*FramePtr);
 			FramePtr++;
 		}
+		return SUCCESS;
 	}
-	return Status;
+	return FAILURE;
 }
 
 // Check packet received in loopback mode is correct
-int can_checkpacket()
+static int can_checkpacket()
 {
 	u8 *FramePtr;
 	int Status;
@@ -236,6 +259,8 @@ int can_loopback_test()
 	}
 
 	Status = can_checkpacket();
-	return Status;
+	if (Status != XST_SUCCESS)
+		return FAILURE;
+	return SUCCESS;
 
 }
