@@ -1,6 +1,6 @@
 #include "drv/analog.h"
 #include "drv/analog_defs.h"
-#include "sys/defines.h"
+#include "sys/errors.h"
 #include <stdbool.h>
 
 static volatile uint32_t *m_adc;
@@ -19,11 +19,11 @@ void analog_init(uint32_t base_addr)
     analog_set_pwm_sync(sync_to_carrier_high, sync_to_carrier_low);
 }
 
-int analog_set_clkdiv(analog_clkdiv_e div)
+error_t analog_set_clkdiv(analog_clkdiv_e div)
 {
     // Make sure the divisor is valid
     if (!analog_is_valid_clkdiv(div)) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Read in CONTROL register
@@ -38,7 +38,7 @@ int analog_set_clkdiv(analog_clkdiv_e div)
     // Write out CONTROL register
     m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4] = reg;
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 void analog_get_clkdiv(analog_clkdiv_e *out_div)
@@ -52,25 +52,25 @@ void analog_get_clkdiv(analog_clkdiv_e *out_div)
     *out_div = value;
 }
 
-int analog_getf(analog_channel_e channel, float *out_value)
+error_t analog_getf(analog_channel_e channel, float *out_value)
 {
     // Read raw binary value from ADC
     int16_t val;
-    if (analog_geti(channel, &val) != SUCCESS) {
-        return FAILURE;
+    if (analog_geti(channel, &val) != ERROR_OK) {
+        return ERROR_GENERIC;
     }
 
     // Conversion from raw bits to voltage
     *out_value = (float) (val) / 400.0;
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
-int analog_geti(analog_channel_e channel, int16_t *out_value)
+error_t analog_geti(analog_channel_e channel, int16_t *out_value)
 {
     // Make sure channel in valid
     if (!analog_is_valid_channel(channel)) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Read in ADC data register
@@ -78,7 +78,7 @@ int analog_geti(analog_channel_e channel, int16_t *out_value)
 
     *out_value = (int16_t) reg;
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 void analog_set_pwm_sync(bool sync_to_carrier_high, bool sync_to_carrier_low)

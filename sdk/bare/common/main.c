@@ -15,7 +15,7 @@
 //
 // NOTE: UART uses 115200 baud
 
-#include "drv/bsp.h"
+#include "sys/peripherals.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/injection.h"
@@ -36,8 +36,8 @@ int main()
     // Required system initialization
     init_platform();
 
-    // User BSP library initialization
-    bsp_init();
+    // AMDC peripherals initialization
+    peripherals_init();
 
     // Initialize system tasks
     serial_init();

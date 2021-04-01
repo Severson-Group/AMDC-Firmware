@@ -1,6 +1,6 @@
 #include "drv/pwm.h"
 #include "drv/hardware_targets.h"
-#include "sys/defines.h"
+#include "sys/errors.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
 #include <stdbool.h>
@@ -34,7 +34,9 @@ void pwm_init(void)
     // Opens all switches...
     pwm_disable();
 
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
     pwm_toggle_reset();
+#endif
 
     pwm_set_switching_freq(PWM_DEFAULT_SWITCHING_FREQ_HZ);
     pwm_set_deadtime_ns(PWM_DEFAULT_DEADTIME_NS);
@@ -60,6 +62,8 @@ void pwm_set_all_duty_midscale(void)
     }
 }
 
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
+
 void pwm_toggle_reset(void)
 {
     // Toggles RST on all inverter outputs for 1 ms
@@ -83,28 +87,30 @@ void pwm_set_all_rst(uint8_t rst)
     Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
-int pwm_enable(void)
+#endif
+
+error_t pwm_enable(void)
 {
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Write to slave reg 31 LSB to enable PWM switching
     Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000001);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
-int pwm_disable(void)
+error_t pwm_disable(void)
 {
     if (!pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Write to slave reg 31 LSB to enable PWM switching
     Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000000);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 bool pwm_is_enabled(void)
@@ -115,17 +121,17 @@ bool pwm_is_enabled(void)
     return reg31 & 0x00000001;
 }
 
-int pwm_set_switching_freq(double freq_hz)
+error_t pwm_set_switching_freq(double freq_hz)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Based on FPGA, freq_hz can be in range: 1526Hz ... ~100MHz
     // For sanity, we limit this to: 2kHz to 2MHz
     if (freq_hz < PWM_MIN_SWITCHING_FREQ_HZ || freq_hz > PWM_MAX_SWITCHING_FREQ_HZ) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Always set carrier_divisor to 0... anything else reduces resolution!
@@ -138,14 +144,14 @@ int pwm_set_switching_freq(double freq_hz)
     // Store current freq so we can access later
     now_fsw = freq_hz;
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
-int pwm_set_deadtime_ns(uint16_t time_ns)
+error_t pwm_set_deadtime_ns(uint16_t time_ns)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // FPGA only supports deadtime reg value from 5 to 2^16 - 1 (naturally supported using uint16_t)
@@ -154,7 +160,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // Ensure requested deadtime is >= 25 ns
     if (time_ns < PWM_MIN_DEADTIME_NS) {
         // Throw error so user knows this didn't work!
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Convert time in ns to FPGA clock cycles
@@ -169,7 +175,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // Store current deadtime so we can access later
     now_deadtime = time_ns;
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 double pwm_get_switching_freq(void)
@@ -182,10 +188,10 @@ uint16_t pwm_get_deadtime_ns(void)
     return now_deadtime;
 }
 
-int pwm_set_duty(pwm_channel_e channel, double duty)
+error_t pwm_set_duty(pwm_channel_e channel, double duty)
 {
     if (!pwm_is_valid_channel(channel)) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     if (duty >= 1.0) {
@@ -196,26 +202,26 @@ int pwm_set_duty(pwm_channel_e channel, double duty)
         pwm_set_duty_raw(channel, duty * carrier_max);
     }
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 static int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value)
 {
     if (!pwm_is_valid_channel(channel)) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // Write to offset 0 to control PWM 0
     Xil_Out32(PWM_BASE_ADDR + (channel * sizeof(uint32_t)), value);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 static int pwm_set_carrier_divisor(uint8_t divisor)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // FPGA only supports divisor from 0 to 255 (naturally supported using uint8_t)
@@ -225,14 +231,14 @@ static int pwm_set_carrier_divisor(uint8_t divisor)
     // Write to slave reg 24 to set triangle carrier clk divisor
     Xil_Out32(PWM_BASE_ADDR + (24 * sizeof(uint32_t)), divisor);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 static int pwm_set_carrier_max(uint16_t max)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     // FPGA only supports carrier max from 0 to 2^16 - 1 (naturally supported using uint16_t)
@@ -245,41 +251,41 @@ static int pwm_set_carrier_max(uint16_t max)
     // Since we updated carrier max value, reset PWMs to new 50%
     pwm_set_all_duty_midscale();
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 // NOTE: we assume config is an array of length >= 48
-int pwm_mux_set_all_pins(uint32_t *config)
+error_t pwm_mux_set_all_pins(uint32_t *config)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     for (int i = 0; i < (PWM_NUM_CHANNELS * 2); i++) {
         Xil_Out32(PWM_MUX_BASE_ADDR + (i * sizeof(uint32_t)), config[i]);
     }
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
-int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
+error_t pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     if (pwm_pin_idx < 0 || pwm_pin_idx >= 48) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
 
 void pwm_get_all_flt_temp(uint8_t *flt_temp)
 {

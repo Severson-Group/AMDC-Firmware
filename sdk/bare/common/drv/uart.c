@@ -1,5 +1,5 @@
 #include "drv/uart.h"
-#include "sys/defines.h"
+#include "sys/errors.h"
 #include "xparameters.h"
 #include "xuartps.h"
 #include <stdio.h>
@@ -22,7 +22,7 @@ volatile int TotalReceivedCount;
 volatile int TotalSentCount;
 int TotalErrorCount;
 
-int uart_init(void)
+error_t uart_init(void)
 {
     XUartPs *UartInstPtr = &UartPs;
     u16 DeviceId = UART_DEVICE_ID;
@@ -41,18 +41,18 @@ int uart_init(void)
      */
     Config = XUartPs_LookupConfig(DeviceId);
     if (NULL == Config) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     Status = XUartPs_CfgInitialize(UartInstPtr, Config, Config->BaseAddress);
     if (Status != XST_SUCCESS) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     /* Check hardware build */
     Status = XUartPs_SelfTest(UartInstPtr);
     if (Status != XST_SUCCESS) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     /* Use local loopback mode. */
@@ -70,7 +70,7 @@ int uart_init(void)
     /* Block sending the buffer. */
     SentCount = XUartPs_Send(UartInstPtr, SendBuffer, TEST_BUFFER_SIZE);
     if (SentCount != TEST_BUFFER_SIZE) {
-        return FAILURE;
+        return ERROR_GENERIC;
     }
 
     /*
@@ -94,14 +94,14 @@ int uart_init(void)
      */
     for (Index = 0; Index < TEST_BUFFER_SIZE; Index++) {
         if (SendBuffer[Index] != RecvBuffer[Index]) {
-            return FAILURE;
+            return ERROR_GENERIC;
         }
     }
 
     /* Restore to normal mode. */
     XUartPs_SetOperMode(UartInstPtr, XUARTPS_OPER_MODE_NORMAL);
 
-    return SUCCESS;
+    return ERROR_OK;
 }
 
 int uart_send(char *msg, int len)

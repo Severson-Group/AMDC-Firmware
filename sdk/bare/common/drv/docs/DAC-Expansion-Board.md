@@ -13,7 +13,7 @@ drv/
 
 ## Enabling the DAC Drivers
 
-Several configuration need to be made to enable the DAC driver. The first configuration is in the `user_config.h` file. The hardware target must be set to `AMDC_REV_D` for the C drivers to be enabled. The second configuration occurs in the [sts_mux.h](Status-Mux.md) file. The DAC IP core needs to be mapped to the desired Inverter Port for operation. By default the DAC IP core is connected to `STS_MUX_DEVICE1`. The desired port (`INVERTER_PORTn`) must be set to `STS_MUX_DEVICE1`. Lastly the direction of the Status lines A, B, and C must be configured as outputs. The `STS_MUX_X_DIR` macros must be set to `STS_MUX_OUTPUT` in the [sts_mux.h](Status-Mux.md) file, and the hardware must be configured as well.
+Several configuration need to be made to enable the DAC driver. The first configuration is in the `user_config.h` file. The hardware target must be set to `HW_TARGET_AMDC_REV_D` for the C drivers to be enabled. The second configuration occurs in the [sts_mux.h](Status-Mux.md) file. The DAC IP core needs to be mapped to the desired Inverter Port for operation. By default the DAC IP core is connected to `STS_MUX_DEVICE1`. The desired port (`INVERTER_PORTn`) must be set to `STS_MUX_DEVICE1`. Lastly the direction of the Status lines A, B, and C must be configured as outputs. The `STS_MUX_X_DIR` macros must be set to `STS_MUX_OUTPUT` in the [sts_mux.h](Status-Mux.md) file, and the hardware must be configured as well.
 
 ## Configuring the DAC
 ### Functions

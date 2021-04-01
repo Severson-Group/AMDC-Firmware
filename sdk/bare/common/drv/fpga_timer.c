@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 // Get the TIMER_1 device from the FPGA
-#define TMR_DEVICE_ID XPAR_CONTROL_TIMER_1_DEVICE_ID
+#define TMR_DEVICE_ID XPAR_HIER_TIMERS_CONTROL_TIMER_1_DEVICE_ID
 
 static XTmrCtr timer;
 

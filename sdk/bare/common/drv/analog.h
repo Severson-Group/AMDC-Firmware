@@ -3,14 +3,15 @@
 
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
+#include "sys/errors.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
 #define ANALOG_BASE_ADDR (0x43C00000)
 #endif
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_D
 #define ANALOG_BASE_ADDR (0x43C00000)
 #endif
 
@@ -27,7 +28,7 @@ typedef enum {
 
 // REV C target hardware is the only platform
 // which supports more than 8 analog inputs.
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
     ANALOG_IN9,
     ANALOG_IN10,
     ANALOG_IN11,
@@ -69,11 +70,11 @@ static inline bool analog_is_valid_clkdiv(analog_clkdiv_e div)
 
 void analog_init(uint32_t base_addr);
 
-int analog_set_clkdiv(analog_clkdiv_e div);
+error_t analog_set_clkdiv(analog_clkdiv_e div);
 void analog_get_clkdiv(analog_clkdiv_e *out_div);
 
-int analog_getf(analog_channel_e channel, float *out_value);
-int analog_geti(analog_channel_e channel, int16_t *out_value);
+error_t analog_getf(analog_channel_e channel, float *out_value);
+error_t analog_geti(analog_channel_e channel, int16_t *out_value);
 
 void analog_set_pwm_sync(bool sync_to_carrier_high, bool sync_to_carrier_low);
 

@@ -1,7 +1,7 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_D
 
 #include "drv/led.h"
 #include "xil_io.h"

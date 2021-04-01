@@ -1,0 +1,19 @@
+#ifndef ERRORS_H
+#define ERRORS_H
+
+typedef enum {
+    ERROR_OK = 0,
+    ERROR_GENERIC,
+
+    ERROR_BUSY,
+    ERROR_TIMEOUT,
+
+    ERROR_INVALID_CHECKSUM,
+    ERROR_INVALID_VERSION,
+    ERROR_WRONG_TYPE,
+    ERROR_WRONG_SIZE,
+
+    ERROR_NO_MEMORY
+} error_t;
+
+#endif

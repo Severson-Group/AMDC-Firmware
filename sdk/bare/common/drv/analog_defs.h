@@ -4,7 +4,7 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
 
 // ===============
 // Number of slave registers in this IP
@@ -35,7 +35,7 @@
 
 #endif // USER_CONFIG_HARDWARE_TARGET
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_D
 
 // ===============
 // Number of slave registers in this IP

@@ -3,6 +3,7 @@
 
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
+#include "sys/errors.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -63,27 +64,29 @@ static inline bool pwm_is_valid_channel(pwm_channel_e channel)
 
 void pwm_init(void);
 
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
 void pwm_toggle_reset(void);
+#endif
 
-int pwm_enable(void);
-int pwm_disable(void);
+error_t pwm_enable(void);
+error_t pwm_disable(void);
 bool pwm_is_enabled(void);
 
-int pwm_set_switching_freq(double freq_hz);
-int pwm_set_deadtime_ns(uint16_t deadtime);
+error_t pwm_set_switching_freq(double freq_hz);
+error_t pwm_set_deadtime_ns(uint16_t deadtime);
 
 double pwm_get_switching_freq(void);
 uint16_t pwm_get_deadtime_ns(void);
 
-int pwm_set_duty(pwm_channel_e channel, double duty);
+error_t pwm_set_duty(pwm_channel_e channel, double duty);
 
 void pwm_set_all_duty_midscale(void);
 
 // Mux for PWM output pins
-int pwm_mux_set_all_pins(uint32_t *config);
-int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
+error_t pwm_mux_set_all_pins(uint32_t *config);
+error_t pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
 
 int pwm_get_status(pwm_channel_e channel, pwm_status_t *status);
 void pwm_get_all_flt_temp(uint8_t *flt_temp);

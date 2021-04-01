@@ -43,7 +43,7 @@ void inverter_saturate_to_Vdc(int inv_idx, double *phase_voltage)
         ctx->Vdc = 1.0;
     }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
+#if USER_CONFIG_HARDWARE_TARGET == HW_TARGET_AMDC_REV_C
     io_led_color_t color = { 0, 0, 0 };
     if (saturate(-ctx->Vdc / 2.0, ctx->Vdc / 2.0, phase_voltage) != 0)
         color.g = 255;
