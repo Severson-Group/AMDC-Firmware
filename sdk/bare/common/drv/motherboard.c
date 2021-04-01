@@ -12,11 +12,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-static volatile uint32_t *cast_base_addr(uint32_t base_addr) {
-	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
-	return m_motherboard;
-}
-
 void motherboard_init(uint32_t base_addr)
 {
     cmd_mb_register();
@@ -31,7 +26,7 @@ void motherboard_init(uint32_t base_addr)
 void motherboard_set_adc_sampling(uint32_t base_addr, bool enable)
 {
     // Cast base address for IP
-	volatile uint32_t *m_motherboard = cast_base_addr(base_addr);
+	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
     // Read register from FPGA
     uint32_t reg = m_motherboard[MOTHERBOARD_DEFS_OFFSET_CONTROL / 4];
@@ -51,7 +46,7 @@ void motherboard_set_adc_sampling(uint32_t base_addr, bool enable)
 void motherboard_request_new_data(uint32_t base_addr)
 {
     // Cast base address for IP
-	volatile uint32_t *m_motherboard = cast_base_addr(base_addr);
+	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
     // Read register from FPGA
     uint32_t reg = m_motherboard[MOTHERBOARD_DEFS_OFFSET_CONTROL / 4];
@@ -66,7 +61,7 @@ void motherboard_request_new_data(uint32_t base_addr)
 error_t motherboard_get_data(uint32_t base_addr, mb_channel_e channel, int32_t *out)
 {
     // Cast base address for IP
-	volatile uint32_t *m_motherboard = cast_base_addr(base_addr);
+	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
     if (!motherboard_is_valid_channel(channel)) {
         return ERROR_GENERIC;
@@ -79,7 +74,7 @@ error_t motherboard_get_data(uint32_t base_addr, mb_channel_e channel, int32_t *
 void motherboard_print_samples(uint32_t base_addr)
 {
     // Cast base address for IP
-	volatile uint32_t *m_motherboard = cast_base_addr(base_addr);
+	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
     for (int i = 0; i < 8; i++) {
         uint32_t val = m_motherboard[i];
@@ -90,7 +85,7 @@ void motherboard_print_samples(uint32_t base_addr)
 void motherboard_print_counters(uint32_t base_addr)
 {
     // Cast base address for IP
-	volatile uint32_t *m_motherboard = cast_base_addr(base_addr);
+	volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
     debug_printf("V: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4]);
     debug_printf("C: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4]);
