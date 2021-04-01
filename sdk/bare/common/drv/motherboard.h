@@ -3,6 +3,7 @@
 
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
+#include "sys/errors.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -42,12 +43,12 @@ static inline bool motherboard_is_valid_channel(mb_channel_e channel)
 
 void motherboard_init(uint32_t base_addr);
 
-void motherboard_set_adc_sampling(bool enable);
-void motherboard_request_new_data(void);
+void motherboard_set_adc_sampling(uint32_t base_addr, bool enable);
+void motherboard_request_new_data(uint32_t base_addr);
 
-int motherboard_get_data(mb_channel_e channel, int32_t *out);
+error_t motherboard_get_data(uint32_t base_addr, mb_channel_e channel, int32_t *out);
 
-void motherboard_print_samples(void);
-void motherboard_print_counters(void);
+void motherboard_print_samples(uint32_t base_addr);
+void motherboard_print_counters(uint32_t base_addr);
 
 #endif // MOTHERBOARD_H
