@@ -26,6 +26,8 @@ int task_can_sendmessage(uint8_t*, int);
 
 int task_can_print();
 
+int task_can_print_mode();
+
 int task_can_setmode(uint32_t);
 
 int task_can_setbaud(int);

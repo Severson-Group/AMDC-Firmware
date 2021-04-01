@@ -87,7 +87,7 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
-    can_init();
+    can_init(0);
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C

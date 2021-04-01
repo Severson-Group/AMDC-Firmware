@@ -50,13 +50,32 @@ static u32 TxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
 static u32 RxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
 
 // Instance of the CAN Device
-XCanPs CanPs;
+static XCanPs CanPs;
 
 // Set the mode of the CAN device
 int can_setmode(uint32_t mode) {
 
 	XCanPs *CanInstPtr = &CanPs;
+	uint32_t currMode = XCanPs_GetMode(CanInstPtr);
+	if (currMode == XCANPS_MODE_LOOPBACK && mode != XCANPS_MODE_CONFIG) {
+		print("\nCAN core currently in loopback mode. Can only enter config mode from here.");
+		return FAILURE;
+	}
+	else if (currMode == XCANPS_MODE_NORMAL && mode != XCANPS_MODE_SLEEP && mode != XCANPS_MODE_CONFIG){
+		print("\nCAN core currently in normal mode. Can only enter config or sleep mode from here.");
+		return FAILURE;
+	}
+
 	XCanPs_EnterMode(CanInstPtr, mode);
+//	while(mode == XCANPS_MODE_NORMAL) {
+//		uint32_t sr = XCanPs_GetStatus(CanInstPtr);
+//		uint32_t er = XCanPs_ReadReg(CanInstPtr->CanConfig.BaseAddr,
+//				XCANPS_ESR_OFFSET);
+//		uint32_t msr = XCanPs_ReadReg(CanInstPtr->CanConfig.BaseAddr,
+//				XCANPS_MSR_OFFSET);
+//		uint32_t srr = XCanPs_ReadReg(CanInstPtr->CanConfig.BaseAddr,
+//				XCANPS_SRR_OFFSET);
+//	}
 	while(XCanPs_GetMode(CanInstPtr) != mode);
 	return SUCCESS;
 }
@@ -65,6 +84,13 @@ int can_setmode(uint32_t mode) {
 int can_setbaud(int rate) {
 	int Status;
 	XCanPs *CanInstPtr = &CanPs;
+
+	// Ensure CAN peripheral in config mode
+	if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_NORMAL) {
+		print("\nMust be in config mode to set baud rate prescalar register");
+		return FAILURE;
+	}
+
 	// Initialize to default baud rate
 	if (!rate)
 		rate = TEST_BRPR_BAUD_PRESCALAR;
@@ -78,6 +104,14 @@ int can_setbaud(int rate) {
 int can_set_btr(int jump_width, int first_time, int second_time) {
 	int Status;
 	XCanPs *CanInstPtr = &CanPs;
+
+	// Ensure CAN peripheral in config mode
+	if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_NORMAL) {
+		print("\nMust be in config mode to set bit timing register");
+		return FAILURE;
+	}
+
+
 	// Initialize to defaults provided by Xilinx
 	if (!jump_width && !first_time && !second_time)
 		Status = XCanPs_SetBitTiming(CanInstPtr, TEST_BTR_SYNCJUMPWIDTH,
@@ -95,9 +129,10 @@ int can_set_btr(int jump_width, int first_time, int second_time) {
 // Initialize the CAN device, default settings
 int can_init(int device_id)
 {
+	printf("CAN:\tInitializing...\n");
 	XCanPs *CanInstPtr = &CanPs;
 	u16 DeviceId;
-	if (device_id != 1 || device_id != 0)
+	if (device_id != 1 && device_id != 0)
 		return FAILURE;
 	else if(!device_id)
 		DeviceId = CAN0_DEVICE_ID;
@@ -110,7 +145,7 @@ int can_init(int device_id)
 	// Initialize the CAN driver so that it's ready to use
 	// Look up the configuration in the config table, then initialize it
 	Config = XCanPs_LookupConfig(DeviceId);
-	if (NULL == Config) {
+	if (Config == NULL || CanInstPtr == NULL) {
 		return FAILURE;
 	}
 
@@ -133,13 +168,15 @@ int can_init(int device_id)
 	// Set Baud Rate Prescalar Register (BRPR) and
 	// Bit Timing Register (BTR)
 	Status = can_setbaud(TEST_BRPR_BAUD_PRESCALAR);
-	if (Status != XST_SUCCESS) {
+	if (Status != SUCCESS) {
 		return FAILURE;
 	}
 	Status = can_set_btr(TEST_BTR_SYNCJUMPWIDTH, TEST_BTR_SECOND_TIMESEGMENT, TEST_BTR_FIRST_TIMESEGMENT);
-	if (Status != XST_SUCCESS) {
+	if (Status != SUCCESS) {
 		return FAILURE;
 	}
+
+	can_setmode(XCANPS_MODE_LOOPBACK);
 
 	// Enter Normal Mode to use CAN peripheral via API calls
 	can_setmode(XCANPS_MODE_NORMAL);
@@ -194,7 +231,7 @@ int can_print()
 	Status = XCanPs_Recv(CanInstPtr, RxFrame);
 
 	if (Status == XST_SUCCESS) {
-		print("Latest CAN packet is: ");
+		print("\nLatest CAN packet is: ");
 		FramePtr = (u8 *)(&RxFrame[2]);
 		for (Index = 0; Index < FRAME_DATA_LENGTH; Index++) {
 			print(*FramePtr);
@@ -203,6 +240,24 @@ int can_print()
 		return SUCCESS;
 	}
 	return FAILURE;
+}
+
+// Print mode the CAN peripheral is in
+void can_print_mode()
+{
+	XCanPs *CanInstPtr = &CanPs;
+	uint32_t mode;
+	mode = XCanPs_GetMode(CanInstPtr);
+	if(mode == XCANPS_MODE_NORMAL)
+		print("\nXCANPS_MODE_NORMAL");
+	else if(mode == XCANPS_MODE_LOOPBACK)
+		print("\nXCANPS_MODE_LOOPBACK");
+	else if(mode == XCANPS_MODE_CONFIG)
+			print("\nXCANPS_MODE_CONFIG");
+	else if(mode == XCANPS_MODE_SLEEP)
+			print("\nXCANPS_MODE_SLEEP");
+	else
+		print("\nOther mode");
 }
 
 // Check packet received in loopback mode is correct
@@ -246,6 +301,13 @@ int can_loopback_test()
 
 	int Status;
 	uint8_t packet[FRAME_DATA_LENGTH];
+
+	// Check we are in loopback mode
+	uint32_t mode;
+	XCanPs *CanInstPtr = &CanPs;
+	mode = XCanPs_GetMode(CanInstPtr);
+	if (mode != XCANPS_MODE_LOOPBACK)
+		return FAILURE;
 
 	// CAN Packet Populated
 	int i;

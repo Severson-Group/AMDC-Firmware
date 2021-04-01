@@ -21,6 +21,7 @@ static command_help_t cmd_help[] = {
 	{ "selftest", "Run test message in loopback mode"},
     { "send <number of bytes>", "Send a predefined message with specified number of bytes" },
 	{ "print", "Prints latest message"},
+	{ "print mode", "Prints  mode of CAN peripheral"},
 	{ "setmode <mode>", "Set CAN mode {loopback, sleep, config, normal}"},
 	{ "setbaud <baudrate>", "Set CAN baudrate (type 0 for default)"},
 	{ "set btr <jump> <first time> <second time>", "Set CAN bit timing register (type 0s for default)"},
@@ -107,6 +108,16 @@ int cmd_can(int argc, char **argv)
 		return CMD_SUCCESS;
 	}
 
+	// Handle 'print mode' sub-command
+	//
+	// First, verify correct number of arguments (3)
+	// Second, verify correct arguments
+	if (argc == 3 && strcmp("print", argv[1]) == 0 && strcmp("mode", argv[2]) == 0) {
+		if (task_can_print_mode() != SUCCESS)
+			return CMD_FAILURE;
+		return CMD_SUCCESS;
+	}
+
 	// Handle 'setmode' sub-command
 	//
 	// First, verify correct number of arguments (3)
@@ -126,8 +137,10 @@ int cmd_can(int argc, char **argv)
 		}
 		else if (strcmp("sleep", argv[2]) == 0) {
 			if (task_can_setmode(XCANPS_MODE_SLEEP) != SUCCESS)
-				return CMD_FAILURE;
+				return CMD_INVALID_ARGUMENTS;
 		}
+		else
+			return CMD_FAILURE;
 		return CMD_SUCCESS;
 	}
 

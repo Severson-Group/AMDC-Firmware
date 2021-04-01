@@ -16,7 +16,7 @@ int task_can_init(void)
 {
 
 	// Initialize the can peripheral
-	can_init();
+	//	can_init(0);
 
     if (scheduler_tcb_is_registered(&tcb)) {
         return FAILURE;
@@ -62,6 +62,12 @@ int task_can_print()
 	if (Status != SUCCESS) {
 		return FAILURE;
 	}
+	return SUCCESS;
+}
+
+int task_can_print_mode()
+{
+	can_print_mode();
 	return SUCCESS;
 }
 
