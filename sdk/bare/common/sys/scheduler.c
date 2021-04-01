@@ -1,11 +1,11 @@
 #include "sys/scheduler.h"
-#include "sys/peripherals.h"
 #include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/led.h"
 #include "drv/motherboard.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
+#include "sys/peripherals.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -197,7 +197,7 @@ void scheduler_run(void)
         // NOTE: this is specifically before the while loop below so that the new
         // data arrives before it is needed in the next control loop.
         for (int i = 0; i < PERIPHERAL_MOTHERBOARD_NUM_INSTANCES; i++) {
-        	motherboard_request_new_data(peripheral_motherboard_id_to_base_addr(i));
+            motherboard_request_new_data(peripheral_motherboard_id_to_base_addr(i));
         }
 #endif
 

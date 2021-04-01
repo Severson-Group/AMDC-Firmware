@@ -14,14 +14,14 @@ static inline bool peripheral_motherboard_is_valid_id(int id)
 
 static inline uint32_t peripheral_motherboard_id_to_base_addr(int id)
 {
-	switch (id) {
-	case XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_0_DEVICE_ID:
-		return XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR;
-	case XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_1_DEVICE_ID:
-		return XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_1_S00_AXI_BASEADDR;
-	default:
-		return 0;
-	}
+    switch (id) {
+    case XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_0_DEVICE_ID:
+        return XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR;
+    case XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_1_DEVICE_ID:
+        return XPAR_HIER_AMDS_IP_AMDC_MOTHERBOARD_1_S00_AXI_BASEADDR;
+    default:
+        return 0;
+    }
 }
 
 static inline bool peripheral_eddy_current_sensor_is_valid_id(int id)
@@ -31,16 +31,15 @@ static inline bool peripheral_eddy_current_sensor_is_valid_id(int id)
 
 static inline uint32_t peripheral_eddy_current_sensor_id_to_base_addr(int id)
 {
-	switch (id) {
-	case XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_0_DEVICE_ID:
-		return XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_0_S00_AXI_BASEADDR;
-	case XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_1_DEVICE_ID:
-		return XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_1_S00_AXI_BASEADDR;
-	default:
-		return 0;
-	}
+    switch (id) {
+    case XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_0_DEVICE_ID:
+        return XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_0_S00_AXI_BASEADDR;
+    case XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_1_DEVICE_ID:
+        return XPAR_HIER_EDDY_CURRENT_SENSOR_IP_AMDC_EDDY_CURRENT_SE_1_S00_AXI_BASEADDR;
+    default:
+        return 0;
+    }
 }
-
 
 error_t peripherals_init(void);
 

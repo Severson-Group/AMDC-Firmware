@@ -15,11 +15,11 @@
 //
 // NOTE: UART uses 115200 baud
 
-#include "sys/peripherals.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/injection.h"
 #include "sys/log.h"
+#include "sys/peripherals.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"

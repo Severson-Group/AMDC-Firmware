@@ -1,8 +1,8 @@
 #ifndef UART_H
 #define UART_H
 
-#include <stdint.h>
 #include "sys/errors.h"
+#include <stdint.h>
 
 #define UART_RX_FIFO_LENGTH (64)
 #define UART_TX_FIFO_LENGTH (64)

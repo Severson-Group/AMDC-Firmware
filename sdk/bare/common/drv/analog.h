@@ -2,8 +2,8 @@
 #define ANALOG_H
 
 #include "drv/hardware_targets.h"
-#include "usr/user_config.h"
 #include "sys/errors.h"
+#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdint.h>
 

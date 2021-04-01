@@ -5,8 +5,8 @@
 #include "drv/motherboard.h"
 #include "sys/cmd/cmd_mb.h"
 #include "sys/commands.h"
-#include "sys/util.h"
 #include "sys/peripherals.h"
+#include "sys/util.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,17 +29,17 @@ void cmd_mb_register(void)
 
 int cmd_mb(int argc, char **argv)
 {
-	// Parse the mb ID right away, since all commands require it
-	uint32_t base_addr = 0;
-	if (argc <= 2) {
-		return CMD_INVALID_ARGUMENTS;
-	} else {
-		int id = atoi(argv[1]);
-		if (!peripheral_motherboard_is_valid_id(id)) {
-			return CMD_INVALID_ARGUMENTS;
-		}
-		base_addr = peripheral_motherboard_id_to_base_addr(id);
-	}
+    // Parse the mb ID right away, since all commands require it
+    uint32_t base_addr = 0;
+    if (argc <= 2) {
+        return CMD_INVALID_ARGUMENTS;
+    } else {
+        int id = atoi(argv[1]);
+        if (!peripheral_motherboard_is_valid_id(id)) {
+            return CMD_INVALID_ARGUMENTS;
+        }
+        base_addr = peripheral_motherboard_id_to_base_addr(id);
+    }
 
     // Handle 'mb <#> adc <on|off>' command
     if (argc == 4 && STREQ("adc", argv[1])) {
