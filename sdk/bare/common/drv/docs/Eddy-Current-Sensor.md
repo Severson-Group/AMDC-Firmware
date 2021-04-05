@@ -1,4 +1,4 @@
-# DAC Expansion Board Driver
+# Eddy Current Sensor Driver
 
 This driver is used to control and configure the AMDC eddy current sensor IP core in the FPGA through the AXI4-Lite interface.
 
