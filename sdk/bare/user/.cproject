@@ -18,21 +18,8 @@
 					<folderInfo id="xilinx.gnu.armv7.exe.debug.994846576." name="/" resourcePath="">
 						<toolChain id="xilinx.gnu.armv7.exe.debug.toolchain.675664127" name="Xilinx ARM v7 GNU Toolchain" superClass="xilinx.gnu.armv7.exe.debug.toolchain">
 							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.x32" id="xilinx.armv7.target.gnu.base.debug.722028308" isAbstract="false" name="Debug Platform" superClass="xilinx.armv7.target.gnu.base.debug"/>
-							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug">
-								<outputEntries>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
-								</outputEntries>
-							</builder>
+							<builder buildPath="${workspace_loc:/bare}/Debug" enableAutoBuild="true" id="xilinx.gnu.armv7.toolchain.builder.debug.873230648" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.armv7.toolchain.builder.debug"/>
 							<tool id="xilinx.gnu.armv7.c.toolchain.assembler.debug.1801385722" name="ARM v7 gcc assembler" superClass="xilinx.gnu.armv7.c.toolchain.assembler.debug">
-								<option id="xilinx.gnu.both.asm.option.include.paths.565012057" name="Include Paths (-I)" superClass="xilinx.gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="../bare/amdc_bsp/ps7_cortexa9_0/include"/>
-									<listOptionValue builtIn="false" value="C:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/sdk/bare/user/bare/common"/>
-									<listOptionValue builtIn="false" value="../bare/bare"/>
-									<listOptionValue builtIn="false" value="../bare/common"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/bare}&quot;"/>
-									<listOptionValue builtIn="false" value="../amdc_bsp/ps7_cortexa9_0/include"/>
-								</option>
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.172815694" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug">
@@ -46,9 +33,9 @@
 									<listOptionValue builtIn="false" value="APP_PCBTEST"/>
 								</option>
 								<option id="xilinx.gnu.compiler.dircategory.includes.1596529872" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/bare}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_0/ps7_cortexa9_0/include}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1322043513" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -65,6 +52,8 @@
 								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1777577282" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath"/>
 								<option id="xilinx.gnu.linker.inferred.swplatform.flags.1492846061" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
 									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
+									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
+									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
 								<option id="xilinx.gnu.c.linker.option.lscript.1654817451" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.1114643894" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>
@@ -75,7 +64,7 @@
 									<listOptionValue builtIn="false" value="-M &gt; mapfile.txt"/>
 								</option>
 								<option id="xilinx.gnu.c.link.option.paths.1313998286" name="Library search path (-L)" superClass="xilinx.gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_0/ps7_cortexa9_0/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp/ps7_cortexa9_0/lib}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.linker.input.1470010392" superClass="xilinx.gnu.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
