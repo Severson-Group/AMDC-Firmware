@@ -39,12 +39,12 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 ### CLOCK_DIVIDER
 | Bits | Name | Description |
 | -- | -- | -- |
-| 7:0 | DIVIDER | Divides the SPI clock and Conversion signal transition times |
+| 7:0 | DIVIDER | Divides the SPI clock and conversion signal transition times by the value in the register plus one|
 
 ### CONVERSION_EN
 | Bits | Name | Description |
 | -- | -- | -- |
-| 0 | ENABLE | Enables the SPI clock and Conversion signal to transition |
+| 0 | ENABLE | Enables the SPI clock and conversion signals to transition. A value of 0x1 enables the SPI interface. While enabled the IP core will continuously read from the eddy current sensor's ADCs |
 
 
 

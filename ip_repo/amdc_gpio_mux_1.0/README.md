@@ -1,6 +1,6 @@
 # AMDC IP: `amdc_gpio_mux_1.0`
 
-This IP core is a mux for the GPIO lines on the IsoSPI ports. It allows remapping of internal FPGA device driver signals from internal device IP's to either of the two IsoSPI ports. 
+This IP core is a mux for the GPIO lines on the IsoSPI (GPIO) ports. It allows remapping of internal FPGA device driver signals from internal device IP's to either of the two IsoSPI ports. 
 ## Features
 
 - Remap IsoSPI ports GPIO lines
@@ -16,8 +16,8 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP.
 
 | Offset | Name | R/W | Description |
 | -- | -- | -- | -- |
-| 0x00 | PORT1_GPIO_SEL | W | Mux selector for Status A output on port 1 and Status A input on Device 1 |
-| 0x04 | PORT2_GPIO_SEL | W | Mux selector for Status A output on port 2 and Status A input on Device 2 |
+| 0x00 | PORT1_GPIO_SEL | W | Mux selector for port 1|
+| 0x04 | PORT2_GPIO_SEL | W | Mux selector for port 2|
 |----- | Unused | W | Reserved for future use |
 | 0x7C | Unused | W | Reserved for future use |
 
