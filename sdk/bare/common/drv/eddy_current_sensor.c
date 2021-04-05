@@ -44,9 +44,9 @@ double eddy_current_sensor_read_x_voltage(void)
 {
     uint32_t x_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR);
 
-    double resolution = 0.000038141;                         // 5V / 2^17
-    double voltage = 0x1FFFF & x_data * resolution;          // 17-bits of positional data
-    double signed_voltage = 0x20000 & x_data ? voltage * -1; // 18th bit determines sign
+    double resolution = 0.000038141;                                   // 5V / 2^17
+    double voltage = (0x1FFFF & x_data) * resolution;                  // 17-bits of positional data
+    double signed_voltage = 0x20000 & x_data ? voltage * -1 : voltage; // 18th bit determines sign
 
     return signed_voltage;
 }
@@ -55,9 +55,9 @@ double eddy_current_sensor_read_y_voltage(void)
 {
     uint32_t y_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR + (1 * sizeof(uint32_t)));
 
-    double resolution = 0.000038141;                         // 5V / 2^17
-    double voltage = 0x1FFFF & y_data * resolution;          // 17-bits of positional data
-    double signed_voltage = 0x20000 & y_data ? voltage * -1; // 18th bit determines sign
+    double resolution = 0.000038141;                                   // 5V / 2^17
+    double voltage = (0x1FFFF & y_data) * resolution;                  // 17-bits of positional data
+    double signed_voltage = 0x20000 & y_data ? voltage * -1 : voltage; // 18th bit determines sign
 
     return signed_voltage;
 }
