@@ -27,7 +27,7 @@
 		<link>
 			<name>common</name>
 			<type>2</type>
-			<location>C:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/sdk/bare/common</location>
+			<locationURI>PARENT-1-PROJECT_LOC/common</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
