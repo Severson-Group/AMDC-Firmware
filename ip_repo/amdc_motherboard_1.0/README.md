@@ -1,6 +1,6 @@
 # IP: `amdc_motherboard_1.0`
 
-This IP core is a driver for the [SensorCard platform motherboard](https://github.com/Severson-Group/SensorCard/tree/develop/Motherboard).
+This IP core is a driver for the [AMDS platform mainboard](https://github.com/Severson-Group/AMDS/tree/develop/Mainboard).
 
 ## Features
 
