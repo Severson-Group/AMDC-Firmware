@@ -12,14 +12,14 @@ More details specific to the ADC timing requirements can be found in the [datash
     
 ## IP Interface
 
-The IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface retries X and Y positional data from the eddy current sensor through control of the integrated ADCs
+The IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface retrieves X and Y positional data from the eddy current sensor through control of its integrated ADCs
 
 ## Register Map
 
 | Offset | Name | R/W | Description |
 | -- | -- | -- | -- |
 | 0x00 | SENSOR_DATA_X | R | IP DATA REGISTER |
-| 0x04 | SENSOR_DATA_Y | W | IP DATA REGISTER |
+| 0x04 | SENSOR_DATA_Y | R | IP DATA REGISTER |
 | 0x08 | CLOCK_DIVIDER | W | IP Configuration Register |
 | 0x0C | CONVERSION_EN | W | IP Configuration Register |
 
@@ -39,12 +39,12 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 ### CLOCK_DIVIDER
 | Bits | Name | Description |
 | -- | -- | -- |
-| 7:0 | DIVIDER | Divides the SPI clock and Conversion signal transition times |
+| 7:0 | DIVIDER | Divides the SPI clock and conversion signal transition times by the value in the register plus one|
 
 ### CONVERSION_EN
 | Bits | Name | Description |
 | -- | -- | -- |
-| 0 | ENABLE | Enables the SPI clock and Conversion signal to transition |
+| 0 | ENABLE | Enables the SPI clock and conversion signals to transition. A value of 0x1 enables the SPI interface. While enabled the IP core will continuously read from the eddy current sensor's ADCs |
 
 
 
