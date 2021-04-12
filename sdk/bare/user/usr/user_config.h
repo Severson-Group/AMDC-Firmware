@@ -42,4 +42,12 @@
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_INJECTION (0)
 
+// Enable SensorCard platform motherboard support
+// set to 1 for enabled, 0 for disabled
+#define USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT (0)
+
+// Enable SensorCard platform motherboard auto request new ADC sample data
+// set to 1 for enabled, 0 for disabled
+#define USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX (0)
+
 #endif // USER_CONFIG_H

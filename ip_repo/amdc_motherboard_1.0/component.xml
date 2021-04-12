@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <spirit:vendor>wisc.edu</spirit:vendor>
+  <spirit:library>user</spirit:library>
+  <spirit:name>amdc_motherboard</spirit:name>
+  <spirit:version>1.0</spirit:version>
+  <spirit:busInterfaces>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm_rtl" spirit:version="1.0"/>
+      <spirit:slave>
+        <spirit:memoryMapRef spirit:memoryMapRef="S00_AXI"/>
+      </spirit:slave>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWADDR</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awaddr</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWPROT</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awprot</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>AWREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_awready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WSTRB</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wstrb</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>WREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_wready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BRESP</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bresp</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>BREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_bready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARADDR</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_araddr</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARPROT</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arprot</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>ARREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_arready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RRESP</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rresp</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_rready</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>WIZ_DATA_WIDTH</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.WIZ_DATA_WIDTH" spirit:choiceRef="choice_list_6fc15197">32</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>WIZ_NUM_REG</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.WIZ_NUM_REG" spirit:minimum="4" spirit:maximum="512" spirit:rangeType="long">16</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>SUPPORTS_NARROW_BURST</spirit:name>
+          <spirit:value spirit:format="long" spirit:id="BUSIFPARAM_VALUE.S00_AXI.SUPPORTS_NARROW_BURST" spirit:choiceRef="choice_pairs_ce1226b1">0</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI_RST</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_aresetn</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>POLARITY</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_RST.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>S00_AXI_CLK</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+      <spirit:slave/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>CLK</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>s00_axi_aclk</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+      <spirit:parameters>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_CLK.ASSOCIATED_BUSIF">S00_AXI</spirit:value>
+        </spirit:parameter>
+        <spirit:parameter>
+          <spirit:name>ASSOCIATED_RESET</spirit:name>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_CLK.ASSOCIATED_RESET">s00_axi_aresetn</spirit:value>
+        </spirit:parameter>
+      </spirit:parameters>
+    </spirit:busInterface>
+  </spirit:busInterfaces>
+  <spirit:memoryMaps>
+    <spirit:memoryMap>
+      <spirit:name>S00_AXI</spirit:name>
+      <spirit:addressBlock>
+        <spirit:name>S00_AXI_reg</spirit:name>
+        <spirit:baseAddress spirit:format="long" spirit:resolve="user">0</spirit:baseAddress>
+        <spirit:range spirit:format="long">4096</spirit:range>
+        <spirit:width spirit:format="long">32</spirit:width>
+        <spirit:usage>register</spirit:usage>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>OFFSET_BASE_PARAM</spirit:name>
+            <spirit:value spirit:id="ADDRBLOCKPARAM_VALUE.S00_AXI.S00_AXI_REG.OFFSET_BASE_PARAM">C_S00_AXI_BASEADDR</spirit:value>
+          </spirit:parameter>
+          <spirit:parameter>
+            <spirit:name>OFFSET_HIGH_PARAM</spirit:name>
+            <spirit:value spirit:id="ADDRBLOCKPARAM_VALUE.S00_AXI.S00_AXI_REG.OFFSET_HIGH_PARAM">C_S00_AXI_HIGHADDR</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:addressBlock>
+    </spirit:memoryMap>
+  </spirit:memoryMaps>
+  <spirit:model>
+    <spirit:views>
+      <spirit:view>
+        <spirit:name>xilinx_verilogsynthesis</spirit:name>
+        <spirit:displayName>Verilog Synthesis</spirit:displayName>
+        <spirit:envIdentifier>verilogSource:vivado.xilinx.com:synthesis</spirit:envIdentifier>
+        <spirit:language>verilog</spirit:language>
+        <spirit:modelName>amdc_motherboard_v1_0</spirit:modelName>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_verilogsynthesis_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>a0233313</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_verilogbehavioralsimulation</spirit:name>
+        <spirit:displayName>Verilog Simulation</spirit:displayName>
+        <spirit:envIdentifier>verilogSource:vivado.xilinx.com:simulation</spirit:envIdentifier>
+        <spirit:language>verilog</spirit:language>
+        <spirit:modelName>amdc_motherboard_v1_0</spirit:modelName>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_verilogbehavioralsimulation_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>a0233313</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_softwaredriver</spirit:name>
+        <spirit:displayName>Software Driver</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:sw.driver</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_softwaredriver_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>974e47f0</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_xpgui</spirit:name>
+        <spirit:displayName>UI Layout</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:xgui.ui</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_xpgui_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>dda4df14</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>bd_tcl</spirit:name>
+        <spirit:displayName>Block Diagram</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:block.diagram</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>bd_tcl_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>16328387</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+      <spirit:view>
+        <spirit:name>xilinx_testbench</spirit:name>
+        <spirit:displayName>Test Bench</spirit:displayName>
+        <spirit:envIdentifier>:vivado.xilinx.com:simulation.testbench</spirit:envIdentifier>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_testbench_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:parameters>
+          <spirit:parameter>
+            <spirit:name>viewChecksum</spirit:name>
+            <spirit:value>dcf4d469</spirit:value>
+          </spirit:parameter>
+        </spirit:parameters>
+      </spirit:view>
+    </spirit:views>
+    <spirit:ports>
+      <spirit:port>
+        <spirit:name>pwm_carrier_low</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>pwm_carrier_high</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>motherboard_dout1</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>motherboard_dout2</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>motherboard_sync_adc</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>motherboard_sync_tx</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awaddr</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">5</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awprot</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_awready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wstrb</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) / 8) - 1)">3</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_wready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bresp</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_bready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_araddr</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH&apos;)) - 1)">5</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arprot</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_arready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="(spirit:decode(id(&apos;MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH&apos;)) - 1)">31</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rresp</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">1</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_rready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_aclk</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>s00_axi_aresetn</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+    </spirit:ports>
+    <spirit:modelParameters>
+      <spirit:modelParameter xsi:type="spirit:nameValueTypeType" spirit:dataType="integer">
+        <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
+        <spirit:displayName>C S00 AXI DATA WIDTH</spirit:displayName>
+        <spirit:description>Width of S_AXI data bus</spirit:description>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_DATA_WIDTH" spirit:order="3" spirit:rangeType="long">32</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="integer">
+        <spirit:name>C_S00_AXI_ADDR_WIDTH</spirit:name>
+        <spirit:displayName>C S00 AXI ADDR WIDTH</spirit:displayName>
+        <spirit:description>Width of S_AXI address bus</spirit:description>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_ADDR_WIDTH" spirit:order="4" spirit:rangeType="long">6</spirit:value>
+      </spirit:modelParameter>
+    </spirit:modelParameters>
+  </spirit:model>
+  <spirit:choices>
+    <spirit:choice>
+      <spirit:name>choice_list_6fc15197</spirit:name>
+      <spirit:enumeration>32</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
+      <spirit:name>choice_list_9d8b0d81</spirit:name>
+      <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
+      <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
+    </spirit:choice>
+    <spirit:choice>
+      <spirit:name>choice_pairs_ce1226b1</spirit:name>
+      <spirit:enumeration spirit:text="true">1</spirit:enumeration>
+      <spirit:enumeration spirit:text="false">0</spirit:enumeration>
+    </spirit:choice>
+  </spirit:choices>
+  <spirit:fileSets>
+    <spirit:fileSet>
+      <spirit:name>xilinx_verilogsynthesis_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/adc_uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/amdc_motherboard_v1_0_S00_AXI.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/amdc_motherboard_v1_0.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>CHECKSUM_c9d65090</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_verilogbehavioralsimulation_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/adc_uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/amdc_motherboard_v1_0_S00_AXI.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>hdl/amdc_motherboard_v1_0.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_softwaredriver_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/data/amdc_motherboard.mdd</spirit:name>
+        <spirit:userFileType>mdd</spirit:userFileType>
+        <spirit:userFileType>driver_mdd</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/data/amdc_motherboard.tcl</spirit:name>
+        <spirit:fileType>tclSource</spirit:fileType>
+        <spirit:userFileType>driver_tcl</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/src/Makefile</spirit:name>
+        <spirit:userFileType>driver_src</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/src/amdc_motherboard.h</spirit:name>
+        <spirit:fileType>cSource</spirit:fileType>
+        <spirit:userFileType>driver_src</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/src/amdc_motherboard.c</spirit:name>
+        <spirit:fileType>cSource</spirit:fileType>
+        <spirit:userFileType>driver_src</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>drivers/amdc_motherboard_v1_0/src/amdc_motherboard_selftest.c</spirit:name>
+        <spirit:fileType>cSource</spirit:fileType>
+        <spirit:userFileType>driver_src</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>xgui/amdc_motherboard_v1_0.tcl</spirit:name>
+        <spirit:fileType>tclSource</spirit:fileType>
+        <spirit:userFileType>CHECKSUM_dda4df14</spirit:userFileType>
+        <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>bd_tcl_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>bd/bd.tcl</spirit:name>
+        <spirit:fileType>tclSource</spirit:fileType>
+      </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_testbench_view_fileset</spirit:name>
+      <spirit:file>
+        <spirit:name>src/adc_uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/uart_rx.v</spirit:name>
+        <spirit:fileType>verilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/tb.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_implementation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_simulation</spirit:userFileType>
+        <spirit:userFileType>USED_IN_synthesis</spirit:userFileType>
+      </spirit:file>
+    </spirit:fileSet>
+  </spirit:fileSets>
+  <spirit:description>IP based on the AXI4-Lite interface to drive the SensorCard motherboard</spirit:description>
+  <spirit:parameters>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
+      <spirit:displayName>C S00 AXI DATA WIDTH</spirit:displayName>
+      <spirit:description>Width of S_AXI data bus</spirit:description>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_DATA_WIDTH" spirit:choiceRef="choice_list_6fc15197" spirit:order="3">32</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_DATA_WIDTH">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_ADDR_WIDTH</spirit:name>
+      <spirit:displayName>C S00 AXI ADDR WIDTH</spirit:displayName>
+      <spirit:description>Width of S_AXI address bus</spirit:description>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_ADDR_WIDTH" spirit:order="4" spirit:rangeType="long">6</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_ADDR_WIDTH">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_BASEADDR</spirit:name>
+      <spirit:displayName>C S00 AXI BASEADDR</spirit:displayName>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_BASEADDR" spirit:order="5" spirit:bitStringLength="32">0xFFFFFFFF</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_BASEADDR">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>C_S00_AXI_HIGHADDR</spirit:name>
+      <spirit:displayName>C S00 AXI HIGHADDR</spirit:displayName>
+      <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.C_S00_AXI_HIGHADDR" spirit:order="6" spirit:bitStringLength="32">0x00000000</spirit:value>
+      <spirit:vendorExtensions>
+        <xilinx:parameterInfo>
+          <xilinx:enablement>
+            <xilinx:isEnabled xilinx:id="PARAM_ENABLEMENT.C_S00_AXI_HIGHADDR">false</xilinx:isEnabled>
+          </xilinx:enablement>
+        </xilinx:parameterInfo>
+      </spirit:vendorExtensions>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>Component_Name</spirit:name>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">amdc_motherboard_v1_0</spirit:value>
+    </spirit:parameter>
+  </spirit:parameters>
+  <spirit:vendorExtensions>
+    <xilinx:coreExtensions>
+      <xilinx:supportedFamilies>
+        <xilinx:family xilinx:lifeCycle="Pre-Production">zynq</xilinx:family>
+      </xilinx:supportedFamilies>
+      <xilinx:taxonomies>
+        <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
+      </xilinx:taxonomies>
+      <xilinx:displayName>amdc_motherboard_v1.0</xilinx:displayName>
+      <xilinx:coreRevision>8</xilinx:coreRevision>
+      <xilinx:upgrades>
+        <xilinx:canUpgradeFrom>xilinx.com:user:amdc_motherboard:1.0</xilinx:canUpgradeFrom>
+      </xilinx:upgrades>
+      <xilinx:coreCreationDateTime>2020-10-06T23:06:11Z</xilinx:coreCreationDateTime>
+      <xilinx:tags>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@280b912e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2ffe60e9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@15c658b4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e18b288_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@11a48065_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53ccfe72_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@74ccb372_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@434b7ea4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68cb8e2b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67eecb82_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2aa5a33e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e768c23_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@bd4d9ed_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e71224f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@187d2753_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31ad962d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1ecdad9d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b190070_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@491ca43a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@22ebe3ab_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@713e81a4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@e351e9d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48e92db2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1dac1b3_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@61553d4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@74553dce_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d203d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3d4eed84_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a1d9a18_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5c3373a9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@71d21d52_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c9864a5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36ad063d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e6e4e69_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@60365a68_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@30993a3d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@24d5e8ff_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f6ee306_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@570e7082_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31e9087c_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ddd418d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68606193_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43e7615f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c53fc11_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a5c9759_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7342853c_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@122aabe9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a2977f0_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a79f53a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f8381fa_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@79570fa7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4aa45289_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5530d7aa_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@659ac3da_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@430ddb15_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67bcdcbc_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31be3ef9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35a8cab5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36deaf4f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@142458c8_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@10f97112_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12cc7ccd_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@293d3873_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@256ba5e5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@641eb386_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a7ffd11_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@297eb740_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@23c838eb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a18c19c_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3c97375a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@234a2049_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1a80ff54_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@690163c9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a8bf7cb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1973c10b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@620cf90_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3c187e7d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3707e779_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3dc9e2e4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1a4ae35a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67b8aad2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@19509722_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@387540_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@515722d8_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@44f3f6fb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cec5a55_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3ccfab9d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@271885db_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@795e6b46_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b369783_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5827a471_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@50f72f3a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7db5ecb3_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f7992bf_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5670b099_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65ba8e70_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@476fafdd_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a6c8e8a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7760ef2e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ff5b800_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@26d7cab4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2cdd95c7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1aa2f382_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cbe70b6_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@443c9a6a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@769d3910_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@40481e6e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6c9ea5b1_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59b7f9ad_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3eb4696a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a3184fe_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b27968_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e0c1d27_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a8fabcb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@56f9cd88_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3916e37_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d78cb6d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@232ba20a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@49df1795_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@40ea70a7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@310c136b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@729b083f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@d257f4d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b9db7b1_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48a862f6_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7cf026b2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@143f835a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@717f4f6_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@762fbf09_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7e8b3a7b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@667694b8_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4bcc93c9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@32da4b81_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5f4aaa58_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4490d9ec_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3bd4a5a2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@adc4e4_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4750a99e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5df423fb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3594048f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c0a3ecc_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65c4dd0a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2851e497_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@323e0177_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6d4920b8_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a4ea1de_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@727448fd_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@225d8701_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@350aa427_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@249a04b3_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b96a6d3_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6f77165c_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b923fb2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@662f7000_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@40d9073f_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@10cfa5f5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@14918b62_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@41900146_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@261f3f7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@164107a7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7428d1bc_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4fde6a6b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@581f6bc7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e36797d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@49eb69ba_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e77d4b_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5c81c995_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@379a4337_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7efe02dd_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2248a157_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6947cc8d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@def36ab_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f06c8db_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4bb7c371_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e92e4ba_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3b19bc47_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5bd1a0f5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e11fdbb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@16b92a10_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@164dcfc5_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69c2e4a9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c28b6a9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@269902d9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@720f6bfa_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36ced61d_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3eed00e9_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@292d84a7_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36ae339a_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6b1f8b86_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2e09d635_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@30f78a61_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7b8ebc3_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@aa7a9ad_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@276a7d41_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12c525df_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2c5364ef_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2da70876_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a935feb_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@74fd39bc_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3d370203_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@647f259e_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@549d0e16_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58d9169c_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2c289099_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48294721_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@66204f79_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64325aa2_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1551c7ab_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_motherboard_1.0</xilinx:tag>
+      </xilinx:tags>
+    </xilinx:coreExtensions>
+    <xilinx:packagingInfo>
+      <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="addc58e4"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="7fa48f50"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="ccf19172"/>
+      <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e7b50784"/>
+      <xilinx:checksum xilinx:scope="parameters" xilinx:value="82206a97"/>
+    </xilinx:packagingInfo>
+  </spirit:vendorExtensions>
+</spirit:component>
