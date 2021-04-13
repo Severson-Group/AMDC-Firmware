@@ -23,6 +23,11 @@ void encoder_set_pulses_per_rev_bits(uint32_t bits)
     Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), bits);
 }
 
+void encoder_get_pulses_per_rev_bits(uint32_t *bits_out)
+{
+    *bits_out = Xil_In32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t));
+}
+
 void encoder_get_steps(int32_t *steps)
 {
     *steps = Xil_In32(ENCODER_BASE_ADDR);
@@ -32,6 +37,40 @@ void encoder_get_position(uint32_t *position)
 {
     *position = Xil_In32(ENCODER_BASE_ADDR + 1 * sizeof(uint32_t));
 }
+
+double encoder_calc_speed(double dt, uint32_t pos_prev)
+{
+	// TODO: implement this
+	return 0;
+}
+
+double encoder_get_theta(void)
+{
+	uint32_t pos;
+	encoder_get_position(&pos);
+
+	double theta = 0;
+
+	if (pos != -1) {
+		uint32_t bits;
+		encoder_get_pulses_per_rev_bits(&bits);
+
+		uint32_t PPR = 1 << bits;
+
+		theta = PI2 * ((double)pos / (double)PPR);
+	}
+
+	return theta;
+}
+
+double encoder_get_theta_resolution(void)
+{
+	// TODO: implement this
+	return 0;
+}
+
+
+
 
 // ****************
 // State Machine which finds z pulse
