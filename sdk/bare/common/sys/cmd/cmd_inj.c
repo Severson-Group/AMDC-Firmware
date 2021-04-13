@@ -75,7 +75,7 @@ int cmd_inj(int argc, char **argv)
         // Pull out value argument
         // and saturate to -10 .. 10
         double value = strtod(argv[5], NULL);
-        if (value < -10.0 || value > 10.0)
+        if (value < -100.0 || value > 100.0)
             return CMD_INVALID_ARGUMENTS;
 
         injection_const(ctx, op, value);
@@ -96,15 +96,15 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out gain argument
-        // and saturate to 0 .. 50
+        // and saturate to 0 .. 1e3
         double gain = strtod(argv[4], NULL);
-        if (gain < 0.0 || gain > 50.0)
+        if (gain < 0.0 || gain > 1e3)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out offset argument
-        // and saturate to -100 .. 100
+        // and saturate to -10e3 .. 10e3
         double offset = strtod(argv[5], NULL);
-        if (offset < -100.0 || offset > 100.0)
+        if (offset < -10e3 || offset > 10e3)
             return CMD_INVALID_ARGUMENTS;
 
         injection_noise(ctx, op, gain, offset);
@@ -125,9 +125,9 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out gain argument
-        // and saturate to 0 .. 10
+        // and saturate to 0 .. 100
         double gain = strtod(argv[4], NULL);
-        if (gain < 0.0 || gain > 10.0)
+        if (gain < 0.0 || gain > 100.0)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out freqMin argument
@@ -166,15 +166,15 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out valueMin argument
-        // and saturate to -100 .. 100
+        // and saturate to -10e3 .. 10e3
         double valueMin = strtod(argv[4], NULL);
-        if (valueMin < -100.0 || valueMin > 100.0)
+        if (valueMin < -10e3 || valueMin > 10e3)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out valueMax argument
-        // and saturate to -100 .. 100
+        // and saturate to -10e3 .. 10e3
         double valueMax = strtod(argv[5], NULL);
-        if (valueMax < -100.0 || valueMax > 100.0)
+        if (valueMax < -10e3 || valueMax > 10e3)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out period argument
