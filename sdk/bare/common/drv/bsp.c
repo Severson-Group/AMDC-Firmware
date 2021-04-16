@@ -30,10 +30,10 @@
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #include "drv/dac.h"
+#include "drv/eddy_current_sensor.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/sts_mux.h"
-
 #endif
 
 void bsp_init(void)
@@ -86,16 +86,13 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
-
+    eddy_current_sensor_init();
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
     io_init();
     gpio_init();
 #endif
-
-    // The DAC driver is current not supported on any hardware
-    // dac_init();
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();

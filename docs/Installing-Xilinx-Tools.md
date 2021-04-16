@@ -16,9 +16,9 @@ Ensure you have no Xilinx tools previously installed on your PC (i.e. make sure 
 
 ### Downloading installation executable
 
-1. Go to the [Xilinx Downloads page](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/2019-1.html) for 2019.1.
+1. Go to the [Xilinx Downloads page](https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools/archive.html) expand 2019.1.
 
-2. Scroll down to the "Full Product Installation" section for 2019.1
+2. Scroll down to the "Vivado Design Suite - HLx Editions  2019.1 Full Product Installation" section for 2019.1
 
 3. It is strongly recommended to use the web installer (you will need to download ~8GB of data). Click on the link for: "Vivado HLx 2019.1: WebPACK and Editions - Windows Self Extracting Web Installer"
 

@@ -2,6 +2,7 @@
 #include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/led.h"
+#include "drv/motherboard.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
 #include "usr/user_config.h"
@@ -188,6 +189,14 @@ void scheduler_run(void)
         }
 
         tasks_running = false;
+
+#if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
+        // Request motherboard to send its latest ADC sample data back to the AMDC
+        //
+        // NOTE: this is specifically before the while loop below so that the new
+        // data arrives before it is needed in the next control loop.
+        motherboard_request_new_data();
+#endif
 
         // Wait here until unpaused (i.e. when SysTick fires)
         scheduler_idle = true;
