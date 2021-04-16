@@ -3,11 +3,16 @@
 
 #include <stdint.h>
 
-typedef enum{
-	SENSOR1 = 0,
-	SENSOR2 = 1,
-	SENSOR3 = 2
-} ild1420_device_t;
+typedef enum {
+	// Keep starting at 0
+	ILD1420_SENSOR1 = 0,
+	ILD1420_SENSOR2 = 1,
+	ILD1420_SENSOR3 = 2,
+	ILD1420_SENSOR4 = 3,
+	
+	// Keep at end
+	ILD1420_NUM_SENSORS
+} ild1420_sensor_t;
 
 typedef struct ild1420_packet_t {
     // 16-bit raw data from the sensor
@@ -29,6 +34,6 @@ typedef struct ild1420_packet_t {
 // NOTE: the C code does NOT have to initialize this driver,
 // because the FPGA takes care of aligning its acquisitions
 // to the UART data stream.
-ild1420_packet_t ild1420_get_latest_packet(ild1420_device_t);
+ild1420_packet_t ild1420_get_latest_packet(ild1420_sensor_t sensor);
 
 #endif // ILD1420_H
