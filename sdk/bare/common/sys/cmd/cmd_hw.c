@@ -139,7 +139,7 @@ int cmd_hw(int argc, char **argv)
         if (strcmp("read", argv[2]) == 0) {
             int sensor = atoi(argv[3]);
 
-            if (sensor < 0 || sensor > 2)
+            if (sensor < 0 || sensor >= ILD1420_NUM_SENSORS)
                 return CMD_INVALID_ARGUMENTS;
 
             ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
