@@ -4,14 +4,14 @@
 #include <stdint.h>
 
 typedef enum {
-	// Keep starting at 0
-	ILD1420_SENSOR1 = 0,
-	ILD1420_SENSOR2 = 1,
-	ILD1420_SENSOR3 = 2,
-	ILD1420_SENSOR4 = 3,
-	
-	// Keep at end
-	ILD1420_NUM_SENSORS
+    // Keep starting at 0
+    ILD1420_SENSOR1 = 0,
+    ILD1420_SENSOR2 = 1,
+    ILD1420_SENSOR3 = 2,
+    ILD1420_SENSOR4 = 3,
+
+    // Keep at end
+    ILD1420_NUM_SENSORS
 } ild1420_sensor_t;
 
 typedef struct ild1420_packet_t {

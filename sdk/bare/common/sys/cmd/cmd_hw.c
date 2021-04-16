@@ -3,9 +3,9 @@
 #include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
-#include "drv/ild1420.h"
 #include "drv/gpio_mux.h"
 #include "drv/hardware_targets.h"
+#include "drv/ild1420.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
 #include "sys/commands.h"
@@ -137,10 +137,10 @@ int cmd_hw(int argc, char **argv)
     // hw ild read
     if (argc == 4 && strcmp("ild", argv[1]) == 0) {
         if (strcmp("read", argv[2]) == 0) {
-        	int sensor = atoi(argv[3]);
+            int sensor = atoi(argv[3]);
 
-        	if (sensor < 0 || sensor > 2)
-        		return CMD_INVALID_ARGUMENTS;
+            if (sensor < 0 || sensor > 2)
+                return CMD_INVALID_ARGUMENTS;
 
             ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
             debug_printf("dist:  %x\r\n", packet.distance);
