@@ -204,7 +204,7 @@ always @(posedge clk, negedge rst_n) begin
 	end
 	
 	else if (load_output_regs) begin
-		my_distance <= {shift_reg[24:21], shift_reg[16:11], shift_reg[6:1]};
+		my_distance <= {shift_reg[23:20], shift_reg[16:11], shift_reg[6:1]};
 		my_error <= shift_reg[26:25];
 	end
 end
