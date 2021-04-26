@@ -78,23 +78,23 @@ int can_setmode(uint32_t mode)
 // Set Baud Rate Prescalar Register (BRPR)
 int can_setbaud(int rate)
 {
-  int Status;
-  XCanPs *CanInstPtr = CanPs;
+	int Status;
+	XCanPs *CanInstPtr = CanPs;
 
-  // Ensure CAN peripheral in config mode
-  if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
-    print("\nMust be in config mode to set baud rate prescalar register");
-	return FAILURE;
-  }
+	// Ensure CAN peripheral in config mode
+	if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
+		print("\nMust be in config mode to set baud rate prescalar register");
+		return FAILURE;
+	}
 
-  // Initialize to default baud rate
-  if (!rate)
-    rate = DEFAULT_BAUD_PRESCALAR;
-  Status = XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
+	// Initialize to default baud rate
+	if (!rate)
+		rate = DEFAULT_BAUD_PRESCALAR;
+	Status = XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
 
-  if (Status != XST_SUCCESS)
-    return FAILURE;
-  return SUCCESS;
+	if (Status != XST_SUCCESS)
+		return FAILURE;
+	return SUCCESS;
 }
 
 // Set Bit Timing Register (BTR)
