@@ -43,7 +43,7 @@ void user_apps_init(void)
 #endif
 
 #ifdef APP_CAN
-	app_can_init();
+    app_can_init();
 #endif
 
 #ifdef APP_BETA_LABS

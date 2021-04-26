@@ -1,13 +1,12 @@
 #include "drv/uart.h"
-#include "sys/defines.h"
-#include "xparameters.h"
-#include "xcanps.h"
 #include "gpio_mux.h"
+#include "sys/defines.h"
+#include "xcanps.h"
+#include "xparameters.h"
 #include <stdio.h>
 
 #define CAN0_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
 #define CAN1_DEVICE_ID XPAR_XCANPS_1_DEVICE_ID
-
 
 // Maximum CAN frame length in words.
 #define XCANPS_MAX_FRAME_SIZE_IN_WORDS (XCANPS_MAX_FRAME_SIZE / sizeof(u32))
@@ -16,7 +15,7 @@
 #define FRAME_DATA_LENGTH 8
 
 // Message Id Constant
-#define MESSAGE_ID	2000
+#define MESSAGE_ID 2000
 
 /*
  * The Baud Rate Prescaler Register (BRPR) and Bit Timing Register (BTR)
@@ -32,9 +31,9 @@
  frequency
  * is 24 MHz.
  */
-#define DEFAULT_BTR_SYNCJUMPWIDTH		3
-#define DEFAULT_BTR_SECOND_TIMESEGMENT	2
-#define DEFAULT_BTR_FIRST_TIMESEGMENT	15
+#define DEFAULT_BTR_SYNCJUMPWIDTH 	   3
+#define DEFAULT_BTR_SECOND_TIMESEGMENT 2
+#define DEFAULT_BTR_FIRST_TIMESEGMENT  15
 
 /*
  * The Baud rate Prescalar value in the Baud Rate Prescaler Register (BRPR)
@@ -43,7 +42,7 @@
  * This value is for a 40 Kbps baudrate assuming the CAN input clock frequency
  * is 24 MHz.
  */
-#define DEFAULT_BAUD_PRESCALAR	29
+#define DEFAULT_BAUD_PRESCALAR 29
 
 static u32 TxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
 static u32 RxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
@@ -58,14 +57,12 @@ static XCanPs *CanPs;
 // Set the mode of the CAN device
 int can_setmode(uint32_t mode)
 {
-
 	XCanPs *CanInstPtr = CanPs;
 	uint32_t currMode = XCanPs_GetMode(CanInstPtr);
 	if (currMode == XCANPS_MODE_LOOPBACK && mode != XCANPS_MODE_CONFIG) {
 		print("\nCAN peripheral currently in loopback mode. Can only enter config mode from here.");
 		return FAILURE;
-	}
-	else if (currMode == XCANPS_MODE_NORMAL && mode != XCANPS_MODE_SLEEP && mode != XCANPS_MODE_CONFIG){
+	} else if (currMode == XCANPS_MODE_NORMAL && mode != XCANPS_MODE_SLEEP && mode != XCANPS_MODE_CONFIG){
 		print("\nCAN peripheral currently in normal mode. Can only enter config or sleep mode from here.");
 		return FAILURE;
 	}
@@ -73,7 +70,8 @@ int can_setmode(uint32_t mode)
 	XCanPs_EnterMode(CanInstPtr, mode);
 
 	// Wait to reach specified mode, should happen instantaneously
-	while(XCanPs_GetMode(CanInstPtr) != mode);
+	while(XCanPs_GetMode(CanInstPtr) != mode)
+		;
 	return SUCCESS;
 }
 
