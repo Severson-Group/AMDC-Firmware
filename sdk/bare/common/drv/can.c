@@ -272,7 +272,7 @@ int can_print()
 
 	XCanPs *CanInstPtr = CanPs;
 
-	// Wait until a frame is received
+	// Check if a frame is empty
 	if (XCanPs_IsRxEmpty(CanInstPtr) == TRUE) {
 		printf("Currently there isn't a packet in the RxFIFO, try again in a bit!\n");
 		return FAILURE;
