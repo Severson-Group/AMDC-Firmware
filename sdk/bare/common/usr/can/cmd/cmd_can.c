@@ -22,9 +22,11 @@ static command_help_t cmd_help[] = {
     { "send <number of bytes>", "Send a predefined message with specified number of bytes" },
 	{ "print", "Prints latest message"},
 	{ "print mode", "Prints  mode of CAN peripheral"},
+	{ "print peripheral", "Prints current CAN peripheral in use"},
 	{ "setmode <mode>", "Set CAN mode {loopback, sleep, config, normal}"},
 	{ "setbaud <baudrate>", "Set CAN baudrate (type 0 for default)"},
 	{ "set btr <jump> <first time> <second time>", "Set CAN bit timing register (type 0s for default)"},
+	{ "peripheral <device_id>", "Set CAN peripheral in use: either 0 or 1"},
 };
 
 void cmd_can_register(void)
@@ -118,6 +120,16 @@ int cmd_can(int argc, char **argv)
 		return CMD_SUCCESS;
 	}
 
+	// Handle 'print peripheral' sub-command
+	//
+	// First, verify correct number of arguments (3)
+	// Second, verify correct arguments
+	if (argc == 3 && strcmp("print", argv[1]) == 0 && strcmp("peripheral", argv[2]) == 0) {
+		if (task_can_print_peripheral() != SUCCESS)
+			return CMD_FAILURE;
+		return CMD_SUCCESS;
+	}
+
 	// Handle 'setmode' sub-command
 	//
 	// First, verify correct number of arguments (3)
@@ -162,7 +174,7 @@ int cmd_can(int argc, char **argv)
 	// First, verify correct number of argumnets (6)
 	// Second, verify second argument is "set" and
 	// Third, verify third argument is "btr"
-	if (argc == 6 && strcmp("set", argv[1]) == 0 && strcmp("btr", argv[1]) == 0) {
+	if (argc == 6 && strcmp("set", argv[1]) == 0 && strcmp("btr", argv[2]) == 0) {
 		int jump;
 		int first_time;
 		int second_time;
@@ -175,6 +187,17 @@ int cmd_can(int argc, char **argv)
 		return CMD_SUCCESS;
 	}
 
+	// Handle 'peripheral' sub-command
+	//
+	// First, verify correct number of arguments 3)
+	// Second, verify second argument is "peripheral"
+	if (argc == 3 && strcmp("peripheral", argv[1]) == 0) {
+		int device_id;
+		sscanf(argv[2], "%i", &device_id);
+		if (task_can_set_peripheral(device_id) != SUCCESS)
+			return CMD_FAILURE;
+		return CMD_SUCCESS;
+	}
 
 
     // At any point, if an error is detected in given input command,

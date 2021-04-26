@@ -28,11 +28,16 @@ int task_can_print();
 
 int task_can_print_mode();
 
+int task_can_print_peripheral();
+
 int task_can_setmode(uint32_t);
 
 int task_can_setbaud(int);
 
 int task_can_set_btr(int, int, int);
+
+int task_can_set_peripheral(int);
+
 
 // Callback function which scheduler calls periodically
 void task_can_callback(void *arg);

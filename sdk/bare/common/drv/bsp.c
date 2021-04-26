@@ -11,7 +11,6 @@
 
 #include "drv/analog.h"
 #include "drv/bsp.h"
-# include "drv/can.h"
 #include "drv/cpu_timer.h"
 #include "drv/dac.h"
 #include "drv/encoder.h"
@@ -24,6 +23,10 @@
 #include "sys/defines.h"
 #include <stdio.h>
 
+#ifdef APP_CAN
+#include "drv/can.h"
+#endif
+
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
 #include "drv/gpio.h"
 #include "drv/io.h"
@@ -34,7 +37,6 @@
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/sts_mux.h"
-
 #endif
 
 void bsp_init(void)
@@ -87,7 +89,11 @@ void bsp_init(void)
     sts_mux_init();
     gpio_mux_init();
     dac_init();
+#endif
+
+#ifdef APP_CAN
     can_init(0);
+    can_init(1);
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C

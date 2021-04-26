@@ -71,6 +71,12 @@ int task_can_print_mode()
 	return SUCCESS;
 }
 
+int task_can_print_peripheral()
+{
+	can_print_peripheral();
+	return SUCCESS;
+}
+
 int task_can_setmode(uint32_t mode)
 {
 	int Status;
@@ -99,6 +105,15 @@ int task_can_set_btr(int jump, int first_time, int second_time)
 	if (Status != SUCCESS) {
 		return FAILURE;
 	}
+	return SUCCESS;
+}
+
+int task_can_set_peripheral(int device_id)
+{
+	int Status;
+	Status = can_set_peripheral(device_id);
+	if (Status != SUCCESS)
+		return FAILURE;
 	return SUCCESS;
 }
 
