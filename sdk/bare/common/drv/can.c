@@ -4,6 +4,7 @@
 #include "xcanps.h"
 #include "xparameters.h"
 #include <stdio.h>
+#include "can.h"
 
 #define CAN0_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
 #define CAN1_DEVICE_ID XPAR_XCANPS_1_DEVICE_ID
@@ -13,36 +14,6 @@
 
 // Default number of bytes of data sending
 #define FRAME_DATA_LENGTH 8
-
-// Message Id Constant
-#define MESSAGE_ID 2000
-
-/*
- * The Baud Rate Prescaler Register (BRPR) and Bit Timing Register (BTR)
- * are setup such that CAN baud rate equals 40Kbps, assuming that the
- * the CAN clock is 24MHz. The user needs to modify these values based on
- * the desired baud rate and the CAN clock frequency. For more information
- * see the CAN 2.0A, CAN 2.0B, ISO 11898-1 specifications.
- */
-
-/*
- * Timing parameters to be set in the Bit Timing Register (BTR).
- * These values are for a 40 Kbps baudrate assuming the CAN input clock
- frequency
- * is 24 MHz.
- */
-#define DEFAULT_BTR_SYNCJUMPWIDTH 	   3
-#define DEFAULT_BTR_SECOND_TIMESEGMENT 2
-#define DEFAULT_BTR_FIRST_TIMESEGMENT  15
-
-/*
- * The Baud rate Prescalar value in the Baud Rate Prescaler Register (BRPR)
- * needs to be set based on the input clock  frequency to the CAN core and
- * the desired CAN baud rate.
- * This value is for a 40 Kbps baudrate assuming the CAN input clock frequency
- * is 24 MHz.
- */
-#define DEFAULT_BAUD_PRESCALAR 29
 
 static u32 TxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
 static u32 RxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
@@ -55,23 +26,26 @@ static XCanPs CanPs1;
 static XCanPs *CanPs;
 
 // Set the mode of the CAN device
-int can_setmode(uint32_t mode)
+int can_setmode(can_mode_t mode)
 {
 	XCanPs *CanInstPtr = CanPs;
 	uint32_t currMode = XCanPs_GetMode(CanInstPtr);
-	if (currMode == XCANPS_MODE_LOOPBACK && mode != XCANPS_MODE_CONFIG) {
+	if (currMode == XCANPS_MODE_LOOPBACK && mode != CAN_CONFIG) {
+#ifdef CAN_DEBUG
 		print("\nCAN peripheral currently in loopback mode. Can only enter config mode from here.");
+#endif
 		return FAILURE;
-	} else if (currMode == XCANPS_MODE_NORMAL && mode != XCANPS_MODE_SLEEP && mode != XCANPS_MODE_CONFIG){
+	} else if (currMode == XCANPS_MODE_NORMAL && mode != CAN_SLEEP && mode != CAN_CONFIG){
+#ifdef CAN_DEBUG
 		print("\nCAN peripheral currently in normal mode. Can only enter config or sleep mode from here.");
+#endif
 		return FAILURE;
 	}
 
 	XCanPs_EnterMode(CanInstPtr, mode);
 
 	// Wait to reach specified mode, should happen instantaneously
-	while(XCanPs_GetMode(CanInstPtr) != mode)
-		;
+	while(XCanPs_GetMode(CanInstPtr) != mode);
 	return SUCCESS;
 }
 
@@ -83,13 +57,12 @@ int can_setbaud(int rate)
 
 	// Ensure CAN peripheral in config mode
 	if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
+#ifdef CAN_DEBUG
 		print("\nMust be in config mode to set baud rate prescalar register");
+#endif
 		return FAILURE;
 	}
 
-	// Initialize to default baud rate
-	if (!rate)
-		rate = DEFAULT_BAUD_PRESCALAR;
 	Status = XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
 
 	if (Status != XST_SUCCESS)
@@ -98,31 +71,20 @@ int can_setbaud(int rate)
 }
 
 // Set Bit Timing Register (BTR)
-int can_set_btr(int jump_width, int first_time, int second_time)
+int can_set_btr(uint8_t sjw, uint8_t ts2, uint8_t ts1)
 {
 	int Status;
 	XCanPs *CanInstPtr = CanPs;
 
 	// Ensure CAN peripheral in config mode
 	if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
+#ifdef CAN_DEBUG
 		print("\nMust be in config mode to set bit timing register");
+#endif
 		return FAILURE;
 	}
 
-
-	// Initialize to defaults provided by Xilinx
-	if (!jump_width && !first_time && !second_time)
-		Status = XCanPs_SetBitTiming(CanInstPtr,
-				   	   	   	   	   	 DEFAULT_BTR_SYNCJUMPWIDTH,
-									 DEFAULT_BTR_SECOND_TIMESEGMENT,
-									 DEFAULT_BTR_FIRST_TIMESEGMENT
-									);
-	else
-		Status = XCanPs_SetBitTiming(CanInstPtr,
-									 jump_width,
-									 first_time,
-									 second_time
-									);
+	Status = XCanPs_SetBitTiming(CanInstPtr, sjw, ts2, ts1);
 
 	if (Status != XST_SUCCESS)
 		return FAILURE;
@@ -153,7 +115,9 @@ int can_init(int device_id)
 
 	// Initialize the user specified CAN peripheral
 	if (device_id != 1 && device_id != 0) {
+#ifdef CAN_DEBUG
 		printf("device_id can only be 0 or 1\n");
+#endif
 		return FAILURE;
 	}
 	else if(!device_id) {
@@ -217,41 +181,46 @@ int can_init(int device_id)
 }
 
 // Send a CAN packet
-int can_send(uint8_t* packet, int num_bytes)
+int can_send(can_packet_t *packet)
 {
 	u8 *FramePtr;
-	int Index;
+	int i;
 	int Status;
 	XCanPs *CanInstPtr = CanPs;
 
 	// Check that pointer isn't NULL
 	if (packet == NULL) {
+#ifdef CAN_DEBUG
 		printf("Packet of data is null, please initialize it!\n");
+#endif
 		return FAILURE;
 	}
 
 	// Check number of bytes user is sending at once is between 1 to 8
 	if (num_bytes <= 0 || num_bytes > 8) {
+#ifdef CAN_DEBUG
 		printf("Can only send 8 bytes at once!\n");
+#endif
 		return FAILURE;
 	}
 
 	// Populate correct values for Identifier - check Zync 700 Reference Manual for meaning of this info
-	TxFrame[0] = (u32)XCanPs_CreateIdValue((u32)MESSAGE_ID, 0, 0, 0, 0);
+	TxFrame[0] = (u32)XCanPs_CreateIdValue((u32)packet->message_id, 0, 0, 0, 0);
 
 	// Specify number of bytes of data sending
-	TxFrame[1] = (u32)XCanPs_CreateDlcValue((u32)num_bytes);
+	TxFrame[1] = (u32)XCanPs_CreateDlcValue((u32)packet->num_bytes);
 
 	// Populate the TX FIFO with CAN packet to send
 	FramePtr = (u8 *)(&TxFrame[2]);
-	for (Index = 0; Index < num_bytes; Index++) {
-		*FramePtr++ = (u8)*packet;
-		packet++;
+	for (i = 0; i < packet->num_bytes; i++) {
+		*FramePtr++ = (u8)packet->buffer[i];
 	}
 
 	// Check if TxFIFO is full
 	if (XCanPs_IsTxFifoFull(CanInstPtr) == TRUE) {
+#ifdef CAN_DEBUG
 		printf("CAN TxFIFO is full, try sending your data again in a bit!\n");
+#endif
 		return FAILURE;
 	}
 
@@ -264,17 +233,19 @@ int can_send(uint8_t* packet, int num_bytes)
 }
 
 // Print latest can packet received
-int can_print()
+int can_rcv(can_packet_t *packet)
 {
 	u8 *FramePtr;
 	int Status;
-	int Index;
+	int i;
 
 	XCanPs *CanInstPtr = CanPs;
 
 	// Check if a frame is empty
 	if (XCanPs_IsRxEmpty(CanInstPtr) == TRUE) {
+#ifdef CAN_DEBUG
 		printf("Currently there isn't a packet in the RxFIFO, try again in a bit!\n");
+#endif
 		return FAILURE;
 	}
 
@@ -282,10 +253,11 @@ int can_print()
 	Status = XCanPs_Recv(CanInstPtr, RxFrame);
 
 	if (Status == XST_SUCCESS) {
-		print("\nLatest CAN packet is: ");
+		packet->message_id = (int)(RxFrame[0] >> 21);
+		packet->num_bytes = (int)(RxFrame[1] >> 28);
 		FramePtr = (u8 *)(&RxFrame[2]);
-		for (Index = 0; Index < FRAME_DATA_LENGTH; Index++) {
-			print(*FramePtr);
+		for (i = 0; i < packet->num_bytes; i++) {
+			packet->buffer[i] = *FramePtr;
 			FramePtr++;
 		}
 		return SUCCESS;
@@ -296,6 +268,7 @@ int can_print()
 // Print mode the CAN peripheral is in, useful for debugging purposes
 void can_print_mode()
 {
+#ifdef CAN_DEBUG
 	XCanPs *CanInstPtr = CanPs;
 
 	uint32_t mode;
@@ -310,17 +283,20 @@ void can_print_mode()
 			print("\nXCANPS_MODE_SLEEP");
 	else
 		print("\nOther mode");
+#endif
 }
 
 // Print the CAN peripheral the user has set, useful for debugging purposes
 void can_print_peripheral()
 {
+#ifdef CAN_DEBUG
 	if (CanPs == &CanPs0)
 		print("\nCAN 0");
 	else if (CanPs == &CanPs1)
 		print("\nCAN 1");
 	else
 		print("\nCAN peripheral not set properly");
+#endif
 }
 
 // Check packet received in loopback mode is correct
@@ -370,7 +346,9 @@ int can_loopback_test()
 	XCanPs *CanInstPtr = CanPs;
 	mode = XCanPs_GetMode(CanInstPtr);
 	if (mode != XCANPS_MODE_LOOPBACK) {
+#ifdef CAN_DEBUG
 		print("\nNot in loopback mode, can't run self test");
+#endif
 		return FAILURE;
 	}
 
