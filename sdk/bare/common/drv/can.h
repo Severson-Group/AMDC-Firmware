@@ -6,17 +6,18 @@
 
 /*
  * The Baud Rate Prescaler Register (BRPR) and Bit Timing Register (BTR)
- * are setup such that CAN baud rate equals 40Kbps, assuming that the
- * the CAN clock is 24MHz. The user needs to modify these values based on
+ * are setup such that CAN baud rate equals 500 Kbps, assuming that the
+ * the CAN clock is 200 MHz. The user needs to modify these values based on
  * the desired baud rate and the CAN clock frequency. For more information
  * see the CAN 2.0A, CAN 2.0B, ISO 11898-1 specifications.
  */
 
 /*
  * Timing parameters to be set in the Bit Timing Register (BTR).
- * These values are for a 40 Kbps baudrate assuming the CAN input clock
- frequency
- * is 24 MHz.
+ * These values are for a 500 Kbps baudrate assuming the CAN input clock frequency
+ * is 200 MHz.
+ *
+ * The value of BTR register after using these defaults is 0x1C
  */
 #define DEFAULT_BTR_SYNCJUMPWIDTH      3
 #define DEFAULT_BTR_SECOND_TIMESEGMENT 2
@@ -26,10 +27,12 @@
  * The Baud rate Prescalar value in the Baud Rate Prescaler Register (BRPR)
  * needs to be set based on the input clock  frequency to the CAN core and
  * the desired CAN baud rate.
- * This value is for a 40 Kbps baudrate assuming the CAN input clock frequency
- * is 24 MHz.
+ * This value is for a 500 Kbps baudrate assuming the CAN input clock frequency
+ * is 200 MHz.
+ *
+ * The value of the BRPR after using this default is 0x18
  */
-#define DEFAULT_BAUD_PRESCALAR 29
+#define DEFAULT_BAUD_PRESCALAR 25
 
 // Different CAN modes
 typedef enum {
