@@ -15,24 +15,29 @@
 /*
  * Timing parameters to be set in the Bit Timing Register (BTR).
  * These values are for a 500 Kbps baudrate assuming the CAN input clock frequency
- * is 200 MHz.
+ * is 24 MHz.
  *
- * The value of BTR register after using these defaults is 0x1C
+ * The value of BTR register after using these defaults is 0x1C. According to the Zynq-7000
+ * Reference Manual, the actual value is one more than the value written to the register.
+ * Thus, we write a value of 12 and 1 for the first and second time segment, respectively,
+ * to have an actual value of 13 and 2.
  */
 #define DEFAULT_BTR_SYNCJUMPWIDTH      3
-#define DEFAULT_BTR_SECOND_TIMESEGMENT 2
-#define DEFAULT_BTR_FIRST_TIMESEGMENT  15
+#define DEFAULT_BTR_SECOND_TIMESEGMENT 1
+#define DEFAULT_BTR_FIRST_TIMESEGMENT  12
 
 /*
  * The Baud rate Prescalar value in the Baud Rate Prescaler Register (BRPR)
  * needs to be set based on the input clock  frequency to the CAN core and
  * the desired CAN baud rate.
  * This value is for a 500 Kbps baudrate assuming the CAN input clock frequency
- * is 200 MHz.
+ * is 24 MHz.
  *
- * The value of the BRPR after using this default is 0x18
+ * The value of the BRPR after using this default is 0x02. According to the Zync-7000
+ * Reference Manual, the actual value is one more than the value written to the register.
+ * Thus, we write a value of 2 to the register, but the actual value is 3, which it should be.
  */
-#define DEFAULT_BAUD_PRESCALAR 25
+#define DEFAULT_BAUD_PRESCALAR 2
 
 // Different CAN modes
 typedef enum {
