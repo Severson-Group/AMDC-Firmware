@@ -6,7 +6,6 @@
 #include "xparameters.h"
 #include <stdio.h>
 
-
 #define CAN0_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
 #define CAN1_DEVICE_ID XPAR_XCANPS_1_DEVICE_ID
 

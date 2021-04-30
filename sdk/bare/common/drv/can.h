@@ -4,7 +4,6 @@
 #include "xcanps.h"
 #include <stdint.h>
 
-
 /*
  * The Baud Rate Prescaler Register (BRPR) and Bit Timing Register (BTR)
  * are setup such that CAN baud rate equals 40Kbps, assuming that the
