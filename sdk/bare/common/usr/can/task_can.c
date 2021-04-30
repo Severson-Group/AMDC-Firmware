@@ -15,8 +15,8 @@ static task_control_block_t tcb;
 int task_can_init(void)
 {
 
-	// Initialize the can peripheral
-	//	can_init(0);
+    // Initialize the can peripheral
+    //	can_init(0);
 
     if (scheduler_tcb_is_registered(&tcb)) {
         return FAILURE;
@@ -35,86 +35,87 @@ int task_can_deinit(void)
     return scheduler_tcb_unregister(&tcb);
 }
 
-int task_can_loopback_test(void) {
-	int Status;
-	Status = can_loopback_test();
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+int task_can_loopback_test(void)
+{
+    int Status;
+    Status = can_loopback_test();
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
-int task_can_sendmessage(uint8_t* packet, int num_bytes)
+int task_can_sendmessage(uint8_t *packet, int num_bytes)
 {
-	int Status;
+    int Status;
 
-	Status = can_send(packet, num_bytes);
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+    Status = can_send(packet, num_bytes);
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 int task_can_print()
 {
-	int Status;
-	Status = can_print();
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+    int Status;
+    Status = can_print();
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 int task_can_print_mode()
 {
-	can_print_mode();
-	return SUCCESS;
+    can_print_mode();
+    return SUCCESS;
 }
 
 int task_can_print_peripheral()
 {
-	can_print_peripheral();
-	return SUCCESS;
+    can_print_peripheral();
+    return SUCCESS;
 }
 
 int task_can_setmode(uint32_t mode)
 {
-	int Status;
+    int Status;
 
-	Status = can_setmode(mode);
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+    Status = can_setmode(mode);
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 int task_can_setbaud(int baud)
 {
-	int Status;
-	Status = can_setbaud(baud);
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+    int Status;
+    Status = can_setbaud(baud);
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 int task_can_set_btr(int jump, int first_time, int second_time)
 {
-	int Status;
-	Status = can_set_btr(jump, first_time, second_time);
-	if (Status != SUCCESS) {
-		return FAILURE;
-	}
-	return SUCCESS;
+    int Status;
+    Status = can_set_btr(jump, first_time, second_time);
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 int task_can_set_peripheral(int device_id)
 {
-	int Status;
-	Status = can_set_peripheral(device_id);
-	if (Status != SUCCESS)
-		return FAILURE;
-	return SUCCESS;
+    int Status;
+    Status = can_set_peripheral(device_id);
+    if (Status != SUCCESS)
+        return FAILURE;
+    return SUCCESS;
 }
 
 void task_can_callback(void *arg)

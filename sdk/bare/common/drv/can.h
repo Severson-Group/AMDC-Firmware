@@ -1,8 +1,9 @@
 #ifndef CAN_H
 #define CAN_H
 
-#include <stdint.h>
 #include "xcanps.h"
+#include <stdint.h>
+
 
 /*
  * The Baud Rate Prescaler Register (BRPR) and Bit Timing Register (BTR)
@@ -18,7 +19,7 @@
  frequency
  * is 24 MHz.
  */
-#define DEFAULT_BTR_SYNCJUMPWIDTH 	   3
+#define DEFAULT_BTR_SYNCJUMPWIDTH      3
 #define DEFAULT_BTR_SECOND_TIMESEGMENT 2
 #define DEFAULT_BTR_FIRST_TIMESEGMENT  15
 
@@ -42,9 +43,9 @@ typedef enum {
 
 // Struct representing an entire CAN Packet
 typedef struct can_packets_t {
-	int message_id;
-	int num_bytes;
-	uint8_t buffer[8];
+    int message_id;
+    int num_bytes;
+    uint8_t buffer[8];
 } can_packet_t;
 
 // Setter methods, useful for configuring the CAN peripheral

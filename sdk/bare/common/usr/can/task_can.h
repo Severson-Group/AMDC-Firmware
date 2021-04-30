@@ -22,7 +22,7 @@ int task_can_deinit(void);
 
 int task_can_loopback_test(void);
 
-int task_can_sendmessage(uint8_t*, int);
+int task_can_sendmessage(uint8_t *, int);
 
 int task_can_print();
 
@@ -37,7 +37,6 @@ int task_can_setbaud(int);
 int task_can_set_btr(int, int, int);
 
 int task_can_set_peripheral(int);
-
 
 // Callback function which scheduler calls periodically
 void task_can_callback(void *arg);
