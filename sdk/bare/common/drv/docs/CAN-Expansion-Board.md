@@ -45,25 +45,25 @@ Below is a description of each API function...
 
 ### Configuring the CAN Peripherals
 ```
-int can_setmode(uin32_t mode);
+int can_setmode(can_mode_t mode);
 ```
-Sets the mode of the current CAN peripheral in use, options include config, normal, sleep, loopback, and snoop. The parameter `mode` is of type `uint32_t` and can be any of the following macros (that are found in `xcanps.h`): 
-- `XCANPS_MODE_CONFIG`
-- `XCANPS_MODE_NORMAL`
-- `XCANPS_MODE_SLEEP`
-- `XCANPS_MODE_LOOPBACK`
-- `XCANPS_MODE_SNOOP`
+Sets the mode of the current CAN peripheral in use, options include config, normal, sleep, loopback, and snoop. The parameter `mode` is of type `uint32_t` and can be any of the following found in the enum in `can.h`: 
+- `CAN_CONFIG`
+- `CAN_LOOPBACK`
+- `CAN_NORMAL`
+- `CAN_SLEEP`
+- `CAN_SNOOP`
 
-Note that if the current mode of the CAN peripheral is `XCANPS_MODE_LOOPBACK` and the user attempts to go to any other mode other than `XCANPS_MODE_CONFIG`, a `FAILURE` is returned. Similarly, if the CAN peripheral is in `XCANPS_MODE_NORMAL` and the user attempts to go to either `XCANPS_MODE_LOOPBACK` or `XCANPS_MODE_SNOOP`, a `FAILURE` is returned. These restrictions are specified in the Zync-7000 Reference Manual, Chapter 18.
+Note that if the current mode of the CAN peripheral is `CAN_LOOPBACK` and the user attempts to go to any other mode other than `CAN_CONFIG`, a `FAILURE` is returned. Similarly, if the CAN peripheral is in `CAN_NORMAL` and the user attempts to go to either `CAN_LOOPBACK` or `CAN_SNOOP`, a `FAILURE` is returned. These restrictions are specified in the Zync-7000 Reference Manual, Chapter 18.
 ```
 int can_setbaud(int rate);
 ```
-Sets the baud rate register of the current CAN peripheral in use to the user specified `rate`. To set the baud rate to the defaults (hardcoded into the CAN drivers as macros), simply pass call `can_setbaud(0)`. Note that the CAN periphal must be in `XCANPS_MODE_CONFIG` before attempting to change the baud rate register.
+Sets the baud rate register of the current CAN peripheral in use to the user specified `rate`. To set the baud rate to the default values, simply use the macros defined in `can.h`. Note that the CAN periphal must be in `CAN_CONFIG` before attempting to change the baud rate register.
 
 ```
-int can_set_btr(int jump_width, int first_time, int second_time);
+int can_set_btr(uint8_t sjw, uint8_t ts2, uint8_t ts1);
 ```
-Sets the bit timing register bits of the current CAN peripheral in use to the user specified inputs. To set these bits to defaults (hardcoded into the CAN drivers as macros), simply call `can_setbtr(0,0,0)`. Note that the CAN periphal must be in `XCANPS_MODE_CONFIG` before attempting to change the bit timing register.
+Sets the bit timing register bits of the current CAN peripheral in use to the user specified inputs. To set these bits to defaults, simply use the macros defined in `can.h`. Note that the CAN periphal must be in `CAN_CONFIG` before attempting to change the bit timing register.
 ```
 int can_set_peripheral(int device_id);
 ```
@@ -79,20 +79,21 @@ As mentioned in the `can_set_peripheral()` description, the peripheral that is i
 
 ### Using the CAN Peripherals
 ```
-int can_send(uint8_t *packet, int num_bytes);
+int can_send(can_packet_t *packet);
 ```
-Sends 8 bit packets of data on the CAN bus. The number of packets sent provided by the user via `num_bytes`. The parameter `*packet` is a pointer to the current packet of data to be sent. The parameter `num_bytes` is the number of bytes to send. 
+Sends 8 bit packets of data on the CAN bus. The parameter `*packet` is a pointer to a user defined `can_packet_t` struct (definition of this struct can be found in `can.h`). The struct should be populated with `message_id`, `num_bytes` and `buffer`. The number of elements in the buffer must match `num_bytes`. 
 
-Note that because the `AMDC` system firmware utilizes a cooperative scheduler, this driver simply checks whether the `TxFIFO` buffer is full upon the time when the user is attempting to send packets of data on the `CAN` bus. If the `FIFO` is full, then a `FAILURE` is returned with a print statement communicating to the user the scenario that occured and possible suggestions. 
+Note that because the `AMDC` system firmware utilizes a cooperative scheduler, this driver simply checks whether the `TxFIFO` buffer is full upon the time when the user is attempting to send packets of data on the `CAN` bus. If the `FIFO` is full, then a `FAILURE` is returned with an optional print statement communicating to the user the scenario that occured and possible suggestions. 
 
 ```
-int can_print();
+int can_rcv(can_packet_t *packet);
 ```
-Prints the latest data the CAN peripheral has received in the `RxFIFO` buffer. 
+Populates the user initialized `can_packet_t` struct with the latest CAN packet found in the `RxFIFO`. Specifically, the `message_id`, `num_bytes`, and `buffer` are populated via this API call.
 
-Note that because the `AMDC` system firmware utilizes a cooperative scheduler, this driver simply checks whether the `RxFIFO` is empty upon the time when the user is attempting to view the most recent sent data on the `CAN` bus. If the `FIFO` is empty, then a `FAILURE` is returned with a printe statement communicating to the user the scneario that occured and possible suggestions.
+Note that because the `AMDC` system firmware utilizes a cooperative scheduler, this driver simply checks whether the `RxFIFO` is empty upon the time when the user is attempting to view the most recent sent data on the `CAN` bus. If the `FIFO` is empty, then a `FAILURE` is returned with an optional printe statement communicating to the user the scneario that occured and possible suggestions.
+
 ### Debugging CAN Peripherals
-These drivers have been written for debugging purposes during development, but can be useful for users during utilization of the API to debug the state of the `CAN` peripherals.
+These drivers have been written for debugging purposes during development, but can be useful for users during utilization of the API to debug the state of the `CAN` peripherals. 
 ```
 void can_print_mode();
 ```
