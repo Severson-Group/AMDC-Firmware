@@ -1,0 +1,45 @@
+{
+  "filename": "amdc_icc.json",
+  "table": [
+    {
+      "name": "LED_1",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "LED_2",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "LED_3",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "LED_4",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "x_pos",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "y_pos",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "z_pos",
+      "datatype": "uint32_t"
+    },
+    {
+      "name": "a",
+      "datatype": "uint8_t"
+    },
+    {
+      "name": "b",
+      "datatype": "uint8_t"
+    },
+    {
+      "name": "c",
+      "datatype": "uint8_t"
+    }
+  ]
+}
