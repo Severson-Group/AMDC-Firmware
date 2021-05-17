@@ -7,6 +7,7 @@
 #include "xil_io.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define EDDY_CURRENT_SENSOR_BASE_ADDR (0x43C80000)
 
@@ -16,6 +17,7 @@ void eddy_current_sensor_init(void)
 
     // Set sampling rate to 20kHz
     eddy_current_sensor_set_sample_rate(20000);
+    eddy_current_sensor_enable();
 }
 
 void eddy_current_sensor_enable(void)
@@ -40,26 +42,38 @@ void eddy_current_sensor_set_divider(uint8_t divider)
     Xil_Out32(EDDY_CURRENT_SENSOR_BASE_ADDR + (2 * sizeof(uint32_t)), divider);
 }
 
+double eddy_current_sensor_bits_to_voltage(uint32_t data)
+{
+    bool is_negative = 0x20000 & data;
+
+    // Convert 2's compliment to positive data
+    if (is_negative) {
+    	data = ~data;
+    	data += 1;
+    }
+
+    // Convert data to voltage +-5V
+    double resolution = 0.00003814697; 					// 5V / 2^17
+    double voltage = (0x1FFFF & data) * resolution;		// 17-bit data
+
+    if (is_negative)
+    	return -voltage;
+
+    return voltage;
+}
+
 double eddy_current_sensor_read_x_voltage(void)
 {
     uint32_t x_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR);
 
-    double resolution = 0.000038141;                                   // 5V / 2^17
-    double voltage = (0x1FFFF & x_data) * resolution;                  // 17-bits of positional data
-    double signed_voltage = 0x20000 & x_data ? voltage * -1 : voltage; // 18th bit determines sign
-
-    return signed_voltage;
+    return eddy_current_sensor_bits_to_voltage(x_data);
 }
 
 double eddy_current_sensor_read_y_voltage(void)
 {
     uint32_t y_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR + (1 * sizeof(uint32_t)));
 
-    double resolution = 0.000038141;                                   // 5V / 2^17
-    double voltage = (0x1FFFF & y_data) * resolution;                  // 17-bits of positional data
-    double signed_voltage = 0x20000 & y_data ? voltage * -1 : voltage; // 18th bit determines sign
-
-    return signed_voltage;
+    return eddy_current_sensor_bits_to_voltage(y_data);
 }
 
 #endif // USER_CONFIG_HARDWARE_TARGET
