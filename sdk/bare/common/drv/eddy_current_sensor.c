@@ -5,9 +5,9 @@
 
 #include "drv/eddy_current_sensor.h"
 #include "xil_io.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #define EDDY_CURRENT_SENSOR_BASE_ADDR (0x43C80000)
 
@@ -52,7 +52,7 @@ double eddy_current_sensor_bits_to_voltage(uint32_t data)
     	data += 1;
     }
 
-    // Convert data to voltage +-5V
+    // Convert data to voltage (+/-5V)
     double resolution = 0.00003814697; 					// 5V / 2^17
     double voltage = (0x1FFFF & data) * resolution;		// 17-bit data
 
