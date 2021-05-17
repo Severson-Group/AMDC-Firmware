@@ -32,7 +32,7 @@ void eddy_current_sensor_disable(void)
 
 void eddy_current_sensor_set_sample_rate(double sample_rate)
 {
-    uint8_t divider = (uint8_t) (500000 / sample_rate);
+    uint8_t divider = (uint8_t)(500000 / sample_rate);
 
     eddy_current_sensor_set_divider(divider - 1);
 }
