@@ -17,7 +17,6 @@ void eddy_current_sensor_init(void)
 
     // Set sampling rate to 20kHz
     eddy_current_sensor_set_sample_rate(20000);
-    eddy_current_sensor_enable();
 }
 
 void eddy_current_sensor_enable(void)
@@ -42,7 +41,7 @@ void eddy_current_sensor_set_divider(uint8_t divider)
     Xil_Out32(EDDY_CURRENT_SENSOR_BASE_ADDR + (2 * sizeof(uint32_t)), divider);
 }
 
-double eddy_current_sensor_bits_to_voltage(uint32_t data)
+static double bits_to_voltage(uint32_t data)
 {
     bool is_negative = 0x20000 & data;
 
@@ -57,7 +56,7 @@ double eddy_current_sensor_bits_to_voltage(uint32_t data)
     double voltage = (0x1FFFF & data) * resolution; // 17-bit data
 
     if (is_negative) {
-        return -voltage;
+        voltage = -voltage;
     }
 
     return voltage;
