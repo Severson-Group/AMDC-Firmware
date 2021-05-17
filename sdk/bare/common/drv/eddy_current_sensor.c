@@ -32,7 +32,7 @@ void eddy_current_sensor_disable(void)
 
 void eddy_current_sensor_set_sample_rate(double sample_rate)
 {
-    uint8_t divider = (uint8_t)(500000 / sample_rate);
+    uint8_t divider = (uint8_t) (500000 / sample_rate);
 
     eddy_current_sensor_set_divider(divider - 1);
 }
@@ -48,16 +48,17 @@ double eddy_current_sensor_bits_to_voltage(uint32_t data)
 
     // Convert 2's compliment to positive data
     if (is_negative) {
-    	data = ~data;
-    	data += 1;
+        data = ~data;
+        data += 1;
     }
 
     // Convert data to voltage (+/-5V)
-    double resolution = 0.00003814697; 					// 5V / 2^17
-    double voltage = (0x1FFFF & data) * resolution;		// 17-bit data
+    double resolution = 0.00003814697;              // 5V / 2^17
+    double voltage = (0x1FFFF & data) * resolution; // 17-bit data
 
-    if (is_negative)
-    	return -voltage;
+    if (is_negative) {
+        return -voltage;
+    }
 
     return voltage;
 }
