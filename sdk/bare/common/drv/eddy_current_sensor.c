@@ -66,14 +66,14 @@ double eddy_current_sensor_read_x_voltage(void)
 {
     uint32_t x_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR);
 
-    return eddy_current_sensor_bits_to_voltage(x_data);
+    return bits_to_voltage(x_data);
 }
 
 double eddy_current_sensor_read_y_voltage(void)
 {
     uint32_t y_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR + (1 * sizeof(uint32_t)));
 
-    return eddy_current_sensor_bits_to_voltage(y_data);
+    return bits_to_voltage(y_data);
 }
 
 #endif // USER_CONFIG_HARDWARE_TARGET
