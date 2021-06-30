@@ -130,8 +130,9 @@ class AMDC_Logger():
         
     def clear_all(self):
         
-        for var in self.log_vars:
-            self.clear(var)
+        self.amdc.cmd(f'log empty_all')
+        #for var in self.log_vars:
+        #    self.clear(var)
         
     def auto_find_vars(self, root):
         
