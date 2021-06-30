@@ -20,6 +20,7 @@ static command_help_t cmd_help[] = {
     { "stop", "Stop logging" },
     { "dump <bin|text> <log_var_idx>", "Dump log data to console" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
+	{ "empty_all", "Empty all slots" },
     { "info", "Print status of logging engine" },
 };
 
@@ -186,6 +187,16 @@ int cmd_log(int argc, char **argv)
         }
 
         int err = log_var_empty(log_var_idx);
+        if (err != SUCCESS) {
+            return CMD_FAILURE;
+        }
+
+        return CMD_SUCCESS;
+    }
+
+    // Handle 'empty_all' sub-command
+    if (argc == 2 && strcmp("empty_all", argv[1]) == 0) {
+        int err = log_var_empty_all();
         if (err != SUCCESS) {
             return CMD_FAILURE;
         }
