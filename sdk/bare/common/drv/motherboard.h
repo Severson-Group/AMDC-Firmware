@@ -13,7 +13,7 @@
 #endif
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-#define MOTHERBOARD_BASE_ADDR (0x43C70000)
+#define MOTHERBOARD_BASE_ADDR (0x43C90000)
 #endif
 
 typedef enum {
