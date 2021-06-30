@@ -223,13 +223,13 @@ int log_var_empty(int idx)
 
 int log_var_empty_all(void)
 {
-	for (int idx = 0; idx < LOG_MAX_NUM_VARIABLES; idx++) {
-	    vars[idx].buffer_idx = 0;
-	    vars[idx].last_logged_usec = 0;
-	    vars[idx].num_samples = 0;
-	}
+    for (int idx = 0; idx < LOG_MAX_NUM_VARIABLES; idx++) {
+        vars[idx].buffer_idx = 0;
+        vars[idx].last_logged_usec = 0;
+        vars[idx].num_samples = 0;
+    }
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 // ***************************

@@ -20,7 +20,7 @@ static command_help_t cmd_help[] = {
     { "stop", "Stop logging" },
     { "dump <bin|text> <log_var_idx>", "Dump log data to console" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
-	{ "empty_all", "Empty all slots" },
+    { "empty_all", "Empty all slots" },
     { "info", "Print status of logging engine" },
 };
 
