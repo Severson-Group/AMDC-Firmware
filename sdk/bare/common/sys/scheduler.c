@@ -167,7 +167,7 @@ void scheduler_run(void)
 
     // This is the main event loop that runs the device
     while (1) {
-    	uint32_t my_elapsed_usec = elapsed_usec;
+        uint32_t my_elapsed_usec = elapsed_usec;
         tasks_running = true;
 
         task_control_block_t *t = tasks;
