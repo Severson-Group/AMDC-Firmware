@@ -93,16 +93,10 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out gain argument
-        // and saturate to 0 .. 50
         double gain = strtod(argv[4], NULL);
-        if (gain < 0.0 || gain > 50.0)
-            return CMD_INVALID_ARGUMENTS;
 
         // Pull out offset argument
-        // and saturate to -100 .. 100
         double offset = strtod(argv[5], NULL);
-        if (offset < -100.0 || offset > 100.0)
-            return CMD_INVALID_ARGUMENTS;
 
         injection_noise(ctx, op, gain, offset);
 
@@ -122,27 +116,26 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out gain argument
-        // and saturate to 0 .. 10
+        // and saturate to 0+
         double gain = strtod(argv[4], NULL);
-        if (gain < 0.0 || gain > 10.0)
+        if (gain < 0.0)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out freqMin argument
-        // and saturate to 0 .. 10000Hz
+        // and saturate to 0+
         double freqMin = strtod(argv[5], NULL);
-        if (freqMin < 0.0 || freqMin > 10000.0)
+        if (freqMin < 0.0)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out freqMax argument
-        // and saturate to 0 .. 10000Hz
+        // and saturate to 0+
         double freqMax = strtod(argv[5], NULL);
-        if (freqMax < 0.0 || freqMax > 10000.0)
+        if (freqMax < 0.0)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out period argument
-        // and saturate to 10ms .. 60 sec
         double period = strtod(argv[7], NULL);
-        if (period < 0.010 || period > 60.0)
+        if (period < 0.0)
             return CMD_INVALID_ARGUMENTS;
 
         injection_chirp(ctx, op, gain, freqMin, freqMax, period);
@@ -163,21 +156,14 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out valueMin argument
-        // and saturate to -100 .. 100
         double valueMin = strtod(argv[4], NULL);
-        if (valueMin < -100.0 || valueMin > 100.0)
-            return CMD_INVALID_ARGUMENTS;
 
         // Pull out valueMax argument
-        // and saturate to -100 .. 100
         double valueMax = strtod(argv[5], NULL);
-        if (valueMax < -100.0 || valueMax > 100.0)
-            return CMD_INVALID_ARGUMENTS;
 
         // Pull out period argument
-        // and saturate to 10ms .. 60 sec
         double period = strtod(argv[6], NULL);
-        if (period < 0.010 || period > 60.0)
+        if (period < 0.0)
             return CMD_INVALID_ARGUMENTS;
 
         injection_triangle(ctx, op, valueMin, valueMax, period);
