@@ -5,6 +5,7 @@
 #include "drv/fpga_timer.h"
 #include "drv/gpio_mux.h"
 #include "drv/hardware_targets.h"
+#include "drv/ild1420.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
 #include "sys/commands.h"
@@ -27,6 +28,7 @@ static command_help_t cmd_help[] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "ild read", "Read the latest packet from ILD1420 sensor" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
@@ -126,6 +128,24 @@ int cmd_hw(int argc, char **argv)
             analog_getf(anlg_idx, &out_volts);
 
             debug_printf("%fV\r\n", out_volts);
+
+            return SUCCESS;
+        }
+    }
+
+    // Handle 'ild' sub-command
+    // hw ild read
+    if (argc == 4 && strcmp("ild", argv[1]) == 0) {
+        if (strcmp("read", argv[2]) == 0) {
+            int sensor = atoi(argv[3]);
+
+            if (sensor < 0 || sensor >= ILD1420_NUM_SENSORS)
+                return CMD_INVALID_ARGUMENTS;
+
+            ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
+            debug_printf("dist:  %x\r\n", packet.distance);
+            debug_printf("err:   %X\r\n", packet.error);
+            debug_printf("fresh: %X\r\n", packet.fresh);
 
             return CMD_SUCCESS;
         }

@@ -73,10 +73,7 @@ int cmd_inj(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
 
         // Pull out value argument
-        // and saturate to -10 .. 10
-        double value = strtod(argv[5], NULL);
-        if (value < -10.0 || value > 10.0)
-            return CMD_INVALID_ARGUMENTS;
+        double value = strtod(argv[4], NULL);
 
         injection_const(ctx, op, value);
 

@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER amdc_ild1420
+	OPTION supported_peripherals = (amdc_ild1420);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = amdc_ild1420;
+END DRIVER
