@@ -9,13 +9,10 @@ Following these instructions will get the AMDC firmware environment up and runni
 Firmware development environment needs a few things:
 
 - Xilinx Vivado 2019.1 and SDK (if you don't have these, [follow these steps to install them](Installing-Xilinx-Tools.md))
-- `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition from online
-    1. Go here: http://zedboard.org/support/documentation/1519
-    2. Scroll down to `Board Definition Files`
-    3. Download `MicroZed Board Definition Install for Vivado 2015.3 through 2017.4`
-    4. Unzip downloaded file
-    5. Unzip `Avnet Zed Board Definitions.zip`
-    6. Copy all the resulting folders (`microzed_*`, `picozed_*`, etc) to `C:\Xilinx\Vivado\YYYY.V\data\boards\board_files`
+- `em.avnet.com:picozed_7030_fmc2:part0:1.1` board definition
+    1. Go here: https://github.com/Severson-Group/AMDC-Firmware/issues/10#issuecomment-847993684
+    2. Download the zip file and unzip it
+    3. Move the resulting folder (`picozed_*`) to `C:\Xilinx\Vivado\2019.1\data\boards\board_files\...`
 
 ## Cloning from GitHub
 
