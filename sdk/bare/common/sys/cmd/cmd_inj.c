@@ -33,10 +33,10 @@ void cmd_inj_register(void)
 
 static int _parse_op(char *op_str, inj_op_e *inj_op)
 {
-	// Default to error state:
-	// -1 : error
-	//  0 : no error
-	int error = -1;
+    // Default to error state:
+    // -1 : error
+    //  0 : no error
+    int error = -1;
 
     if (STREQ("set", op_str)) {
         *inj_op = SET;
@@ -132,7 +132,7 @@ int cmd_inj(int argc, char **argv)
         double gain = strtod(argv[4], NULL);
         if (gain < 0.0) {
             return CMD_INVALID_ARGUMENTS;
-    	}
+        }
 
         // Pull out freqMin argument
         // and saturate to 0+

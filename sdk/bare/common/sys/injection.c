@@ -84,13 +84,13 @@ static inline double _triangle(double min, double max, double period, double tim
 
 static inline double _square(double min, double max, double period, double time)
 {
-	// Output defaults to min value
-	double out = min;
+    // Output defaults to min value
+    double out = min;
 
-	// Output becomes max value for second half of period
-	if (time >= period / 2.0) {
-		out = max;
-	}
+    // Output becomes max value for second half of period
+    if (time >= period / 2.0) {
+        out = max;
+    }
 
     return out;
 }
