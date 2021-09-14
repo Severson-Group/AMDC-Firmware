@@ -14,10 +14,8 @@ amdc/
 
 # Keep only base source files
 hw/*
-!hw/amdc_revc.bd
 !hw/amdc_revd.bd
 !hw/amdc_reve.bd
-!hw/constraints_amdc_revc.xdc
 !hw/constraints_amdc_revd.xdc
 !hw/constraints_amdc_reve.xdc
 
@@ -56,5 +54,6 @@ sdk/**/*.d
 ##########
 # Python #
 ##########
+
 scripts/__pycache__/
 **/.ipynb_checkpoints/
