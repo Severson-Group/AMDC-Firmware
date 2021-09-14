@@ -1,8 +1,9 @@
-# FPGA Pin Mapping for AMDC REV D
+# FPGA Pin Mapping for AMDC REV E
 # 
-# Please keep this document in sync with 
-# the documentation in the AMDC-Hardware
-# repo: docs/PinMappingRevD.md
+# Please keep this document in sync with the
+# documentation in the AMDC-Hardware repo:
+#
+# AMDC-Hardware/docs/RevE-PinMapping.md
 
 
 ###########
@@ -62,80 +63,80 @@ set_property PACKAGE_PIN F6 [get_ports adc_sdo[6]]; # JX1-31
 set_property PACKAGE_PIN E8 [get_ports adc_sdo[7]]; # JX1-35
 
 
-########
-# SPI1 #
-########
+#########
+# GPIO1 #
+#########
 
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_sclk];
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_miso];
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_mosi];
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_nss];
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_in];
-set_property IOSTANDARD LVCMOS18 [get_ports spi1_out];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_out[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_out[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_out[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_in[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_in[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio1_in[2]];
 
-set_property PACKAGE_PIN B4  [get_ports spi1_sclk]; # JX1-47
-set_property PACKAGE_PIN C6  [get_ports spi1_miso]; # JX1-41
-set_property PACKAGE_PIN B3  [get_ports spi1_mosi]; # JX1-49
-set_property PACKAGE_PIN C5  [get_ports spi1_nss];  # JX1-43
-set_property PACKAGE_PIN Y14 [get_ports spi1_in];   # JX1-88
-set_property PACKAGE_PIN A7  [get_ports spi1_out];  # JX1-74
-
-
-########
-# SPI2 #
-########
-
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_sclk];
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_miso];
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_mosi];
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_nss];
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_in];
-set_property IOSTANDARD LVCMOS18 [get_ports spi2_out];
-
-set_property PACKAGE_PIN E2  [get_ports spi2_sclk]; # JX1-61
-set_property PACKAGE_PIN D1  [get_ports spi2_miso]; # JX1-53
-set_property PACKAGE_PIN D2  [get_ports spi2_mosi]; # JX1-63
-set_property PACKAGE_PIN C1  [get_ports spi2_nss];  # JX1-55
-set_property PACKAGE_PIN Y15 [get_ports spi2_in];   # JX1-90
-set_property PACKAGE_PIN A6  [get_ports spi2_out];  # JX1-76
+set_property PACKAGE_PIN A7 [get_ports gpio1_out[0]]; # JX1-74
+set_property PACKAGE_PIN A6 [get_ports gpio1_out[1]]; # JX1-76
+set_property PACKAGE_PIN C8 [get_ports gpio1_out[2]]; # JX1-82
+set_property PACKAGE_PIN D1 [get_ports gpio1_in[0]];  # JX1-53
+set_property PACKAGE_PIN C1 [get_ports gpio1_in[1]];  # JX1-55
+set_property PACKAGE_PIN E2 [get_ports gpio1_in[2]];  # JX1-61
 
 
-########
-# SPI3 #
-########
+#########
+# GPIO2 #
+#########
 
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_sclk];
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_miso];
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_mosi];
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_nss];
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_in];
-set_property IOSTANDARD LVCMOS18 [get_ports spi3_out];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_out[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_out[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_out[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_in[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_in[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio2_in[2]];
 
-set_property PACKAGE_PIN G8  [get_ports spi3_sclk]; # JX1-73
-set_property PACKAGE_PIN F7  [get_ports spi3_miso]; # JX1-67
-set_property PACKAGE_PIN G7  [get_ports spi3_mosi]; # JX1-75
-set_property PACKAGE_PIN E7  [get_ports spi3_nss];  # JX1-69
-set_property PACKAGE_PIN V18 [get_ports spi3_in];   # JX1-92
-set_property PACKAGE_PIN C8  [get_ports spi3_out];  # JX1-82
+set_property PACKAGE_PIN B8  [get_ports gpio2_out[0]]; # JX1-84
+set_property PACKAGE_PIN Y14 [get_ports gpio2_out[1]]; # JX1-88
+set_property PACKAGE_PIN Y15 [get_ports gpio2_out[2]]; # JX1-90
+set_property PACKAGE_PIN D2  [get_ports gpio2_in[0]];  # JX1-63
+set_property PACKAGE_PIN F7  [get_ports gpio2_in[1]];  # JX1-67
+set_property PACKAGE_PIN E7  [get_ports gpio2_in[2]];  # JX1-69
 
 
-########
-# SPI4 #
-########
+#########
+# GPIO3 #
+#########
 
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_sclk];
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_miso];
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_mosi];
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_nss];
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_in];
-set_property IOSTANDARD LVCMOS18 [get_ports spi4_out];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_out[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_out[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_out[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_in[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_in[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio3_in[2]];
 
-set_property PACKAGE_PIN AA14 [get_ports spi4_sclk]; # JX1-87
-set_property PACKAGE_PIN B7   [get_ports spi4_miso]; # JX1-81
-set_property PACKAGE_PIN AA15 [get_ports spi4_mosi]; # JX1-89
-set_property PACKAGE_PIN B6   [get_ports spi4_nss];  # JX1-83
-set_property PACKAGE_PIN W18  [get_ports spi4_in];   # JX1-94
-set_property PACKAGE_PIN B8   [get_ports spi4_out];  # JX1-84
+set_property PACKAGE_PIN V18 [get_ports gpio3_out[0]]; # JX1-92
+set_property PACKAGE_PIN W18 [get_ports gpio3_out[1]]; # JX1-94
+set_property PACKAGE_PIN C6  [get_ports gpio3_out[2]]; # JX1-41
+set_property PACKAGE_PIN G8  [get_ports gpio3_in[0]];  # JX1-73
+set_property PACKAGE_PIN G7  [get_ports gpio3_in[1]];  # JX1-75
+set_property PACKAGE_PIN B7  [get_ports gpio3_in[2]];  # JX1-81
+
+
+#########
+# GPIO4 #
+#########
+
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_out[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_out[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_out[2]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_in[0]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_in[1]];
+set_property IOSTANDARD LVCMOS18 [get_ports gpio4_in[2]];
+
+set_property PACKAGE_PIN C5   [get_ports gpio4_out[0]]; # JX1-43
+set_property PACKAGE_PIN B4   [get_ports gpio4_out[1]]; # JX1-47
+set_property PACKAGE_PIN B3   [get_ports gpio4_out[2]]; # JX1-49
+set_property PACKAGE_PIN B6   [get_ports gpio4_in[0]];  # JX1-83
+set_property PACKAGE_PIN AA14 [get_ports gpio4_in[1]];  # JX1-87
+set_property PACKAGE_PIN AA15 [get_ports gpio4_in[2]];  # JX1-89
 
 
 #############
