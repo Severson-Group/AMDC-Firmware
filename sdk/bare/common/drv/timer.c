@@ -6,8 +6,8 @@
 
 // Get the TIMER_0 device from the FPGA
 // Parameter definitions
-#define TMR_DEVICE_ID                 XPAR_CONTROL_TIMER_0_DEVICE_ID
-#define INTC_TMR_INTERRUPT_ID         XPAR_FABRIC_CONTROL_TIMER_0_INTERRUPT_INTR
+#define TMR_DEVICE_ID                 XPAR_HIER_TIMERS_CONTROL_TIMER_0_DEVICE_ID
+#define INTC_TMR_INTERRUPT_ID         XPAR_FABRIC_HIER_TIMERS_CONTROL_TIMER_0_INTERRUPT_INTR
 #define TIMER_LOAD_VALUE(period_usec) ((0xFFFFFFFF) - (((period_usec) *200) - 2))
 
 // PERIOD = ((2^32-1) - (TMR_LOAD_VALUE) + 2) * 5e-9
