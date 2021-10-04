@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 #include "drv/led.h"
 #endif // USER_CONFIG_HARDWARE_TARGET
 
@@ -34,7 +34,7 @@ static command_help_t cmd_help[] = {
     { "enc init", "Turn on blue LED until Z pulse found" },
     { "timer <fpga|cpu> now", "Read value from hardware timer" },
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
 #endif // USER_CONFIG_HARDWARE_TARGET
@@ -203,7 +203,7 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc >= 2 && STREQ("led", argv[1])) {
