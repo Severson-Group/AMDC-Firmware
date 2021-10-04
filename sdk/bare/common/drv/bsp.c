@@ -1,9 +1,9 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D)
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 // Ensure a valid hardware target is specified
-// NOTE: this firmware only supports REV C hardware onward
+// NOTE: this firmware only supports REV D hardware onward
 #else
 #error "ERROR: Hardware target not specified correctly"
 // If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your usr/user_config.h file!
@@ -23,12 +23,7 @@
 #include "sys/defines.h"
 #include <stdio.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-#include "drv/gpio.h"
-#include "drv/io.h"
-#endif
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 #include "drv/dac.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/gpio_mux.h"
@@ -54,12 +49,12 @@ void bsp_init(void)
     printf("Advanced Motor Drive Controller\n");
 
     switch (USER_CONFIG_HARDWARE_TARGET) {
-    case AMDC_REV_C:
-        printf("Hardware Target: REV C\n");
-        break;
-
     case AMDC_REV_D:
         printf("Hardware Target: REV D\n");
+        break;
+
+    case AMDC_REV_E:
+        printf("Hardware Target: REV E\n");
         break;
 
     default:
@@ -68,7 +63,7 @@ void bsp_init(void)
         }
     }
 
-    printf("(C) 2020 Severson Research Group\n");
+    printf("(C) Severson Research Group\n");
     printf("--------------------------------\n");
     printf("\n");
 
@@ -81,17 +76,12 @@ void bsp_init(void)
     fpga_timer_init();
     cpu_timer_init();
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     led_init();
     sts_mux_init();
     gpio_mux_init();
     dac_init();
     eddy_current_sensor_init();
-#endif
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-    io_init();
-    gpio_init();
 #endif
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1

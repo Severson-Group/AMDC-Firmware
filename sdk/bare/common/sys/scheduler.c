@@ -1,6 +1,5 @@
 #include "sys/scheduler.h"
 #include "drv/hardware_targets.h"
-#include "drv/io.h"
 #include "drv/led.h"
 #include "drv/motherboard.h"
 #include "drv/timer.h"
@@ -33,13 +32,8 @@ void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
     if (tasks_running) {
         // Use raw printf so this goes directly to the UART device
         printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-        io_led_color_t color;
-        color.r = 255;
-        color.g = 0;
-        color.b = 0;
-        io_led_set(&color);
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
         led_set_color(0, LED_COLOR_RED);
         led_set_color(1, LED_COLOR_RED);
         led_set_color(2, LED_COLOR_RED);

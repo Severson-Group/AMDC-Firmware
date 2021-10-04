@@ -1,6 +1,5 @@
 #include "drv/encoder.h"
 #include "drv/hardware_targets.h"
-#include "drv/io.h"
 #include "sys/defines.h"
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
@@ -73,12 +72,6 @@ static void _find_z_callback(void *arg)
     case REMOVE_TASK:
     {
         scheduler_tcb_unregister(&ctx->tcb);
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-        io_led_color_t color;
-        color.b = 0;
-        io_led_set_c(0, 0, 1, &color);
-#endif // USER_CONFIG_HARDWARE_TARGET
         break;
     }
     }
@@ -90,12 +83,6 @@ void encoder_find_z(void)
 {
     // Initialize the state machine context
     ctx.state = WAIT_UNTIL_Z;
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-    io_led_color_t color;
-    color.b = 255;
-    io_led_set_c(0, 0, 1, &color);
-#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx.tcb, _find_z_callback, &ctx, "find_z", SM_INTERVAL_USEC);

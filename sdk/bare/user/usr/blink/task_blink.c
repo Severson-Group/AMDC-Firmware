@@ -7,20 +7,11 @@
 #include <math.h>
 #include <stdint.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 #include "drv/led.h"
 #endif // USER_CONFIG_HARDWARE_TARGET
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-#include "drv/io.h"
-#endif // USER_CONFIG_HARDWARE_TARGET
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-// Hold LED state (0: off, 1: red, 2: green, 3: blue)
-static uint8_t led_state = 0;
-#endif // USER_CONFIG_HARDWARE_TARGET
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 // Hold LED animation state
 static uint8_t led_pos = 0;
 static uint8_t led_color_idx = 0;
@@ -54,7 +45,7 @@ int task_blink_init(void)
 
 int task_blink_deinit(void)
 {
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Turn off all LEDs
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, LED_COLOR_BLACK);
@@ -71,21 +62,7 @@ int task_blink_deinit(void)
 
 void task_blink_callback(void *arg)
 {
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-    // Set LED output via I/O driver
-    io_led_color_t color = { 0 };
-    color.r = led_state == 1 ? 1 : 0;
-    color.g = led_state == 2 ? 1 : 0;
-    color.b = led_state == 3 ? 1 : 0;
-    io_led_set(&color);
-
-    // Update LED state for next time task is called
-    if (++led_state >= 4) {
-        led_state = 0;
-    }
-#endif // USER_CONFIG_HARDWARE_TARGET
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, led_pos == i ? led_colors[led_color_idx] : LED_COLOR_BLACK);
     }
