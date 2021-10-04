@@ -1,7 +1,7 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 
 #include "drv/dac.h"
 #include "xil_io.h"

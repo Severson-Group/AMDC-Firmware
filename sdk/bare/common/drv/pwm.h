@@ -83,14 +83,4 @@ void pwm_set_all_duty_midscale(void);
 int pwm_mux_set_all_pins(uint32_t *config);
 int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-
-int pwm_get_status(pwm_channel_e channel, pwm_status_t *status);
-void pwm_get_all_flt_temp(uint8_t *flt_temp);
-void pwm_get_all_flt_desat(uint8_t *flt_desat);
-void pwm_get_all_rdy(uint8_t *rdy);
-void pwm_set_all_rst(uint8_t rst);
-
-#endif // USER_CONFIG_HARDWARE_TARGET
-
 #endif // PWM_H

@@ -6,13 +6,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-#define ANALOG_BASE_ADDR (0x43C00000)
-#endif
+// From Vivado build output
+#include "xparameters.h"
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-#define ANALOG_BASE_ADDR (0x43C00000)
-#endif
+#define ANALOG_BASE_ADDR (XPAR_AMDC_ADC_0_S00_AXI_BASEADDR)
 
 typedef enum {
     // Keep first channel index at 0!
@@ -24,19 +21,6 @@ typedef enum {
     ANALOG_IN6,
     ANALOG_IN7,
     ANALOG_IN8,
-
-// REV C target hardware is the only platform
-// which supports more than 8 analog inputs.
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-    ANALOG_IN9,
-    ANALOG_IN10,
-    ANALOG_IN11,
-    ANALOG_IN12,
-    ANALOG_IN13,
-    ANALOG_IN14,
-    ANALOG_IN15,
-    ANALOG_IN16,
-#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Keep this as last entry!
     ANALOG_NUM_CHANNELS,

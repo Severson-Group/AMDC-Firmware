@@ -5,7 +5,6 @@
 
 // As the AMDC platform matures, the supported hardware targets will change.
 
-#define AMDC_REV_C (3)
 #define AMDC_REV_D (4)
 #define AMDC_REV_E (5)
 
