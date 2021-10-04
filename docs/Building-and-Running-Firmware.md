@@ -227,7 +227,7 @@ At this point, you are done generating code / importing / exporting / etc. Now w
 
 ### Discard changes to AMDC-Firmware
 
-Your submodule `AMDC-Firmeware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
+Your submodule `AMDC-Firmware` should be clean, i.e. no changes. Chances are, this is not true. Please revert your local changes to `AMDC-Firmware` to make it match the remote version.
 
 Vivado probably updated the `*.bd` file... Simply run: `git restore ...` to put this file back to a clean state.
 
@@ -275,20 +275,25 @@ Now, you are ready to start the code on AMDC!
 
 ### Connecting to AMDC over USB-UART
 
-To interface with the serial terminal on AMDC, you will need to install the required drivers on your PC:
+To interface with the serial terminal on AMDC, your PC needs the appropriate driver: 
+
+- For <= REV D hardware, the UART interface is the `Silicon Labs CP210x USB-UART Bridge`
+- For >= REV E hardware, the UART interface is from `FTDI` and should be natively supported by your operating system
+
+#### For Silicon Labs UART-USB Driver (<= REV D hardware)
 
 1. Open: https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers
 2. Download the right drivers for your platform and install them.
-
-Now, verify the drivers are installed:
-
-1. Connect a micro USB cable to the "UART" input on AMDC
-2. Check that a `Silicon Labs CP210x USB-UART Bridge` appears as a connected device.
+3. Verify the drivers are installed:
+    1. Connect a micro USB cable to the "UART" input on AMDC
+    2. Check that a `Silicon Labs CP210x USB-UART Bridge` appears as a connected device.
 
 ## Issues
 
 Getting AMDC to start and run FPGA and C code can be hard. If it isn't working, try repeating the programming steps. Make sure to reset the board by either power cycling AMDC or pushing `RESET` button on AMDC.
 
-NOTE: Pushing `RESET` button on PCB != power cycle of board. The `RESET` button performs a different type of reset (keeps around debug configurations, etc). During developement, you may need to perform a full power cycle, while other times, a simple `RESET` button push will work. 
+If you are getting compilation errors in the SDK (especially during the linking phase), consider deleting the `amdc_bsp` project and regenerating it -- doing so sometimes resolves common issues.
+
+NOTE: Pushing the `RESET` button on PCB **is NOT** exactly the same as doing a full power cycle of board. The `RESET` button performs a different type of reset (it keeps around debug configurations, etc). During developement, you may need to perform a full power cycle, while other times, a simple `RESET` button push will work. 
 
 Xilinx tools also have **many** quirks. Good luck getting everything working!
