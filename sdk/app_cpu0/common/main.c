@@ -31,10 +31,34 @@
 #include "drv/motherboard.h"
 #endif
 
+#include "xil_mmu.h"
+#include "xpseudo_asm.h"
+#include "xil_io.h"
+#include "xil_exception.h"
+
+#define sev() __asm__("sev")
+#define ARM1_STARTADR 0xFFFFFFF0
+#define ARM1_BASEADDR 0x20080000
+
 int main()
 {
     // Required system initialization
     init_platform();
+    print("CPU0: init_platform\n\r");
+
+    // Disable cache on OCM
+    // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
+    Xil_SetTlbAttributes(0xFFFF0000,0x14de2);
+
+    print("CPU0: writing startaddress for ARM1\n\r");
+    //Xil_Out32(ARM1_STARTADR, ARM1_BASEADDR);
+    dmb(); // waits until write has finished
+
+    print("CPU0: sending the SEV to wake up ARM1\n\r");
+    // Set Event command "sev()" causes CPU1 to wake up and jump to ARM1_BASEADDR
+    sev();
+
+
 
     // User BSP library initialization
     bsp_init();
