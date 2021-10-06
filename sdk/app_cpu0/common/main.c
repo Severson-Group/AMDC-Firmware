@@ -36,29 +36,37 @@
 #include "xil_io.h"
 #include "xil_exception.h"
 
-#include "sleep.h"
-
-#define sev() __asm__("sev")
-#define ARM1_STARTADR 0xFFFFFFF0
-#define ARM1_BASEADDR 0x20080000
-
 int main()
 {
     // Required system initialization
     init_platform();
-    print("CPU0: init_platform\n\r");
 
     // Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
-    Xil_SetTlbAttributes(0xFFFF0000,0x14de2);
+    Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
 
-    print("CPU0: writing start address for CPU1\n\r");
-    Xil_Out32(ARM1_STARTADR, ARM1_BASEADDR);
-    dmb(); // waits until write has finished
+#if 1
+    // This code is required to start CPU1 from CPU0 during boot.
+    //
+    // This only applies when booting from flash via the FSBL.
+    // During development with JTAG loading, these low-level
+    // calls in this #if block are not needed! However, we'll
+    // keep them here since it doesn't affect performance...
 
-    print("CPU0: sending the SEV to wake up CPU1\n\r");
-    // Set Event command "sev()" causes CPU1 to wake up and jump to ARM1_BASEADDR
-    sev();
+    // Write starting base address for CPU1 PC.
+    // It will look for this address upon waking up
+    static const uintptr_t CPU1_START_ADDR = 0xFFFFFFF0;
+    static const uint32_t CPU1_BASE_ADDR = 0x20080000;
+    Xil_Out32(CPU1_START_ADDR, CPU1_BASE_ADDR);
+
+    // Waits until write has finished
+    // DMB = Data Memory Barrier
+    dmb();
+
+    // Wake up CPU1 by sending the SEV command
+    // SEV = Set Event, which causes CPU1 to wake up and jump to CPU1_BASE_ADDR
+    __asm__("sev");
+#endif
 
     // User BSP library initialization
     bsp_init();
