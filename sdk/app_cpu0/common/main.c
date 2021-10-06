@@ -48,7 +48,6 @@ int main()
     init_platform();
     print("CPU0: init_platform\n\r");
 
-/*
     // Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000,0x14de2);
@@ -60,7 +59,6 @@ int main()
     print("CPU0: sending the SEV to wake up CPU1\n\r");
     // Set Event command "sev()" causes CPU1 to wake up and jump to ARM1_BASEADDR
     sev();
-*/
 
     // User BSP library initialization
     bsp_init();
