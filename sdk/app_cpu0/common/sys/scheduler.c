@@ -24,31 +24,36 @@ static volatile uint32_t elapsed_usec = 0;
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
-void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
+void scheduler_timer_isr(void *timer_instance_ptr)
 {
+	UNUSED(timer_instance_ptr);
+	if (timer_is_expired()) {
+		timer_clear_interrupt();
+
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
-    // We should be done running tasks in a time slice before this fires,
-    // so if tasks are still running, we consumed too many cycles per slice
-    if (tasks_running) {
-        // Use raw printf so this goes directly to the UART device
-        printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+		// We should be done running tasks in a time slice before this fires,
+		// so if tasks are still running, we consumed too many cycles per slice
+		if (tasks_running) {
+			// Use raw printf so this goes directly to the UART device
+			printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
 
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-        led_set_color(0, LED_COLOR_RED);
-        led_set_color(1, LED_COLOR_RED);
-        led_set_color(2, LED_COLOR_RED);
-        led_set_color(3, LED_COLOR_RED);
+			led_set_color(0, LED_COLOR_RED);
+			led_set_color(1, LED_COLOR_RED);
+			led_set_color(2, LED_COLOR_RED);
+			led_set_color(3, LED_COLOR_RED);
 #endif // USER_CONFIG_HARDWARE_TARGET
 
-        // Hang here so the user can debug why the code took so long
-        // and overran the time slice! See the `running_task` variable.
-        while (1) {
-        }
-    }
+			// Hang here so the user can debug why the code took so long
+			// and overran the time slice! See the `running_task` variable.
+			while (1) {
+			}
+		}
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
 
-    elapsed_usec += SYS_TICK_USEC;
-    scheduler_idle = false;
+		elapsed_usec += SYS_TICK_USEC;
+		scheduler_idle = false;
+	}
 }
 
 uint32_t scheduler_get_elapsed_usec(void)

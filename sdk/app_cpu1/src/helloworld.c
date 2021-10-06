@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* Copyright (C) 2008 - 2014 Xilinx, Inc.  All rights reserved.
+* Copyright (C) 2009 - 2014 Xilinx, Inc.  All rights reserved.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -30,12 +30,42 @@
 *
 ******************************************************************************/
 
-#ifndef __PLATFORM_H_
-#define __PLATFORM_H_
+/*
+ * helloworld.c: simple test application
+ *
+ * This application configures UART 16550 to baud rate 9600.
+ * PS7 UART (Zynq) is not initialized by this application, since
+ * bootrom/bsp configures it to baud rate 115200
+ *
+ * ------------------------------------------------
+ * | UART TYPE   BAUD RATE                        |
+ * ------------------------------------------------
+ *   uartns550   9600
+ *   uartlite    Configurable only in HW design
+ *   ps7_uart    115200 (configured by bootrom/bsp)
+ */
 
-#include "platform_config.h"
+#include <stdio.h>
+#include "platform.h"
+#include "xil_printf.h"
+#include "xil_mmu.h"
+#include "sleep.h"
 
-void init_platform();
-void cleanup_platform();
 
-#endif
+int main()
+{
+    init_platform();
+	xil_printf("CPU1: init_platform\n\r");
+
+    // Disable cache on OCM
+    // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
+    Xil_SetTlbAttributes(0xFFFF0000,0x14de2);
+
+    while (1) {
+    	usleep(1.0 * 1e6);
+    	print("Hello from CPU1\n\r");
+    }
+
+    cleanup_platform();
+    return 0;
+}
