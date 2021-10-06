@@ -47,15 +47,14 @@
 
 #include <stdio.h>
 #include "platform.h"
-#include "xil_printf.h"
 #include "xil_mmu.h"
+#include "xil_printf.h"
 #include "sleep.h"
 
 
 int main()
 {
     init_platform();
-	xil_printf("CPU1: init_platform\n\r");
 
     // Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
@@ -63,7 +62,7 @@ int main()
 
     while (1) {
     	usleep(1.0 * 1e6);
-    	print("Hello from CPU1\n\r");
+    	print("CPU1: Hello!\n\r");
     }
 
     cleanup_platform();
