@@ -3,6 +3,7 @@
 #include "sys/defines.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
+#include "xgpiops.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -26,9 +27,38 @@ static double now_fsw;
 // or
 // carrier_max = ((200e6 / divisor) / (switching_freq)) / 2
 
+static XGpioPs Gpio;
+static const uint32_t pin_PS_DRIVE_EN_MIO = 44;
+
+static void setup_pin_PS_DRIVE_EN(void)
+{
+	int Status;
+	XGpioPs_Config *GPIOConfigPtr;
+
+	// GPIO Initialization
+	GPIOConfigPtr = XGpioPs_LookupConfig(XPAR_PS7_GPIO_0_DEVICE_ID);
+	Status = XGpioPs_CfgInitialize(&Gpio, GPIOConfigPtr, GPIOConfigPtr->BaseAddr);
+	if (Status != XST_SUCCESS) {
+		// Just hang here if error...
+		while (1) {
+		}
+	}
+
+	// Set the PS_DRIVE_EN MIO pin as an output
+	XGpioPs_SetDirectionPin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+
+	// Start the pin as off
+	XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
+
+	// Enable the PS_DRIVE_EN MIO pin
+    XGpioPs_SetOutputEnablePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+}
+
 void pwm_init(void)
 {
     printf("PWM:\tInitializing...\n");
+
+    setup_pin_PS_DRIVE_EN();
 
     // Default to no switching (all PWM outputs are logic LOW)
     // Opens all switches...
@@ -81,6 +111,15 @@ void pwm_set_all_rst(uint8_t rst)
 
     // Offset 27 is rst output reg
     Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
+}
+
+int pwm_enable_hw(bool en)
+{
+	if (en) {
+
+	} else {
+
+	}
 }
 
 int pwm_enable(void)

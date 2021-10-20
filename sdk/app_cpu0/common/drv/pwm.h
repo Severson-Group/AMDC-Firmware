@@ -46,12 +46,6 @@ typedef enum {
     PWM_NUM_CHANNELS,
 } pwm_channel_e;
 
-typedef struct pwm_status_t {
-    uint8_t ready;
-    uint8_t fault_desat;
-    uint8_t fault_temp;
-} pwm_status_t;
-
 static inline bool pwm_is_valid_channel(pwm_channel_e channel)
 {
     if (channel >= PWM_OUT1 && channel < PWM_NUM_CHANNELS) {
@@ -65,6 +59,8 @@ void pwm_init(void);
 
 void pwm_toggle_reset(void);
 void pwm_set_all_rst(uint8_t rst);
+
+int pwm_enable_hw(bool en);
 
 int pwm_enable(void);
 int pwm_disable(void);
