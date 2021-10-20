@@ -46,12 +46,6 @@ typedef enum {
     PWM_NUM_CHANNELS,
 } pwm_channel_e;
 
-typedef struct pwm_status_t {
-    uint8_t ready;
-    uint8_t fault_desat;
-    uint8_t fault_temp;
-} pwm_status_t;
-
 static inline bool pwm_is_valid_channel(pwm_channel_e channel)
 {
     if (channel >= PWM_OUT1 && channel < PWM_NUM_CHANNELS) {
@@ -64,6 +58,8 @@ static inline bool pwm_is_valid_channel(pwm_channel_e channel)
 void pwm_init(void);
 
 void pwm_toggle_reset(void);
+
+int pwm_enable_hw(bool en);
 
 int pwm_enable(void);
 int pwm_disable(void);
@@ -82,15 +78,5 @@ void pwm_set_all_duty_midscale(void);
 // Mux for PWM output pins
 int pwm_mux_set_all_pins(uint32_t *config);
 int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-
-int pwm_get_status(pwm_channel_e channel, pwm_status_t *status);
-void pwm_get_all_flt_temp(uint8_t *flt_temp);
-void pwm_get_all_flt_desat(uint8_t *flt_desat);
-void pwm_get_all_rdy(uint8_t *rdy);
-void pwm_set_all_rst(uint8_t rst);
-
-#endif // USER_CONFIG_HARDWARE_TARGET
 
 #endif // PWM_H

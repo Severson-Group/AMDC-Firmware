@@ -3,6 +3,7 @@
 #include "sys/defines.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
+#include "xgpiops.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -26,9 +27,38 @@ static double now_fsw;
 // or
 // carrier_max = ((200e6 / divisor) / (switching_freq)) / 2
 
+static XGpioPs Gpio;
+static const uint32_t pin_PS_DRIVE_EN_MIO = 44;
+
+static void setup_pin_PS_DRIVE_EN(void)
+{
+	int Status;
+	XGpioPs_Config *GPIOConfigPtr;
+
+	// GPIO Initialization
+	GPIOConfigPtr = XGpioPs_LookupConfig(XPAR_PS7_GPIO_0_DEVICE_ID);
+	Status = XGpioPs_CfgInitialize(&Gpio, GPIOConfigPtr, GPIOConfigPtr->BaseAddr);
+	if (Status != XST_SUCCESS) {
+		// Just hang here if error...
+		while (1) {
+		}
+	}
+
+	// Set the PS_DRIVE_EN MIO pin as an output
+	XGpioPs_SetDirectionPin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+
+	// Start the pin as off
+	XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
+
+	// Enable the PS_DRIVE_EN MIO pin
+    XGpioPs_SetOutputEnablePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+}
+
 void pwm_init(void)
 {
     printf("PWM:\tInitializing...\n");
+
+    setup_pin_PS_DRIVE_EN();
 
     // Default to no switching (all PWM outputs are logic LOW)
     // Opens all switches...
@@ -81,6 +111,15 @@ void pwm_set_all_rst(uint8_t rst)
 
     // Offset 27 is rst output reg
     Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
+}
+
+int pwm_enable_hw(bool en)
+{
+	if (en) {
+
+	} else {
+
+	}
 }
 
 int pwm_enable(void)
@@ -278,67 +317,3 @@ int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
 
     return SUCCESS;
 }
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_C
-
-void pwm_get_all_flt_temp(uint8_t *flt_temp)
-{
-    uint32_t value;
-
-    // Offset 28 is flt_temp
-    value = Xil_In32(PWM_BASE_ADDR + (28 * sizeof(uint32_t)));
-
-    // Only look at bottom 8 bits
-    value &= 0x000000FF;
-
-    *flt_temp = (uint8_t) value;
-}
-
-void pwm_get_all_flt_desat(uint8_t *flt_desat)
-{
-    uint32_t value;
-
-    // Offset 29 is flt_desat
-    value = Xil_In32(PWM_BASE_ADDR + (29 * sizeof(uint32_t)));
-
-    // Only look at bottom 8 bits
-    value &= 0x000000FF;
-
-    *flt_desat = (uint8_t) value;
-}
-
-void pwm_get_all_rdy(uint8_t *rdy)
-{
-    uint32_t value;
-
-    // Offset 30 is rdy
-    value = Xil_In32(PWM_BASE_ADDR + (30 * sizeof(uint32_t)));
-
-    // Only look at bottom 8 bits
-    value &= 0x000000FF;
-
-    *rdy = (uint8_t) value;
-}
-
-int pwm_get_status(pwm_channel_e channel, pwm_status_t *status)
-{
-    if (!pwm_is_valid_channel(channel)) {
-        return FAILURE;
-    }
-
-    // Read status signals from hardware
-    uint8_t flt_temp, flt_desat, rdy;
-    pwm_get_all_flt_temp(&flt_temp);
-    pwm_get_all_flt_desat(&flt_desat);
-    pwm_get_all_rdy(&rdy);
-
-    uint8_t bit_mask = (1 << channel);
-
-    status->fault_temp = (flt_temp & bit_mask) ? 1 : 0;
-    status->fault_desat = (flt_desat & bit_mask) ? 1 : 0;
-    status->ready = (rdy & bit_mask) ? 1 : 0;
-
-    return SUCCESS;
-}
-
-#endif // USER_CONFIG_HARDWARE_TARGET
