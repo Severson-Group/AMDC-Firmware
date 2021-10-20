@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 - 2019 Xilinx, Inc.
+ * Copyright (C) 2010 - 2019 Xilinx, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,24 +25,60 @@
  * OF SUCH DAMAGE.
  *
  */
-
-#ifndef __PLATFORM_H_
-#define __PLATFORM_H_
-
-/* Platform timer is calibrated for 250 ms, so kept interval value 4 to call
- * eth_link_detect() at every one second
+/*
+ * platform_ppc.c
+ *
+ * PPC specific functions to setup timer
  */
-#define ETH_LINK_DETECT_INTERVAL 4
 
-void init_platform();
-void cleanup_platform();
-#ifdef __MICROBLAZE__
-void timer_callback();
-#endif
 #ifdef __PPC__
-void timer_callback();
-#endif
-void platform_setup_timer();
-void platform_enable_interrupts();
-#endif
 
+#include "platform.h"
+#include "platform_config.h"
+
+#include "xexception_l.h"
+#include "xil_exception.h"
+#include "xtime_l.h"
+#include "xparameters.h"
+
+#define MHZ 400
+#define PIT_INTERVAL (250*MHZ*1000)
+
+void
+xadapter_timer_handler(void *p)
+{
+	timer_callback();
+
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+}
+
+void
+platform_setup_timer()
+{
+#ifdef XPAR_CPU_PPC440_CORE_CLOCK_FREQ_HZ
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_DEC_INT,
+			(XExceptionHandler)xadapter_timer_handler, NULL);
+
+	/* Set DEC to interrupt every 250 mseconds */
+	XTime_DECSetInterval(PIT_INTERVAL);
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+	XTime_DECEnableAutoReload();
+	XTime_DECEnableInterrupt();
+#else
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_PIT_INT,
+			(XExceptionHandler)xadapter_timer_handler, NULL);
+
+	/* Set PIT to interrupt every 250 mseconds */
+	XTime_PITSetInterval(PIT_INTERVAL);
+	XTime_TSRClearStatusBits(XREG_TSR_CLEAR_ALL);
+	XTime_PITEnableAutoReload();
+	XTime_PITEnableInterrupt();
+#endif
+}
+
+void
+platform_enable_interrupts()
+{
+	Xil_ExceptionEnable();
+}
+#endif
