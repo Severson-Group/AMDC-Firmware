@@ -40,7 +40,6 @@
 
 #include "lwip/tcp.h"
 #include "xil_cache.h"
-#include "xil_mmu.h"
 
 #if LWIP_IPV6==1
 #include "lwip/ip.h"
@@ -146,11 +145,6 @@ int main()
 #endif
 
 	init_platform();
-
-	// Disable cache on OCM
-	// S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
-	Xil_SetTlbAttributes(0xFFFF0000,0x14de2);
-
 
 #if LWIP_IPV6==0
 #if LWIP_DHCP==1

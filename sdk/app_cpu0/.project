@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>app_cpu0</name>
-	<comment>Created by SDK v2017.2. amdc_bsp - ps7_cortexa9_0</comment>
+	<comment>Created by SDK v2019.1. amdc_bsp_cpu0 - ps7_cortexa9_0</comment>
 	<projects>
+		<project>amdc_bsp_cpu0</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -22,17 +23,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>common</name>
-			<type>2</type>
-			<location>C:/Users/npetersen2/Documents/GitHub/AMDC-Firmware/sdk/app_cpu0/common</location>
-		</link>
-	</linkedResources>
-	<variableList>
-		<variable>
-			<name>copy_PARENT</name>
-			<value>$%7BPARENT-1-PROJECT_LOC%7D/app_cpu0</value>
-		</variable>
-	</variableList>
 </projectDescription>
