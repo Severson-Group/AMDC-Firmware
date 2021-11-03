@@ -27,16 +27,16 @@ static int next_ctx_id = 0;
 // - T:    time period
 static inline double _chirp(double w1, double w2, double A, double T, double time)
 {
-	double slope = (w2-w1) / (T/2.0);
+    double slope = (w2 - w1) / (T / 2.0);
 
     double freq;
-    if (time < T/2.0) {
-        freq = slope*time + w1;
+    if (time < T / 2.0) {
+        freq = slope * time + w1;
     } else {
-    	freq = -1.0*slope*(time-(T/2.0)) + w2;
+        freq = -1.0 * slope * (time - (T / 2.0)) + w2;
     }
 
-    double out = A*cos(freq*time);
+    double out = A * cos(freq * time);
     return out;
 }
 
@@ -147,7 +147,7 @@ int injection_ctx_unregister(inj_ctx_t *ctx)
 {
     // Don't let clients unregister their already unregistered ctx
     if (!ctx->registered) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     // Mark as unregistered
@@ -155,7 +155,7 @@ int injection_ctx_unregister(inj_ctx_t *ctx)
 
     // Make sure list isn't empty
     if (inj_ctxs == NULL) {
-    	return FAILURE;
+        return FAILURE;
     }
 
     // Special case: trying to remove the head of the list
