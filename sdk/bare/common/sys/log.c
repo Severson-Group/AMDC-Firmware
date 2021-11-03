@@ -18,7 +18,7 @@
 #define LOG_DEBUG_ENABLE_PRELOAD_SLOT (0)
 
 // This ought to be larger than the `sys/commands.c` max char per argument
-#define LOG_VAR_NAME_MAX_CHARS (20)
+#define LOG_VAR_NAME_MAX_CHARS (40)
 
 typedef struct buffer_entry_t {
     uint32_t timestamp;
@@ -217,6 +217,17 @@ int log_var_empty(int idx)
     // Note: we don't have to actually clear the memory buffer since we only dump
     // the number of samples we recorded! So the old data can live in memory
     // and not be an issue.
+
+    return SUCCESS;
+}
+
+int log_var_empty_all(void)
+{
+    for (int idx = 0; idx < LOG_MAX_NUM_VARIABLES; idx++) {
+        vars[idx].buffer_idx = 0;
+        vars[idx].last_logged_usec = 0;
+        vars[idx].num_samples = 0;
+    }
 
     return SUCCESS;
 }

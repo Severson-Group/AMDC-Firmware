@@ -2,6 +2,7 @@
 #include "drv/hardware_targets.h"
 #include "drv/io.h"
 #include "drv/led.h"
+#include "drv/motherboard.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
 #include "usr/user_config.h"
@@ -19,7 +20,7 @@ static task_control_block_t *tasks = NULL;
 static task_control_block_t *running_task = NULL;
 
 // Incremented every SysTick interrupt to track time
-static uint32_t elapsed_usec = 0;
+static volatile uint32_t elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
@@ -166,11 +167,12 @@ void scheduler_run(void)
 
     // This is the main event loop that runs the device
     while (1) {
+        uint32_t my_elapsed_usec = elapsed_usec;
         tasks_running = true;
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint32_t usec_since_last_run = elapsed_usec - t->last_run_usec;
+            uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!
@@ -180,7 +182,7 @@ void scheduler_run(void)
                 running_task = NULL;
                 task_stats_post_task(&t->stats);
 
-                t->last_run_usec = elapsed_usec;
+                t->last_run_usec = my_elapsed_usec;
             }
 
             // Go to next task in linked list
@@ -188,6 +190,14 @@ void scheduler_run(void)
         }
 
         tasks_running = false;
+
+#if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
+        // Request motherboard to send its latest ADC sample data back to the AMDC
+        //
+        // NOTE: this is specifically before the while loop below so that the new
+        // data arrives before it is needed in the next control loop.
+        motherboard_request_new_data();
+#endif
 
         // Wait here until unpaused (i.e. when SysTick fires)
         scheduler_idle = true;

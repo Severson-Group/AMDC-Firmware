@@ -90,6 +90,19 @@ static inline double _triangle(double min, double max, double period, double tim
     return out;
 }
 
+static inline double _square(double min, double max, double period, double time)
+{
+    // Output defaults to min value
+    double out = min;
+
+    // Output becomes max value for second half of period
+    if (time >= period / 2.0) {
+        out = max;
+    }
+
+    return out;
+}
+
 void injection_init(void)
 {
     cmd_inj_register();
@@ -220,6 +233,17 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
         break;
     }
 
+    case SQUARE:
+    {
+        ctx->curr_time += Ts;
+        if (ctx->curr_time >= ctx->square.period) {
+            ctx->curr_time = 0.0;
+        }
+
+        value = _square(ctx->square.valueMin, ctx->square.valueMax, ctx->square.period, ctx->curr_time);
+        break;
+    }
+
     case NONE:
     default:
         // Injection function not set by user,
@@ -314,6 +338,16 @@ void injection_triangle(inj_ctx_t *ctx, inj_op_e op, double valueMin, double val
     ctx->triangle.valueMin = valueMin;
     ctx->triangle.valueMax = valueMax;
     ctx->triangle.period = period;
+}
+
+void injection_square(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
+{
+    ctx->inj_func = SQUARE;
+    ctx->operation = op;
+    ctx->curr_time = 0.0;
+    ctx->square.valueMin = valueMin;
+    ctx->square.valueMax = valueMax;
+    ctx->square.period = period;
 }
 
 // ***************************

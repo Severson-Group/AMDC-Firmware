@@ -3,8 +3,11 @@
 #include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
+#include "drv/gpio_mux.h"
 #include "drv/hardware_targets.h"
+#include "drv/ild1420.h"
 #include "drv/pwm.h"
+#include "drv/sts_mux.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
@@ -25,6 +28,7 @@ static command_help_t cmd_help[] = {
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "ild read", "Read the latest packet from ILD1420 sensor" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
@@ -32,6 +36,7 @@ static command_help_t cmd_help[] = {
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+    { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
 #endif // USER_CONFIG_HARDWARE_TARGET
 };
 
@@ -124,6 +129,24 @@ int cmd_hw(int argc, char **argv)
 
             debug_printf("%fV\r\n", out_volts);
 
+            return SUCCESS;
+        }
+    }
+
+    // Handle 'ild' sub-command
+    // hw ild read
+    if (argc == 4 && strcmp("ild", argv[1]) == 0) {
+        if (strcmp("read", argv[2]) == 0) {
+            int sensor = atoi(argv[3]);
+
+            if (sensor < 0 || sensor >= ILD1420_NUM_SENSORS)
+                return CMD_INVALID_ARGUMENTS;
+
+            ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
+            debug_printf("dist:  %x\r\n", packet.distance);
+            debug_printf("err:   %X\r\n", packet.error);
+            debug_printf("fresh: %X\r\n", packet.fresh);
+
             return CMD_SUCCESS;
         }
     }
@@ -201,6 +224,38 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
 
             led_set_color_bytes(led_idx, r, g, b);
+
+            return CMD_SUCCESS;
+        }
+    }
+
+    // Handle 'mux' sub-command
+    // mux gpio <port#> <device#>
+    if (argc >= 2 && STREQ("mux", argv[1])) {
+        if (argc == 5 && STREQ("gpio", argv[2])) {
+            int gpio_port = atoi(argv[3]);
+            int device = atoi(argv[4]);
+
+            if (gpio_port < 1 || gpio_port > 2)
+                return CMD_INVALID_ARGUMENTS;
+            if (device < 0 || device > 4)
+                return CMD_INVALID_ARGUMENTS;
+
+            gpio_mux_set_device(gpio_port - 1, device);
+
+            return CMD_SUCCESS;
+        }
+
+        if (argc == 5 && STREQ("sts", argv[2])) {
+            int sts_port = atoi(argv[3]);
+            int device = atoi(argv[4]);
+
+            if (sts_port < 1 || sts_port > 8)
+                return CMD_INVALID_ARGUMENTS;
+            if (device < 0 || device > 8)
+                return CMD_INVALID_ARGUMENTS;
+
+            sts_mux_set_device(sts_port - 1, device);
 
             return CMD_SUCCESS;
         }
