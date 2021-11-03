@@ -76,6 +76,7 @@ void bsp_init(void)
     gpio_mux_init();
     dac_init();
     eddy_current_sensor_init();
+
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();
 #endif
