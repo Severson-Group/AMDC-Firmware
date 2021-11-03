@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-
 #ifndef STS_MUX_H
 #define STS_MUX_H
 
@@ -55,5 +50,3 @@ void sts_mux_set_device(uint8_t, sts_mux_device_t);
 void sts_mux_set_output(sts_mux_line_t, bool);
 
 #endif // STS_MUX_H
-
-#endif // USER_CONFIG_HARDWARE_TARGET

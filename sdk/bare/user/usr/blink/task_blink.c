@@ -1,17 +1,10 @@
 #ifdef APP_BLINK
 
 #include "usr/blink/task_blink.h"
-#include "drv/hardware_targets.h"
+#include "drv/led.h"
 #include "sys/scheduler.h"
-#include "usr/user_config.h"
-#include <math.h>
 #include <stdint.h>
 
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-#include "drv/led.h"
-#endif // USER_CONFIG_HARDWARE_TARGET
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 // Hold LED animation state
 static uint8_t led_pos = 0;
 static uint8_t led_color_idx = 0;
@@ -25,7 +18,6 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
     LED_COLOR_MAGENTA, //
     LED_COLOR_WHITE,   //
 };
-#endif // USER_CONFIG_HARDWARE_TARGET
 
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
@@ -45,7 +37,6 @@ int task_blink_init(void)
 
 int task_blink_deinit(void)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Turn off all LEDs
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, LED_COLOR_BLACK);
@@ -54,7 +45,6 @@ int task_blink_deinit(void)
     // Reset state
     led_pos = 0;
     led_color_idx = 0;
-#endif // USER_CONFIG_HARDWARE_TARGET
 
     // Unregister task with scheduler
     return scheduler_tcb_unregister(&tcb);
@@ -62,7 +52,6 @@ int task_blink_deinit(void)
 
 void task_blink_callback(void *arg)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, led_pos == i ? led_colors[led_color_idx] : LED_COLOR_BLACK);
     }
@@ -74,7 +63,6 @@ void task_blink_callback(void *arg)
             led_color_idx = 0;
         }
     }
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void task_blink_stats_print(void)

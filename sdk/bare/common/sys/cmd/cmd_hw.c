@@ -4,22 +4,18 @@
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/gpio_mux.h"
-#include "drv/hardware_targets.h"
 #include "drv/ild1420.h"
+#include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
-#include "usr/user_config.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-#include "drv/led.h"
-#endif // USER_CONFIG_HARDWARE_TARGET
 
 static command_entry_t cmd_entry;
 
@@ -33,11 +29,8 @@ static command_help_t cmd_help[] = {
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
     { "timer <fpga|cpu> now", "Read value from hardware timer" },
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
-#endif // USER_CONFIG_HARDWARE_TARGET
 };
 
 void cmd_hw_register(void)
@@ -203,7 +196,6 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Handle 'led' sub-command
     // hw led set <led_idx> <r> <g> <b>
     if (argc >= 2 && STREQ("led", argv[1])) {
@@ -260,7 +252,6 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
     }
-#endif // USER_CONFIG_HARDWARE_TARGET
 
     return CMD_INVALID_ARGUMENTS;
 }

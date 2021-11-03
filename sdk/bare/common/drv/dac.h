@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-
 #ifndef DAC_H
 #define DAC_H
 
@@ -37,5 +32,3 @@ void dac_set_trigger(void);
 void dac_set_raw(dac_reg_t reg, uint32_t value);
 
 #endif // DAC_H
-
-#endif // USER_CONFIG_HARDWARE_TARGET

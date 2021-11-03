@@ -19,17 +19,14 @@
 #include "drv/timer.h"
 #include "drv/uart.h"
 #include "drv/watchdog.h"
-#include "sys/cmd/cmd_hw.h"
-#include "sys/defines.h"
-#include <stdio.h>
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
 #include "drv/dac.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/sts_mux.h"
-#endif
+#include "sys/cmd/cmd_hw.h"
+#include "sys/defines.h"
+#include <stdio.h>
 
 void bsp_init(void)
 {
@@ -75,14 +72,11 @@ void bsp_init(void)
 
     fpga_timer_init();
     cpu_timer_init();
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     led_init();
     sts_mux_init();
     gpio_mux_init();
     dac_init();
     eddy_current_sensor_init();
-#endif
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();

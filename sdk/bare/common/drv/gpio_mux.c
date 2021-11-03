@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
-
 #include "drv/gpio_mux.h"
 #include "xil_io.h"
 #include <stdint.h>
@@ -28,5 +23,3 @@ void gpio_mux_set_device(uint8_t port, gpio_mux_device_t device)
 {
     Xil_Out32(GPIO_MUX_BASE_ADDR + (port * sizeof(uint32_t)), device);
 }
-
-#endif // USER_CONFIG_HARDWARE_TARGET
