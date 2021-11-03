@@ -2,9 +2,7 @@
 
 #include "usr/dac/task_dac.h"
 #include "drv/dac.h"
-#include "drv/hardware_targets.h"
 #include "sys/scheduler.h"
-#include "usr/user_config.h"
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -39,11 +37,10 @@ int task_dac_deinit(void)
 
 void task_dac_trigger()
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Initiate a trigger
     dac_set_trigger();
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
+
 void task_dac_frequency(double freq)
 {
     // Update the frequency
@@ -52,31 +49,24 @@ void task_dac_frequency(double freq)
 
 void task_dac_broadcast(double voltage)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Initiate a broadcast
     dac_set_broadcast(voltage);
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void task_dac_set_voltage(uint8_t ch, double voltage)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Set the given channels voltage to given voltage
     dac_set_voltage(ch, voltage);
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void task_dac_set_reg(uint8_t reg, uint32_t value)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     // Write the raw value given in hex to the given register
     dac_set_raw(reg, value);
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 void task_dac_callback(void *arg)
 {
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D || USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
     static int divider = 0; // Divides the frequency
     static double step = 0;
 
@@ -110,7 +100,6 @@ void task_dac_callback(void *arg)
         // Send all channel updates through
         dac_set_trigger();
     }
-#endif // USER_CONFIG_HARDWARE_TARGET
 }
 
 #endif // APP_BLINK

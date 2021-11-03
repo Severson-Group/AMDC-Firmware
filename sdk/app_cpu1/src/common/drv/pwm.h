@@ -62,6 +62,8 @@ void pwm_set_all_rst(uint8_t rst);
 
 int pwm_enable_hw(bool en);
 
+int pwm_enable_hw(bool en);
+
 int pwm_enable(void);
 int pwm_disable(void);
 bool pwm_is_enabled(void);

@@ -1,7 +1,6 @@
-#include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) && (USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1)
+#if (USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1)
 
 #include "drv/motherboard.h"
 #include "drv/motherboard_defs.h"
@@ -82,4 +81,4 @@ void motherboard_print_counters(void)
     debug_printf("T: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4]);
 }
 
-#endif // USER_CONFIG_HARDWARE_TARGET
+#endif // USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT

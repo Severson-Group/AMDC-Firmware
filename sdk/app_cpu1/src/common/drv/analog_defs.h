@@ -4,8 +4,6 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if ((USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E))
-
 // ===============
 // Number of slave registers in this IP
 // ===============
@@ -25,8 +23,6 @@
 #define ANALOG_DEFS_OFFSET_CHANNEL8 (7 * 4)
 #define ANALOG_DEFS_OFFSET_CONTROL  (8 * 4)
 #define ANALOG_DEFS_OFFSET_UNUSED1  (9 * 4)
-
-#endif // USER_CONFIG_HARDWARE_TARGET
 
 // ===============
 // CONTROL register
