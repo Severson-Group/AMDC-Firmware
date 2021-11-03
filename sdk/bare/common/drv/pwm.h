@@ -58,6 +58,7 @@ static inline bool pwm_is_valid_channel(pwm_channel_e channel)
 void pwm_init(void);
 
 void pwm_toggle_reset(void);
+void pwm_set_all_rst(uint8_t rst);
 
 int pwm_enable_hw(bool en);
 
