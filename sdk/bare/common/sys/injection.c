@@ -27,22 +27,22 @@ static int next_ctx_id = 0;
 // - period: time period (sec)
 static inline double _chirp(double w1, double w2, double A, double period, double time)
 {
-	double half_period = T / 2.0;
+    double half_period = T / 2.0;
     double freq_slope = (w2 - w1) / half_period;
-	
+
     double mytime;
     double mygain;
     if (time < half_period) {
-		mytime = time;
-		mygain = 1.0;
+        mytime = time;
+        mygain = 1.0;
     } else {
-		mytime = period - time;
-		mygain = -1.0;
-	}
-	
-	double freq = freq_slope * mytime/2.0 + w1;
+        mytime = period - time;
+        mygain = -1.0;
+    }
+
+    double freq = freq_slope * mytime / 2.0 + w1;
     double out = A * mygain * sin(freq * mytime);
-	
+
     return out;
 }
 
