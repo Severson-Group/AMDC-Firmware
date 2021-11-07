@@ -20,23 +20,29 @@ static int next_ctx_id = 0;
 // Chirp function
 //
 // Generates the chirp signal value given:
-// - time: current time instant
-// - w1:   low freq (rad)
-// - w2:   high freq (rad)
-// - A:    amplitude
-// - T:    time period
-static inline double _chirp(double w1, double w2, double A, double T, double time)
+// - time:   current time instant
+// - w1:     low freq (rad/s)
+// - w2:     high freq (rad/s)
+// - A:      amplitude
+// - period: time period (sec)
+static inline double _chirp(double w1, double w2, double A, double period, double time)
 {
-    double slope = (w2 - w1) / (T / 2.0);
+    double half_period = period / 2.0;
+    double freq_slope = (w2 - w1) / half_period;
 
-    double freq;
-    if (time < T / 2.0) {
-        freq = slope * time + w1;
+    double mytime;
+    double mygain;
+    if (time < half_period) {
+        mytime = time;
+        mygain = 1.0;
     } else {
-        freq = -1.0 * slope * (time - (T / 2.0)) + w2;
+        mytime = period - time;
+        mygain = -1.0;
     }
 
-    double out = A * cos(freq * time);
+    double freq = freq_slope * mytime / 2.0 + w1;
+    double out = A * mygain * sin(freq * mytime);
+
     return out;
 }
 
