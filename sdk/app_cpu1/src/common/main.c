@@ -45,29 +45,6 @@ int main()
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
 
-#if 1
-    // This code is required to start CPU1 from CPU0 during boot.
-    //
-    // This only applies when booting from flash via the FSBL.
-    // During development with JTAG loading, these low-level
-    // calls in this #if block are not needed! However, we'll
-    // keep them here since it doesn't affect performance...
-
-    // Write starting base address for CPU1 PC.
-    // It will look for this address upon waking up
-    static const uintptr_t CPU1_START_ADDR = 0xFFFFFFF0;
-    static const uint32_t CPU1_BASE_ADDR = 0x20080000;
-    Xil_Out32(CPU1_START_ADDR, CPU1_BASE_ADDR);
-
-    // Waits until write has finished
-    // DMB = Data Memory Barrier
-    dmb();
-
-    // Wake up CPU1 by sending the SEV command
-    // SEV = Set Event, which causes CPU1 to wake up and jump to CPU1_BASE_ADDR
-    __asm__("sev");
-#endif
-
     // User BSP library initialization
     bsp_init();
 
