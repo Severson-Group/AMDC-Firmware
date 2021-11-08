@@ -6,6 +6,6 @@
 int setup_lwip(void);
 int start_tcpip(void);
 
-extern struct netif *echo_netif;
+extern struct netif *my_netif;
 
 #endif // LWIP_GLUE_H

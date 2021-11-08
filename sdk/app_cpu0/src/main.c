@@ -67,7 +67,7 @@ int main()
 
 	// Receive and process packets
 	while (1) {
-		xemacif_input(echo_netif);
+		xemacif_input(my_netif);
 
 		if (TcpFastTmrFlag) {
 			tcp_fasttmr();
