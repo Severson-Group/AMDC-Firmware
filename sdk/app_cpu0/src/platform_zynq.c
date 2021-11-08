@@ -45,8 +45,6 @@
 * </pre>
  */
 
-#ifdef __arm__
-
 #include "xparameters.h"
 #include "xparameters_ps.h"	/* defines XPAR values */
 #include "xil_cache.h"
@@ -56,7 +54,6 @@
 #include "platform.h"
 #include "platform_config.h"
 #include "netif/xadapter.h"
-#ifdef PLATFORM_ZYNQ
 #include "xscutimer.h"
 
 #define INTC_DEVICE_ID		XPAR_SCUGIC_SINGLE_DEVICE_ID
@@ -72,52 +69,29 @@ void tcp_slowtmr(void);
 
 static XScuTimer TimerInstance;
 
-#ifndef USE_SOFTETH_ON_ZYNQ
 static int ResetRxCntr = 0;
-#endif
 
 extern struct netif *echo_netif;
 
 volatile int TcpFastTmrFlag = 0;
 volatile int TcpSlowTmrFlag = 0;
 
-#if LWIP_DHCP==1
-volatile int dhcp_timoutcntr = 24;
-void dhcp_fine_tmr();
-void dhcp_coarse_tmr();
-#endif
-
-void
-timer_callback(XScuTimer * TimerInstance)
+void timer_callback(XScuTimer *TimerInstance)
 {
 	static int DetectEthLinkStatus = 0;
-	/* we need to call tcp_fasttmr & tcp_slowtmr at intervals specified
-	 * by lwIP. It is not important that the timing is absoluetly accurate.
-	 */
+
+	// We need to call tcp_fasttmr & tcp_slowtmr at intervals specified
+	// by lwIP. It is not important that the timing is absolutely accurate.
 	static int odd = 1;
-#if LWIP_DHCP==1
-    static int dhcp_timer = 0;
-#endif
+
 	DetectEthLinkStatus++;
 	 TcpFastTmrFlag = 1;
 
 	odd = !odd;
-#ifndef USE_SOFTETH_ON_ZYNQ
 	ResetRxCntr++;
-#endif
+
 	if (odd) {
-#if LWIP_DHCP==1
-		dhcp_timer++;
-		dhcp_timoutcntr--;
-#endif
 		TcpSlowTmrFlag = 1;
-#if LWIP_DHCP==1
-		dhcp_fine_tmr();
-		if (dhcp_timer >= 120) {
-			dhcp_coarse_tmr();
-			dhcp_timer = 0;
-		}
-#endif
 	}
 
 	/* For providing an SW alternative for the SI #692601. Under heavy
@@ -128,13 +102,12 @@ timer_callback(XScuTimer * TimerInstance)
 	 * the Rx path cannot become unresponsive for more than 100
 	 * milliseconds.
 	 */
-#ifndef USE_SOFTETH_ON_ZYNQ
 	if (ResetRxCntr >= RESET_RX_CNTR_LIMIT) {
 		xemacpsif_resetrx_on_no_rxdata(echo_netif);
 		ResetRxCntr = 0;
 	}
-#endif
-	/* For detecting Ethernet phy link status periodically */
+
+	// For detecting Ethernet phy link status periodically
 	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
 		eth_link_detect(echo_netif);
 		DetectEthLinkStatus = 0;
@@ -150,27 +123,21 @@ void platform_setup_timer(void)
 	int TimerLoadValue = 0;
 
 	ConfigPtr = XScuTimer_LookupConfig(TIMER_DEVICE_ID);
-	Status = XScuTimer_CfgInitialize(&TimerInstance, ConfigPtr,
-			ConfigPtr->BaseAddr);
+	Status = XScuTimer_CfgInitialize(&TimerInstance, ConfigPtr, ConfigPtr->BaseAddr);
 	if (Status != XST_SUCCESS) {
-
-		xil_printf("In %s: Scutimer Cfg initialization failed...\r\n",
-		__func__);
+		xil_printf("In %s: Scutimer Cfg initialization failed...\r\n", __func__);
 		return;
 	}
 
 	Status = XScuTimer_SelfTest(&TimerInstance);
 	if (Status != XST_SUCCESS) {
-		xil_printf("In %s: Scutimer Self test failed...\r\n",
-		__func__);
+		xil_printf("In %s: Scutimer Self test failed...\r\n", __func__);
 		return;
-
 	}
 
 	XScuTimer_EnableAutoReload(&TimerInstance);
-	/*
-	 * Set for 250 milli seconds timeout.
-	 */
+
+	// Set for 250 milli seconds timeout
 	TimerLoadValue = XPAR_CPU_CORTEXA9_0_CPU_CLK_FREQ_HZ / 8;
 
 	XScuTimer_LoadTimer(&TimerInstance, TimerLoadValue);
@@ -183,41 +150,36 @@ void platform_setup_interrupts(void)
 
 	XScuGic_DeviceInitialize(INTC_DEVICE_ID);
 
-	/*
-	 * Connect the interrupt controller interrupt handler to the hardware
-	 * interrupt handling logic in the processor.
-	 */
+	// Connect the interrupt controller interrupt handler to the hardware
+	// interrupt handling logic in the processor.
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_IRQ_INT,
 			(Xil_ExceptionHandler)XScuGic_DeviceInterruptHandler,
 			(void *)INTC_DEVICE_ID);
-	/*
-	 * Connect the device driver handler that will be called when an
-	 * interrupt for the device occurs, the handler defined above performs
-	 * the specific interrupt processing for the device.
-	 */
+
+	// Connect the device driver handler that will be called when an
+	// interrupt for the device occurs, the handler defined above performs
+	// the specific interrupt processing for the device.
 	XScuGic_RegisterHandler(INTC_BASE_ADDR, TIMER_IRPT_INTR,
 					(Xil_ExceptionHandler)timer_callback,
 					(void *)&TimerInstance);
-	/*
-	 * Enable the interrupt for scu timer.
-	 */
+
+	// Enable the interrupt for scu timer
 	XScuGic_EnableIntr(INTC_DIST_BASE_ADDR, TIMER_IRPT_INTR);
 
 	return;
 }
 
-void platform_enable_interrupts()
+void platform_enable_interrupts(void)
 {
-	/*
-	 * Enable non-critical exceptions.
-	 */
+	// Enable non-critical exceptions
 	Xil_ExceptionEnableMask(XIL_EXCEPTION_IRQ);
 	XScuTimer_EnableInterrupt(&TimerInstance);
 	XScuTimer_Start(&TimerInstance);
+
 	return;
 }
 
-void init_platform()
+void init_platform(void)
 {
 	platform_setup_timer();
 	platform_setup_interrupts();
@@ -225,12 +187,10 @@ void init_platform()
 	return;
 }
 
-void cleanup_platform()
+void cleanup_platform(void)
 {
 	Xil_ICacheDisable();
 	Xil_DCacheDisable();
+
 	return;
 }
-#endif
-#endif
-

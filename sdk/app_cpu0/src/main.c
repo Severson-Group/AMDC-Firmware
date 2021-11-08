@@ -56,8 +56,6 @@ int main()
 		print("Success!\r\n");
     } else {
 		print("Failure\r\n");
-    	print("Hanging program...\r\n");
-    	while(1);
     }
 
 	print("Setting up listening sockets... ");
@@ -65,8 +63,6 @@ int main()
 		print("Success!\r\n");
 	} else {
 		print("Failure\r\n");
-    	print("Hanging program...\r\n");
-    	while(1);
 	}
 
 	// Receive and process packets
