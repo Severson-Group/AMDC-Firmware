@@ -1,15 +1,15 @@
-#include "xparameters.h"
+#include "lwip_glue.h"
 #include "netif/xadapter.h"
 #include "platform.h"
 #include "platform_config.h"
-#include "xil_printf.h"
-#include "xstatus.h"
-#include "xil_cache.h"
-#include "xil_mmu.h"
-#include "xil_io.h"
-#include <stdio.h>
-#include "lwip_glue.h"
 #include "socket_manager.h"
+#include "xil_cache.h"
+#include "xil_io.h"
+#include "xil_mmu.h"
+#include "xil_printf.h"
+#include "xparameters.h"
+#include "xstatus.h"
+#include <stdio.h>
 
 /* defined by each RAW mode application */
 int start_application();
@@ -22,7 +22,7 @@ extern volatile int TcpSlowTmrFlag;
 
 int main()
 {
-	init_platform();
+    init_platform();
 
     // Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
@@ -52,40 +52,39 @@ int main()
 #endif
 
     // Set up LwIP stuff
-	print("Setting up LwIP... ");
+    print("Setting up LwIP... ");
     if (setup_lwip() == XST_SUCCESS) {
-		print("Success!\r\n");
+        print("Success!\r\n");
     } else {
-		print("Failure\r\n");
+        print("Failure\r\n");
     }
 
-	print("Setting up listening sockets... ");
-	if (start_tcpip() == XST_SUCCESS) {
-		print("Success!\r\n");
-	} else {
-		print("Failure\r\n");
-	}
+    print("Setting up listening sockets... ");
+    if (start_tcpip() == XST_SUCCESS) {
+        print("Success!\r\n");
+    } else {
+        print("Failure\r\n");
+    }
 
+    while (1) {
+        // Receive and process packets
+        xemacif_input(my_netif);
 
-	while (1) {
-		// Receive and process packets
-		xemacif_input(my_netif);
+        // Post-process data from the socket_manager
+        socket_manager_process_rx_data();
 
-		// Post-process data from the socket_manager
-		socket_manager_process_rx_data();
+        if (TcpFastTmrFlag) {
+            tcp_fasttmr();
+            TcpFastTmrFlag = 0;
+        }
+        if (TcpSlowTmrFlag) {
+            tcp_slowtmr();
+            TcpSlowTmrFlag = 0;
+        }
+    }
 
-		if (TcpFastTmrFlag) {
-			tcp_fasttmr();
-			TcpFastTmrFlag = 0;
-		}
-		if (TcpSlowTmrFlag) {
-			tcp_slowtmr();
-			TcpSlowTmrFlag = 0;
-		}
-	}
+    // Never reached
+    cleanup_platform();
 
-	// Never reached
-	cleanup_platform();
-
-	return 0;
+    return 0;
 }

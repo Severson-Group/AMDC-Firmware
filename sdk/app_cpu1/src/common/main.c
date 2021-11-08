@@ -16,13 +16,13 @@
 // NOTE: UART uses 115200 baud
 
 #include "drv/bsp.h"
+#include "sys/command_icc.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/injection.h"
 #include "sys/log.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
-#include "sys/command_icc.h"
 #include "sys/serial.h"
 #include "usr/user_apps.h"
 #include "usr/user_config.h"
@@ -32,10 +32,10 @@
 #include "drv/motherboard.h"
 #endif
 
+#include "xil_exception.h"
+#include "xil_io.h"
 #include "xil_mmu.h"
 #include "xpseudo_asm.h"
-#include "xil_io.h"
-#include "xil_exception.h"
 
 int main()
 {

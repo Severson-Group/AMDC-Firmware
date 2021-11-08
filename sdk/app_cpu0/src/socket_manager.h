@@ -1,8 +1,8 @@
 #ifndef SOCKET_MANAGER_H
 #define SOCKET_MANAGER_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 void socket_manager_init(void);
 

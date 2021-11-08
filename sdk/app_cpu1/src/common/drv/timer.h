@@ -1,10 +1,10 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-typedef void (*timer_handler_t) (void *arg);
+typedef void (*timer_handler_t)(void *arg);
 
 void timer_init(timer_handler_t timer_isr, uint32_t timer_period_usec);
 

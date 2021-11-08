@@ -1,7 +1,7 @@
-#include "sys/scheduler.h"
 #include "sys/command_icc.h"
-#include "sys/icc.h"
 #include "sys/debug.h"
+#include "sys/icc.h"
+#include "sys/scheduler.h"
 #include <stdint.h>
 
 #define TASK_COMMAND_ICC_UPDATES_PER_SEC (10000)
@@ -12,19 +12,19 @@ static task_control_block_t tcb;
 
 static void task_command_icc_callback(void *arg)
 {
-	// Check if CPU0 wrote data
-	if (ICC_CPU0to1__GET_CPU0_HasWrittenData) {
-		ICC_CPU0to1__CLR_CPU0_HasWrittenData;
+    // Check if CPU0 wrote data
+    if (ICC_CPU0to1__GET_CPU0_HasWrittenData) {
+        ICC_CPU0to1__CLR_CPU0_HasWrittenData;
 
-		// Read the byte from shared memory
-		uint8_t c = (uint8_t) ICC_CPU0to1__GET_DATA;
+        // Read the byte from shared memory
+        uint8_t c = (uint8_t) ICC_CPU0to1__GET_DATA;
 
-		// TODO: for testing, echo the data
-		debug_printf("%c", c);
+        // TODO: for testing, echo the data
+        debug_printf("%c", c);
 
-		// Tell CPU0 that we are now waiting for more data
-		ICC_CPU0to1__SET_CPU1_WaitingForData;
-	}
+        // Tell CPU0 that we are now waiting for more data
+        ICC_CPU0to1__SET_CPU1_WaitingForData;
+    }
 }
 
 void command_icc_init(void)

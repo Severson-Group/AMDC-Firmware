@@ -39,4 +39,3 @@ void cleanup_platform();
 void platform_setup_timer();
 void platform_enable_interrupts();
 #endif
-
