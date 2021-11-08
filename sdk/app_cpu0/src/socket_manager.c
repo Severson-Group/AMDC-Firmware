@@ -8,8 +8,7 @@
 
 // Communications
 #define MAX_NUM_SOCKETS         (8)
-#define MAX_TX_RING_BUFFER_DATA (4 * 1024)
-#define MAX_RX_RING_BUFFER_DATA (4 * 1024)
+#define MAX_RX_RING_BUFFER_DATA (1024)
 
 typedef enum {
     SOCKET_TYPE_UNUSED = 0,

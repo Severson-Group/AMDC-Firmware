@@ -3,8 +3,10 @@
 
 #include <stdint.h>
 
+// KEEP THIS FILE IN SYNC BETWEEN THE TWO CORES!!!!
+
 // Per TRM page 738, the initial mapping of OCM is split between
-// low addresses and high addressses in 64 KB chunks.
+// low addresses and high addresses in 64 KB chunks.
 //
 // We will pick to use the highest 64 KB chunk as our base address:
 #define OCM_BASE_ADDR (0xFFFF0000)
