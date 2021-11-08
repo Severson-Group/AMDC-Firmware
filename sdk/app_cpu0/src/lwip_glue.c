@@ -74,46 +74,25 @@ int setup_lwip(void)
 void tcpip_disconnect_callback(void *arg, err_t err)
 {
 	socket_manager_remove(arg);
-//	//if we are streaming out this port, stop the streaming.
-//	if (StreamFIFOComm == arg)
-//		StreamFIFOComm = 0;
 }
 
-err_t recv_callback(void *arg, struct tcp_pcb *tpcb,
-                               struct pbuf *p, err_t err)
+err_t recv_callback(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
-	char szOutDataEth[8192];
-	int status;
-	char *szRcvCmdEth;
-	u32 *CmdHndlStateEth;
-
-	status = socket_manager_get(arg, &szRcvCmdEth, &CmdHndlStateEth);
-	/* do not read the packet if we are not in ESTABLISHED state */
-	/* Also, abort connection if unable to find the comm data*/
-	if ((!p) || (status != XST_SUCCESS)) {
+	// Do not read the packet if we are not in ESTABLISHED state
+	// Also, abort connection if socket has never been registered
+	if ((!p) || (!socket_manager_is_registered(arg))) {
 		tcp_close(tpcb);
 		tcp_recv(tpcb, NULL);
 		socket_manager_remove(tpcb);
 		return ERR_OK;
 	}
 
-	//u32 outLen = HandleCommandsGeneral(szOutDataEth, szRcvCmdEth, p->payload, p->len, CmdHndlStateEth, arg);
-	u32 outLen = 0;
+	socket_manager_rx_data(arg, p->payload, p->len);
 
-	/* indicate that the packet has been received */
+	// Indicate that the packet has been received
 	tcp_recved(tpcb, p->len);
 
-
-	/* echo back the payload */
-	/* in this case, we assume that the payload is < TCP_SND_BUF */
-	if (outLen > 0)
-	{
-		if (tcp_sndbuf(tpcb) > outLen) { //(tcp_sndbuf(tpcb) > p->len) {
-			err = tcp_write(tpcb, szOutDataEth, outLen, 1);
-		} else
-			xil_printf("no space in tcp_sndbuf\n\r");
-	}
-	/* free the received pbuf */
+	// Free the received pbuf
 	pbuf_free(p);
 
 	return ERR_OK;

@@ -1,99 +1,60 @@
 #include "socket_manager.h"
+#include "lwip/tcp.h"
+#include "ringbuf.h"
 #include "xstatus.h"
+#include "xil_printf.h"
+#include "icc.h"
 #include <stdint.h>
 
 // Communications
-#define MAX_BASE_SOCKETS     (5)
-#define MAX_SEND_PACKET_SIZE (2*8192)
+#define MAX_NUM_SOCKETS         (8)
+#define MAX_TX_RING_BUFFER_DATA (4*1024)
+#define MAX_RX_RING_BUFFER_DATA (4*1024)
 
-typedef enum socket_type_e {
-	MY_SOCKET_TYPE_
-} my_socket_type_e;
+typedef enum {
+	SOCKET_TYPE_UNUSED = 0,
+	SOCKET_TYPE_IDLE,
+	SOCKET_TYPE_ASCII_CMD,
+	SOCKET_TYPE_LOG_VAR,
+} socket_type_e;
 
-typedef struct my_lwip_socket {
-	void *socket;
-	char szRcvCmdEth[4096];
-	uint32_t CmdHndlStateEth;
-} my_lwip_socket_t;
+typedef struct socket {
+	void *raw_socket;
+	socket_type_e type;
 
-my_lwip_socket_t EthComm[MAX_BASE_SOCKETS];
+	// Rx stuff
+	struct ringbuf_t rx_ring_buffer;
+	uint8_t rx_ring_buffer_data[MAX_RX_RING_BUFFER_DATA];
+} socket_t;
 
-// These protection functions come from Eric's "basic" app where the ScuTimer
-// was configured to call ISR at 100 kHz. This was driving the whole
-// application.
-//
-// In this code, we are running Ethernet on a different core, so there
-// is no high priority timer doing anything... Therefore, we can just
-// do nothing when we want to enter/leave protected code...
-//
-//char TimerDisabled = TRUE;
-int EnterProtection() {
-//	if (!TimerDisabled)
-//	{
-//		XScuGic_Disable(&IntcInstance, TIMER_IRPT_INTR);
-//		TimerDisabled = TRUE;
-//		return TRUE;
-//	}
-//	else
-//		return FALSE;
-	return FALSE;
+static socket_t socket_list[MAX_NUM_SOCKETS];
+
+static void reset_socket(socket_t *socket_ptr)
+{
+	socket_ptr->raw_socket = NULL;
+	socket_ptr->type = SOCKET_TYPE_UNUSED;
+
+	ringbuf_reset(&(socket_ptr->rx_ring_buffer));
 }
 
-int LeaveProtection(int State) {
-//	if (State)
-//	{
-//		XScuGic_Enable(&IntcInstance, TIMER_IRPT_INTR);
-//		TimerDisabled = FALSE;
-//	}
-//	return State;
-	return FALSE;
-}
+static void init_socket(socket_t *socket_ptr)
+{
+	socket_ptr->raw_socket = NULL;
+	socket_ptr->type = SOCKET_TYPE_UNUSED;
 
+	ringbuf_init(&socket_ptr->rx_ring_buffer, socket_ptr->rx_ring_buffer_data, MAX_RX_RING_BUFFER_DATA);
+}
 
 // socket_manager_init()
 //
-// Set up the communication data structures.
+// Set up the socket data structures.
 // Call on power up.
 //
 void socket_manager_init(void)
 {
-	int i;
-	for (i = 0; i < MAX_BASE_SOCKETS; i++)
-	{
-		EthComm[i].socket = 0;
-		EthComm[i].CmdHndlStateEth = 0;
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		init_socket(&socket_list[i]);
 	}
-}
-
-// socket_manager_get()
-//
-// Get a pointer to the receive data and the receive state for
-// this socket.
-//
-// socket: unique pointer to the socket (doesn't need to point
-// 	to the socket, just needs to be unique to the socket)
-// data: returned pointer to the data
-// state: returned pointer to the state
-//
-// Returns a status code: NOT_FOUND or SUCCESS
-//
-int socket_manager_get(void *socket, char **data, uint32_t **state)
-{
-	int retVal = XST_DEVICE_NOT_FOUND;
-	int i;
-	int protect = EnterProtection();
-	for (i = 0; i < MAX_BASE_SOCKETS; i++)
-	{
-		if (EthComm[i].socket == socket)
-		{
-			*data = EthComm[i].szRcvCmdEth;
-			*state = &EthComm[i].CmdHndlStateEth;
-			retVal = XST_SUCCESS;
-			break;
-		}
-	}
-	LeaveProtection(protect);
-	return retVal;
 }
 
 // socket_manager_put()
@@ -104,25 +65,23 @@ int socket_manager_get(void *socket, char **data, uint32_t **state)
 // socket: unique pointer to the socket (doesn't need to point
 // 	to the socket, just needs to be unique to the socket)
 //
-// Returns a status code: OVERFLOW (if no space) or SUCCESS
+// Returns: error code
 //
-int socket_manager_put(void *socket)
+int socket_manager_put(void *raw_socket)
 {
-	int retVal = XST_FAILURE; // indicate overflow
-	int i;
-	int protect = EnterProtection();
-	for (i = 0; i < MAX_BASE_SOCKETS; i++)
-	{
-		if ((EthComm[i].socket == 0) || (EthComm[i].socket == socket))
-		{
-			EthComm[i].socket = socket;
-			EthComm[i].CmdHndlStateEth = 0;
-			retVal = XST_SUCCESS;
+	int err = XST_FAILURE; // default to overflow error
+
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if ((socket_list[i].raw_socket == NULL) || (socket_list[i].raw_socket == raw_socket)) {
+			socket_list[i].raw_socket = raw_socket;
+			socket_list[i].type = SOCKET_TYPE_IDLE;
+
+			err = XST_SUCCESS;
 			break;
 		}
 	}
-	LeaveProtection(protect);
-	return retVal;
+
+	return err;
 }
 
 // socket_manager_remove()
@@ -135,21 +94,140 @@ int socket_manager_put(void *socket)
 //
 // Returns a status code: NOT_FOUND or SUCCESS
 //
-int socket_manager_remove(void *socket)
+int socket_manager_remove(void *raw_socket)
 {
-	int retVal = XST_DEVICE_NOT_FOUND;
-	int i;
-	int protect = EnterProtection();
-	for (i = 0; i < MAX_BASE_SOCKETS; i++)
-	{
-		if (EthComm[i].socket == socket)
-		{
-			EthComm[i].socket = 0;
-			EthComm[i].CmdHndlStateEth = 0;
-			retVal = XST_SUCCESS;
+	int err = XST_DEVICE_NOT_FOUND;
+
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].raw_socket == raw_socket) {
+			reset_socket(&socket_list[i]);
+
+			err = XST_SUCCESS;
 			break;
 		}
 	}
-	LeaveProtection(protect);
-	return retVal;
+
+	return err;
+}
+
+void socket_manager_rx_data(void *raw_socket, uint8_t *data, uint16_t len)
+{
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].raw_socket == raw_socket) {
+			// Copy the incoming data from the TCP packet into our local ring buffer
+			//
+			// NOTE: this copy function can overflow the ring buffer, but it just
+			// overwrites old data, so it is ok... This is not really ok from our
+			// application side, so let's just hope the user never sends too much data
+			// in a single TCP packet before we can pull the data out of the ring buffer!
+			ringbuf_memcpy_into(&socket_list[i].rx_ring_buffer, data, len);
+			break;
+		}
+	}
+}
+
+void socket_manager_tx_data(void *raw_socket, uint8_t *data, uint16_t len)
+{
+	struct tcp_pcb *pcb = raw_socket;
+
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].raw_socket == raw_socket) {
+			if (len > 0) {
+				uint16_t tcp_space_avail = tcp_sndbuf(pcb);
+
+				uint16_t bytes_to_send = len;
+				if (bytes_to_send > tcp_space_avail) {
+					// Silently truncate data that will get sent!
+					bytes_to_send = tcp_space_avail;
+				}
+
+				tcp_write(pcb, data, bytes_to_send, TCP_WRITE_FLAG_COPY);
+			}
+
+			break;
+		}
+	}
+}
+
+bool socket_manager_is_registered(void *raw_socket)
+{
+	bool is_active = false;
+
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].raw_socket == raw_socket) {
+			is_active = true;
+			break;
+		}
+	}
+
+	return is_active;
+}
+
+void socket_manager_process_rx_data(void)
+{
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		socket_t *socket = &socket_list[i];
+		ringbuf_t rb = &socket->rx_ring_buffer;
+
+		size_t data_len = ringbuf_bytes_used(rb);
+		if (data_len > 0) {
+			switch (socket->type) {
+			case SOCKET_TYPE_IDLE:
+			{
+				// User is trying to assign the type of this IDLE socket.
+				// The first two bytes of data determine the socket type:
+				uint8_t d[2];
+				ringbuf_memcpy_from(&d[0], rb, 2);
+
+				if (d[0] == 12 && d[1] == 34) {
+					socket->type = SOCKET_TYPE_ASCII_CMD;
+				} else if (d[0] == 56 && d[1] == 78) {
+					socket->type = SOCKET_TYPE_LOG_VAR;
+				} else {
+					// User specified bogus type.
+					// Keep as IDLE and wait for user to try again
+				}
+
+				break;
+			}
+
+			case SOCKET_TYPE_ASCII_CMD:
+			{
+				// Try to give one data byte to CPU1
+				if (!ringbuf_is_empty(rb)) {
+
+					// Check if CPU1 is ready to receive a byte of data
+					if (ICC_CPU0to1__GET_CPU1_WaitingForData) {
+						// Clear CPU1's WaitingForData flag
+						ICC_CPU0to1__CLR_CPU1_WaitingForData;
+
+						// Read one byte from the fifo
+						uint8_t d;
+						ringbuf_memcpy_from(&d, rb, 1);
+
+						// Set data to shared memory space
+						ICC_CPU0to1__SET_DATA(d);
+
+						// Tell CPU1 that we just wrote data
+						ICC_CPU0to1__SET_CPU0_HasWrittenData;
+					}
+				}
+				break;
+			}
+
+			case SOCKET_TYPE_LOG_VAR:
+			{
+				// TODO: unsupported as of now, do nothing!
+				break;
+			}
+
+			case SOCKET_TYPE_UNUSED:
+			default:
+			{
+				// Do nothing;
+				break;
+			}
+			}
+		}
+	}
 }

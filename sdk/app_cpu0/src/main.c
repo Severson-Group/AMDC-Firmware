@@ -9,6 +9,7 @@
 #include "xil_io.h"
 #include <stdio.h>
 #include "lwip_glue.h"
+#include "socket_manager.h"
 
 /* defined by each RAW mode application */
 int start_application();
@@ -65,9 +66,13 @@ int main()
 		print("Failure\r\n");
 	}
 
-	// Receive and process packets
+
 	while (1) {
+		// Receive and process packets
 		xemacif_input(my_netif);
+
+		// Post-process data from the socket_manager
+		socket_manager_process_rx_data();
 
 		if (TcpFastTmrFlag) {
 			tcp_fasttmr();
