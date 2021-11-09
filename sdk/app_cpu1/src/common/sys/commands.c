@@ -11,9 +11,9 @@
 #include "sys/serial.h"
 #include "sys/util.h"
 #include <ctype.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 
 #define RECV_BUFFER_LENGTH (4 * 1024)
 
@@ -86,30 +86,30 @@ static task_control_block_t tcb_exec_eth;
 // update these functions to target the correct stream.
 
 typedef enum cmd_src_e {
-	CMD_SRC_UART = 0,
-	CMD_SRC_ETH,
+    CMD_SRC_UART = 0,
+    CMD_SRC_ETH,
 } cmd_src_e;
 
 static cmd_src_e current_cmd_source = CMD_SRC_UART;
 
 void cmd_resp_write(char *msg, int len)
 {
-	if (current_cmd_source == CMD_SRC_UART) {
-		serial_write(msg, len);
-	} else {
-		for (int i = 0; i < len; i++) {
-			icc_tx_append_char_to_fifo(msg[i]);
-		}
-	}
+    if (current_cmd_source == CMD_SRC_UART) {
+        serial_write(msg, len);
+    } else {
+        for (int i = 0; i < len; i++) {
+            icc_tx_append_char_to_fifo(msg[i]);
+        }
+    }
 }
 
 void cmd_resp_print(char *msg)
 {
-	if (current_cmd_source == CMD_SRC_UART) {
-		debug_print(msg);
-	} else {
-		cmd_resp_write(msg, strlen(msg));
-	}
+    if (current_cmd_source == CMD_SRC_UART) {
+        debug_print(msg);
+    } else {
+        cmd_resp_write(msg, strlen(msg));
+    }
 }
 
 #define PRINTF_BUFFER_LENGTH (1024)
@@ -119,7 +119,7 @@ void cmd_resp_printf(const char *format, ...)
     va_list vargs;
     va_start(vargs, format);
     vsnprintf(buffer, PRINTF_BUFFER_LENGTH, format, vargs);
-	cmd_resp_print(buffer);
+    cmd_resp_print(buffer);
     va_end(vargs);
 }
 
@@ -173,10 +173,10 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
 
             // Make console go to beginning of next line
             if (ctx == &ctx_uart) {
-            	debug_print("\r\n");
+                debug_print("\r\n");
             } else {
-            	icc_tx_append_char_to_fifo('\r');
-            	icc_tx_append_char_to_fifo('\n');
+                icc_tx_append_char_to_fifo('\r');
+                icc_tx_append_char_to_fifo('\n');
             }
 
             p->ready = 1;
@@ -195,9 +195,9 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
 
         // Echo character back to host
         if (ctx == &ctx_uart) {
-        	serial_write(&c, 1);
+            serial_write(&c, 1);
         } else {
-        	icc_tx_append_char_to_fifo(c);
+            icc_tx_append_char_to_fifo(c);
         }
 
         // Process incoming char `c`
@@ -324,14 +324,14 @@ static void commands_callback_exec(void *arg)
     if (p->ready) {
         // Run me!
 
-    	// Change current cmd source
-    	if (ctx == &ctx_uart) {
-    		current_cmd_source = CMD_SRC_UART;
-    	} else if (ctx == &ctx_eth) {
-    		current_cmd_source = CMD_SRC_ETH;
-    	} else {
-    		// unreachable
-    	}
+        // Change current cmd source
+        if (ctx == &ctx_uart) {
+            current_cmd_source = CMD_SRC_UART;
+        } else if (ctx == &ctx_eth) {
+            current_cmd_source = CMD_SRC_ETH;
+        } else {
+            // unreachable
+        }
 
         // Don't run a cmd that has errors
         int err = p->err;
@@ -346,27 +346,27 @@ static void commands_callback_exec(void *arg)
             break;
 
         case CMD_SUCCESS:
-        	cmd_resp_printf("SUCCESS\r\n\n");
+            cmd_resp_printf("SUCCESS\r\n\n");
             break;
 
         case CMD_FAILURE:
-        	cmd_resp_printf("FAILURE\r\n\n");
+            cmd_resp_printf("FAILURE\r\n\n");
             break;
 
         case CMD_INVALID_ARGUMENTS:
-        	cmd_resp_printf("INVALID ARGUMENTS\r\n\n");
+            cmd_resp_printf("INVALID ARGUMENTS\r\n\n");
             break;
 
         case CMD_INPUT_TOO_LONG:
-        	cmd_resp_printf("INPUT TOO LONG\r\n\n");
+            cmd_resp_printf("INPUT TOO LONG\r\n\n");
             break;
 
         case CMD_UNKNOWN_CMD:
-        	cmd_resp_printf("UNKNOWN CMD\r\n\n");
+            cmd_resp_printf("UNKNOWN CMD\r\n\n");
             break;
 
         default:
-        	cmd_resp_printf("UNKNOWN ERROR\r\n\n");
+            cmd_resp_printf("UNKNOWN ERROR\r\n\n");
             break;
         }
 
@@ -415,7 +415,7 @@ void commands_cmd_register(command_entry_t *cmd_entry)
 
 void commands_start_msg(void)
 {
-	cmd_resp_printf("\r\n");
+    cmd_resp_printf("\r\n");
     commands_display_help();
 }
 
@@ -464,29 +464,29 @@ void help_state_machine_callback(void *arg)
 
     switch (ctx->state) {
     case TITLE1:
-    	cmd_resp_printf("\r\n");
+        cmd_resp_printf("\r\n");
 
         ctx->curr = cmds;
         ctx->state = TITLE2;
         break;
 
     case TITLE2:
-    	cmd_resp_printf("Available commands:\r\n");
+        cmd_resp_printf("Available commands:\r\n");
         ctx->state = TITLE3;
         break;
 
     case TITLE3:
-    	cmd_resp_printf("-------------------\r\n");
+        cmd_resp_printf("-------------------\r\n");
         ctx->state = CMD_HEADER;
         break;
 
     case CMD_HEADER:
         if (ctx->curr == NULL) {
             // DONE!
-        	cmd_resp_printf("\r\n");
+            cmd_resp_printf("\r\n");
             ctx->state = REMOVE_TASK;
         } else {
-        	cmd_resp_printf("%s -- %s\r\n", ctx->curr->cmd, ctx->curr->desc);
+            cmd_resp_printf("%s -- %s\r\n", ctx->curr->cmd, ctx->curr->desc);
             ctx->sub_cmd_idx = 0;
             ctx->state = SUB_CMD;
         }

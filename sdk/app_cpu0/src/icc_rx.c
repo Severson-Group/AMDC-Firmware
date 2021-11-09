@@ -7,7 +7,7 @@ void icc_rx_process(void)
     // Check if CPU1 has written data
     if (ICC_CPU1to0__GET_CPU1_HasWrittenData) {
         // Clear CPU1's HasWrittenData flag
-    	ICC_CPU1to0__CLR_CPU1_HasWrittenData;
+        ICC_CPU1to0__CLR_CPU1_HasWrittenData;
 
         // Read one byte from ICC
         uint32_t d = ICC_CPU1to0__GET_DATA;

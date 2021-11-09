@@ -18,12 +18,12 @@
 #include "drv/bsp.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
+#include "sys/icc_tx.h"
 #include "sys/injection.h"
 #include "sys/log.h"
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
-#include "sys/icc_tx.h"
 #include "usr/user_apps.h"
 #include "usr/user_config.h"
 #include <stdio.h>
