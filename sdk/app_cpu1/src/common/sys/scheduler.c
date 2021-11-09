@@ -4,6 +4,7 @@
 #include "drv/motherboard.h"
 #include "drv/timer.h"
 #include "drv/watchdog.h"
+#include "xil_printf.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -23,14 +24,14 @@ static volatile uint32_t elapsed_usec = 0;
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
-void scheduler_timer_isr(void *userParam, uint8_t TmrCtrNumber)
+void scheduler_timer_isr(void *arg)
 {
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
         // Use raw printf so this goes directly to the UART device
-        printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+        xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
 
         led_set_color(0, LED_COLOR_RED);
         led_set_color(1, LED_COLOR_RED);

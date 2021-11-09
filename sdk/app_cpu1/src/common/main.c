@@ -16,7 +16,6 @@
 // NOTE: UART uses 115200 baud
 
 #include "drv/bsp.h"
-#include "sys/command_icc.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/injection.h"
@@ -52,7 +51,6 @@ int main()
     // Initialize system tasks
     serial_init();
     commands_init();
-    command_icc_init();
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif

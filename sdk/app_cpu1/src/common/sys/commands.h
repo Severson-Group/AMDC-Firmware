@@ -36,8 +36,6 @@ typedef struct command_help_t {
 } command_help_t;
 
 void commands_init(void);
-void commands_callback_parse(void *arg);
-void commands_callback_exec(void *arg);
 
 void commands_cmd_init(command_entry_t *cmd_entry,
                        const char *cmd,
