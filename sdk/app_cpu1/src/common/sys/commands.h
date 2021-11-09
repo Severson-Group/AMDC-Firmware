@@ -35,6 +35,11 @@ typedef struct command_help_t {
     const char *desc;
 } command_help_t;
 
+// Use these functions to output data for a cmd response:
+void cmd_resp_write(char *msg, int len);
+void cmd_resp_print(char *msg);
+void cmd_resp_printf(const char *format, ...);
+
 void commands_init(void);
 
 void commands_cmd_init(command_entry_t *cmd_entry,

@@ -25,4 +25,6 @@ void socket_manager_tx_data(void *raw_socket, uint8_t *data, uint16_t len);
 // It takes the received data from the TCP sockets and processes it.
 void socket_manager_process_rx_data(void);
 
+void socket_manager_broadcast_ascii_cmd_byte(char c);
+
 #endif // SOCKET_MANAGER_H

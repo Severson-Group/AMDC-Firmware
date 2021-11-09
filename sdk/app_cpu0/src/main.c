@@ -3,6 +3,8 @@
 #include "platform.h"
 #include "platform_config.h"
 #include "socket_manager.h"
+#include "icc_rx.h"
+#include "icc.h"
 #include "xil_cache.h"
 #include "xil_io.h"
 #include "xil_mmu.h"
@@ -66,12 +68,18 @@ int main()
         print("Failure\r\n");
     }
 
+    // Tell CPU1 we are ready to rx data from ICC
+    ICC_CPU1to0__SET_CPU0_WaitingForData;
+
     while (1) {
         // Receive and process packets
         xemacif_input(my_netif);
 
         // Post-process data from the socket_manager
         socket_manager_process_rx_data();
+
+        // Send data from CPU1 back over TCP packets
+        icc_rx_process();
 
         if (TcpFastTmrFlag) {
             tcp_fasttmr();

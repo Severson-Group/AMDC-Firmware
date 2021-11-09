@@ -245,3 +245,21 @@ void socket_manager_process_rx_data(void)
         }
     }
 }
+
+void socket_manager_broadcast_ascii_cmd_byte(char c)
+{
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].type == SOCKET_TYPE_ASCII_CMD) {
+		    struct tcp_pcb *pcb = socket_list[i].raw_socket;
+			uint16_t tcp_space_avail = tcp_sndbuf(pcb);
+
+			uint16_t bytes_to_send = 1;
+			if (bytes_to_send > tcp_space_avail) {
+				// Silently truncate data that will get sent!
+				bytes_to_send = tcp_space_avail;
+			}
+
+			tcp_write(pcb, &c, bytes_to_send, TCP_WRITE_FLAG_COPY);
+		}
+	}
+}

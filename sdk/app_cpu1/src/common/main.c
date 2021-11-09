@@ -23,6 +23,7 @@
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
+#include "sys/icc_tx.h"
 #include "usr/user_apps.h"
 #include "usr/user_config.h"
 #include <stdio.h>
@@ -51,6 +52,7 @@ int main()
     // Initialize system tasks
     serial_init();
     commands_init();
+    icc_tx_init();
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif
