@@ -8,7 +8,7 @@
 
 // Communications
 #define MAX_NUM_SOCKETS         (8)
-#define MAX_RX_RING_BUFFER_DATA (1024*1024)
+#define MAX_RX_RING_BUFFER_DATA (1024 * 1024)
 
 typedef enum {
     SOCKET_TYPE_UNUSED = 0,
@@ -193,21 +193,21 @@ void socket_manager_process_rx_data(void)
             case SOCKET_TYPE_ASCII_CMD:
             {
                 // Try to give one data byte to CPU1
-            	//
-            	// Yes, this design implies that only ONE byte is transfered
-            	// between the two cores at a time. Since the other core only
-            	// reads the data every 100us, this means a limit of 10 kB / sec
-            	//    ==> SLOW!
-            	//
-            	// However, the old standard UART interface we have been using
-            	// runs at 115200 baud, meaning that its throughput is about
-            	// 10 kB / sec as well. Therefore, our single byte ICC method
-            	// is actually duplicating the performance of UART.
-            	//
-            	// This merits not improving it, since there are other limits
-            	// in the other core software arch design which we would need
-            	// to address first. To really improve this, we ought to redesign
-            	// the whole system and not support UART ascii comms...
+                //
+                // Yes, this design implies that only ONE byte is transfered
+                // between the two cores at a time. Since the other core only
+                // reads the data every 100us, this means a limit of 10 kB / sec
+                //    ==> SLOW!
+                //
+                // However, the old standard UART interface we have been using
+                // runs at 115200 baud, meaning that its throughput is about
+                // 10 kB / sec as well. Therefore, our single byte ICC method
+                // is actually duplicating the performance of UART.
+                //
+                // This merits not improving it, since there are other limits
+                // in the other core software arch design which we would need
+                // to address first. To really improve this, we ought to redesign
+                // the whole system and not support UART ascii comms...
                 if (!ringbuf_is_empty(rb)) {
 
                     // Check if CPU1 is ready to receive a byte of data

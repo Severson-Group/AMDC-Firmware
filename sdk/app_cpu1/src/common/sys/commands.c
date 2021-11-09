@@ -4,10 +4,10 @@
 #include "sys/cmd/cmd_help.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/icc.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
-#include "sys/icc.h"
 #include "sys/util.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -16,9 +16,9 @@
 #define RECV_BUFFER_LENGTH (4 * 1024)
 
 typedef enum cmd_parsing_state_e {
-	BEGIN = 0,
-	LOOKING_FOR_SPACE,
-	LOOKING_FOR_CHAR,
+    BEGIN = 0,
+    LOOKING_FOR_SPACE,
+    LOOKING_FOR_CHAR,
 } cmd_parsing_state_e;
 
 #define CMD_MAX_ARGC       (16) // # of args accepted
@@ -48,16 +48,16 @@ typedef struct pending_cmd_t {
 #define MAX_PENDING_CMDS (8)
 
 typedef struct {
-	cmd_parsing_state_e state;
+    cmd_parsing_state_e state;
 
-	// Store parsed cmds
-	pending_cmd_t pending_cmds[MAX_PENDING_CMDS];
-	int pending_cmd_write_idx;
-	int pending_cmd_read_idx;
+    // Store parsed cmds
+    pending_cmd_t pending_cmds[MAX_PENDING_CMDS];
+    int pending_cmd_write_idx;
+    int pending_cmd_read_idx;
 
-	// Store rx chars
-	char recv_buffer[RECV_BUFFER_LENGTH];
-	int recv_buffer_idx;
+    // Store rx chars
+    char recv_buffer[RECV_BUFFER_LENGTH];
+    int recv_buffer_idx;
 } sm_parse_ascii_cmd_ctx_t;
 
 static sm_parse_ascii_cmd_ctx_t ctx_uart;
@@ -82,11 +82,13 @@ void commands_init(void)
     printf("CMD:\tInitializing command tasks...\n");
 
     // Command parse task (UART)
-    scheduler_tcb_init(&tcb_parse_uart, commands_callback_parse_uart, &ctx_uart, "command_parse_uart", COMMANDS_INTERVAL_USEC);
+    scheduler_tcb_init(
+        &tcb_parse_uart, commands_callback_parse_uart, &ctx_uart, "command_parse_uart", COMMANDS_INTERVAL_USEC);
     scheduler_tcb_register(&tcb_parse_uart);
 
     // Command parse task (ETH)
-    scheduler_tcb_init(&tcb_parse_eth, commands_callback_parse_eth, &ctx_eth, "command_parse_eth", COMMANDS_INTERVAL_USEC);
+    scheduler_tcb_init(
+        &tcb_parse_eth, commands_callback_parse_eth, &ctx_eth, "command_parse_eth", COMMANDS_INTERVAL_USEC);
     scheduler_tcb_register(&tcb_parse_eth);
 
     // Command exec task (UART)
@@ -130,7 +132,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
 
             // Update current pending cmd slot
             if (++ctx->pending_cmd_write_idx >= MAX_PENDING_CMDS)
-            	ctx->pending_cmd_write_idx = 0;
+                ctx->pending_cmd_write_idx = 0;
             p = &ctx->pending_cmds[ctx->pending_cmd_write_idx];
             p->ready = 0;
 
@@ -208,7 +210,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
 
 static void commands_callback_parse_uart(void *arg)
 {
-	sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
+    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
     // Read in bounded chunk of new chars
     //
@@ -224,13 +226,13 @@ static void commands_callback_parse_uart(void *arg)
     // Move along in recv buffer
     ctx->recv_buffer_idx += num_bytes;
     if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-    	ctx->recv_buffer_idx = 0;
+        ctx->recv_buffer_idx = 0;
     }
 }
 
 static void commands_callback_parse_eth(void *arg)
 {
-	sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
+    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
     // Check if CPU0 wrote data
     if (ICC_CPU0to1__GET_CPU0_HasWrittenData) {
@@ -249,7 +251,7 @@ static void commands_callback_parse_eth(void *arg)
         // Move along in recv buffer
         ctx->recv_buffer_idx += 1;
         if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-        	ctx->recv_buffer_idx = 0;
+            ctx->recv_buffer_idx = 0;
         }
 
         // Tell CPU0 that we are now waiting for more data
@@ -259,7 +261,7 @@ static void commands_callback_parse_eth(void *arg)
 
 static void commands_callback_exec(void *arg)
 {
-	sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
+    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
     // Get current pending cmd slot
     pending_cmd_t *p = &ctx->pending_cmds[ctx->pending_cmd_read_idx];
@@ -308,7 +310,7 @@ static void commands_callback_exec(void *arg)
 
         // Update READ index
         if (++ctx->pending_cmd_read_idx >= MAX_PENDING_CMDS) {
-        	ctx->pending_cmd_read_idx = 0;
+            ctx->pending_cmd_read_idx = 0;
         }
     }
 }
