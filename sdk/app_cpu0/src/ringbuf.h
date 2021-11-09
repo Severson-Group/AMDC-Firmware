@@ -30,6 +30,8 @@
  * Nathan Petersen updated this implementation to only support static memory,
  * therefore removing the malloc and free calls and requiring the user
  * to statically allocate memory and pass that into the init function.
+ *
+ * He also removed the function designed to work with file descriptors.
  */
 
 #include <stddef.h>
