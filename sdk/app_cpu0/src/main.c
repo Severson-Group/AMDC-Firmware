@@ -30,6 +30,16 @@ int main()
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
 
+    // Initialize shared memory space for ICC
+    //
+    // This is ONLY done on this core!!
+    // CPU1 assumes we are master and does not initialize
+    // the shared memory space at all.
+    //
+    // We also need to do this early on, before CPU1
+    // tried to use the ICC interface.
+    icc_init();
+
 #if 1
     // This code is required to start CPU1 from CPU0 during boot.
     //
@@ -67,9 +77,6 @@ int main()
     } else {
         print("Failure\r\n");
     }
-
-    // Tell CPU1 we are ready to rx data from ICC
-    ICC_CPU1to0__SET_CPU0_WaitingForData;
 
     while (1) {
         // Receive and process packets

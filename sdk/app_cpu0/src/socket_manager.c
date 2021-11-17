@@ -3,6 +3,7 @@
 #include "lwip/tcp.h"
 #include "ringbuf.h"
 #include "xil_printf.h"
+#include "xil_io.h"
 #include "xstatus.h"
 #include <stdint.h>
 
@@ -192,40 +193,39 @@ void socket_manager_process_rx_data(void)
 
             case SOCKET_TYPE_ASCII_CMD:
             {
-                // Try to give one data byte to CPU1
-                //
-                // Yes, this design implies that only ONE byte is transfered
-                // between the two cores at a time. Since the other core only
-                // reads the data every 100us, this means a limit of 10 kB / sec
-                //    ==> SLOW!
-                //
-                // However, the old standard UART interface we have been using
-                // runs at 115200 baud, meaning that its throughput is about
-                // 10 kB / sec as well. Therefore, our single byte ICC method
-                // is actually duplicating the performance of UART.
-                //
-                // This merits not improving it, since there are other limits
-                // in the other core software arch design which we would need
-                // to address first. To really improve this, we ought to redesign
-                // the whole system and not support UART ascii comms...
-                if (!ringbuf_is_empty(rb)) {
+                // Try to give all our ringbuf TCP/IP data to CPU1
+            	//
+            	// If we ever find that the ICC shared FIFO gets full,
+            	// we'll just stop and wait until next time.
+            	for (int j = 0; j < data_len; j++) {
+            		if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == ICC_BUFFER_SIZE) {
+            			// Shared buffer is full
 
-                    // Check if CPU1 is ready to receive a byte of data
-                    if (ICC_CPU0to1__GET_CPU1_WaitingForData) {
-                        // Clear CPU1's WaitingForData flag
-                        ICC_CPU0to1__CLR_CPU1_WaitingForData;
+            			// Break out of inner for-loop which is trying to send all data
+            			//
+            			// This will allow us to process other sockets as well
+            			break;
+            		}
 
-                        // Read one byte from the fifo
-                        uint8_t d;
-                        ringbuf_memcpy_from(&d, rb, 1);
+            		// Write one byte to the sharedBuffer BEFORE incrementing produceCount
+					uint8_t d;
+					uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
+					ringbuf_memcpy_from(&d, rb, 1);
+            		sharedBuffer[ICC_CPU0to1_CH0__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
 
-                        // Set data to shared memory space
-                        ICC_CPU0to1__SET_DATA(d);
+            		// Memory barrier required here to ensure update of the sharedBuffer is
+            		// visible to the other core before the update of produceCount
+            		//
+            		// Nathan thinks we don't actually have to do this since we turned off
+            		// caching on the OCM, so the write should flush immediately, but,
+            		// I might be wrong and it could be stuck in some pipeline...
+            		// Just to be safe, we'll insert a DMB instruction.
+            		dmb();
 
-                        // Tell CPU1 that we just wrote data
-                        ICC_CPU0to1__SET_CPU0_HasWrittenData;
-                    }
-                }
+            		// Increment produce count
+            		ICC_CPU0to1_CH0__SET_ProduceCount(ICC_CPU0to1_CH0__GET_ProduceCount + 1);
+            	}
+
                 break;
             }
 

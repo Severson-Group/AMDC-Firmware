@@ -146,9 +146,6 @@ void commands_init(void)
     scheduler_tcb_register(&tcb_exec_eth);
 
     cmd_help_register();
-
-    // Tell CPU0 we are waiting for their data
-    ICC_CPU0to1__SET_CPU1_WaitingForData;
 }
 
 static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, int length)
@@ -289,13 +286,32 @@ static void commands_callback_parse_eth(void *arg)
 {
     sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
-    // Check if CPU0 wrote data
-    if (ICC_CPU0to1__GET_CPU0_HasWrittenData) {
-        ICC_CPU0to1__CLR_CPU0_HasWrittenData;
 
-        // Read the byte from shared memory
-        uint8_t c = (uint8_t) ICC_CPU0to1__GET_DATA;
-        char c_char = (char) c;
+	static const int MAX_NUM_BYTES_TO_TRY = 64;
+
+	// Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
+	//
+	// If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
+	// pull out everything and return.
+	for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
+		// Check if there are any bytes in the FIFO
+		if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
+			// Shared buffer is empty
+			return;
+		}
+
+		// Read the oldest byte available
+		uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
+		uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
+
+		// Increment the consume count
+		ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
+
+		// =====================
+		// Process incoming char
+		// =====================
+
+		char c_char = (char) c;
 
         // Push the new byte into the rx buffer
         ctx->recv_buffer[ctx->recv_buffer_idx] = c_char;
@@ -308,10 +324,7 @@ static void commands_callback_parse_eth(void *arg)
         if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
             ctx->recv_buffer_idx = 0;
         }
-
-        // Tell CPU0 that we are now waiting for more data
-        ICC_CPU0to1__SET_CPU1_WaitingForData;
-    }
+	}
 }
 
 static void commands_callback_exec(void *arg)
