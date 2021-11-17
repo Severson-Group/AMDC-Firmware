@@ -1,8 +1,8 @@
 #include "sys/icc_tx.h"
 #include "sys/icc.h"
 #include "sys/scheduler.h"
-#include <stdint.h>
 #include "xil_io.h"
+#include <stdint.h>
 
 #define TASK_ICC_TX_UPDATES_PER_SEC (10000)
 #define TASK_ICC_TX_INTERVAL_USEC   (USEC_IN_SEC / TASK_ICC_TX_UPDATES_PER_SEC)
@@ -40,46 +40,46 @@ static void _push(char c)
 
 static void task_icc_tx_callback(void *arg)
 {
-	// Try to give all our ringbuf TCP/IP data to CPU0
-	//
-	// Bounded up to 1024 bytes
-	//
-	// If we ever find that the ICC shared FIFO gets full,
-	// we'll just stop and wait until next time.
+    // Try to give all our ringbuf TCP/IP data to CPU0
+    //
+    // Bounded up to 1024 bytes
+    //
+    // If we ever find that the ICC shared FIFO gets full,
+    // we'll just stop and wait until next time.
 
-	int num_sent = 0;
+    int num_sent = 0;
 
-	while (num_in_buffer > 0) {
-		if (ICC_CPU1to0_CH0__GET_ProduceCount - ICC_CPU1to0_CH0__GET_ConsumeCount == ICC_BUFFER_SIZE) {
-			// Shared buffer is full
-			// Return and try again in the next time slice
-			return;
-		}
+    while (num_in_buffer > 0) {
+        if (ICC_CPU1to0_CH0__GET_ProduceCount - ICC_CPU1to0_CH0__GET_ConsumeCount == ICC_BUFFER_SIZE) {
+            // Shared buffer is full
+            // Return and try again in the next time slice
+            return;
+        }
 
-		// Write one byte to the sharedBuffer BEFORE incrementing produceCount
-		uint8_t *sharedBuffer = ICC_CPU1to0_CH0__BufferBaseAddr;
-		char c = _pop();
-		sharedBuffer[ICC_CPU1to0_CH0__GET_ProduceCount % ICC_BUFFER_SIZE] = c;
+        // Write one byte to the sharedBuffer BEFORE incrementing produceCount
+        uint8_t *sharedBuffer = ICC_CPU1to0_CH0__BufferBaseAddr;
+        char c = _pop();
+        sharedBuffer[ICC_CPU1to0_CH0__GET_ProduceCount % ICC_BUFFER_SIZE] = c;
 
-		// Memory barrier required here to ensure update of the sharedBuffer is
-		// visible to the other core before the update of produceCount
-		//
-		// Nathan thinks we don't actually have to do this since we turned off
-		// caching on the OCM, so the write should flush immediately, but,
-		// I might be wrong and it could be stuck in some pipeline...
-		// Just to be safe, we'll insert a DMB instruction.
-		dmb();
+        // Memory barrier required here to ensure update of the sharedBuffer is
+        // visible to the other core before the update of produceCount
+        //
+        // Nathan thinks we don't actually have to do this since we turned off
+        // caching on the OCM, so the write should flush immediately, but,
+        // I might be wrong and it could be stuck in some pipeline...
+        // Just to be safe, we'll insert a DMB instruction.
+        dmb();
 
-		// Increment produce count
-		ICC_CPU1to0_CH0__SET_ProduceCount(ICC_CPU1to0_CH0__GET_ProduceCount + 1);
+        // Increment produce count
+        ICC_CPU1to0_CH0__SET_ProduceCount(ICC_CPU1to0_CH0__GET_ProduceCount + 1);
 
-		num_sent++;
-		if (num_sent > 1024) {
-			// We sent enough during this time slice!
-			// Stop now.
-			return;
-		}
-	}
+        num_sent++;
+        if (num_sent > 1024) {
+            // We sent enough during this time slice!
+            // Stop now.
+            return;
+        }
+    }
 }
 
 void icc_tx_init(void)

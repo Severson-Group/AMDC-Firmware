@@ -286,32 +286,31 @@ static void commands_callback_parse_eth(void *arg)
 {
     sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
+    static const int MAX_NUM_BYTES_TO_TRY = 64;
 
-	static const int MAX_NUM_BYTES_TO_TRY = 64;
+    // Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
+    //
+    // If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
+    // pull out everything and return.
+    for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
+        // Check if there are any bytes in the FIFO
+        if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
+            // Shared buffer is empty
+            return;
+        }
 
-	// Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
-	//
-	// If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
-	// pull out everything and return.
-	for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
-		// Check if there are any bytes in the FIFO
-		if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
-			// Shared buffer is empty
-			return;
-		}
+        // Read the oldest byte available
+        uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
+        uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
 
-		// Read the oldest byte available
-		uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
-		uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
+        // Increment the consume count
+        ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
 
-		// Increment the consume count
-		ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
+        // =====================
+        // Process incoming char
+        // =====================
 
-		// =====================
-		// Process incoming char
-		// =====================
-
-		char c_char = (char) c;
+        char c_char = (char) c;
 
         // Push the new byte into the rx buffer
         ctx->recv_buffer[ctx->recv_buffer_idx] = c_char;
@@ -324,7 +323,7 @@ static void commands_callback_parse_eth(void *arg)
         if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
             ctx->recv_buffer_idx = 0;
         }
-	}
+    }
 }
 
 static void commands_callback_exec(void *arg)

@@ -24,7 +24,6 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <limits.h>
 
 /*
  * The code is written for clarity, not cleverness or performance, and

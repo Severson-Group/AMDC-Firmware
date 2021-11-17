@@ -2,8 +2,8 @@
 #include "icc.h"
 #include "lwip/tcp.h"
 #include "ringbuf.h"
-#include "xil_printf.h"
 #include "xil_io.h"
+#include "xil_printf.h"
 #include "xstatus.h"
 #include <stdint.h>
 
@@ -194,37 +194,37 @@ void socket_manager_process_rx_data(void)
             case SOCKET_TYPE_ASCII_CMD:
             {
                 // Try to give all our ringbuf TCP/IP data to CPU1
-            	//
-            	// If we ever find that the ICC shared FIFO gets full,
-            	// we'll just stop and wait until next time.
-            	for (int j = 0; j < data_len; j++) {
-            		if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == ICC_BUFFER_SIZE) {
-            			// Shared buffer is full
+                //
+                // If we ever find that the ICC shared FIFO gets full,
+                // we'll just stop and wait until next time.
+                for (int j = 0; j < data_len; j++) {
+                    if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == ICC_BUFFER_SIZE) {
+                        // Shared buffer is full
 
-            			// Break out of inner for-loop which is trying to send all data
-            			//
-            			// This will allow us to process other sockets as well
-            			break;
-            		}
+                        // Break out of inner for-loop which is trying to send all data
+                        //
+                        // This will allow us to process other sockets as well
+                        break;
+                    }
 
-            		// Write one byte to the sharedBuffer BEFORE incrementing produceCount
-					uint8_t d;
-					uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
-					ringbuf_memcpy_from(&d, rb, 1);
-            		sharedBuffer[ICC_CPU0to1_CH0__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
+                    // Write one byte to the sharedBuffer BEFORE incrementing produceCount
+                    uint8_t d;
+                    uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
+                    ringbuf_memcpy_from(&d, rb, 1);
+                    sharedBuffer[ICC_CPU0to1_CH0__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
 
-            		// Memory barrier required here to ensure update of the sharedBuffer is
-            		// visible to the other core before the update of produceCount
-            		//
-            		// Nathan thinks we don't actually have to do this since we turned off
-            		// caching on the OCM, so the write should flush immediately, but,
-            		// I might be wrong and it could be stuck in some pipeline...
-            		// Just to be safe, we'll insert a DMB instruction.
-            		dmb();
+                    // Memory barrier required here to ensure update of the sharedBuffer is
+                    // visible to the other core before the update of produceCount
+                    //
+                    // Nathan thinks we don't actually have to do this since we turned off
+                    // caching on the OCM, so the write should flush immediately, but,
+                    // I might be wrong and it could be stuck in some pipeline...
+                    // Just to be safe, we'll insert a DMB instruction.
+                    dmb();
 
-            		// Increment produce count
-            		ICC_CPU0to1_CH0__SET_ProduceCount(ICC_CPU0to1_CH0__GET_ProduceCount + 1);
-            	}
+                    // Increment produce count
+                    ICC_CPU0to1_CH0__SET_ProduceCount(ICC_CPU0to1_CH0__GET_ProduceCount + 1);
+                }
 
                 break;
             }

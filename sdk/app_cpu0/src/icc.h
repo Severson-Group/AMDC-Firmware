@@ -31,12 +31,12 @@
 // On this platform, UINT_MAX = 2^32 - 1. Thus, BUFFER_SIZE needs
 // to evenly go into 2^32. This is possible if we keep the buffer
 // size as a power of 2: e.g. 2^10.
-#define ICC_BUFFER_SIZE (2*1024)
+#define ICC_BUFFER_SIZE (2 * 1024)
 
 // Keep 1024 bytes free at the beginning of the OCM so we can have
 // shared memory spaces for registers, counters, etc
-#define ICC_CPU0to1_CH0__BufferBaseAddr ((uint8_t *) (OCM_BASE_ADDR + 1024 + (0*ICC_BUFFER_SIZE)))
-#define ICC_CPU1to0_CH0__BufferBaseAddr ((uint8_t *) (OCM_BASE_ADDR + 1024 + (1*ICC_BUFFER_SIZE)))
+#define ICC_CPU0to1_CH0__BufferBaseAddr ((uint8_t *) (OCM_BASE_ADDR + 1024 + (0 * ICC_BUFFER_SIZE)))
+#define ICC_CPU1to0_CH0__BufferBaseAddr ((uint8_t *) (OCM_BASE_ADDR + 1024 + (1 * ICC_BUFFER_SIZE)))
 
 #define ICC_CPU0to1_CH0__GET_ProduceCount    (*((uint32_t *) (OCM_BASE_ADDR + 0)))
 #define ICC_CPU0to1_CH0__SET_ProduceCount(x) (*((uint32_t *) (OCM_BASE_ADDR + 0)) = x)
