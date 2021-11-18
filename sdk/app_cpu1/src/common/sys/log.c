@@ -8,6 +8,7 @@
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
+#include "sys/commands.h"
 #include "sys/serial.h"
 #include "sys/util.h"
 #include <stdint.h>
@@ -267,17 +268,17 @@ void state_machine_dump_ascii_callback(void *arg)
 
     switch (ctx->state) {
     case DUMP_ASCII_TITLE:
-        debug_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
+        cmd_resp_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
         ctx->state = DUMP_ASCII_NUM_SAMPLES;
         break;
 
     case DUMP_ASCII_NUM_SAMPLES:
-        debug_printf("NUM SAMPLES: %d\r\n", v->num_samples);
+    	cmd_resp_printf("NUM SAMPLES: %d\r\n", v->num_samples);
         ctx->state = DUMP_ASCII_HEADER;
         break;
 
     case DUMP_ASCII_HEADER:
-        debug_printf("-------START-------\r\n");
+    	cmd_resp_printf("-------START-------\r\n");
 
         if (v->num_samples == 0) {
             // Nothing to dump!
@@ -289,7 +290,7 @@ void state_machine_dump_ascii_callback(void *arg)
 
     case DUMP_ASCII_VARIABLES_TS:
         // Print just the timestamp
-        debug_printf("> %ld\t\t", e->timestamp);
+    	cmd_resp_printf("> %ld\t\t", e->timestamp);
 
         ctx->state = DUMP_ASCII_VARIABLES_VALUE;
         break;
@@ -297,10 +298,10 @@ void state_machine_dump_ascii_callback(void *arg)
     case DUMP_ASCII_VARIABLES_VALUE:
         // Print just the value
         if (v->type == LOG_INT) {
-            debug_printf("%ld\r\n", e->value);
+        	cmd_resp_printf("%ld\r\n", e->value);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             float *f = (float *) &(e->value);
-            debug_printf("%f\r\n", *f);
+            cmd_resp_printf("%f\r\n", *f);
         }
 
         ctx->sample_idx++;
@@ -313,7 +314,7 @@ void state_machine_dump_ascii_callback(void *arg)
         break;
 
     case DUMP_ASCII_FOOTER:
-        debug_printf("-------END-------\r\n\r\n");
+    	cmd_resp_printf("-------END-------\r\n\r\n");
 
         ctx->state = DUMP_ASCII_REMOVE_TASK;
         break;
@@ -599,30 +600,30 @@ void state_machine_info_callback(void *arg)
     switch (ctx->state) {
     case INFO_HEAD:
     {
-        debug_printf("Log Info\r\n");
-        debug_printf("--------\r\n");
+        cmd_resp_printf("Log Info\r\n");
+        cmd_resp_printf("--------\r\n");
         ctx->state = INFO_MAX_SLOTS;
         break;
     }
 
     case INFO_MAX_SLOTS:
     {
-        debug_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
+    	cmd_resp_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
         ctx->state = INFO_MAX_DEPTH;
         break;
     }
 
     case INFO_MAX_DEPTH:
     {
-        debug_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
+    	cmd_resp_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
         ctx->state = INFO_MAX_SAMPLE_RATE;
         break;
     }
 
     case INFO_MAX_SAMPLE_RATE:
     {
-        debug_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
-        debug_printf("--------\r\n");
+    	cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
+    	cmd_resp_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;
     }
@@ -630,10 +631,10 @@ void state_machine_info_callback(void *arg)
     case INFO_VAR_TITLE:
     {
         if (v->is_registered) {
-            debug_printf("Slot %d:\r\n", ctx->var_idx);
+        	cmd_resp_printf("Slot %d:\r\n", ctx->var_idx);
             ctx->state = INFO_VAR_DATA1;
         } else {
-            debug_printf("Slot %d: unused\r\n", ctx->var_idx);
+        	cmd_resp_printf("Slot %d: unused\r\n", ctx->var_idx);
             ctx->state = INFO_NEXT_VAR;
         }
         break;
@@ -641,7 +642,7 @@ void state_machine_info_callback(void *arg)
 
     case INFO_VAR_DATA1:
     {
-        debug_printf("  Name: %s\r\n", v->name);
+    	cmd_resp_printf("  Name: %s\r\n", v->name);
         ctx->state = INFO_VAR_DATA2;
         break;
     }
@@ -649,11 +650,11 @@ void state_machine_info_callback(void *arg)
     case INFO_VAR_DATA2:
     {
         if (v->type == LOG_INT) {
-            debug_printf("  Type: int\r\n");
+        	cmd_resp_printf("  Type: int\r\n");
         } else if (v->type == LOG_FLOAT) {
-            debug_printf("  Type: float\r\n");
+        	cmd_resp_printf("  Type: float\r\n");
         } else {
-            debug_printf("  Type: double\r\n");
+        	cmd_resp_printf("  Type: double\r\n");
         }
         ctx->state = INFO_VAR_DATA3;
         break;
@@ -661,21 +662,21 @@ void state_machine_info_callback(void *arg)
 
     case INFO_VAR_DATA3:
     {
-        debug_printf("  Memory address: 0x%X\r\n", v->addr);
+    	cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
         ctx->state = INFO_VAR_DATA4;
         break;
     }
 
     case INFO_VAR_DATA4:
     {
-        debug_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
+    	cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
         ctx->state = INFO_VAR_DATA5;
         break;
     }
 
     case INFO_VAR_DATA5:
     {
-        debug_printf("  Num samples: %d\r\n", v->num_samples);
+    	cmd_resp_printf("  Num samples: %d\r\n", v->num_samples);
         ctx->state = INFO_NEXT_VAR;
         break;
     }
@@ -684,7 +685,7 @@ void state_machine_info_callback(void *arg)
     {
         ctx->var_idx++;
         if (ctx->var_idx >= LOG_MAX_NUM_VARIABLES) {
-            debug_printf("\r\n");
+        	cmd_resp_printf("\r\n");
             ctx->state = INFO_REMOVE_TASK;
         } else {
             ctx->state = INFO_VAR_TITLE;

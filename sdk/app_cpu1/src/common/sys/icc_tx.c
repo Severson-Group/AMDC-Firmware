@@ -42,10 +42,12 @@ static void task_icc_tx_callback(void *arg)
 {
     // Try to give all our ringbuf TCP/IP data to CPU0
     //
-    // Bounded up to 1024 bytes
+    // Bounded up to MAX_NUM_BYTES_TO_TRY bytes
     //
     // If we ever find that the ICC shared FIFO gets full,
     // we'll just stop and wait until next time.
+
+	static const int MAX_NUM_BYTES_TO_TRY = 256;
 
     int num_sent = 0;
 
@@ -74,7 +76,7 @@ static void task_icc_tx_callback(void *arg)
         ICC_CPU1to0_CH0__SET_ProduceCount(ICC_CPU1to0_CH0__GET_ProduceCount + 1);
 
         num_sent++;
-        if (num_sent > 1024) {
+        if (num_sent > MAX_NUM_BYTES_TO_TRY) {
             // We sent enough during this time slice!
             // Stop now.
             return;

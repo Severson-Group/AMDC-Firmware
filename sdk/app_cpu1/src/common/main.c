@@ -24,6 +24,7 @@
 #include "sys/platform.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
+#include "sys/cmd/cmd_counter.h"
 #include "usr/user_apps.h"
 #include "usr/user_config.h"
 #include <stdio.h>
@@ -65,6 +66,9 @@ int main()
     // Initialize motherboard driver and register command
     motherboard_init(MOTHERBOARD_BASE_ADDR);
 #endif
+
+    // Register the "cnt" command
+    cmd_counter_register();
 
     // Initialize user applications
     user_apps_init();

@@ -148,6 +148,27 @@ void commands_init(void)
     cmd_help_register();
 }
 
+// Set if we should echo back characters to sender:
+//  - 0: when EXECUTING the pending command
+//  - 1: when PROCESSING the incoming chars
+//
+// Both have pros and cons... For slow comms, we want
+// to echo AS the chars come in since the user is likely
+// using a UART terminal and wants to see a response to
+// their inputs.
+//
+// For fast comms (i.e. Ethernet), we should only echo
+// when the command is executed since the host could send
+// a burst of multiple command strings in short time,
+// before we have time to actually run the command.
+//
+// We will choose when PROCESSING the incoming chars and
+// limit the command through-put from the host to:
+// <=  1 command string per 100 usec time slice
+// This will ensure we process the pending command before
+// the next set of chars appears.
+#define ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS (1)
+
 static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, int length)
 {
     // Get current pending cmd slot
@@ -168,6 +189,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
             // (replaces a \r or \n, so nbd
             buffer[i] = 0;
 
+#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 1
             // Make console go to beginning of next line
             if (ctx == &ctx_uart) {
                 debug_print("\r\n");
@@ -175,12 +197,14 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
                 icc_tx_append_char_to_fifo('\r');
                 icc_tx_append_char_to_fifo('\n');
             }
+#endif
 
             p->ready = 1;
 
             // Update current pending cmd slot
-            if (++ctx->pending_cmd_write_idx >= MAX_PENDING_CMDS)
+            if (++ctx->pending_cmd_write_idx >= MAX_PENDING_CMDS) {
                 ctx->pending_cmd_write_idx = 0;
+            }
             p = &ctx->pending_cmds[ctx->pending_cmd_write_idx];
             p->ready = 0;
 
@@ -190,12 +214,14 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
             continue;
         }
 
+#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 1
         // Echo character back to host
         if (ctx == &ctx_uart) {
             serial_write(&c, 1);
         } else {
             icc_tx_append_char_to_fifo(c);
         }
+#endif
 
         // Process incoming char `c`
         switch (ctx->state) {
@@ -286,7 +312,7 @@ static void commands_callback_parse_eth(void *arg)
 {
     sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
 
-    static const int MAX_NUM_BYTES_TO_TRY = 64;
+    static const int MAX_NUM_BYTES_TO_TRY = 128;
 
     // Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
     //
@@ -344,6 +370,18 @@ static void commands_callback_exec(void *arg)
         } else {
             // unreachable
         }
+
+#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 0
+        // Echo back command to sender
+        for (int i = 0; i < p->argc; i++) {
+            cmd_resp_printf("%s", p->argv[i]);
+
+            if (i+1 < p->argc) {
+                cmd_resp_print(" ");
+            }
+        }
+        cmd_resp_print("\r\n");
+#endif
 
         // Don't run a cmd that has errors
         int err = p->err;
