@@ -120,7 +120,7 @@ int cmd_hw(int argc, char **argv)
             float out_volts;
             analog_getf(anlg_idx, &out_volts);
 
-            debug_printf("%fV\r\n", out_volts);
+            cmd_resp_printf("%fV\r\n", out_volts);
 
             return SUCCESS;
         }
@@ -136,9 +136,9 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
 
             ild1420_packet_t packet = ild1420_get_latest_packet(sensor);
-            debug_printf("dist:  %x\r\n", packet.distance);
-            debug_printf("err:   %X\r\n", packet.error);
-            debug_printf("fresh: %X\r\n", packet.fresh);
+            cmd_resp_printf("dist:  %x\r\n", packet.distance);
+            cmd_resp_printf("err:   %X\r\n", packet.error);
+            cmd_resp_printf("fresh: %X\r\n", packet.fresh);
 
             return CMD_SUCCESS;
         }
@@ -150,7 +150,7 @@ int cmd_hw(int argc, char **argv)
             int32_t steps;
             encoder_get_steps(&steps);
 
-            debug_printf("steps: %ld\r\n", steps);
+            cmd_resp_printf("steps: %ld\r\n", steps);
 
             return CMD_SUCCESS;
         }
@@ -159,7 +159,7 @@ int cmd_hw(int argc, char **argv)
             uint32_t position;
             encoder_get_position(&position);
 
-            debug_printf("pos: %ld\r\n", position);
+            cmd_resp_printf("pos: %ld\r\n", position);
 
             return CMD_SUCCESS;
         }
@@ -177,9 +177,9 @@ int cmd_hw(int argc, char **argv)
             uint32_t counts1 = fpga_timer_now();
             uint32_t counts2 = fpga_timer_now();
 
-            debug_printf("counts1: %lu\r\n", counts1);
-            debug_printf("counts2: %lu\r\n", counts2);
-            debug_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
+            cmd_resp_printf("counts1: %lu\r\n", counts1);
+            cmd_resp_printf("counts2: %lu\r\n", counts2);
+            cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
 
             return CMD_SUCCESS;
         }
@@ -188,9 +188,9 @@ int cmd_hw(int argc, char **argv)
             uint32_t counts1 = cpu_timer_now();
             uint32_t counts2 = cpu_timer_now();
 
-            debug_printf("counts1: %lu\r\n", counts1);
-            debug_printf("counts2: %lu\r\n", counts2);
-            debug_printf("time delta = %8.3f ns\r\n", 1e3 * cpu_timer_ticks_to_usec(counts2 - counts1));
+            cmd_resp_printf("counts1: %lu\r\n", counts1);
+            cmd_resp_printf("counts2: %lu\r\n", counts2);
+            cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * cpu_timer_ticks_to_usec(counts2 - counts1));
 
             return CMD_SUCCESS;
         }
