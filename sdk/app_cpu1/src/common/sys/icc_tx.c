@@ -47,7 +47,7 @@ static void task_icc_tx_callback(void *arg)
     // If we ever find that the ICC shared FIFO gets full,
     // we'll just stop and wait until next time.
 
-	static const int MAX_NUM_BYTES_TO_TRY = 256;
+    static const int MAX_NUM_BYTES_TO_TRY = 256;
 
     int num_sent = 0;
 

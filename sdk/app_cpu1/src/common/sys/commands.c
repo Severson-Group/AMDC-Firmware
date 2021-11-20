@@ -376,7 +376,7 @@ static void commands_callback_exec(void *arg)
         for (int i = 0; i < p->argc; i++) {
             cmd_resp_printf("%s", p->argv[i]);
 
-            if (i+1 < p->argc) {
+            if (i + 1 < p->argc) {
                 cmd_resp_print(" ");
             }
         }
@@ -553,7 +553,7 @@ void help_state_machine_callback(void *arg)
         break;
 
     case REMOVE_TASK:
-    	cmd_resp_printf("SUCCESS\r\n\n");
+        cmd_resp_printf("SUCCESS\r\n\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 
