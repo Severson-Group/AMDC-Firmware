@@ -7,6 +7,7 @@
 #include "sys/defines.h"
 #include "sys/injection.h"
 #include "sys/scheduler.h"
+#include "sys/commands.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -372,7 +373,7 @@ void state_machine_list_callback(void *arg)
         break;
 
     case REMOVE_TASK:
-        debug_printf("\r\n");
+    	cmd_resp_printf("SUCCESS\r\n\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 

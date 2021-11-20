@@ -553,6 +553,7 @@ void help_state_machine_callback(void *arg)
         break;
 
     case REMOVE_TASK:
+    	cmd_resp_printf("SUCCESS\r\n\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 

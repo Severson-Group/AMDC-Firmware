@@ -63,7 +63,7 @@ int cmd_inj(int argc, char **argv)
     // Handle 'inj list' command
     if (argc == 2 && STREQ("list", argv[1])) {
         injection_list();
-        return CMD_SUCCESS;
+        return CMD_SUCCESS_QUIET;
     }
 
     // Handle 'inj const ...' command

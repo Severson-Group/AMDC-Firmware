@@ -7,6 +7,13 @@
 #define COMMANDS_INTERVAL_USEC   (USEC_IN_SEC / COMMANDS_UPDATES_PER_SEC)
 
 // Supported command handler return codes
+//
+// NOTE: all commands must return a valid response to the host.
+// Only use the resp: "SUCCESS_QUIET" if you will output a valid
+// response later in your handler.
+//
+// For example, "help" and "log dump" work this way.
+//
 #define CMD_SUCCESS           (0)
 #define CMD_FAILURE           (1)
 #define CMD_SUCCESS_QUIET     (2)
