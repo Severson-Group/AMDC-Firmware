@@ -399,10 +399,10 @@ void state_machine_dump_binary_callback(void *arg)
     case DUMP_BINARY_MAGIC_HEADER:
     {
         // Write to data stream output (UART)
-        serial_write((char *) &MAGIC_HEADER, 4);
-        serial_write((char *) &MAGIC_HEADER, 4);
-        serial_write((char *) &MAGIC_HEADER, 4);
-        serial_write((char *) &MAGIC_HEADER, 4);
+        cmd_resp_write((char *) &MAGIC_HEADER, 4);
+        cmd_resp_write((char *) &MAGIC_HEADER, 4);
+        cmd_resp_write((char *) &MAGIC_HEADER, 4);
+        cmd_resp_write((char *) &MAGIC_HEADER, 4);
 
         // Run data through CRC
         ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
@@ -419,7 +419,7 @@ void state_machine_dump_binary_callback(void *arg)
         uint32_t out = (uint32_t) v->num_samples;
 
         // Write to output data stream (UART)
-        serial_write((char *) &out, 4);
+        cmd_resp_write((char *) &out, 4);
 
         // Run data through CRC
         ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
@@ -433,7 +433,7 @@ void state_machine_dump_binary_callback(void *arg)
         uint32_t interval_usec = (uint32_t) v->log_interval_usec;
 
         // Write to output data stream (UART)
-        serial_write((char *) &interval_usec, 4);
+        cmd_resp_write((char *) &interval_usec, 4);
 
         // Run data through CRC
         ctx->crc = crc32_calc_part((uint8_t *) &interval_usec, 4, ctx->crc);
@@ -447,7 +447,7 @@ void state_machine_dump_binary_callback(void *arg)
         uint32_t var_type = (uint32_t) v->type;
 
         // Write to output data stream (UART)
-        serial_write((char *) &var_type, 4);
+        cmd_resp_write((char *) &var_type, 4);
 
         // Run data through CRC
         ctx->crc = crc32_calc_part((uint8_t *) &var_type, 4, ctx->crc);
@@ -466,13 +466,13 @@ void state_machine_dump_binary_callback(void *arg)
         // Dump the sampled value
         if (v->type == LOG_INT) {
             int32_t out = (int32_t) e->value;
-            serial_write((char *) &out, 4);
+            cmd_resp_write((char *) &out, 4);
             ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
         } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
             // During the sampling, the distinction between float and double variable types
             // was accounted for. The data is stored in the log array in the float format.
             float out = *((float *) &(e->value));
-            serial_write((char *) &out, 4);
+            cmd_resp_write((char *) &out, 4);
             ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
         }
 
@@ -488,10 +488,10 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_MAGIC_FOOTER:
     {
-        serial_write((char *) &MAGIC_FOOTER, 4);
-        serial_write((char *) &MAGIC_FOOTER, 4);
-        serial_write((char *) &MAGIC_FOOTER, 4);
-        serial_write((char *) &MAGIC_FOOTER, 4);
+        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
 
         // Calculate CRC across footer bytes
         ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
@@ -505,7 +505,7 @@ void state_machine_dump_binary_callback(void *arg)
 
         // The CRC includes the footer, so the client must
         // read an extra 4 bytes (the CRC bytes!)
-        serial_write((char *) &(ctx->crc), 4);
+        cmd_resp_write((char *) &(ctx->crc), 4);
 
         ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
         break;
@@ -513,7 +513,7 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_PRINT_FOOTER_SPACE:
     {
-        debug_print("\r\n\r\n");
+        cmd_resp_print("\r\n\r\n");
         ctx->state = DUMP_BINARY_REMOVE_TASK;
         break;
     }
@@ -695,6 +695,7 @@ void state_machine_info_callback(void *arg)
 
     case INFO_REMOVE_TASK:
     default:
+        cmd_resp_printf("SUCCESS\r\n\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
     }

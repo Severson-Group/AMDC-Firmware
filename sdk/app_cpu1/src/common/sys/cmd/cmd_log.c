@@ -215,7 +215,7 @@ int cmd_log(int argc, char **argv)
             return CMD_FAILURE;
         }
 
-        return CMD_SUCCESS;
+        return CMD_SUCCESS_QUIET;
     }
 
     return CMD_INVALID_ARGUMENTS;
