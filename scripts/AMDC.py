@@ -25,12 +25,9 @@ class AMDC:
         self.comm_cmd_resp_print_prepend = ""
 
         if comm_method in ['uart', 'serial']:
-            self.comm_cmd_delay_cmd = 0.2 # [sec]
-            self.comm_cmd_delay_cmd_char = 0.001 # [sec]
-
-        if comm_method in ['eth', 'ethernet']:
             self.comm_cmd_delay_cmd = 0.001 # [sec]
-            self.comm_cmd_delay_cmd_char = 0 # [sec]
+        elif comm_method in ['eth', 'ethernet']:
+            self.comm_cmd_delay_cmd = 0.001 # [sec]
 
 
     def uart_init(self, port, baudrate = '115200'):
@@ -62,7 +59,7 @@ class AMDC:
         if self.comm_method is not 'eth':
             raise Exception('Comm not set up for eth')
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)        
         s.connect((self.comm_eth_amdc_ip_addr, self.comm_eth_amdc_ip_port))
         
         s.setblocking(1)
@@ -120,16 +117,12 @@ class AMDC:
     def cmd(self, cmd_str):
         to_send_str = f"{cmd_str}\n"
         to_send_bytes = str.encode(to_send_str)
-        for b in to_send_bytes:
-            if self.comm_method is 'uart':
+
+        if self.comm_method is 'uart':
+            for b in to_send_bytes:
                 self.comm_uart_ser.write(bytes([b]))
-            
-            if self.comm_method is 'eth':
-                self.comm_eth_default_ascii_cmd_socket.send(bytes([b]))
-            
-            # Pause between letters so we don't send data too fast
-            if self.comm_cmd_delay_cmd_char > 0:
-                time.sleep(self.comm_cmd_delay_cmd_char)
+        elif self.comm_method is 'eth':
+            self.comm_eth_default_ascii_cmd_socket.send(to_send_bytes)
         
         # Wait for cmd to execute on AMDC
         if self.comm_cmd_delay_cmd > 0:
@@ -141,53 +134,83 @@ class AMDC:
 
         # Optionally listen for response
         if self.comm_cmd_resp_capture:
+
+            # UART - capture response
             if self.comm_method is 'uart':
                 output = []
 
-                # Number of empty lines in a row
-                count_empty = 0
+                looking_for_cmd_resp_code = True
+                timeout_sec = 1.0
 
-                # Keep reading lines until we get this many consecutive blank lines
-                allowed_empty = 10 
-                                    
-                while count_empty < allowed_empty:
+                start_time = time.time()     
+                while looking_for_cmd_resp_code:
                     # Read in line and decode
                     line = self.comm_uart_ser.readline().decode()
 
                     if len(line) > 0 and line != '\n':
                         line = line.strip('\n\r')
                         output.append(line)
-                        count_empty = 0
-                    else:
-                        count_empty += 1
-        
+
+                        # Only read until valid response!
+                        valid_cmd_resp = ['SUCCESS', 'FAILURE', 'INVALID ARGUMENTS', 'INPUT TOO LONG', 'UNKNOWN CMD', 'UNKNOWN ERRROR']
+                        for valid_resp_str in valid_cmd_resp:
+                            if line.find(valid_resp_str) != -1:
+                                # Found a valid response!
+                                looking_for_cmd_resp_code = False
+
+                    # Break loop if timeout
+                    if time.time() >= start_time + timeout_sec:
+                        raise Exception("ERROR: timeout, could not find command response!")
+                    
+            # Ethernet - capture response
             if self.comm_method is 'eth':
                 retdata = bytearray()
 
                 self.comm_eth_default_ascii_cmd_socket.setblocking(0)
                 
-                timeout_sec = 0.010
-                num_consecutive_no_data = 50
-                i = 0
-                while (i < num_consecutive_no_data):
-                    inputs = [self.comm_eth_default_ascii_cmd_socket]
-                    outputs = []
+                timeout_sec = 1.0
+                looking_for_cmd_resp_code = True
 
-                    readable, writable, exceptional = select.select(inputs, outputs, inputs, timeout_sec)
-                    if len(readable) > 0:
+                start_time = time.time()
+                while (looking_for_cmd_resp_code):
+                    try:
                         incoming_data = self.comm_eth_default_ascii_cmd_socket.recv(4096)
                         retdata.extend(incoming_data)
-                        i = 0
-                    else:
-                        # No new data after the timeout
-                        i += 1
+                    except BlockingIOError:
+                        # Could not read enough data
+                        pass
+
+                    if len(retdata) > 0:
+                        # Convert byte array into chars
+                        retdata_chars = retdata.decode("utf-8").split('\r\n')
+                        output = []
+                        for d in retdata_chars:
+                            d = d.strip('\n\r')
+                            if len(d) > 0:
+                                output.append(d)
+
+                        # Only read until valid response!
+                        valid_cmd_resp = ['SUCCESS', 'FAILURE', 'INVALID ARGUMENTS', 'INPUT TOO LONG', 'UNKNOWN CMD', 'UNKNOWN ERRROR']
+                        for valid_resp_str in valid_cmd_resp:
+                            for line in output:
+                                if line.find(valid_resp_str) != -1:
+                                    # Found a valid response!
+                                    looking_for_cmd_resp_code = False
+                                    break
+                            
+                            if not looking_for_cmd_resp_code:
+                                break
+
+                    # Break loop if timeout
+                    if time.time() >= start_time + timeout_sec:
+                        raise Exception("ERROR: timeout, could not find command response!")
 
                 self.comm_eth_default_ascii_cmd_socket.setblocking(1)
 
                 # Convert byte array into chars
-                retdata = retdata.decode("utf-8").split('\r\n')
+                retdata_chars = retdata.decode("utf-8").split('\r\n')
                 output = []
-                for d in retdata:
+                for d in retdata_chars:
                     d = d.strip('\n\r')
                     if len(d) > 0:
                         output.append(d)
