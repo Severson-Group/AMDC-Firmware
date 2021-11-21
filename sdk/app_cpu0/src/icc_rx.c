@@ -14,6 +14,10 @@ void icc_rx_process(void)
         // Check if there are any bytes in the FIFO
         if (ICC_CPU1to0_CH0__GET_ProduceCount - ICC_CPU1to0_CH0__GET_ConsumeCount == 0) {
             // Shared buffer is empty
+
+            // Flush TCP packets
+            socket_manager_flush_ascii_cmd_sockets();
+
             return;
         }
 

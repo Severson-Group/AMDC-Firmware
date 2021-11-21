@@ -246,6 +246,16 @@ void socket_manager_process_rx_data(void)
     }
 }
 
+void socket_manager_flush_ascii_cmd_sockets(void)
+{
+    for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+        if (socket_list[i].type == SOCKET_TYPE_ASCII_CMD) {
+            struct tcp_pcb *pcb = socket_list[i].raw_socket;
+            tcp_output(pcb);
+        }
+    }
+}
+
 void socket_manager_broadcast_ascii_cmd_byte(char c)
 {
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
@@ -256,6 +266,7 @@ void socket_manager_broadcast_ascii_cmd_byte(char c)
             uint16_t bytes_to_send = 1;
             if (bytes_to_send > tcp_space_avail) {
                 // Silently truncate data that will get sent!
+                xil_printf("X");
                 bytes_to_send = tcp_space_avail;
             }
 

@@ -26,5 +26,6 @@ void socket_manager_tx_data(void *raw_socket, uint8_t *data, uint16_t len);
 void socket_manager_process_rx_data(void);
 
 void socket_manager_broadcast_ascii_cmd_byte(char c);
+void socket_manager_flush_ascii_cmd_sockets(void);
 
 #endif // SOCKET_MANAGER_H
