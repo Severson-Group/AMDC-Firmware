@@ -18,7 +18,7 @@ static command_help_t cmd_help[] = {
     { "unreg <log_var_idx>", "Unregister variable slot" },
     { "start", "Start logging" },
     { "stop", "Stop logging" },
-    { "dump <bin|text> <log_var_idx>", "Dump log data to console" },
+    { "dump <uart|eth> <bin|text> <log_var_idx>", "Dump log data to host" },
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
     { "empty_all", "Empty all slots" },
     { "info", "Print status of logging engine" },
@@ -138,36 +138,47 @@ int cmd_log(int argc, char **argv)
     }
 
     // Handle 'dump' sub-command
-    if (strcmp("dump", argv[1]) == 0) {
-        // Check correct number of arguments
-        if (argc != 4)
-            return CMD_INVALID_ARGUMENTS;
-
+    if (argc == 5 && strcmp("dump", argv[1]) == 0) {
         // Ensure logging was stopped before this
         if (log_is_logging())
             return CMD_FAILURE;
 
+        // Parse dump method
+        int dump_method;
+        if (STREQ("uart", argv[2])) {
+            dump_method = 1;
+        } else if (STREQ("eth", argv[2])) {
+            dump_method = 2;
+        } else {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        // Parse dump format
+        int dump_format;
+        if (STREQ("text", argv[3])) {
+            dump_format = 1;
+        } else if (STREQ("bin", argv[3])) {
+            dump_format = 2;
+        } else {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
         // Parse log_var_idx
-        int log_var_idx = atoi(argv[3]);
+        int log_var_idx = atoi(argv[4]);
         if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
 
-        if (strcmp("text", argv[2]) == 0) {
-            // Dump using text (human-readable)
-            int err = log_var_dump_uart_ascii(log_var_idx);
-            if (err != SUCCESS) {
-                return CMD_FAILURE;
-            }
-        } else if (strcmp("bin", argv[2]) == 0) {
-            // Dump using binary
-            int err = log_var_dump_uart_binary(log_var_idx);
-            if (err != SUCCESS) {
-                return CMD_FAILURE;
-            }
+        int err;
+        if (dump_format == 1) {
+            err = log_var_dump_ascii(log_var_idx, dump_method);
         } else {
-            return CMD_INVALID_ARGUMENTS;
+            err = log_var_dump_binary(log_var_idx, dump_method);
+        }
+
+        if (err != SUCCESS) {
+            return CMD_FAILURE;
         }
 
         return CMD_SUCCESS_QUIET;

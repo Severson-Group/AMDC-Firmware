@@ -316,7 +316,11 @@ class AMDC_Logger():
         timeout_sec = 1.1 * (self.max_sample_depth / 1800)
 
         # Start dumping to host
-        self.amdc.cmd(f"log dump bin {log_var_idx}") 
+        if self.amdc.comm_method is 'uart':
+            self.amdc.cmd(f"log dump uart bin {log_var_idx}") 
+        elif self.amdc.comm_method is 'eth':
+            self.amdc.cmd(f"log dump eth bin {log_var_idx}") 
+            
         if print_output:
             print("Dumping:", var)
         
@@ -335,6 +339,8 @@ class AMDC_Logger():
         dump_data_idx = 0
         dump_data_max = 0
 
+        latest_data_time = time.time()
+
         found_footer = False
         while not found_footer:
             # Read in all serial data from OS buffer
@@ -342,6 +348,8 @@ class AMDC_Logger():
             dump_data += out
 
             N = len(out)
+            if N > 0:
+                latest_data_time = time.time()
 
             dump_data_max += N
             dump_data_idx = 0
@@ -362,11 +370,8 @@ class AMDC_Logger():
                 dump_data_idx += 1
 
             if not found_footer:
-                # Sleep for 100 ms to let OS do other work if needed
-                time.sleep(0.1)
-
-                # Break loop if timeout
-                if time.time() >= start_time + timeout_sec:
+                # Break loop if timeout or have not seen new data for 1 second
+                if (time.time() >= start_time + timeout_sec) or (time.time() - latest_data_time >= 1):
                     raise Exception("ERROR: timeout, could not find footer!")
 
         end_time = time.time()
@@ -376,7 +381,7 @@ class AMDC_Logger():
         # This might be unnessecary; at minimum, we might need to do this
         # one time to get the CRC bytes from the AMDC since they come after
         # the footer bytes.
-        for i in range(0,10):
+        for i in range(0,1000):
             out = bytes(self.amdc.read(4096))
             dump_data += out
 
@@ -481,7 +486,10 @@ class AMDC_Logger():
         old_state = self.amdc.comm_cmd_resp_capture
         self.amdc.comm_cmd_resp_capture = False
         
-        self.amdc.cmd(f"log dump text {log_var_idx}", timeout_sec = 120)
+        if self.amdc.comm_method is 'uart':
+            self.amdc.cmd(f"log dump uart text {log_var_idx}", timeout_sec = 120)
+        elif self.amdc.comm_method is 'eth':
+            self.amdc.cmd(f"log dump eth text {log_var_idx}", timeout_sec = 120)
         
         samples = []
         

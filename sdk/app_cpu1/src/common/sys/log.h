@@ -65,8 +65,8 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
 int log_var_empty(int idx);
 int log_var_empty_all(void);
 
-int log_var_dump_uart_ascii(int idx);
-int log_var_dump_uart_binary(int idx);
+int log_var_dump_ascii(int idx, int dump_method);
+int log_var_dump_binary(int idx, int dump_method);
 
 int log_var_unregister(int idx);
 int log_var_is_registered(int idx, bool *is_registered);

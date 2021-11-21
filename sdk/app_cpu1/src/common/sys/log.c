@@ -328,7 +328,7 @@ void state_machine_dump_ascii_callback(void *arg)
 
 static sm_ctx_dump_ascii_t ctx_dump_ascii;
 
-int log_var_dump_uart_ascii(int log_var_idx)
+int log_var_dump_ascii(int log_var_idx, int dump_method)
 {
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
@@ -375,12 +375,17 @@ typedef struct sm_ctx_dump_binary_t {
     sm_states_dump_binary_e state;
     int var_idx;
     int sample_idx;
+    int dump_method;
     uint32_t crc;
     task_control_block_t tcb;
 } sm_ctx_dump_binary_t;
 
 // State machine at 2kHz results in 2kSPS dumping,
 // which is nearly full UART bandwidth at 112500 baud
+//
+// NOTE: the state machine runs at full 10kHz when
+// dumping over Ethernet and binary format!
+//
 #define SM_DUMP_BIANRY_UPDATES_PER_SEC (2000)
 #define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
 
@@ -392,7 +397,6 @@ void state_machine_dump_binary_callback(void *arg)
     sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
 
     log_var_t *v = &vars[ctx->var_idx];
-    buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
     switch (ctx->state) {
 
@@ -463,24 +467,44 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_SAMPLE_VALUE:
     {
-        // Dump the sampled value
-        if (v->type == LOG_INT) {
-            int32_t out = (int32_t) e->value;
-            cmd_resp_write((char *) &out, 4);
-            ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
-        } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
-            // During the sampling, the distinction between float and double variable types
-            // was accounted for. The data is stored in the log array in the float format.
-            float out = *((float *) &(e->value));
-            cmd_resp_write((char *) &out, 4);
-            ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+        int max_num_samples = 1;
+        if (ctx->dump_method == 2) {
+            // Means Ethernet
+            max_num_samples = 4;
+
+            // To compute network load:
+            // Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
+            //
+            // 4 ==> 1.22 Mbps
+            //
+            // This works out to about 20k samples/sec dumping
         }
 
-        ctx->sample_idx++;
+        for (int i = 0; i < max_num_samples; i++) {
+            buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
-        // Stay in the current state until we have dumped enough samples
-        if (ctx->sample_idx >= v->num_samples) {
-            ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+            // Dump the sampled value
+            if (v->type == LOG_INT) {
+                int32_t out = (int32_t) e->value;
+                cmd_resp_write((char *) &out, 4);
+                ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+            } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+                // During the sampling, the distinction between float and double variable types
+                // was accounted for. The data is stored in the log array in the float format.
+                float out = *((float *) &(e->value));
+                cmd_resp_write((char *) &out, 4);
+                ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+            }
+
+            ctx->sample_idx++;
+
+            // Stay in the current state until we have dumped enough samples
+            if (ctx->sample_idx >= v->num_samples) {
+                ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+
+                // Break out of this local for loop
+                break;
+            }
         }
 
         break;
@@ -529,7 +553,7 @@ void state_machine_dump_binary_callback(void *arg)
 
 static sm_ctx_dump_binary_t ctx_dump_binary;
 
-int log_var_dump_uart_binary(int log_var_idx)
+int log_var_dump_binary(int log_var_idx, int dump_method)
 {
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
@@ -544,16 +568,20 @@ int log_var_dump_uart_binary(int log_var_idx)
     ctx_dump_binary.state = DUMP_BINARY_MAGIC_HEADER;
     ctx_dump_binary.var_idx = log_var_idx;
     ctx_dump_binary.sample_idx = 0;
+    ctx_dump_binary.dump_method = dump_method;
+
+    uint32_t INTERVAL_USEC = SM_DUMP_BINARY_INTERVAL_USEC;
+    if (dump_method == 2) {
+        // Means Ethernet ==> run state machine at 10 kHz
+        INTERVAL_USEC = (USEC_IN_SEC / 10e3);
+    }
 
     // CRC-32 must be seeded as follows:
     ctx_dump_binary.crc = CRC32_DEFAULT_INIT;
 
     // Initialize the state machine callback tcb
-    scheduler_tcb_init(&ctx_dump_binary.tcb,
-                       state_machine_dump_binary_callback,
-                       &ctx_dump_binary,
-                       "logdbin",
-                       SM_DUMP_BINARY_INTERVAL_USEC);
+    scheduler_tcb_init(
+        &ctx_dump_binary.tcb, state_machine_dump_binary_callback, &ctx_dump_binary, "logdbin", INTERVAL_USEC);
     scheduler_tcb_register(&ctx_dump_binary.tcb);
 
     return SUCCESS;

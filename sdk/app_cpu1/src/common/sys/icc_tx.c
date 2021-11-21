@@ -16,7 +16,7 @@ static uint32_t idx_writing = 0;
 static uint32_t idx_reading = 0;
 static uint32_t num_in_buffer = 0;
 
-static char _pop(void)
+static inline char _pop(void)
 {
     char ret = send_buffer[idx_reading];
     if (++idx_reading >= BUFFER_LENGTH) {
@@ -28,7 +28,7 @@ static char _pop(void)
     return ret;
 }
 
-static void _push(char c)
+static inline void _push(char c)
 {
     send_buffer[idx_writing] = c;
     if (++idx_writing >= BUFFER_LENGTH) {
