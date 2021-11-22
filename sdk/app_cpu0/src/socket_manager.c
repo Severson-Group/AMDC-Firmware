@@ -246,6 +246,12 @@ void socket_manager_process_rx_data(void)
     }
 }
 
+void socket_manager_flush_log_socket(int socket_id)
+{
+    struct tcp_pcb *pcb = socket_list[socket_id].raw_socket;
+    tcp_output(pcb);
+}
+
 void socket_manager_flush_ascii_cmd_sockets(void)
 {
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
@@ -254,6 +260,29 @@ void socket_manager_flush_ascii_cmd_sockets(void)
             tcp_output(pcb);
         }
     }
+}
+
+void socket_manager_log_socket_send(int socket_id, char c)
+{
+    struct tcp_pcb *pcb = socket_list[socket_id].raw_socket;
+    uint16_t tcp_space_avail = tcp_sndbuf(pcb);
+
+    uint16_t bytes_to_send = 1;
+    if (bytes_to_send > tcp_space_avail) {
+        // Silently truncate data that will get sent!
+        xil_printf("L%d", socket_id);
+        bytes_to_send = tcp_space_avail;
+    }
+
+    tcp_write(pcb, &c, bytes_to_send, TCP_WRITE_FLAG_COPY);
+}
+
+int socket_manager_tcp_sndbuf_space_available(int socket_id)
+{
+    struct tcp_pcb *pcb = socket_list[socket_id].raw_socket;
+    uint16_t tcp_space_avail = tcp_sndbuf(pcb);
+
+    return tcp_space_avail;
 }
 
 void socket_manager_broadcast_ascii_cmd_byte(char c)

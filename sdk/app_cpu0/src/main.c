@@ -88,6 +88,9 @@ int main()
         // Send data from CPU1 back over TCP packets
         icc_rx_process();
 
+        // Process log var stream packets from CPU1
+        // icc_rx_process_log_stream();
+
         if (TcpFastTmrFlag) {
             tcp_fasttmr();
             TcpFastTmrFlag = 0;

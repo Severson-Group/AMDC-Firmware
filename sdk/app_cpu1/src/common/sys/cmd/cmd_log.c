@@ -22,6 +22,7 @@ static command_help_t cmd_help[] = {
     { "empty <log_var_idx>", "Empty log for a previously logged variable (stays registered)" },
     { "empty_all", "Empty all slots" },
     { "info", "Print status of logging engine" },
+    { "stream <start|stop> <log_var_idx> <socket_id>", "Stream variable to TCP socket" },
 };
 
 void cmd_log_register(void)
@@ -227,6 +228,38 @@ int cmd_log(int argc, char **argv)
         }
 
         return CMD_SUCCESS_QUIET;
+    }
+
+    // Handle 'stream' sub-command
+    // log stream <start|stop> <log_var_idx> <socket_id>
+    if (argc == 5 && STREQ("stream", argv[1])) {
+        // Parse log_var_idx
+        int log_var_idx = atoi(argv[3]);
+        if (log_var_idx >= LOG_MAX_NUM_VARIABLES || log_var_idx < 0) {
+            // ERROR
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        // Parse socket_id
+        int socket_id = atoi(argv[4]);
+        if (socket_id < 0 || socket_id > 4) {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        int err = FAILURE;
+        if (STREQ("start", argv[2])) {
+            err = log_stream_start(log_var_idx, socket_id);
+        } else if (STREQ("stop", argv[2])) {
+            err = log_stream_stop(log_var_idx, socket_id);
+        } else {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        if (err == SUCCESS) {
+            return CMD_SUCCESS;
+        } else {
+            return CMD_FAILURE;
+        }
     }
 
     return CMD_INVALID_ARGUMENTS;

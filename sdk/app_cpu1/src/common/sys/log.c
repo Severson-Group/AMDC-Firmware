@@ -7,6 +7,7 @@
 #include "sys/crc32.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/icc_tx.h"
 #include "sys/log.h"
 #include "sys/scheduler.h"
 #include "sys/serial.h"
@@ -38,6 +39,11 @@ typedef struct log_var_t {
     int num_samples;
     buffer_entry_t buffer[LOG_SAMPLE_DEPTH_PER_VARIABLE];
     int buffer_idx;
+
+    // Streaming:
+    bool is_streaming;
+    int socket_id;
+    uint32_t last_streamed_usec;
 } log_var_t;
 
 static log_var_t vars[LOG_MAX_NUM_VARIABLES] = { 0 };
@@ -89,13 +95,11 @@ void log_init(void)
 #endif // LOG_DEBUG_ENABLE_PRELOAD_SLOT
 }
 
-void log_callback(void *arg)
+static void _do_log_to_buffer(uint32_t elapsed_usec)
 {
     if (!is_log_running) {
         return;
     }
-
-    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
 
     for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
         log_var_t *v = &vars[i];
@@ -134,6 +138,56 @@ void log_callback(void *arg)
             }
         }
     }
+}
+
+static void _do_log_to_stream(uint32_t elapsed_usec)
+{
+    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
+        log_var_t *v = &vars[i];
+
+        if (!v->is_registered) {
+            // Variable not active for logging, so skip
+            continue;
+        }
+
+        if (!v->is_streaming) {
+            // Variable not streaming
+            continue;
+        }
+
+        uint32_t usec_since_last_streamed = elapsed_usec - v->last_streamed_usec;
+
+        if (usec_since_last_streamed >= v->log_interval_usec) {
+            // Time to stream this variable!
+            v->last_streamed_usec = elapsed_usec;
+
+            // Build object to stream out
+            uint32_t stream_obj_ts = elapsed_usec;
+            uint32_t stream_obj_data = 0;
+
+            if (v->type == LOG_INT) {
+                stream_obj_data = *((uint32_t *) v->addr);
+            } else if (v->type == LOG_FLOAT) {
+                float *f = (float *) &(stream_obj_data);
+                *f = *((float *) v->addr);
+            } else if (v->type == LOG_DOUBLE) {
+                float *f = (float *) &(stream_obj_data);
+                double value = *((double *) v->addr);
+                *f = (float) value;
+            }
+
+            // Pass to streaming utility
+            icc_tx_log_stream(v->socket_id, stream_obj_ts, stream_obj_data);
+        }
+    }
+}
+
+void log_callback(void *arg)
+{
+    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
+
+    _do_log_to_buffer(elapsed_usec);
+    _do_log_to_stream(elapsed_usec);
 }
 
 void log_start(void)
@@ -470,14 +524,12 @@ void state_machine_dump_binary_callback(void *arg)
         int max_num_samples = 1;
         if (ctx->dump_method == 2) {
             // Means Ethernet
-            max_num_samples = 4;
+            max_num_samples = 6;
 
             // To compute network load:
             // Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
             //
-            // 4 ==> 1.22 Mbps
-            //
-            // This works out to about 20k samples/sec dumping
+            // 6 ==> 1.8 Mbps
         }
 
         for (int i = 0; i < max_num_samples; i++) {
@@ -745,6 +797,48 @@ int log_print_info(void)
     // Initialize the state machine callback tcb
     scheduler_tcb_init(&ctx_info.tcb, state_machine_info_callback, &ctx_info, "loginfo", SM_INFO_INTERVAL_USEC);
     scheduler_tcb_register(&ctx_info.tcb);
+
+    return SUCCESS;
+}
+
+int log_stream_start(int idx, int socket_id)
+{
+    bool is_registered = false;
+    if (log_var_is_registered(idx, &is_registered) != SUCCESS) {
+        return FAILURE;
+    }
+
+    if (!is_registered) {
+        return FAILURE;
+    }
+
+    if (vars[idx].is_streaming) {
+        return FAILURE;
+    }
+
+    vars[idx].is_streaming = true;
+    vars[idx].last_streamed_usec = 0;
+    vars[idx].socket_id = socket_id;
+
+    return SUCCESS;
+}
+
+int log_stream_stop(int idx, int socket_id)
+{
+    bool is_registered = false;
+    if (log_var_is_registered(idx, &is_registered) != SUCCESS) {
+        return FAILURE;
+    }
+
+    if (!is_registered) {
+        return FAILURE;
+    }
+
+    if (!vars[idx].is_streaming) {
+        return FAILURE;
+    }
+
+    vars[idx].is_streaming = false;
 
     return SUCCESS;
 }

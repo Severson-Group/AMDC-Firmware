@@ -101,3 +101,100 @@ void icc_tx_append_char_to_fifo(char c)
 {
     _push(c);
 }
+
+void icc_tx_log_stream(int socket_id, uint32_t ts, uint32_t data)
+{
+    // Create chunk of data to send to host
+    uint8_t bytes_to_send[8] = { 0 };
+    uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[0];
+    uint32_t *ptr_data = (uint32_t *) &bytes_to_send[4];
+    *ptr_ts = ts;
+    *ptr_data = data;
+
+    for (int i = 0; i < 8; i++) {
+        uint8_t d = bytes_to_send[i];
+
+        int buffer_full = 0;
+        switch (socket_id) {
+        case 1:
+            buffer_full = ICC_CPU1to0_CH1__IsBufferFull;
+            break;
+        case 2:
+            buffer_full = ICC_CPU1to0_CH2__IsBufferFull;
+            break;
+        case 3:
+            buffer_full = ICC_CPU1to0_CH3__IsBufferFull;
+            break;
+        case 4:
+            buffer_full = ICC_CPU1to0_CH4__IsBufferFull;
+            break;
+        default:
+            // Invalid socket
+            // Return from function and fail silently
+            return;
+        }
+
+        if (buffer_full) {
+            // Shared buffer is full
+
+            // This is a silent error and will cause dropped data!
+            // For testing, print Q to UART terminal...
+            xil_printf("Q");
+            return;
+        }
+
+        // Write one byte to the sharedBuffer BEFORE incrementing produceCount
+        uint8_t *sharedBuffer;
+        switch (socket_id) {
+        case 1:
+            sharedBuffer = ICC_CPU1to0_CH1__BufferBaseAddr;
+            sharedBuffer[ICC_CPU1to0_CH1__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
+            break;
+        case 2:
+            sharedBuffer = ICC_CPU1to0_CH2__BufferBaseAddr;
+            sharedBuffer[ICC_CPU1to0_CH2__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
+            break;
+        case 3:
+            sharedBuffer = ICC_CPU1to0_CH3__BufferBaseAddr;
+            sharedBuffer[ICC_CPU1to0_CH3__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
+            break;
+        case 4:
+            sharedBuffer = ICC_CPU1to0_CH4__BufferBaseAddr;
+            sharedBuffer[ICC_CPU1to0_CH4__GET_ProduceCount % ICC_BUFFER_SIZE] = d;
+            break;
+        default:
+            // Not a valid socket...
+            // Just silently ignore for now
+            break;
+        }
+
+        // Memory barrier required here to ensure update of the sharedBuffer is
+        // visible to the other core before the update of produceCount
+        //
+        // Nathan thinks we don't actually have to do this since we turned off
+        // caching on the OCM, so the write should flush immediately, but,
+        // I might be wrong and it could be stuck in some pipeline...
+        // Just to be safe, we'll insert a DMB instruction.
+        dmb();
+
+        // Increment produce count
+        switch (socket_id) {
+        case 1:
+            ICC_CPU1to0_CH1__INC_ProduceCount;
+            break;
+        case 2:
+            ICC_CPU1to0_CH2__INC_ProduceCount;
+            break;
+        case 3:
+            ICC_CPU1to0_CH3__INC_ProduceCount;
+            break;
+        case 4:
+            ICC_CPU1to0_CH4__INC_ProduceCount;
+            break;
+        default:
+            // Not a valid socket...
+            // Just silently ignore for now
+            break;
+        }
+    }
+}

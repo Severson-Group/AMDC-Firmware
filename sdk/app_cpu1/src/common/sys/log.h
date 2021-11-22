@@ -73,4 +73,7 @@ int log_var_is_registered(int idx, bool *is_registered);
 
 int log_print_info(void);
 
+int log_stream_start(int idx, int socket_id);
+int log_stream_stop(int idx, int socket_id);
+
 #endif // LOG_H

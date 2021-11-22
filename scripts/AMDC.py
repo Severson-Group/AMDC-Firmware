@@ -52,6 +52,18 @@ class AMDC:
         self.comm_is_inited = True
 
 
+    def eth_create_sockets(self):
+        # Default sockets:
+        s0 = self.eth_new_socket('ascii_cmd')
+
+        s1 = self.eth_new_socket('log_var')
+        s2 = self.eth_new_socket('log_var')
+        s3 = self.eth_new_socket('log_var')
+        s4 = self.eth_new_socket('log_var')
+
+        return (s0,s1,s2,s3,s4)
+
+
     def eth_new_socket(self, socket_type):
         if not self.comm_is_inited:
             raise Exception('Comm not initialized')
