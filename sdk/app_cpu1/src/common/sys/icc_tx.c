@@ -30,7 +30,7 @@ static inline char _pop(void)
 
 int task_icc_tx_get_buffer_space_available(void)
 {
-	return BUFFER_LENGTH - num_in_buffer;
+    return BUFFER_LENGTH - num_in_buffer;
 }
 
 static inline void _push(char c)
@@ -110,16 +110,16 @@ void icc_tx_append_char_to_fifo(char c)
 void icc_tx_log_stream(int socket_id, int var_slot, uint32_t ts, uint32_t data)
 {
     // Create packet of data to send to host
-	//
-	// Packet format: HEADER, VAR_SLOT, TS, DATA, FOOTER
-	// where each entry is 32 bits
-	//
-	// Total packet length: 5*4 = 20 bytes
-	//
-	// HEADER = 0x11111111
-	// FOOTER = 0x22222222
+    //
+    // Packet format: HEADER, VAR_SLOT, TS, DATA, FOOTER
+    // where each entry is 32 bits
+    //
+    // Total packet length: 5*4 = 20 bytes
+    //
+    // HEADER = 0x11111111
+    // FOOTER = 0x22222222
 
-	static const int packet_len = 20;
+    static const int packet_len = 20;
     uint8_t bytes_to_send[20] = { 0 };
 
     uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];

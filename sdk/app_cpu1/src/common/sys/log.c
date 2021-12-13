@@ -541,8 +541,8 @@ void state_machine_dump_binary_callback(void *arg)
             // Stop when the buffer gets full
             // Leave a few bytes of extra space free
             if (task_icc_tx_get_buffer_space_available() < 10) {
-            	// Break out of this local for loop
-            	break;
+                // Break out of this local for loop
+                break;
             }
 
             // Dump the sampled value
@@ -835,21 +835,21 @@ int log_stream(bool enable, int idx, int socket_id)
 
 void log_stream_synctime(void)
 {
-	for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
-		log_var_t *v = &vars[i];
+    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
+        log_var_t *v = &vars[i];
 
-		if (!v->is_registered) {
-			// Variable not active for logging, so skip
-			continue;
-		}
+        if (!v->is_registered) {
+            // Variable not active for logging, so skip
+            continue;
+        }
 
-		if (!v->is_streaming) {
-			// Variable not streaming
-			continue;
-		}
+        if (!v->is_streaming) {
+            // Variable not streaming
+            continue;
+        }
 
-		v->last_streamed_usec = 0;
-	}
+        v->last_streamed_usec = 0;
+    }
 }
 
 #endif // USER_CONFIG_ENABLE_LOGGING

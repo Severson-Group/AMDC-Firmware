@@ -35,7 +35,7 @@ void task_vsi_init(void)
 
 void task_vsi_callback(void *arg)
 {
-	LOG_task_vsi_runs += 1;
+    LOG_task_vsi_runs += 1;
 
     // Update theta
     theta += (Ts * omega);
