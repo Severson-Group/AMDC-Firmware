@@ -7,6 +7,7 @@ import os
 import datetime
 import struct
 import binascii
+import re
 
 #########################################################
 # Title:       AMDC Logging code
@@ -150,7 +151,20 @@ class AMDC_Logger():
                         log_types.append(tp)
                         
         return log_vars, log_types
-        
+    
+    def auto_find_vars_by_regex(self, root, regex):
+        names, types = self.auto_find_vars(root)
+
+        output_vars = []
+        output_types = []
+
+        for i,n in enumerate(names):
+            if re.search(regex, n) is not None:
+                output_vars.append(names[i])
+                output_types.append(types[i])
+
+        return output_vars, output_types
+    
     def start(self):
         self.amdc.cmd('log start')
         
