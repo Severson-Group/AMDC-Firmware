@@ -69,12 +69,20 @@ void socket_manager_init(void)
 //
 int socket_manager_put(void *raw_socket)
 {
+    struct tcp_pcb *pcb = raw_socket;
+
     int err = XST_FAILURE; // default to overflow error
 
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         if ((socket_list[i].raw_socket == NULL) || (socket_list[i].raw_socket == raw_socket)) {
             socket_list[i].raw_socket = raw_socket;
             socket_list[i].type = SOCKET_TYPE_IDLE;
+
+            printf("Alloc new socket: %d\n", i);
+
+            // Send host this socket ID
+            uint8_t d = (uint8_t) i;
+            tcp_write(pcb, &d, 1, TCP_WRITE_FLAG_COPY);
 
             err = XST_SUCCESS;
             break;
@@ -101,6 +109,8 @@ int socket_manager_remove(void *raw_socket)
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         if (socket_list[i].raw_socket == raw_socket) {
             reset_socket(&socket_list[i]);
+
+            printf("Remove socket: %d\n", i);
 
             err = XST_SUCCESS;
             break;

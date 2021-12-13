@@ -23,6 +23,7 @@ static command_help_t cmd_help[] = {
     { "empty_all", "Empty all slots" },
     { "info", "Print status of logging engine" },
     { "stream <start|stop> <log_var_idx> <socket_id>", "Stream variable to TCP socket" },
+	{ "stream synctime", "Resets stream timing to align output" },
 };
 
 void cmd_log_register(void)
@@ -247,19 +248,27 @@ int cmd_log(int argc, char **argv)
         }
 
         int err = FAILURE;
+        bool enable = false;
         if (STREQ("start", argv[2])) {
-            err = log_stream_start(log_var_idx, socket_id);
+        	enable = true;
         } else if (STREQ("stop", argv[2])) {
-            err = log_stream_stop(log_var_idx, socket_id);
+        	enable = false;
         } else {
             return CMD_INVALID_ARGUMENTS;
         }
+
+        err = log_stream(enable, log_var_idx, socket_id);
 
         if (err == SUCCESS) {
             return CMD_SUCCESS;
         } else {
             return CMD_FAILURE;
         }
+    }
+
+    if (argc == 3 && STREQ("stream", argv[1]) && STREQ("synctime", argv[2])) {
+    	log_stream_synctime();
+    	return CMD_SUCCESS;
     }
 
     return CMD_INVALID_ARGUMENTS;

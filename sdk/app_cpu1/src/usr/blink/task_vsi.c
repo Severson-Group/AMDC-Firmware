@@ -10,6 +10,7 @@
 static task_control_block_t tcb;
 
 // Example logging variables for testing
+int LOG_task_vsi_runs = 0;
 double LOG_vsi_a = 0;
 float LOG_vsi_b = 0;
 int LOG_vsi_c = 0;
@@ -34,6 +35,8 @@ void task_vsi_init(void)
 
 void task_vsi_callback(void *arg)
 {
+	LOG_task_vsi_runs += 1;
+
     // Update theta
     theta += (Ts * omega);
     theta = fmod(theta, 2.0 * M_PI); // Wrap to 2*pi

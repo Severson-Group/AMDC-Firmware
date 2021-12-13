@@ -10,7 +10,7 @@
 // Scheduler TCB which holds task "context"
 static task_control_block_t tcb;
 
-#define BUFFER_LENGTH (100 * 1024)
+#define BUFFER_LENGTH (10 * 1024)
 static uint8_t send_buffer[BUFFER_LENGTH] = { 0 };
 static uint32_t idx_writing = 0;
 static uint32_t idx_reading = 0;
@@ -26,6 +26,11 @@ static inline char _pop(void)
     num_in_buffer -= 1;
 
     return ret;
+}
+
+int task_icc_tx_get_buffer_space_available(void)
+{
+	return BUFFER_LENGTH - num_in_buffer;
 }
 
 static inline void _push(char c)
@@ -102,16 +107,34 @@ void icc_tx_append_char_to_fifo(char c)
     _push(c);
 }
 
-void icc_tx_log_stream(int socket_id, uint32_t ts, uint32_t data)
+void icc_tx_log_stream(int socket_id, int var_slot, uint32_t ts, uint32_t data)
 {
-    // Create chunk of data to send to host
-    uint8_t bytes_to_send[8] = { 0 };
-    uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[0];
-    uint32_t *ptr_data = (uint32_t *) &bytes_to_send[4];
+    // Create packet of data to send to host
+	//
+	// Packet format: HEADER, VAR_SLOT, TS, DATA, FOOTER
+	// where each entry is 32 bits
+	//
+	// Total packet length: 5*4 = 20 bytes
+	//
+	// HEADER = 0x11111111
+	// FOOTER = 0x22222222
+
+	static const int packet_len = 20;
+    uint8_t bytes_to_send[20] = { 0 };
+
+    uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];
+    uint32_t *ptr_var_slot = (uint32_t *) &bytes_to_send[4];
+    uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[8];
+    uint32_t *ptr_data = (uint32_t *) &bytes_to_send[12];
+    uint32_t *ptr_footer = (uint32_t *) &bytes_to_send[16];
+
+    *ptr_header = 0x11111111;
+    *ptr_var_slot = var_slot;
     *ptr_ts = ts;
     *ptr_data = data;
+    *ptr_footer = 0x22222222;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < packet_len; i++) {
         uint8_t d = bytes_to_send[i];
 
         int buffer_full = 0;

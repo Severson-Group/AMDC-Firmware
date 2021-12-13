@@ -13,7 +13,7 @@
 #include "xstatus.h"
 #include <stdio.h>
 
-/* defined by each RAW mode application */
+// Defined by each RAW mode application
 int start_application();
 int transfer_data();
 void tcp_fasttmr(void);
@@ -89,7 +89,7 @@ int main()
         icc_rx_process();
 
         // Process log var stream packets from CPU1
-        // icc_rx_process_log_stream();
+        icc_rx_process_log_stream();
 
         if (TcpFastTmrFlag) {
             tcp_fasttmr();

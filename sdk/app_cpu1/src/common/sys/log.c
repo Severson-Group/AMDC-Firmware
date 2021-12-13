@@ -177,7 +177,7 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
             }
 
             // Pass to streaming utility
-            icc_tx_log_stream(v->socket_id, stream_obj_ts, stream_obj_data);
+            icc_tx_log_stream(v->socket_id, i, stream_obj_ts, stream_obj_data);
         }
     }
 }
@@ -524,16 +524,26 @@ void state_machine_dump_binary_callback(void *arg)
         int max_num_samples = 1;
         if (ctx->dump_method == 2) {
             // Means Ethernet
-            max_num_samples = 6;
+            max_num_samples = 100;
 
             // To compute network load:
             // Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
             //
-            // 6 ==> 1.8 Mbps
+            // 100 ==> 30.5 Mbps
+            //
+            // This is the upper limit; might stop early
+            // due to buffer getting full!
         }
 
         for (int i = 0; i < max_num_samples; i++) {
             buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+
+            // Stop when the buffer gets full
+            // Leave a few bytes of extra space free
+            if (task_icc_tx_get_buffer_space_available() < 10) {
+            	// Break out of this local for loop
+            	break;
+            }
 
             // Dump the sampled value
             if (v->type == LOG_INT) {
@@ -801,7 +811,7 @@ int log_print_info(void)
     return SUCCESS;
 }
 
-int log_stream_start(int idx, int socket_id)
+int log_stream(bool enable, int idx, int socket_id)
 {
     bool is_registered = false;
     if (log_var_is_registered(idx, &is_registered) != SUCCESS) {
@@ -812,35 +822,34 @@ int log_stream_start(int idx, int socket_id)
         return FAILURE;
     }
 
-    if (vars[idx].is_streaming) {
+    if ((enable && vars[idx].is_streaming) || (!enable && !vars[idx].is_streaming)) {
         return FAILURE;
     }
 
-    vars[idx].is_streaming = true;
+    vars[idx].is_streaming = enable;
     vars[idx].last_streamed_usec = 0;
     vars[idx].socket_id = socket_id;
 
     return SUCCESS;
 }
 
-int log_stream_stop(int idx, int socket_id)
+void log_stream_synctime(void)
 {
-    bool is_registered = false;
-    if (log_var_is_registered(idx, &is_registered) != SUCCESS) {
-        return FAILURE;
-    }
+	for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
+		log_var_t *v = &vars[i];
 
-    if (!is_registered) {
-        return FAILURE;
-    }
+		if (!v->is_registered) {
+			// Variable not active for logging, so skip
+			continue;
+		}
 
-    if (!vars[idx].is_streaming) {
-        return FAILURE;
-    }
+		if (!v->is_streaming) {
+			// Variable not streaming
+			continue;
+		}
 
-    vars[idx].is_streaming = false;
-
-    return SUCCESS;
+		v->last_streamed_usec = 0;
+	}
 }
 
 #endif // USER_CONFIG_ENABLE_LOGGING

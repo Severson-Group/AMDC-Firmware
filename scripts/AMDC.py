@@ -52,18 +52,6 @@ class AMDC:
         self.comm_is_inited = True
 
 
-    def eth_create_sockets(self):
-        # Default sockets:
-        s0 = self.eth_new_socket('ascii_cmd')
-
-        s1 = self.eth_new_socket('log_var')
-        s2 = self.eth_new_socket('log_var')
-        s3 = self.eth_new_socket('log_var')
-        s4 = self.eth_new_socket('log_var')
-
-        return (s0,s1,s2,s3,s4)
-
-
     def eth_new_socket(self, socket_type):
         if not self.comm_is_inited:
             raise Exception('Comm not initialized')
@@ -76,6 +64,12 @@ class AMDC:
         
         s.setblocking(1)
         
+        # Upon connection, the AMDC tells the host the socket ID
+        # by sending back 1 byte with the ID
+        #
+        # Endianness does not matter; only one byte!
+        sock_id = int.from_bytes(s.recv(1), "little")
+        
         # Tell AMDC what type of socket this is
         if socket_type in ['ascii_cmd']:
             s.send(bytearray([12, 34]))
@@ -85,7 +79,8 @@ class AMDC:
             raise InvalidSocketTypeExeption('Valid types:', 'ascii_cmd', 'log_var')
         
         self.comm_eth_sockets.append(s)
-        return s
+        
+        return (s,sock_id)
 
 
     def eth_set_default_ascii_cmd_socket(self, s):
@@ -125,7 +120,21 @@ class AMDC:
     def __exit__(self, type, value, traceback):
         self.disconnect()
 
+    @staticmethod
+    def try_read_sock(sock, num_bytes):
+        incoming_data = bytes()
+        
+        try:
+            sock.setblocking(0) 
+            incoming_data = sock.recv(num_bytes)
+            sock.setblocking(1)
+        except BlockingIOError:
+            # Nothing was available, this is ok
+            pass
 
+        return incoming_data
+        
+        
     def read(self, num_bytes):
         incoming_data = bytes()
         
