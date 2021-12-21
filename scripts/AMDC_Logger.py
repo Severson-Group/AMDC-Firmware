@@ -159,14 +159,14 @@ class AMDC_Logger():
         
     def log(self, duration = 0.25):
         
-        old_delay = self.amdc.cmdDelay #store old time delay
-        self.amdc.cmdDelay = 0.01 #temporarily set delay between commands to shorter
+        old_delay = self.amdc.comm_cmd_delay_cmd #store old time delay
+        self.amdc.comm_cmd_delay_cmd = 0.01 #temporarily set delay between commands to shorter
         
         self.start()
         time.sleep(duration)
         self.stop()
         
-        self.amdc.cmdDelay = old_delay #reset cmd delay to previous value
+        self.amdc.comm_cmd_delay_cmd = old_delay #reset cmd delay to previous value
         
         
     def dump(self, log_vars = None, file = None, comment = '', timestamp = True, timestamp_fmt = '%Y-%m-%d_H%H-M%M-S%S', how = 'binary', max_tries = 4, print_output = True):
@@ -305,10 +305,10 @@ class AMDC_Logger():
         log_var_idx = LV.index
         
         # Don't automatically capture binary output data! 
-        old_state_captureOutput = self.amdc.captureOutput
-        old_state_cmdDelay = self.amdc.cmdDelay
-        self.amdc.captureOutput = False
-        self.amdc.cmdDelay = 0.010
+        old_state_captureOutput = self.amdc.comm_cmd_resp_capture
+        old_state_cmdDelay = self.amdc.comm_cmd_delay_cmd
+        self.amdc.comm_cmd_resp_capture = False
+        self.amdc.comm_cmd_delay_cmd = 0.010
 
         start_time = time.time()
 
@@ -316,13 +316,17 @@ class AMDC_Logger():
         timeout_sec = 1.1 * (self.max_sample_depth / 1800)
 
         # Start dumping to host
-        self.amdc.cmd(f"log dump bin {log_var_idx}") 
+        if self.amdc.comm_method is 'uart':
+            self.amdc.cmd(f"log dump uart bin {log_var_idx}") 
+        elif self.amdc.comm_method is 'eth':
+            self.amdc.cmd(f"log dump eth bin {log_var_idx}") 
+            
         if print_output:
             print("Dumping:", var)
         
         # Reset the previous state
-        self.amdc.captureOutput = old_state_captureOutput
-        self.amdc.cmdDelay = old_state_cmdDelay
+        self.amdc.comm_cmd_resp_capture = old_state_captureOutput
+        self.amdc.comm_cmd_delay_cmd = old_state_cmdDelay
 
         # These are repeating 4 times in the binary stream!
         MAGIC_HEADER = 0x12345678
@@ -335,13 +339,17 @@ class AMDC_Logger():
         dump_data_idx = 0
         dump_data_max = 0
 
+        latest_data_time = time.time()
+
         found_footer = False
         while not found_footer:
             # Read in all serial data from OS buffer
-            out = bytes(self.amdc.ser.read_all())
+            out = bytes(self.amdc.read(4096))
             dump_data += out
 
             N = len(out)
+            if N > 0:
+                latest_data_time = time.time()
 
             dump_data_max += N
             dump_data_idx = 0
@@ -362,11 +370,8 @@ class AMDC_Logger():
                 dump_data_idx += 1
 
             if not found_footer:
-                # Sleep for 100 ms to let OS do other work if needed
-                time.sleep(0.1)
-
-                # Break loop if timeout
-                if time.time() >= start_time + timeout_sec:
+                # Break loop if timeout or have not seen new data for 1 second
+                if (time.time() >= start_time + timeout_sec) or (time.time() - latest_data_time >= 1):
                     raise Exception("ERROR: timeout, could not find footer!")
 
         end_time = time.time()
@@ -376,8 +381,8 @@ class AMDC_Logger():
         # This might be unnessecary; at minimum, we might need to do this
         # one time to get the CRC bytes from the AMDC since they come after
         # the footer bytes.
-        for i in range(0,10):
-            out = bytes(self.amdc.ser.read_all())
+        for i in range(0,1000):
+            out = bytes(self.amdc.read(4096))
             dump_data += out
 
         if debug:
@@ -478,16 +483,19 @@ class AMDC_Logger():
         
         #we want to set the print state to false so we don't
         #print all of our data to the screen
-        old_state = self.amdc.printOutput
-        self.amdc.printOutput = False
+        old_state = self.amdc.comm_cmd_resp_capture
+        self.amdc.comm_cmd_resp_capture = False
         
-        self.amdc.cmd(f"log dump text {log_var_idx}")
+        if self.amdc.comm_method is 'uart':
+            self.amdc.cmd(f"log dump uart text {log_var_idx}", timeout_sec = 120)
+        elif self.amdc.comm_method is 'eth':
+            self.amdc.cmd(f"log dump eth text {log_var_idx}", timeout_sec = 120)
         
         samples = []
         
         line = ""
         while True:
-            c = self.amdc.ser.read().decode()
+            c = self.amdc.read(1).decode()
             line += c
             
             if ("\n" in c):
@@ -502,7 +510,7 @@ class AMDC_Logger():
                 if ("-------END-------" in line):
                     # Flush the rest of the RX line
                     for j in range(10000):
-                        self.amdc.ser.read()
+                        self.amdc.read(1)
                     
                     # End the outer for loop
                     break
@@ -515,7 +523,8 @@ class AMDC_Logger():
         
         df.set_index('t', inplace = True)
         
-        self.amdc.printOutput = old_state #reset the print state
+        # Reset the print state
+        self.amdc.comm_cmd_resp_capture = old_state
 
         return df
     
@@ -586,17 +595,17 @@ class AMDC_Logger():
         
     def _get_amdc_state(self):
         
-        old_state = self.amdc.printOutput
-        self.amdc.printOutput = False
+        old_state = self.amdc.comm_cmd_resp_print
+        self.amdc.comm_cmd_resp_print = False
         
-        oldDelay = self.amdc.cmdDelay
-        self.amdc.cmdDelay = 0.5
+        oldDelay = self.amdc.comm_cmd_delay_cmd
+        self.amdc.comm_cmd_delay_cmd = 0.5
         
         out = self.amdc.cmd('log info')
-        self.amdc.printOutput = old_state
+        self.amdc.comm_cmd_resp_print = old_state
 
-        max_slots = int(out[4].split()[-1])
-        max_sample_depth = int(out[5].split()[-1])
+        max_slots = int(out[3].split()[-1])
+        max_sample_depth = int(out[4].split()[-1])
         
         names = []
         types = []
@@ -627,7 +636,7 @@ class AMDC_Logger():
             if 'Num samples' in line:
                 num_samples.append(int(line.split()[-1]))
                 
-        self.amdc.cmdDelay = oldDelay
+        self.amdc.comm_cmd_delay_cmd = oldDelay
                 
         return max_slots, max_sample_depth, names, types, indices, sample_rates, num_samples
         
