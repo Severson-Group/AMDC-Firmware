@@ -69,8 +69,8 @@ typedef struct inj_ctx_t {
 void injection_init(void);
 
 void injection_ctx_init(inj_ctx_t *inj_ctx, char *name);
-void injection_ctx_register(inj_ctx_t *inj_ctx);
-void injection_ctx_unregister(inj_ctx_t *inj_ctx);
+int injection_ctx_register(inj_ctx_t *inj_ctx);
+int injection_ctx_unregister(inj_ctx_t *inj_ctx);
 void injection_ctx_clear(inj_ctx_t *inj_ctx);
 
 void injection_inj(double *output, inj_ctx_t *ctx, double Ts);

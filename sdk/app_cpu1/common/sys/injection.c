@@ -21,15 +21,29 @@ static int next_ctx_id = 0;
 // Chirp function
 //
 // Generates the chirp signal value given:
-// - time: current time instant
-// - w1:   low freq (rad)
-// - w2:   high freq (rad)
-// - A:    amplitude
-// - M:    time period
-static inline double _chirp(double w1, double w2, double A, double M, double time)
+// - time:   current time instant
+// - w1:     low freq (rad/s)
+// - w2:     high freq (rad/s)
+// - A:      amplitude
+// - period: time period (sec)
+static inline double _chirp(double w1, double w2, double A, double period, double time)
 {
-    double out;
-    out = A * cos(w1 * time + (w2 - w1) * time * time / (2 * M));
+    double half_period = period / 2.0;
+    double freq_slope = (w2 - w1) / half_period;
+
+    double mytime;
+    double mygain;
+    if (time < half_period) {
+        mytime = time;
+        mygain = 1.0;
+    } else {
+        mytime = period - time;
+        mygain = -1.0;
+    }
+
+    double freq = freq_slope * mytime / 2.0 + w1;
+    double out = A * mygain * sin(freq * mytime);
+
     return out;
 }
 
@@ -107,11 +121,11 @@ void injection_ctx_init(inj_ctx_t *ctx, char *name)
     strncpy(ctx->name, name, INJ_MAX_NAME_LENGTH);
 }
 
-void injection_ctx_register(inj_ctx_t *ctx)
+int injection_ctx_register(inj_ctx_t *ctx)
 {
     // Don't let clients re-register their ctx
     if (ctx->registered) {
-        HANG;
+        return FAILURE;
     }
 
     // Mark as registered
@@ -121,7 +135,7 @@ void injection_ctx_register(inj_ctx_t *ctx)
     if (inj_ctxs == NULL) {
         inj_ctxs = ctx;
         inj_ctxs->next = NULL;
-        return;
+        return SUCCESS;
     }
 
     // Find end of list
@@ -132,13 +146,15 @@ void injection_ctx_register(inj_ctx_t *ctx)
     // Append new ctx to end of list
     curr->next = ctx;
     ctx->next = NULL;
+
+    return SUCCESS;
 }
 
-void injection_ctx_unregister(inj_ctx_t *ctx)
+int injection_ctx_unregister(inj_ctx_t *ctx)
 {
     // Don't let clients unregister their already unregistered ctx
     if (!ctx->registered) {
-        HANG;
+        return FAILURE;
     }
 
     // Mark as unregistered
@@ -146,13 +162,13 @@ void injection_ctx_unregister(inj_ctx_t *ctx)
 
     // Make sure list isn't empty
     if (inj_ctxs == NULL) {
-        HANG;
+        return FAILURE;
     }
 
     // Special case: trying to remove the head of the list
     if (inj_ctxs->id == ctx->id) {
         inj_ctxs = inj_ctxs->next;
-        return;
+        return SUCCESS;
     }
 
     // Now we know that 'ctx' to remove is NOT first node
@@ -169,6 +185,8 @@ void injection_ctx_unregister(inj_ctx_t *ctx)
     // 'curr' is now the one we want to remove!
 
     prev->next = curr->next;
+
+    return SUCCESS;
 }
 
 void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
