@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-
 #ifndef eddy_current_sensor_H
 #define eddy_current_sensor_H
 
@@ -24,5 +19,3 @@ double eddy_current_sensor_read_x_voltage(void);
 double eddy_current_sensor_read_y_voltage(void);
 
 #endif // EDDY_CURRENT_SENSOR_H
-
-#endif // USER_CONFIG_HARDWARE_TARGET

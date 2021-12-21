@@ -19,7 +19,7 @@
 #
 # ----------------------------------------
 #
-# Script tested with Vivado 2017.2 (64-bit)
+# Script tested with Vivado 2019.1 (64-bit)
 #
 # Vivado automatically created the base version
 # of this script. Nathan then modified it to fit
@@ -32,7 +32,7 @@ set proj_name      amdc
 set proj_ip_path   "./ip_repo"
 
 # This variable (proj_revision) should be set from calling script...
-#set proj_revision revd
+#set proj_revision reve
 if {![info exists proj_revision]} {
   return -code error "Error: No project revision specified. Please run the appropriate import_rev*.tcl scripts."
 }

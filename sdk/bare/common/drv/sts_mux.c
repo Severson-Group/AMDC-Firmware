@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-
 #include "drv/sts_mux.h"
 #include "xil_io.h"
 #include <stdint.h>
@@ -51,5 +46,3 @@ void sts_mux_set_device(uint8_t port, sts_mux_device_t device)
     sts_mux_set_line(port, device, STS_MUX_C);
     sts_mux_set_line(port, device, STS_MUX_D);
 }
-
-#endif // USER_CONFIG_HARDWARE_TARGET

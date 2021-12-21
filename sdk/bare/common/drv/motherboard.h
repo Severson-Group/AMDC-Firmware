@@ -1,20 +1,10 @@
 #ifndef MOTHERBOARD_H
 #define MOTHERBOARD_H
 
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-// Throw compiler error if the motherboard is not supported on the hardware target
-// NOTE: this won't be an issue if the user code never includes this file!
-#if USER_CONFIG_HARDWARE_TARGET != AMDC_REV_D
-#error "SensorCard motherboard interface is only supported on the AMDC REV D hardware target."
-#endif
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #define MOTHERBOARD_BASE_ADDR (0x43C90000)
-#endif
 
 typedef enum {
     // Keep first channel index at 0!

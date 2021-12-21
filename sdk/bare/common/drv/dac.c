@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-
 #include "drv/dac.h"
 #include "xil_io.h"
 #include <stdint.h>
@@ -49,5 +44,3 @@ void dac_set_raw(dac_reg_t reg, uint32_t value)
 {
     Xil_Out32(DAC_BASE_ADDR + (reg * sizeof(uint32_t)), value);
 }
-
-#endif // USER_CONFIG_HARDWARE_TARGET

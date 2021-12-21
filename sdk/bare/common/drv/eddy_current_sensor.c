@@ -1,8 +1,3 @@
-#include "drv/hardware_targets.h"
-#include "usr/user_config.h"
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-
 #include "drv/eddy_current_sensor.h"
 #include "xil_io.h"
 #include <stdbool.h>
@@ -75,5 +70,3 @@ double eddy_current_sensor_read_y_voltage(void)
 
     return bits_to_voltage(y_data);
 }
-
-#endif // USER_CONFIG_HARDWARE_TARGET
