@@ -4,9 +4,9 @@
 #ifndef GP3IO_MUX_H
 #define GP3IO_MUX_H
 
+#include "xparameters.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include "xparameters.h"
 
 #define GP3IO_MUX_1_BASE_ADDR (XPAR_HIER_GPIO_0_AMDC_GP3IO_MUX_0_S00_AXI_BASEADDR)
 #define GP3IO_MUX_2_BASE_ADDR (XPAR_HIER_GPIO_1_AMDC_GP3IO_MUX_0_S00_AXI_BASEADDR)

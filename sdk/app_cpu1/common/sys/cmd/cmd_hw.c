@@ -3,8 +3,8 @@
 #include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
-#include "drv/gpio_mux.h"
 #include "drv/gp3io_mux.h"
+#include "drv/gpio_mux.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
@@ -248,19 +248,19 @@ int cmd_hw(int argc, char **argv)
             switch (gpio_port) {
             case 1:
                 gp3io_mux_set_device(GP3IO_MUX_1_BASE_ADDR, device);
-            	break;
+                break;
             case 2:
                 gp3io_mux_set_device(GP3IO_MUX_2_BASE_ADDR, device);
-            	break;
+                break;
             case 3:
                 gp3io_mux_set_device(GP3IO_MUX_3_BASE_ADDR, device);
-            	break;
+                break;
             case 4:
                 gp3io_mux_set_device(GP3IO_MUX_4_BASE_ADDR, device);
-            	break;
+                break;
             default:
-            	return CMD_INVALID_ARGUMENTS;
-            	break;
+                return CMD_INVALID_ARGUMENTS;
+                break;
             }
 #endif
 
