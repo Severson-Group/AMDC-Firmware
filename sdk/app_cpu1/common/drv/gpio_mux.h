@@ -1,3 +1,6 @@
+#include "usr/user_config.h"
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+
 #ifndef GPIO_MUX_H
 #define GPIO_MUX_H
 
@@ -20,3 +23,5 @@ void gpio_mux_init(void);
 void gpio_mux_set_device(uint8_t, gpio_mux_device_t);
 
 #endif // GPIO_MUX_H
+
+#endif // USER_CONFIG_HARDWARE_TARGET

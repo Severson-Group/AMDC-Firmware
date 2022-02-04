@@ -408,7 +408,66 @@
 	end    
 
 	// Add user logic here
+	
+	// There is probably a better way to do this in Verilog,
+	// but for the sake of time, I think this will do...
+	//
+	// Feel free to improve this, future code reader! :)
+	//
+	// -Nathan, Feb 2022
 
+    reg [2:0] my_port_out;
+    always @(*) begin
+    case (slv_reg0)
+        32'd1 : my_port_out = device1_out;
+        32'd2 : my_port_out = device2_out;
+        32'd3 : my_port_out = device3_out;
+        32'd4 : my_port_out = device4_out;
+        default: my_port_out = 3'b0;
+    endcase
+    end
+    
+    assign port_out = my_port_out;
+    
+    
+    reg [2:0] my_device1_in;
+    reg [2:0] my_device2_in;
+    reg [2:0] my_device3_in;
+    reg [2:0] my_device4_in;
+    
+    always @(*) begin
+    case (slv_reg0)
+        32'd1 : my_device1_in = port_in;
+        default: my_device1_in = 3'b0;
+    endcase
+    end
+    
+    always @(*) begin
+    case (slv_reg0)
+        32'd2 : my_device2_in = port_in;
+        default: my_device2_in = 3'b0;
+    endcase
+    end
+    
+    always @(*) begin
+    case (slv_reg0)
+        32'd3 : my_device3_in = port_in;
+        default: my_device3_in = 3'b0;
+    endcase
+    end
+    
+    always @(*) begin
+    case (slv_reg0)
+        32'd4 : my_device4_in = port_in;
+        default: my_device4_in = 3'b0;
+    endcase
+    end
+    
+    assign device1_in = my_device1_in;
+    assign device2_in = my_device2_in;
+    assign device3_in = my_device3_in;
+    assign device4_in = my_device4_in;
+    
 	// User logic ends
 
 	endmodule

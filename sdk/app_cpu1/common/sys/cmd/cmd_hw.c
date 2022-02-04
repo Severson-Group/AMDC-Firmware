@@ -3,6 +3,7 @@
 #include "drv/cpu_timer.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
+#include "drv/gp3io_mux.h"
 #include "drv/gpio_mux.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
@@ -12,6 +13,7 @@
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/util.h"
+#include "usr/user_config.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -228,12 +230,39 @@ int cmd_hw(int argc, char **argv)
             int gpio_port = atoi(argv[3]);
             int device = atoi(argv[4]);
 
-            if (gpio_port < 1 || gpio_port > 2)
+            if (device < 0 || device > 4) {
                 return CMD_INVALID_ARGUMENTS;
-            if (device < 0 || device > 4)
+            }
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (gpio_port < 1 || gpio_port > 2) {
                 return CMD_INVALID_ARGUMENTS;
+            }
 
             gpio_mux_set_device(gpio_port - 1, device);
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (gpio_port < 1 || gpio_port > 4) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            switch (gpio_port) {
+            case 1:
+                gp3io_mux_set_device(GP3IO_MUX_1_BASE_ADDR, device);
+                break;
+            case 2:
+                gp3io_mux_set_device(GP3IO_MUX_2_BASE_ADDR, device);
+                break;
+            case 3:
+                gp3io_mux_set_device(GP3IO_MUX_3_BASE_ADDR, device);
+                break;
+            case 4:
+                gp3io_mux_set_device(GP3IO_MUX_4_BASE_ADDR, device);
+                break;
+            default:
+                return CMD_INVALID_ARGUMENTS;
+                break;
+            }
+#endif
 
             return CMD_SUCCESS;
         }
