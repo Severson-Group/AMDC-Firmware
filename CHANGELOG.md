@@ -2,6 +2,10 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.0.1
+
+- Fix GPIO subsystem firmware drivers mainly for REV E hardware
+
 ## v1.0.0
 
 Initial commit of released code base.

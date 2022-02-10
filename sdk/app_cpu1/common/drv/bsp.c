@@ -16,6 +16,7 @@
 #include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
+#include "drv/gp3io_mux.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
@@ -73,9 +74,16 @@ void bsp_init(void)
     cpu_timer_init();
     led_init();
     sts_mux_init();
-    gpio_mux_init();
     dac_init();
     eddy_current_sensor_init();
+
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D)
+    gpio_mux_init();
+#endif
+
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
+    gp3io_mux_init();
+#endif
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
     watchdog_init();
