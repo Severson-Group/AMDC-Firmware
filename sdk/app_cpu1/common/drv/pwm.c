@@ -113,11 +113,12 @@ void pwm_set_all_rst(uint8_t rst)
     Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
-int pwm_enable_hw(bool en)
+void pwm_enable_hw(bool en)
 {
     if (en) {
-
+        XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
     } else {
+        XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
     }
 }
 

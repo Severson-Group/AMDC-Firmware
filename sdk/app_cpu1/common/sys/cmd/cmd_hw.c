@@ -48,6 +48,9 @@ int cmd_hw(int argc, char **argv)
     // Handle 'pwm' sub-command
     if (argc >= 2 && STREQ("pwm", argv[1])) {
         if (argc == 3 && STREQ("on", argv[2])) {
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+        	pwm_enable_hw(true);
+#endif
             if (pwm_enable() != SUCCESS) {
                 return CMD_FAILURE;
             }
@@ -56,6 +59,9 @@ int cmd_hw(int argc, char **argv)
         }
 
         if (argc == 3 && STREQ("off", argv[2])) {
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+        	pwm_enable_hw(false);
+#endif
             if (pwm_disable() != SUCCESS) {
                 return CMD_FAILURE;
             }
