@@ -120,20 +120,20 @@ static bool is_pwm_enable_hw_enabled = false;
 
 int pwm_enable_hw(bool en)
 {
-	int err = FAILURE;
+    int err = FAILURE;
 
     if (en) {
-    	if (!is_pwm_enable_hw_enabled) {
-    		XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
-    		is_pwm_enable_hw_enabled = true;
-    		err = SUCCESS;
-    	}
+        if (!is_pwm_enable_hw_enabled) {
+            XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+            is_pwm_enable_hw_enabled = true;
+            err = SUCCESS;
+        }
     } else {
-    	if (is_pwm_enable_hw_enabled) {
-    		XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
-    		is_pwm_enable_hw_enabled = false;
-    		err = SUCCESS;
-    	}
+        if (is_pwm_enable_hw_enabled) {
+            XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
+            is_pwm_enable_hw_enabled = false;
+            err = SUCCESS;
+        }
     }
 
     return err;
