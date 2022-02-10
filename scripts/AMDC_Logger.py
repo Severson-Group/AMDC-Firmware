@@ -117,7 +117,7 @@ class AMDC_Logger():
         for var in variables:
             self.unregister(var)    
                 
-    def clear(self, log_vars):
+    def empty(self, log_vars):
         
         variables = self._sanitize_inputs(log_vars)
         
@@ -128,11 +128,11 @@ class AMDC_Logger():
             except:
                 pass
         
-    def clear_all(self):
+    def empty_all(self):
         
         self.amdc.cmd(f'log empty_all')
         #for var in self.log_vars:
-        #    self.clear(var)
+        #    self.empty(var)
         
     def auto_find_vars(self, root):
         
