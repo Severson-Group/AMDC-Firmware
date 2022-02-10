@@ -60,7 +60,9 @@ void pwm_init(void);
 void pwm_toggle_reset(void);
 void pwm_set_all_rst(uint8_t rst);
 
-void pwm_enable_hw(bool en);
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+int pwm_enable_hw(bool en);
+#endif
 
 int pwm_enable(void);
 int pwm_disable(void);
