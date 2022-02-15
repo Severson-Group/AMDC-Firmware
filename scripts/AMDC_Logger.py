@@ -135,7 +135,7 @@ class AMDC_Logger():
         #for var in self.log_vars:
         #    self.clear(var)
         
-    def auto_find_vars(self, root):
+    def auto_find_vars(self, root, regex=None):
         
         log_vars = []
         log_types = []
@@ -149,21 +149,21 @@ class AMDC_Logger():
                     for var, tp in zip(lv, lt):
                         log_vars.append(var)
                         log_types.append(tp)
-                        
-        return log_vars, log_types
-    
-    def auto_find_vars_by_regex(self, root, regex):
-        names, types = self.auto_find_vars(root)
 
-        output_vars = []
-        output_types = []
+        if regex is None:
+            # Return all
+            return log_vars, log_types
+        else:
+            # Filter by user-provided regex
+            output_vars = []
+            output_types = []
 
-        for i,n in enumerate(names):
-            if re.search(regex, n) is not None:
-                output_vars.append(names[i])
-                output_types.append(types[i])
+            for i,n in enumerate(log_vars):
+                if re.search(regex, n) is not None:
+                    output_vars.append(log_vars[i])
+                    output_types.append(log_types[i])
 
-        return output_vars, output_types
+            return output_vars, output_types
     
     def start(self):
         self.amdc.cmd('log start')
