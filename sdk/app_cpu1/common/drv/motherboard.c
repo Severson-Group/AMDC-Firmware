@@ -5,7 +5,7 @@
 #include "drv/motherboard.h"
 #include "drv/motherboard_defs.h"
 #include "sys/cmd/cmd_mb.h"
-#include "sys/debug.h"
+#include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/util.h"
 #include <stdbool.h>
@@ -16,15 +16,16 @@ void motherboard_init(void)
     cmd_mb_register();
 
 #if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
-    motherboard_set_adc_sampling(MOTHERBOARD_1_BASE_ADDR, true);
-    motherboard_set_adc_sampling(MOTHERBOARD_2_BASE_ADDR, true);
-    motherboard_set_adc_sampling(MOTHERBOARD_3_BASE_ADDR, true);
-    motherboard_set_adc_sampling(MOTHERBOARD_4_BASE_ADDR, true);
+    bool auto_tx = true;
 #else
-    motherboard_set_adc_sampling(MOTHERBOARD_1_BASE_ADDR, false);
-    motherboard_set_adc_sampling(MOTHERBOARD_2_BASE_ADDR, false);
-    motherboard_set_adc_sampling(MOTHERBOARD_3_BASE_ADDR, false);
-    motherboard_set_adc_sampling(MOTHERBOARD_4_BASE_ADDR, false);
+    bool auto_tx = false
+#endif
+
+    motherboard_set_adc_sampling(MOTHERBOARD_1_BASE_ADDR, auto_tx);
+    motherboard_set_adc_sampling(MOTHERBOARD_2_BASE_ADDR, auto_tx);
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+    motherboard_set_adc_sampling(MOTHERBOARD_3_BASE_ADDR, auto_tx);
+    motherboard_set_adc_sampling(MOTHERBOARD_4_BASE_ADDR, auto_tx);
 #endif
 }
 
@@ -83,7 +84,7 @@ void motherboard_print_samples(uint32_t base_addr)
 
     for (int i = 0; i < 8; i++) {
         uint32_t val = m_motherboard[i];
-        debug_printf("%i: %04X\r\n", i, val);
+        cmd_resp_printf("%i: %04X\r\n", i, val);
     }
 }
 
@@ -92,9 +93,9 @@ void motherboard_print_counters(uint32_t base_addr)
     // Create base address for IP
     volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
 
-    debug_printf("V: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4]);
-    debug_printf("C: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4]);
-    debug_printf("T: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4]);
+    cmd_resp_printf("V: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4]);
+    cmd_resp_printf("C: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4]);
+    cmd_resp_printf("T: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4]);
 }
 
 #endif // USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT

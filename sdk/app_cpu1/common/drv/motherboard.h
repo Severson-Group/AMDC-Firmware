@@ -3,13 +3,24 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "usr/user_config.h"
+#include "drv/hardware_targets.h"
 
 #include "xparameters.h"
 
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#define MOTHERBOARD_MAX_IP_CORES (XPAR_AMDC_MOTHERBOARD_NUM_INSTANCES)
+#define MOTHERBOARD_1_BASE_ADDR (TODO)
+#define MOTHERBOARD_2_BASE_ADDR (TODO)
+#endif
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#define MOTHERBOARD_MAX_IP_CORES (XPAR_AMDC_MOTHERBOARD_NUM_INSTANCES)
 #define MOTHERBOARD_1_BASE_ADDR (XPAR_HIER_GPIO_0_HIER_AMDS_0_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR)
 #define MOTHERBOARD_2_BASE_ADDR (XPAR_HIER_GPIO_1_HIER_AMDS_0_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR)
 #define MOTHERBOARD_3_BASE_ADDR (XPAR_HIER_GPIO_2_HIER_AMDS_0_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR)
 #define MOTHERBOARD_4_BASE_ADDR (XPAR_HIER_GPIO_3_HIER_AMDS_0_AMDC_MOTHERBOARD_0_S00_AXI_BASEADDR)
+#endif
 
 typedef enum {
     // Keep first channel index at 0!
@@ -37,7 +48,7 @@ static inline bool motherboard_is_valid_channel(mb_channel_e channel)
 
 static inline bool motherboard_is_valid_idx(int idx)
 {
-    if (idx >= 0 && idx <= 3) {
+    if (idx >= 0 && idx < MOTHERBOARD_MAX_IP_CORES) {
         return true;
     }
 
@@ -51,10 +62,14 @@ static inline uint32_t motherboard_idx_to_base_addr(int idx)
         return MOTHERBOARD_1_BASE_ADDR;
     case 1:
         return MOTHERBOARD_2_BASE_ADDR;
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     case 2:
         return MOTHERBOARD_3_BASE_ADDR;
     case 3:
         return MOTHERBOARD_4_BASE_ADDR;
+#endif
+
     default:
         return 0;
     }
