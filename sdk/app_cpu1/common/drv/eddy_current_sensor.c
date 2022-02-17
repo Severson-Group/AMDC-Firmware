@@ -4,36 +4,37 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define EDDY_CURRENT_SENSOR_BASE_ADDR (0x43C80000)
-
 void eddy_current_sensor_init(void)
 {
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
     // Set sampling rate to 20kHz
-    eddy_current_sensor_set_sample_rate(20000);
+    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 20000);
+    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 20000);
+    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 20000);
+    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 20000);
 }
 
-void eddy_current_sensor_enable(void)
+void eddy_current_sensor_enable(uint32_t base_addr)
 {
-    Xil_Out32(EDDY_CURRENT_SENSOR_BASE_ADDR + (3 * sizeof(uint32_t)), 1);
+    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 1);
 }
 
-void eddy_current_sensor_disable(void)
+void eddy_current_sensor_disable(uint32_t base_addr)
 {
-    Xil_Out32(EDDY_CURRENT_SENSOR_BASE_ADDR + (3 * sizeof(uint32_t)), 0);
+    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 0);
 }
 
-void eddy_current_sensor_set_sample_rate(double sample_rate)
+void eddy_current_sensor_set_sample_rate(uint32_t base_addr, double sample_rate)
 {
     uint8_t divider = (uint8_t)(500000 / sample_rate);
 
-    eddy_current_sensor_set_divider(divider - 1);
+    eddy_current_sensor_set_divider(base_addr, divider - 1);
 }
 
-void eddy_current_sensor_set_divider(uint8_t divider)
+void eddy_current_sensor_set_divider(uint32_t base_addr, uint8_t divider)
 {
-    Xil_Out32(EDDY_CURRENT_SENSOR_BASE_ADDR + (2 * sizeof(uint32_t)), divider);
+    Xil_Out32(base_addr + (2 * sizeof(uint32_t)), divider);
 }
 
 static double bits_to_voltage(uint32_t data)
@@ -57,16 +58,16 @@ static double bits_to_voltage(uint32_t data)
     return voltage;
 }
 
-double eddy_current_sensor_read_x_voltage(void)
+double eddy_current_sensor_read_x_voltage(uint32_t base_addr)
 {
-    uint32_t x_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR);
+    uint32_t x_data = Xil_In32(base_addr);
 
     return bits_to_voltage(x_data);
 }
 
-double eddy_current_sensor_read_y_voltage(void)
+double eddy_current_sensor_read_y_voltage(uint32_t base_addr)
 {
-    uint32_t y_data = Xil_In32(EDDY_CURRENT_SENSOR_BASE_ADDR + (1 * sizeof(uint32_t)));
+    uint32_t y_data = Xil_In32(base_addr + (1 * sizeof(uint32_t)));
 
     return bits_to_voltage(y_data);
 }
