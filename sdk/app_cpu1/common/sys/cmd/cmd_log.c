@@ -267,7 +267,7 @@ int cmd_log(int argc, char **argv)
     }
 
     if (argc == 3 && STREQ("stream", argv[1]) && STREQ("synctime", argv[2])) {
-        log_stream_synctime();
+    	log_stream_synctime();
         return CMD_SUCCESS;
     }
 

@@ -382,7 +382,7 @@ void state_machine_list_callback(void *arg)
     switch (ctx->state) {
     case LISTING:
         // Print entry
-        debug_printf("%s\r\n", ctx->curr->name);
+    	cmd_resp_printf("%s\r\n", ctx->curr->name);
 
         // Move to next entry
         ctx->curr = ctx->curr->next;
