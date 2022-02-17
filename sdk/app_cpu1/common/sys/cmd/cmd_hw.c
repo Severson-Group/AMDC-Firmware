@@ -55,6 +55,7 @@ int cmd_hw(int argc, char **argv)
             // so that the first cycle has correct duty
             pwm_enable_hw(true);
 #endif
+
             if (pwm_enable() != SUCCESS) {
                 return CMD_FAILURE;
             }
@@ -72,7 +73,7 @@ int cmd_hw(int argc, char **argv)
             // so that the last cycle has correct duty
             pwm_enable_hw(false);
 #endif
-            
+
             return CMD_SUCCESS;
         }
 
