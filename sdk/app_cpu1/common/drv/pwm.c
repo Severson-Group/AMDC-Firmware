@@ -113,13 +113,33 @@ void pwm_set_all_rst(uint8_t rst)
     Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
 }
 
+// Hardware disabling of PWM was added to REV E hardware
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+
+static bool is_pwm_enable_hw_enabled = false;
+
 int pwm_enable_hw(bool en)
 {
-    if (en) {
+    int err = FAILURE;
 
+    if (en) {
+        if (!is_pwm_enable_hw_enabled) {
+            XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 1);
+            is_pwm_enable_hw_enabled = true;
+            err = SUCCESS;
+        }
     } else {
+        if (is_pwm_enable_hw_enabled) {
+            XGpioPs_WritePin(&Gpio, pin_PS_DRIVE_EN_MIO, 0);
+            is_pwm_enable_hw_enabled = false;
+            err = SUCCESS;
+        }
     }
+
+    return err;
 }
+
+#endif
 
 int pwm_enable(void)
 {
