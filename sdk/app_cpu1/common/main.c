@@ -64,7 +64,7 @@ int main()
 
 #if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
     // Initialize motherboard driver and register command
-    motherboard_init(MOTHERBOARD_BASE_ADDR);
+    motherboard_init();
 #endif
 
     // Register the "cnt" command
