@@ -59,10 +59,10 @@ static inline uint32_t motherboard_idx_to_base_addr(int idx)
     switch (idx) {
     case 0:
         return MOTHERBOARD_1_BASE_ADDR;
-    case 1:
-        return MOTHERBOARD_2_BASE_ADDR;
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+    case 1:
+        return MOTHERBOARD_2_BASE_ADDR;
     case 2:
         return MOTHERBOARD_3_BASE_ADDR;
     case 3:
