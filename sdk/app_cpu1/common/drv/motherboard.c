@@ -22,8 +22,8 @@ void motherboard_init(void)
 #endif
 
     motherboard_set_adc_sampling(MOTHERBOARD_1_BASE_ADDR, auto_tx);
-    motherboard_set_adc_sampling(MOTHERBOARD_2_BASE_ADDR, auto_tx);
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+    motherboard_set_adc_sampling(MOTHERBOARD_2_BASE_ADDR, auto_tx);
     motherboard_set_adc_sampling(MOTHERBOARD_3_BASE_ADDR, auto_tx);
     motherboard_set_adc_sampling(MOTHERBOARD_4_BASE_ADDR, auto_tx);
 #endif

@@ -11,9 +11,9 @@ void eddy_current_sensor_init(void)
 
     // Set sampling rate to 20kHz
     eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 20000);
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 20000);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 20000);
     eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 20000);
     eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 20000);
 #endif
