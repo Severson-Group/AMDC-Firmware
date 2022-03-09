@@ -1,11 +1,17 @@
 #include "drv/fpga_timer.h"
 #include "sys/defines.h"
+#include "usr/user_config.h"
 #include "xparameters.h"
 #include "xtmrctr.h"
 #include <stdio.h>
 
-// Get the TIMER_1 device from the FPGA
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+#define TMR_DEVICE_ID XPAR_CONTROL_TIMER_1_DEVICE_ID
+#endif
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
 #define TMR_DEVICE_ID XPAR_HIER_TIMERS_CONTROL_TIMER_1_DEVICE_ID
+#endif
 
 static XTmrCtr timer;
 
