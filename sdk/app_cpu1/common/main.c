@@ -38,6 +38,18 @@
 #include "xil_mmu.h"
 #include "xpseudo_asm.h"
 
+#include "xparameters.h"
+
+// REV E has 4 GPIO ports, each with their own eddy current sensor driver IP block:
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) && (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES != 4)
+#error "ERROR: Vivado hardware target is REV D, but usr/user_config.h target is REV E!"
+#endif
+
+// REV D has 2 GPIO ports, each with their own eddy current sensor driver IP block:
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) && (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES != 2)
+#error "ERROR: Vivado hardware target is REV E, but usr/user_config.h target is REV D!"
+#endif
+
 int main()
 {
     // Required system initialization
@@ -64,7 +76,7 @@ int main()
 
 #if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
     // Initialize motherboard driver and register command
-    motherboard_init(MOTHERBOARD_BASE_ADDR);
+    motherboard_init();
 #endif
 
     // Register the "cnt" command

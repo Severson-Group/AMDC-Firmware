@@ -74,5 +74,6 @@ int log_var_is_registered(int idx, bool *is_registered);
 int log_print_info(void);
 
 int log_stream(bool enable, int idx, int socket_id);
+void log_stream_synctime(void);
 
 #endif // LOG_H

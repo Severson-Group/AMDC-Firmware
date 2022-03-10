@@ -1,6 +1,6 @@
 #include "sys/task_stats.h"
 #include "drv/fpga_timer.h"
-#include "sys/debug.h"
+#include "sys/commands.h"
 #include "sys/scheduler.h"
 #include <assert.h>
 #include <stdint.h>
@@ -91,66 +91,67 @@ static void state_machine_callback(void *arg)
 
     switch (ctx->state) {
     case PRINT_HEADER:
-        debug_printf("Task Stats:\r\n");
+        cmd_resp_printf("Task Stats:\r\n");
         ctx->state = PRINT_LOOP_NUM_SAMPLES;
         break;
 
     // Loop timings
     // ...
     case PRINT_LOOP_NUM_SAMPLES:
-        debug_printf("Loop Num:\t%d samples\r\n", ctx->stats->loop_time.num_samples);
+        cmd_resp_printf("Loop Num:\t%d samples\r\n", ctx->stats->loop_time.num_samples);
         ctx->state = PRINT_LOOP_MIN;
         break;
 
     case PRINT_LOOP_MIN:
-        debug_printf("Loop Min:\t%.2f usec\r\n", ctx->stats->loop_time.min);
+        cmd_resp_printf("Loop Min:\t%.2f usec\r\n", ctx->stats->loop_time.min);
         ctx->state = PRINT_LOOP_MAX;
         break;
 
     case PRINT_LOOP_MAX:
-        debug_printf("Loop Max:\t%.2f usec\r\n", ctx->stats->loop_time.max);
+        cmd_resp_printf("Loop Max:\t%.2f usec\r\n", ctx->stats->loop_time.max);
         ctx->state = PRINT_LOOP_MEAN;
         break;
 
     case PRINT_LOOP_MEAN:
-        debug_printf("Loop Mean:\t%.2f usec\r\n", ctx->stats->loop_time.mean);
+        cmd_resp_printf("Loop Mean:\t%.2f usec\r\n", ctx->stats->loop_time.mean);
         ctx->state = PRINT_LOOP_VARIANCE;
         break;
 
     case PRINT_LOOP_VARIANCE:
-        debug_printf("Loop Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->loop_time));
+        cmd_resp_printf("Loop Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->loop_time));
         ctx->state = PRINT_RUN_NUM_SAMPLES;
         break;
 
     // Run timings
     // ...
     case PRINT_RUN_NUM_SAMPLES:
-        debug_printf("Run Num:\t%d samples\r\n", ctx->stats->run_time.num_samples);
+        cmd_resp_printf("Run Num:\t%d samples\r\n", ctx->stats->run_time.num_samples);
         ctx->state = PRINT_RUN_MIN;
         break;
 
     case PRINT_RUN_MIN:
-        debug_printf("Run Min:\t%.2f usec\r\n", ctx->stats->run_time.min);
+        cmd_resp_printf("Run Min:\t%.2f usec\r\n", ctx->stats->run_time.min);
         ctx->state = PRINT_RUN_MAX;
         break;
 
     case PRINT_RUN_MAX:
-        debug_printf("Run Max:\t%.2f usec\r\n", ctx->stats->run_time.max);
+        cmd_resp_printf("Run Max:\t%.2f usec\r\n", ctx->stats->run_time.max);
         ctx->state = PRINT_RUN_MEAN;
         break;
 
     case PRINT_RUN_MEAN:
-        debug_printf("Run Mean:\t%.2f usec\r\n", ctx->stats->run_time.mean);
+        cmd_resp_printf("Run Mean:\t%.2f usec\r\n", ctx->stats->run_time.mean);
         ctx->state = PRINT_RUN_VARIANCE;
         break;
 
     case PRINT_RUN_VARIANCE:
-        debug_printf("Run Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->run_time));
+        cmd_resp_printf("Run Var:\t%.2f usec\r\n", statistics_variance(&ctx->stats->run_time));
         ctx->state = REMOVE_TASK;
         break;
 
     case REMOVE_TASK:
-        debug_printf("\r\n");
+        cmd_resp_printf("\r\n");
+        cmd_resp_printf("SUCCESS\r\n\n");
         scheduler_tcb_unregister(&ctx->tcb);
         break;
 
