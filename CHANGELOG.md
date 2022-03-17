@@ -2,6 +2,11 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.0.3
+
+- Fix bug in Vivado project vs. C code config checking
+- Reduce max number of samples to dump per time slice over Ethernet
+
 ## v1.0.2
 
 - Fix task stats printing

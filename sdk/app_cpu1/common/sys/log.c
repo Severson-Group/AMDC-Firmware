@@ -524,12 +524,12 @@ void state_machine_dump_binary_callback(void *arg)
         int max_num_samples = 1;
         if (ctx->dump_method == 2) {
             // Means Ethernet
-            max_num_samples = 100;
+            max_num_samples = 20;
 
             // To compute network load:
             // Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
             //
-            // 100 ==> 30.5 Mbps
+            // 20 ==> 6.1 Mbps
             //
             // This is the upper limit; might stop early
             // due to buffer getting full!
