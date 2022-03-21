@@ -121,8 +121,7 @@ static inline double _ramp(double min, double max, double period, double time)
     if (0.0 <= time && time < period) {
         // State S1
         out = m_pos * time + min;
-    }
-    else {
+    } else {
         // State S2
         // y = m(x - x1) + y1
         out = min;
