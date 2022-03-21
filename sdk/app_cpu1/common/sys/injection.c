@@ -110,6 +110,28 @@ static inline double _square(double min, double max, double period, double time)
     return out;
 }
 
+static inline double _ramp(double min, double max, double period, double time)
+{
+    // S1: increases to max at t = T,
+    // S2: resets to min after
+
+    double out = min;
+    // Calculate slope
+    double m_pos = (max - min) / (period);
+    if (0.0 <= time && time < period) {
+        // State S1
+        out = m_pos * time + min;
+    }
+    else {
+        // State S2
+        // y = m(x - x1) + y1
+        out = min;
+    }
+
+    return out;
+}
+
+
 void injection_init(void)
 {
     cmd_inj_register();
@@ -251,6 +273,17 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
         break;
     }
 
+    case RAMP:
+    {
+		ctx->curr_time += Ts;
+		if (ctx->curr_time >= ctx->ramp.period) {
+			ctx->curr_time = 0.0;
+		}
+
+		value = _ramp(ctx->ramp.valueMin, ctx->ramp.valueMax, ctx->ramp.period, ctx->curr_time);
+		break;
+	}
+
     case NONE:
     default:
         // Injection function not set by user,
@@ -357,6 +390,16 @@ void injection_square(inj_ctx_t *ctx, inj_op_e op, double valueMin, double value
     ctx->square.period = period;
 }
 
+void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
+{
+    ctx->inj_func = RAMP;
+    ctx->operation = op;
+    ctx->curr_time = 0.0;
+    ctx->ramp.valueMin = valueMin;
+    ctx->ramp.valueMax = valueMax;
+    ctx->ramp.period = period;
+}
+
 // ***************************
 // Code for running the state machine to
 // list the registered injection contexts
@@ -382,7 +425,7 @@ void state_machine_list_callback(void *arg)
     switch (ctx->state) {
     case LISTING:
         // Print entry
-        cmd_resp_printf("%s\r\n", ctx->curr->name);
+        debug_printf("%s\r\n", ctx->curr->name);
 
         // Move to next entry
         ctx->curr = ctx->curr->next;
