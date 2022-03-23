@@ -9,7 +9,7 @@ typedef enum inj_func_e {
     CHIRP,
     TRIANGLE,
     SQUARE,
-	RAMP,
+    RAMP,
     NONE,
 } inj_func_e;
 

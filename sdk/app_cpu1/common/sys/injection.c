@@ -130,7 +130,6 @@ static inline double _ramp(double min, double max, double period, double time)
     return out;
 }
 
-
 void injection_init(void)
 {
     cmd_inj_register();
@@ -274,14 +273,14 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
 
     case RAMP:
     {
-		ctx->curr_time += Ts;
-		if (ctx->curr_time >= ctx->ramp.period) {
-			ctx->curr_time = 0.0;
-		}
+        ctx->curr_time += Ts;
+        if (ctx->curr_time >= ctx->ramp.period) {
+            ctx->curr_time = 0.0;
+        }
 
-		value = _ramp(ctx->ramp.valueMin, ctx->ramp.valueMax, ctx->ramp.period, ctx->curr_time);
-		break;
-	}
+        value = _ramp(ctx->ramp.valueMin, ctx->ramp.valueMax, ctx->ramp.period, ctx->curr_time);
+        break;
+    }
 
     case NONE:
     default:
