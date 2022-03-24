@@ -70,7 +70,7 @@ typedef struct inj_ctx_t {
     inj_func_triangle_t triangle;
     inj_func_square_t square;
     inj_func_ramp_t ramp;
-    
+
     double curr_time;
 } inj_ctx_t;
 
