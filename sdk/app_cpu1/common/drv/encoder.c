@@ -3,7 +3,7 @@
 #include "sys/scheduler.h"
 #include "xil_io.h"
 #include <stdio.h>
-
+#include <math.h>
 #define ENCODER_BASE_ADDR (0x43C10000)
 
 void encoder_init(void)
@@ -14,9 +14,15 @@ void encoder_init(void)
 
 void encoder_set_pulses_per_rev_bits(uint32_t bits)
 {
-    printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
+	printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
+    encoder_set_pulses_per_rev(pow((uint32_t)2, bits));
+}
 
-    Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), bits);
+void encoder_set_pulses_per_rev(uint32_t pulses)
+{
+    printf("ENC:\tSetting pulses per rev = %ld...\n", pulses);
+
+    Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), pulses);
 }
 
 void encoder_get_steps(int32_t *steps)

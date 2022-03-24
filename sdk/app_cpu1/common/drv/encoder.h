@@ -9,7 +9,7 @@
 void encoder_init(void);
 
 void encoder_set_pulses_per_rev_bits(uint32_t bits);
-
+void encoder_set_pulses_per_rev(uint32_t pulses);
 void encoder_get_steps(int32_t *steps);
 void encoder_get_position(uint32_t *position);
 
