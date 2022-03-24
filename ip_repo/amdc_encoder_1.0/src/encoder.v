@@ -9,15 +9,15 @@
 // and sum them into a binary counter register.
 //
 // Z is used to provide single revolution position via `position` output
-// `position` ranges between 0 and (2 ^ pulses_per_rev_bits) - 1
+// `position` ranges between 0 and pulses_per_rev_bits
 //
-module encoder(clk, rst_n, A, B, Z, counter, position, pulses_per_rev_bits);
+module encoder(clk, rst_n, A, B, Z, counter, position, pulses_per_rev);
 
 input A, B, Z;
 input clk;
 input rst_n;
 
-input [31:0] pulses_per_rev_bits;
+input [31:0] pulses_per_rev;
 
 output wire [31:0] counter;
 output wire [31:0] position;
@@ -180,13 +180,13 @@ end
 //
 //       Typically ~12-bit (2^12 = 4096 pulses per rev).
 //       
-//       Stored in `pulses_per_rev_bits` input signal.
+//       Stored in `pulses_per_rev` input signal.
 //
 //       Max pulses per rev: 2^32
 // *****************************
 
 wire [31:0] MAX_POS;
-assign MAX_POS = (32'd1 << pulses_per_rev_bits) - 32'd1;
+assign MAX_POS = pulses_per_rev;
 
 // Find rising edge of Z
 wire z_rise;
