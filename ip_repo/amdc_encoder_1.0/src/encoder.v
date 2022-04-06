@@ -9,7 +9,7 @@
 // and sum them into a binary counter register.
 //
 // Z is used to provide single revolution position via `position` output
-// `position` ranges between 0 and pulses_per_rev_bits
+// `position` ranges between 0 and pulses_per_rev - 1
 //
 module encoder(clk, rst_n, A, B, Z, counter, position, pulses_per_rev);
 
@@ -186,7 +186,7 @@ end
 // *****************************
 
 wire [31:0] MAX_POS;
-assign MAX_POS = pulses_per_rev;
+assign MAX_POS = pulses_per_rev - 32'd1;
 
 // Find rising edge of Z
 wire z_rise;
