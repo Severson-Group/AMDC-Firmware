@@ -32,7 +32,7 @@ void scheduler_timer_isr(void *arg)
     if (tasks_running) {
         // Use raw printf so this goes directly to the UART device
         xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
-        xil_printf("ERROR: PROBLEM TASK IS %s\n", running_task->name);
+        xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
 
         led_set_color(0, LED_COLOR_RED);
         led_set_color(1, LED_COLOR_RED);
