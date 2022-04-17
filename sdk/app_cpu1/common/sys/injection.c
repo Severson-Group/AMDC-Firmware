@@ -115,7 +115,7 @@ static inline double _ramp(double min, double max, double period, double time)
     double out;
     // Calculate slope
     double m_pos = (max - min) / (period);
-    // Caclculate output	
+    // Caclculate output
     out = m_pos * time + min;
 
     return out;
