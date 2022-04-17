@@ -232,7 +232,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->chirp.period) {
-            ctx->curr_time -= ctx->ramp.period;
+            ctx->curr_time -= ctx->chirp.period;
         }
 
         value = _chirp(
@@ -244,7 +244,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->triangle.period) {
-            ctx->curr_time -= ctx->ramp.period;
+            ctx->curr_time -= ctx->triangle.period;
         }
 
         value = _triangle(ctx->triangle.valueMin, ctx->triangle.valueMax, ctx->triangle.period, ctx->curr_time);
@@ -255,7 +255,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->square.period) {
-            ctx->curr_time -= ctx->ramp.period;
+            ctx->curr_time -= ctx->square.period;
         }
 
         value = _square(ctx->square.valueMin, ctx->square.valueMax, ctx->square.period, ctx->curr_time);
