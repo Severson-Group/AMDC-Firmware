@@ -112,20 +112,11 @@ static inline double _square(double min, double max, double period, double time)
 
 static inline double _ramp(double min, double max, double period, double time)
 {
-    // S1: increases to max at t = T,
-    // S2: resets to min after
-
-    double out = min;
+    double out;
     // Calculate slope
     double m_pos = (max - min) / (period);
-    if (0.0 <= time && time < period) {
-        // State S1
-        out = m_pos * time + min;
-    } else {
-        // State S2
-        // y = m(x - x1) + y1
-        out = min;
-    }
+    // Caclculate output	
+    out = m_pos * time + min;
 
     return out;
 }
@@ -241,7 +232,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->chirp.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->ramp.period;
         }
 
         value = _chirp(
@@ -253,7 +244,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->triangle.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->ramp.period;
         }
 
         value = _triangle(ctx->triangle.valueMin, ctx->triangle.valueMax, ctx->triangle.period, ctx->curr_time);
@@ -264,7 +255,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->square.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->ramp.period;
         }
 
         value = _square(ctx->square.valueMin, ctx->square.valueMax, ctx->square.period, ctx->curr_time);
@@ -275,7 +266,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->ramp.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->ramp.period;
         }
 
         value = _ramp(ctx->ramp.valueMin, ctx->ramp.valueMax, ctx->ramp.period, ctx->curr_time);
