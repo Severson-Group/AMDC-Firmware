@@ -107,12 +107,12 @@ void motherboard_get_counters(uint32_t base_addr, uint32_t *V, uint32_t *C, uint
     if (V != NULL) {
         *V = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4];
     }
-    
+
     // Read C counter if user requested it
     if (C != NULL) {
         *V = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4];
     }
-    
+
     // Read T counter if user requested it
     if (T != NULL) {
         *V = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4];
