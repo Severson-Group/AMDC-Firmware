@@ -110,6 +110,29 @@ int scheduler_tcb_register(task_control_block_t *tcb)
     return SUCCESS;
 }
 
+int scheduler_tcb_register_high_priority(task_control_block_t *tcb)
+{
+    // Don't let clients re-register their tcb
+    if (tcb->is_registered) {
+        return FAILURE;
+    }
+
+    // Mark as registered
+    tcb->is_registered = true;
+
+    if (tasks == NULL) {
+        // There are no tasks in linked list
+        tasks = tcb;
+        tasks->next = NULL;
+    } else {
+        // Put new tcb at front of linked list
+        tcb->next = tasks;
+        tasks = tcb;
+    }
+
+    return SUCCESS;
+}
+
 int scheduler_tcb_unregister(task_control_block_t *tcb)
 {
     // Don't let clients unregister their already unregistered tcb
