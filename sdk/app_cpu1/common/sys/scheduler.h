@@ -49,7 +49,7 @@ void scheduler_run(void);
 void scheduler_tcb_init(
     task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec);
 int scheduler_tcb_register(task_control_block_t *tcb);
-int scheduler_tcb_register_high_priority(task_control_block_t *tcb)
+int scheduler_tcb_register_high_priority(task_control_block_t *tcb);
 int scheduler_tcb_unregister(task_control_block_t *tcb);
 bool scheduler_tcb_is_registered(task_control_block_t *tcb);
 
