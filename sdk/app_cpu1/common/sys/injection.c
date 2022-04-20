@@ -110,6 +110,18 @@ static inline double _square(double min, double max, double period, double time)
     return out;
 }
 
+static inline double _ramp(double min, double max, double period, double time)
+{
+    double out;
+    // Calculate slope
+    double m_pos = (max - min) / (period);
+
+    // Calculate output
+    out = m_pos * time + min;
+
+    return out;
+}
+
 void injection_init(void)
 {
     cmd_inj_register();
@@ -221,7 +233,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->chirp.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->chirp.period;
         }
 
         value = _chirp(
@@ -233,7 +245,7 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->triangle.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->triangle.period;
         }
 
         value = _triangle(ctx->triangle.valueMin, ctx->triangle.valueMax, ctx->triangle.period, ctx->curr_time);
@@ -244,10 +256,21 @@ void injection_inj(double *output, inj_ctx_t *ctx, double Ts)
     {
         ctx->curr_time += Ts;
         if (ctx->curr_time >= ctx->square.period) {
-            ctx->curr_time = 0.0;
+            ctx->curr_time -= ctx->square.period;
         }
 
         value = _square(ctx->square.valueMin, ctx->square.valueMax, ctx->square.period, ctx->curr_time);
+        break;
+    }
+
+    case RAMP:
+    {
+        ctx->curr_time += Ts;
+        if (ctx->curr_time >= ctx->ramp.period) {
+            ctx->curr_time -= ctx->ramp.period;
+        }
+
+        value = _ramp(ctx->ramp.valueMin, ctx->ramp.valueMax, ctx->ramp.period, ctx->curr_time);
         break;
     }
 
@@ -355,6 +378,16 @@ void injection_square(inj_ctx_t *ctx, inj_op_e op, double valueMin, double value
     ctx->square.valueMin = valueMin;
     ctx->square.valueMax = valueMax;
     ctx->square.period = period;
+}
+
+void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMax, double period)
+{
+    ctx->inj_func = RAMP;
+    ctx->operation = op;
+    ctx->curr_time = 0.0;
+    ctx->ramp.valueMin = valueMin;
+    ctx->ramp.valueMax = valueMax;
+    ctx->ramp.period = period;
 }
 
 // ***************************

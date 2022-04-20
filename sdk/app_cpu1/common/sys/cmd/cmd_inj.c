@@ -221,6 +221,37 @@ int cmd_inj(int argc, char **argv)
         return CMD_SUCCESS;
     }
 
+    // Handle 'inj ramp ...' command
+    if (argc == 7 && STREQ("ramp", argv[1])) {
+        // Parse out name and convert to injection context
+        inj_ctx_t *ctx = injection_find_ctx_by_name(argv[2]);
+        if (ctx == NULL) {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        // Parse out operation
+        inj_op_e op;
+        if (_parse_op(argv[3], &op) != 0) {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        // Pull out valueMin argument
+        double valueMin = strtod(argv[4], NULL);
+
+        // Pull out valueMax argument
+        double valueMax = strtod(argv[5], NULL);
+
+        // Pull out period argument
+        double period = strtod(argv[6], NULL);
+        if (period < 0.0) {
+            return CMD_INVALID_ARGUMENTS;
+        }
+
+        injection_ramp(ctx, op, valueMin, valueMax, period);
+
+        return CMD_SUCCESS;
+    }
+
     return CMD_INVALID_ARGUMENTS;
 }
 
