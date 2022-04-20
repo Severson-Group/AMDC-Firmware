@@ -83,5 +83,6 @@ int motherboard_get_data(uint32_t base_addr, mb_channel_e channel, int32_t *out)
 
 void motherboard_print_samples(uint32_t base_addr);
 void motherboard_print_counters(uint32_t base_addr);
+void motherboard_get_counters(uint32_t base_addr, uint32_t *V, uint32_t *C, uint32_t *T);
 
 #endif // MOTHERBOARD_H

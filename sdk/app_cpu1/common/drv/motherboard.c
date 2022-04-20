@@ -98,4 +98,25 @@ void motherboard_print_counters(uint32_t base_addr)
     cmd_resp_printf("T: %08X\r\n", m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4]);
 }
 
+void motherboard_get_counters(uint32_t base_addr, uint32_t *V, uint32_t *C, uint32_t *T)
+{
+    // Create base address for IP
+    volatile uint32_t *m_motherboard = (volatile uint32_t *) base_addr;
+
+    // Read V counter if user requested it
+    if (V != NULL) {
+        *V = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_VALID / 4];
+    }
+
+    // Read C counter if user requested it
+    if (C != NULL) {
+        *C = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_CORRUPT / 4];
+    }
+
+    // Read T counter if user requested it
+    if (T != NULL) {
+        *T = m_motherboard[MOTHERBOARD_DEFS_OFFSET_COUNT_TIMEOUT / 4];
+    }
+}
+
 #endif // USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT
