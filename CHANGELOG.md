@@ -2,6 +2,13 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.0.4
+
+- Fix injection period inconsistencies
+- Add ramp injection function
+- Add AMDS driver counter access API
+- Add top priority scheduler task register method
+
 ## v1.0.3
 
 - Fix bug in Vivado project vs. C code config checking
