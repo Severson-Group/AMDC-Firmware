@@ -30,17 +30,25 @@ void scheduler_timer_isr(void *arg)
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
-        // Use raw printf so this goes directly to the UART device
-        xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\n");
+        // Per AMDC-Firmware Issue #265, during start-up, the overrun check
+        // seems to falsely trigger, or at least, we do not care about the trigger.
+        //
+        // To fix this, wait until at least 100 time slices have elapsed
+        // before allowing it to trigger.
+        if (elapsed_usec > 100 * SYS_TICK_USEC) {
+            // Use raw printf so this goes directly to the UART device
+            xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
+            xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
 
-        led_set_color(0, LED_COLOR_RED);
-        led_set_color(1, LED_COLOR_RED);
-        led_set_color(2, LED_COLOR_RED);
-        led_set_color(3, LED_COLOR_RED);
+            led_set_color(0, LED_COLOR_RED);
+            led_set_color(1, LED_COLOR_RED);
+            led_set_color(2, LED_COLOR_RED);
+            led_set_color(3, LED_COLOR_RED);
 
-        // Hang here so the user can debug why the code took so long
-        // and overran the time slice! See the `running_task` variable.
-        while (1) {
+            // Hang here so the user can debug why the code took so long
+            // and overran the time slice! See the `running_task` variable.
+            while (1) {
+            }
         }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
@@ -104,6 +112,29 @@ int scheduler_tcb_register(task_control_block_t *tcb)
         // Append new tcb to end of list
         curr->next = tcb;
         tcb->next = NULL;
+    }
+
+    return SUCCESS;
+}
+
+int scheduler_tcb_register_high_priority(task_control_block_t *tcb)
+{
+    // Don't let clients re-register their tcb
+    if (tcb->is_registered) {
+        return FAILURE;
+    }
+
+    // Mark as registered
+    tcb->is_registered = true;
+
+    if (tasks == NULL) {
+        // There are no tasks in linked list
+        tasks = tcb;
+        tasks->next = NULL;
+    } else {
+        // Put new tcb at front of linked list
+        tcb->next = tasks;
+        tasks = tcb;
     }
 
     return SUCCESS;
