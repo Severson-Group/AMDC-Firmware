@@ -23,6 +23,9 @@ class AMDC_Logger():
     
     def __init__(self, AMDC, mapfile):
         
+        if mapfile == None:
+            raise Exception("Could not find map file")
+
         self.amdc = AMDC
         self.mapfile = Mapfile(mapfile)
         
