@@ -178,6 +178,15 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
 
+        if (argc == 3 && STREQ("zval", argv[2])) {
+            uint32_t zvalue;
+            encoder_get_z_value(&zvalue);
+
+            cmd_resp_printf("zval: %ld\r\n", zvalue);
+
+            return CMD_SUCCESS;
+        }
+
         if (argc == 3 && STREQ("init", argv[2])) {
             encoder_find_z();
 

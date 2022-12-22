@@ -29,6 +29,11 @@ void encoder_get_position(uint32_t *position)
     *position = Xil_In32(ENCODER_BASE_ADDR + 1 * sizeof(uint32_t));
 }
 
+void encoder_get_z_value(uint32_t *z_value)
+{
+    *z_value = Xil_In32(ENCODER_BASE_ADDR + 3 * sizeof(uint32_t));
+}
+
 // ****************
 // State Machine which finds z pulse
 // ****************

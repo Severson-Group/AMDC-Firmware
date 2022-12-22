@@ -378,7 +378,8 @@
 	        2'h0   : reg_data_out <= counter;
 	        2'h1   : reg_data_out <= position;
 	        2'h2   : reg_data_out <= slv_reg2;
-	        2'h3   : reg_data_out <= slv_reg3;
+	        //2'h3   : reg_data_out <= slv_reg3;
+	        2'h3   : reg_data_out <= {31'h0, Z};
 	        default : reg_data_out <= 0;
 	      endcase
 	end
