@@ -1,4 +1,4 @@
-name: CI
+name: Check Format
 
 on:
   workflow_dispatch:
