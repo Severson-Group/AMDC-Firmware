@@ -2,6 +2,11 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.0.5
+
+- Fix GitHub action for code format check
+- Throw exception when mapfile is not given to `AMDC_Logger` python class
+
 ## v1.0.4
 
 - Fix injection period inconsistencies
