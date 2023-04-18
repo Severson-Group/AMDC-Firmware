@@ -12,7 +12,11 @@ typedef enum {
     GPIO_MUX_DEVICE1 = 1,
     GPIO_MUX_DEVICE2 = 2,
     GPIO_MUX_DEVICE3 = 3,
-    GPIO_MUX_DEVICE4 = 4
+    GPIO_MUX_DEVICE4 = 4,
+    GPIO_MUX_DEVICE5 = 5,
+    GPIO_MUX_DEVICE6 = 6,
+    GPIO_MUX_DEVICE7 = 7,
+    GPIO_MUX_DEVICE8 = 8
 } gpio_mux_device_t;
 
 #define GPIO_PORT1 GPIO_MUX_UNUSED
