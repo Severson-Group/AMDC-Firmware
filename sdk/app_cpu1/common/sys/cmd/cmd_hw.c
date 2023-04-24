@@ -5,6 +5,7 @@
 #include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_mux.h"
+#include "drv/gpio_direct.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
@@ -235,6 +236,134 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
+
+    // Handle 'gpio' sub-command
+    // hw gpio read <port> <pin>
+    // hw gpio write <port> <pin> <HIGH|LOW>
+    // hw gpio toggle <port> <pin>
+    if (argc >= 2 && STREQ("gpio", argv[1])) {
+
+        // NOTE:
+        // Users should enter ports and pins that are 1-indexed.
+        // However, the functions in gpio_direct.c require 0-indexed 
+        // arguments. That is why we subtract 1 from the user cmd input
+
+        if (argc == 5 && STREQ("read", argv[2])) {
+            uint8_t gpio_port = atoi(argv[3]);
+            uint8_t pin = atoi(argv[4]);
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (gpio_port < 1 || gpio_port > 2) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 2)
+                return CMD_INVALID_ARGUMENTS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (gpio_port < 1 || gpio_port > 4) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 3)
+                return CMD_INVALID_ARGUMENTS;
+
+#endif            
+
+            gpio_direct_level_t level = gpio_direct_read(gpio_port-1, pin-1);
+
+            cmd_resp_print("Read GPIO");
+            cmd_resp_printf("Port: %i\r\n", gpio_port);
+            cmd_resp_printf("Pin: %i\r\n", pin);
+
+            if(level == GPIO_DIRECT_HIGH){
+                cmd_resp_print("Result: HIGH");
+            }
+            else if(level == GPIO_DIRECT_LOW){
+                cmd_resp_print("Result: HIGH");
+            }
+            else{
+                cmd_resp_print("Result: UNKNOWN");
+                return CMD_FAILURE;
+            }
+
+            return CMD_SUCCESS;
+        } // end if "read"
+
+
+        if (argc == 6 && STREQ("write", argv[2])) {
+            uint8_t gpio_port = atoi(argv[3]);
+            uint8_t pin = atoi(argv[4]);
+            char* level = argv[5];
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (gpio_port < 1 || gpio_port > 2) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 2)
+                return CMD_INVALID_ARGUMENTS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (gpio_port < 1 || gpio_port > 4) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 3)
+                return CMD_INVALID_ARGUMENTS;
+#endif          
+
+            if (STREQ("HIGH", level)){
+                gpio_direct_write(gpio_port-1, pin-1, 1);
+            }
+            else if (STREQ("LOW", level)){
+                gpio_direct_write(gpio_port-1, pin-1, 0);
+            }
+            else{
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            cmd_resp_print("Wrote GPIO");
+            cmd_resp_printf("Port: %i\r\n", gpio_port);
+            cmd_resp_printf("Pin: %i\r\n", pin);
+
+            if(STREQ("HIGH", level)){
+                cmd_resp_print("Level: HIGH");
+            }
+            else if(STREQ("LOW", level)){
+                cmd_resp_print("Level: HIGH");
+            }
+
+            return CMD_SUCCESS;
+        } // end if "write"
+
+
+        if (argc == 5 && STREQ("toggle", argv[2])) {
+            uint8_t gpio_port = atoi(argv[3]);
+            uint8_t pin = atoi(argv[4]);
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (gpio_port < 1 || gpio_port > 2) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 2)
+                return CMD_INVALID_ARGUMENTS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (gpio_port < 1 || gpio_port > 4) 
+                return CMD_INVALID_ARGUMENTS;
+            
+            if (pin < 1 || pin > 3)
+                return CMD_INVALID_ARGUMENTS;
+#endif          
+            gpio_direct_toggle(gpio_port-1, pin-1)
+
+            cmd_resp_print("Toggled GPIO");
+            cmd_resp_printf("Port: %i\r\n", gpio_port);
+            cmd_resp_printf("Pin: %i\r\n", pin);
+
+            return CMD_SUCCESS;
+        } // end if "write"
+
+    } // end if "gpio" sub-command
+
+
     // Handle 'mux' sub-command
     // mux gpio <port#> <device#>
     if (argc >= 2 && STREQ("mux", argv[1])) {
@@ -242,17 +371,24 @@ int cmd_hw(int argc, char **argv)
             int gpio_port = atoi(argv[3]);
             int device = atoi(argv[4]);
 
-            if (device < 0 || device > 4) {
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (device < 0 || device > GPIO_MUX_DEVICE_COUNT) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             if (gpio_port < 1 || gpio_port > 2) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
             gpio_mux_set_device(gpio_port - 1, device);
+
+
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (device < 0 || device > GP3IO_MUX_DEVICE_COUNT) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
             if (gpio_port < 1 || gpio_port > 4) {
                 return CMD_INVALID_ARGUMENTS;
             }
@@ -274,7 +410,8 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
                 break;
             }
-#endif
+
+#endif //USER_CONFIG_HARDWARE_TARGET
 
             return CMD_SUCCESS;
         }

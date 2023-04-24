@@ -22,6 +22,8 @@ typedef enum {
 #define GPIO_PORT1 GPIO_MUX_UNUSED
 #define GPIO_PORT2 GPIO_MUX_UNUSED
 
+#define GPIO_MUX_DEVICE_COUNT 8
+
 void gpio_mux_init(void);
 
 void gpio_mux_set_device(uint8_t, gpio_mux_device_t);

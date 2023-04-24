@@ -29,6 +29,8 @@ typedef enum {
     GP3IO_MUX_DEVICE8 = 8
 } gp3io_mux_device_t;
 
+#define GP3IO_MUX_DEVICE_COUNT 8
+
 void gp3io_mux_init(void);
 void gp3io_mux_set_device(uint32_t base_addr, gp3io_mux_device_t device);
 
