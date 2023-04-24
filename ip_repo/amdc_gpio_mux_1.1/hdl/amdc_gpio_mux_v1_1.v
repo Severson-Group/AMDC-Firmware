@@ -105,18 +105,18 @@
 		.device_out_2(device_out_2),
 		.device_out_3(device_out_3),
 		.device_out_4(device_out_4),
-		.device_out_1(device_out_5),
-		.device_out_2(device_out_6),
-		.device_out_3(device_out_7),
-		.device_out_4(device_out_8),
+		.device_out_5(device_out_5),
+		.device_out_6(device_out_6),
+		.device_out_7(device_out_7),
+		.device_out_8(device_out_8),
 		.device_in_1(device_in_1),
 		.device_in_2(device_in_2),
 		.device_in_3(device_in_3),
 		.device_in_4(device_in_4),
-		.device_in_1(device_in_5),
-		.device_in_2(device_in_6),
-		.device_in_3(device_in_7),
-		.device_in_4(device_in_8)
+		.device_in_5(device_in_5),
+		.device_in_6(device_in_6),
+		.device_in_7(device_in_7),
+		.device_in_8(device_in_8)
 	);
 
 	// Add user logic here
