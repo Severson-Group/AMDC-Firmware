@@ -34,6 +34,8 @@ static command_help_t cmd_help[] = {
     { "timer <fpga|cpu> now", "Read value from hardware timer" },
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
+    { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
+    { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
 };
 
 void cmd_hw_register(void)
@@ -270,18 +272,18 @@ int cmd_hw(int argc, char **argv)
 
             gpio_direct_level_t level = gpio_direct_read(gpio_port-1, pin-1);
 
-            cmd_resp_print("Read GPIO");
+            cmd_resp_print("Read GPIO\r\n");
             cmd_resp_printf("Port: %i\r\n", gpio_port);
             cmd_resp_printf("Pin: %i\r\n", pin);
 
             if(level == GPIO_DIRECT_HIGH){
-                cmd_resp_print("Result: HIGH");
+                cmd_resp_print("Result: HIGH\r\n");
             }
             else if(level == GPIO_DIRECT_LOW){
-                cmd_resp_print("Result: HIGH");
+                cmd_resp_print("Result: LOW\r\n");
             }
             else{
-                cmd_resp_print("Result: UNKNOWN");
+                cmd_resp_print("Result: UNKNOWN\r\n");
                 return CMD_FAILURE;
             }
 
@@ -319,15 +321,15 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            cmd_resp_print("Wrote GPIO");
+            cmd_resp_print("Wrote GPIO\r\n");
             cmd_resp_printf("Port: %i\r\n", gpio_port);
             cmd_resp_printf("Pin: %i\r\n", pin);
 
             if(STREQ("HIGH", level)){
-                cmd_resp_print("Level: HIGH");
+                cmd_resp_print("Level: HIGH\r\n");
             }
             else if(STREQ("LOW", level)){
-                cmd_resp_print("Level: HIGH");
+                cmd_resp_print("Level: LOW\r\n");
             }
 
             return CMD_SUCCESS;
@@ -354,7 +356,7 @@ int cmd_hw(int argc, char **argv)
 #endif          
             gpio_direct_toggle(gpio_port-1, pin-1);
 
-            cmd_resp_print("Toggled GPIO");
+            cmd_resp_print("Toggled GPIO\r\n");
             cmd_resp_printf("Port: %i\r\n", gpio_port);
             cmd_resp_printf("Pin: %i\r\n", pin);
 
@@ -415,6 +417,33 @@ int cmd_hw(int argc, char **argv)
 
             return CMD_SUCCESS;
         }
+        else if(argc == 4 && STREQ("gpio", argv[2]) && STREQ("list", argv[3])){
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            cmd_resp_print("AMDC REV D gpio device numbers:\r\n");
+            cmd_resp_print("1. Eddy Current Sensor\r\n");
+            cmd_resp_print("2. AMDS\r\n");
+            cmd_resp_print("3. ILD1420 Proximity Sensor 1\r\n");
+            cmd_resp_print("4. ILD1420 Proximity Sensor 2\r\n");
+            cmd_resp_print("5. GPIO Direct (Port 1)\r\n");
+            cmd_resp_print("6. GPIO Direct (Port 2)\r\n");
+            cmd_resp_print("7. UNUSED\r\n");
+            cmd_resp_print("8. UNUSED\r\n");
+            return CMD_SUCCESS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            cmd_resp_print("AMDC REV E gpio device numbers:\r\n");
+            cmd_resp_print("1. AMDS\r\n");
+            cmd_resp_print("2. Eddy Current Sensor\r\n");
+            cmd_resp_print("3. ILD1420 Proximity Sensor\r\n");
+            cmd_resp_print("4. GPIO Direct\r\n");
+            cmd_resp_print("5. UNUSED\r\n");
+            cmd_resp_print("6. UNUSED\r\n");
+            cmd_resp_print("7. UNUSED\r\n");
+            cmd_resp_print("8. UNUSED\r\n");
+            return CMD_SUCCESS;
+
+#endif // USER_CONFIG_HARDWARE_TARGET for hw mux gpio list
+        }
 
         if (argc == 5 && STREQ("sts", argv[2])) {
             int sts_port = atoi(argv[3]);
@@ -428,6 +457,39 @@ int cmd_hw(int argc, char **argv)
             sts_mux_set_device(sts_port - 1, device);
 
             return CMD_SUCCESS;
+        }
+        else if(argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])){
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            cmd_resp_print("AMDC REV D sts device numbers: TODO\r\n");
+
+            /*
+            cmd_resp_print("1. \r\n");          TODO: FILL ME IN
+            cmd_resp_print("2. \r\n");
+            cmd_resp_print("3. \r\n");
+            cmd_resp_print("4. \r\n");
+            cmd_resp_print("5. \r\n");
+            cmd_resp_print("6. \r\n");
+            cmd_resp_print("7. \r\n");
+            cmd_resp_print("8. \r\n");
+            return CMD_SUCCESS;
+            */
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            cmd_resp_print("AMDC REV E sts device numbers: TODO\r\n");
+
+            /*
+            cmd_resp_print("1. \r\n");          TODO: FILL ME IN
+            cmd_resp_print("2. \r\n");
+            cmd_resp_print("3. \r\n");
+            cmd_resp_print("4. \r\n");
+            cmd_resp_print("5. \r\n");
+            cmd_resp_print("6. \r\n");
+            cmd_resp_print("7. \r\n");
+            cmd_resp_print("8. \r\n");
+            return CMD_SUCCESS;
+            */
+
+#endif // USER_CONFIG_HARDWARE_TARGET for hw mux sts list
         }
     }
 
