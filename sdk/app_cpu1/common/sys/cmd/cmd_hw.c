@@ -352,7 +352,7 @@ int cmd_hw(int argc, char **argv)
             if (pin < 1 || pin > 3)
                 return CMD_INVALID_ARGUMENTS;
 #endif          
-            gpio_direct_toggle(gpio_port-1, pin-1)
+            gpio_direct_toggle(gpio_port-1, pin-1);
 
             cmd_resp_print("Toggled GPIO");
             cmd_resp_printf("Port: %i\r\n", gpio_port);
