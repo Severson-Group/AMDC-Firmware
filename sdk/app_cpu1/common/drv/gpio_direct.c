@@ -62,21 +62,29 @@ gpio_direct_level_t gpio_direct_read(gpio_direct_port_t port, gpio_direct_pin_t 
 {
 	switch(port){
 		case GPIO_DIRECT_PORT1:
-			// do something
-			return (gpio_direct_level_t)(Xil_In32(GPIO1_DIRECT_BASE_ADDR) & (1 << pin));
+			if(Xil_In32(GPIO1_DIRECT_BASE_ADDR) & (1 << pin))
+				return GPIO_DIRECT_HIGH;
+			else
+				return GPIO_DIRECT_LOW;
 			break;
 		case GPIO_DIRECT_PORT2:
-			// do something
-			return (gpio_direct_level_t)(Xil_In32(GPIO2_DIRECT_BASE_ADDR) & (1 << pin));
+			if(Xil_In32(GPIO2_DIRECT_BASE_ADDR) & (1 << pin))
+				return GPIO_DIRECT_HIGH;
+			else
+				return GPIO_DIRECT_LOW;
 			break;
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
 		case GPIO_DIRECT_PORT3:
-			// do something
-			return (gpio_direct_level_t)(Xil_In32(GPIO3_DIRECT_BASE_ADDR) & (1 << pin));
+			if(Xil_In32(GPIO3_DIRECT_BASE_ADDR) & (1 << pin))
+				return GPIO_DIRECT_HIGH;
+			else
+				return GPIO_DIRECT_LOW;
 			break;
 		case GPIO_DIRECT_PORT4:
-			// do something
-			return (gpio_direct_level_t)(Xil_In32(GPIO4_DIRECT_BASE_ADDR) & (1 << pin));
+			if(Xil_In32(GPIO4_DIRECT_BASE_ADDR) & (1 << pin))
+				return GPIO_DIRECT_HIGH;
+			else
+				return GPIO_DIRECT_LOW;
 			break;
 #endif
 		default:
@@ -98,7 +106,7 @@ void gpio_direct_write(gpio_direct_port_t port, gpio_direct_pin_t pin, gpio_dire
 			current = Xil_In32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t));
 			
 			if(level){ // SET
-				Xil_Out32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t), current | (1 << pin));
+				Xil_Out32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t), current | (1 << pin));    // Read register, change only desired bit, write back out
 			}
 			else{ // CLEAR
 				Xil_Out32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t), current & ~(1 << pin));
