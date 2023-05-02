@@ -3,7 +3,7 @@
 This driver is used to control and configure the GPIO mux IP core in the FPGA through the AXI4-Lite interface.
 
 ## Files
-All files for the GPIO mux driver are in the driver directory ([`common/drv/`](/sdk/bare/common/drv/)).
+All files for the GPIO mux driver are in the driver directory ([`common/drv/`](/sdk/common/drv/)).
 
 ```
 drv/
@@ -12,21 +12,9 @@ drv/
 ```
 ## Default Connections and Operation
 
-The mux IP can be connected to 4 different IP drivers
+The mux IP can be connected to one of eight different IP drivers
 
 ## Configuring the Mux
-
-### Macros
-
-The following macros are used to configure which device driver each IsoSPI port is mapped to upon initialization. 
-
-Each port is set to the `GPIO_MUX_UNUSED` macro by default which disables the GPIO lines on the port by holding the lines to logic low. Each port can be mapped to a specific driver IP core by setting the port macro to one of the devices (`GPIO_MUX_DEVICE1` - `GPIO_MUX_DEVICE4`)
-
-```C
-#define GPIO_PORT1 GPIO_MUX_UNUSED
-
-#define GPIO_PORT2 GPIO_MUX_UNUSED
-```
 
 The following functions are used to configuring the GPIO mux IP. The `gpio_mux_init()` function is called upon initialization of the AMDC and sets the GPIO mux into a default state defined by the macros as described below. The `gpio_mux_set_device()` function is the intended way of configuring the GPIO mux IP. The function must be called by the user app. During runtime, the CLI commands can be used to configure the mux. 
 
