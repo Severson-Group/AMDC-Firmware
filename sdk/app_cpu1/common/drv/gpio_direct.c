@@ -163,28 +163,20 @@ void gpio_direct_toggle(gpio_direct_port_t port, gpio_direct_pin_t pin)
 {
 	switch(port){
 		case GPIO_DIRECT_PORT1:
-			// Get current register value using Xil_In, 
-			// then toggle the desired bit
-			
+			// Get current register value using Xil_In, then toggle the desired bit
 			Xil_Out32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t), Xil_In32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
 			break;
 		case GPIO_DIRECT_PORT2:
-			// Get current register value using Xil_In, 
-			// then toggle the desired bit
-			
+			// Get current register value using Xil_In, then toggle the desired bit
 			Xil_Out32(GPIO2_DIRECT_BASE_ADDR + sizeof(uint32_t), Xil_In32(GPIO2_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
 			break;
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
 		case GPIO_DIRECT_PORT3:
-			// Get current register value using Xil_In, 
-			// then toggle the desired bit
-			
+			// Get current register value using Xil_In, then toggle the desired bit
 			Xil_Out32(GPIO3_DIRECT_BASE_ADDR + sizeof(uint32_t), Xil_In32(GPIO3_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
 			break;
 		case GPIO_DIRECT_PORT4:
-			// Get current register value using Xil_In, 
-			// then toggle the desired bit
-			
+			// Get current register value using Xil_In, then toggle the desired bit
 			Xil_Out32(GPIO4_DIRECT_BASE_ADDR + sizeof(uint32_t), Xil_In32(GPIO4_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
 			break;
 #endif

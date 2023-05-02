@@ -271,15 +271,11 @@ int cmd_hw(int argc, char **argv)
          
             gpio_direct_level_t level = gpio_direct_read(gpio_port-1, pin-1);
 
-            cmd_resp_print("Read GPIO\r\n");
-            cmd_resp_printf("Port: %i\r\n", gpio_port);
-            cmd_resp_printf("Pin: %i\r\n", pin);
-
             if(level == GPIO_DIRECT_HIGH){
-                cmd_resp_print("Result: HIGH\r\n");
+                cmd_resp_print("Read Result: HIGH\r\n");
             }
             else if(level == GPIO_DIRECT_LOW){
-                cmd_resp_print("Result: LOW\r\n");
+                cmd_resp_print("Read Result: LOW\r\n");
             }
             else{
                 return CMD_FAILURE;  // gpio_direct_read() returned error, see REVIEW comment in drv/gpio_direct.c
@@ -303,17 +299,6 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            cmd_resp_print("Wrote GPIO\r\n");
-            cmd_resp_printf("Port: %i\r\n", gpio_port);
-            cmd_resp_printf("Pin: %i\r\n", pin);
-
-            if(STREQ("HIGH", level)){
-                cmd_resp_print("Level: HIGH\r\n");
-            }
-            else if(STREQ("LOW", level)){
-                cmd_resp_print("Level: LOW\r\n");
-            }
-
             return CMD_SUCCESS;
         } // end if "write"
 
@@ -321,10 +306,6 @@ int cmd_hw(int argc, char **argv)
         if (argc == 5 && STREQ("toggle", argv[2])) {
 
             gpio_direct_toggle(gpio_port-1, pin-1);
-
-            cmd_resp_print("Toggled GPIO\r\n");
-            cmd_resp_printf("Port: %i\r\n", gpio_port);
-            cmd_resp_printf("Pin: %i\r\n", pin);
 
             return CMD_SUCCESS;
         } // end if "write"
