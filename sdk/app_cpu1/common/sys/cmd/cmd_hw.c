@@ -243,16 +243,14 @@ int cmd_hw(int argc, char **argv)
     // hw gpio read <port> <pin>
     // hw gpio write <port> <pin> <HIGH|LOW>
     // hw gpio toggle <port> <pin>
-    if (argc >= 2 && STREQ("gpio", argv[1])) {
+    if (argc >= 5 && STREQ("gpio", argv[1])) {
 
         // NOTE:
         // Users should enter ports and pins that are 1-indexed.
         // However, the functions in gpio_direct.c require 0-indexed 
         // arguments. That is why we subtract 1 from the user cmd input
-
-        if (argc == 5 && STREQ("read", argv[2])) {
-            uint8_t gpio_port = atoi(argv[3]);
-            uint8_t pin = atoi(argv[4]);
+        uint8_t gpio_port = atoi(argv[3]);
+        uint8_t pin = atoi(argv[4]);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             if (gpio_port < 1 || gpio_port > 2) 
@@ -267,9 +265,10 @@ int cmd_hw(int argc, char **argv)
             
             if (pin < 1 || pin > 3)
                 return CMD_INVALID_ARGUMENTS;
+#endif   
 
-#endif            
-
+        if (argc == 5 && STREQ("read", argv[2])) {
+         
             gpio_direct_level_t level = gpio_direct_read(gpio_port-1, pin-1);
 
             cmd_resp_print("Read GPIO\r\n");
@@ -283,8 +282,7 @@ int cmd_hw(int argc, char **argv)
                 cmd_resp_print("Result: LOW\r\n");
             }
             else{
-                cmd_resp_print("Result: UNKNOWN\r\n");
-                return CMD_FAILURE;
+                return CMD_FAILURE;  // gpio_direct_read() returned error, see REVIEW comment in drv/gpio_direct.c
             }
 
             return CMD_SUCCESS;
@@ -292,24 +290,8 @@ int cmd_hw(int argc, char **argv)
 
 
         if (argc == 6 && STREQ("write", argv[2])) {
-            uint8_t gpio_port = atoi(argv[3]);
-            uint8_t pin = atoi(argv[4]);
+
             char* level = argv[5];
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-            if (gpio_port < 1 || gpio_port > 2) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 2)
-                return CMD_INVALID_ARGUMENTS;
-
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            if (gpio_port < 1 || gpio_port > 4) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 3)
-                return CMD_INVALID_ARGUMENTS;
-#endif          
 
             if (STREQ("HIGH", level)){
                 gpio_direct_write(gpio_port-1, pin-1, 1);
@@ -337,23 +319,7 @@ int cmd_hw(int argc, char **argv)
 
 
         if (argc == 5 && STREQ("toggle", argv[2])) {
-            uint8_t gpio_port = atoi(argv[3]);
-            uint8_t pin = atoi(argv[4]);
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-            if (gpio_port < 1 || gpio_port > 2) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 2)
-                return CMD_INVALID_ARGUMENTS;
-
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            if (gpio_port < 1 || gpio_port > 4) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 3)
-                return CMD_INVALID_ARGUMENTS;
-#endif          
             gpio_direct_toggle(gpio_port-1, pin-1);
 
             cmd_resp_print("Toggled GPIO\r\n");

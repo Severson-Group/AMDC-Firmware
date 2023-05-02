@@ -88,7 +88,7 @@ gpio_direct_level_t gpio_direct_read(gpio_direct_port_t port, gpio_direct_pin_t 
 			break;
 #endif
 		default:
-			return GPIO_DIRECT_LOW;
+			return GPIO_DIRECT_LOW;  // REVIEW: Should this return some error condition (-1) instead??
 			break;
 	}
 }
