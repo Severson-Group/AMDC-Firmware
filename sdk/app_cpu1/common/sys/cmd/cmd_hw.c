@@ -4,8 +4,8 @@
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
-#include "drv/gpio_mux.h"
 #include "drv/gpio_direct.h"
+#include "drv/gpio_mux.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
@@ -238,7 +238,6 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-
     // Handle 'gpio' sub-command
     // hw gpio read <port> <pin>
     // hw gpio write <port> <pin> <HIGH|LOW>
@@ -253,65 +252,58 @@ int cmd_hw(int argc, char **argv)
         uint8_t pin = atoi(argv[4]);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-            if (gpio_port < 1 || gpio_port > 2) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 2)
-                return CMD_INVALID_ARGUMENTS;
+        if (gpio_port < 1 || gpio_port > 2)
+            return CMD_INVALID_ARGUMENTS;
+
+        if (pin < 1 || pin > 2)
+            return CMD_INVALID_ARGUMENTS;
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            if (gpio_port < 1 || gpio_port > 4) 
-                return CMD_INVALID_ARGUMENTS;
-            
-            if (pin < 1 || pin > 3)
-                return CMD_INVALID_ARGUMENTS;
-#endif   
+        if (gpio_port < 1 || gpio_port > 4)
+            return CMD_INVALID_ARGUMENTS;
+
+        if (pin < 1 || pin > 3)
+            return CMD_INVALID_ARGUMENTS;
+#endif
 
         if (argc == 5 && STREQ("read", argv[2])) {
-         
-            gpio_direct_level_t level = gpio_direct_read(gpio_port-1, pin-1);
 
-            if(level == GPIO_DIRECT_HIGH){
+            gpio_direct_level_t level = gpio_direct_read(gpio_port - 1, pin - 1);
+
+            if (level == GPIO_DIRECT_HIGH) {
                 cmd_resp_print("Read Result: HIGH\r\n");
-            }
-            else if(level == GPIO_DIRECT_LOW){
+            } else if (level == GPIO_DIRECT_LOW) {
                 cmd_resp_print("Read Result: LOW\r\n");
-            }
-            else{
-                return CMD_FAILURE;  // gpio_direct_read() returned error, see REVIEW comment in drv/gpio_direct.c
+            } else {
+                return CMD_FAILURE; // gpio_direct_read() returned error, see REVIEW comment in drv/gpio_direct.c
             }
 
             return CMD_SUCCESS;
         } // end if "read"
 
-
         if (argc == 6 && STREQ("write", argv[2])) {
 
-            char* level = argv[5];
+            char *level = argv[5];
 
-            if (STREQ("HIGH", level)){
-                gpio_direct_write(gpio_port-1, pin-1, 1);
-            }
-            else if (STREQ("LOW", level)){
-                gpio_direct_write(gpio_port-1, pin-1, 0);
-            }
-            else{
+            if (STREQ("HIGH", level)) {
+                gpio_direct_write(gpio_port - 1, pin - 1, 1);
+            } else if (STREQ("LOW", level)) {
+                gpio_direct_write(gpio_port - 1, pin - 1, 0);
+            } else {
                 return CMD_INVALID_ARGUMENTS;
             }
 
             return CMD_SUCCESS;
         } // end if "write"
 
-
         if (argc == 5 && STREQ("toggle", argv[2])) {
 
-            gpio_direct_toggle(gpio_port-1, pin-1);
+            gpio_direct_toggle(gpio_port - 1, pin - 1);
 
             return CMD_SUCCESS;
         } // end if "write"
 
     } // end if "gpio" sub-command
-
 
     // Handle 'mux' sub-command
     // mux gpio <port#> <device#>
@@ -319,7 +311,6 @@ int cmd_hw(int argc, char **argv)
         if (argc == 5 && STREQ("gpio", argv[2])) {
             int gpio_port = atoi(argv[3]);
             int device = atoi(argv[4]);
-
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             if (device < 0 || device > GPIO_MUX_DEVICE_COUNT) {
@@ -331,7 +322,6 @@ int cmd_hw(int argc, char **argv)
             }
 
             gpio_mux_set_device(gpio_port - 1, device);
-
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
             if (device < 0 || device > GP3IO_MUX_DEVICE_COUNT) {
@@ -360,11 +350,10 @@ int cmd_hw(int argc, char **argv)
                 break;
             }
 
-#endif //USER_CONFIG_HARDWARE_TARGET
+#endif // USER_CONFIG_HARDWARE_TARGET
 
             return CMD_SUCCESS;
-        }
-        else if(argc == 4 && STREQ("gpio", argv[2]) && STREQ("list", argv[3])){
+        } else if (argc == 4 && STREQ("gpio", argv[2]) && STREQ("list", argv[3])) {
             /* MAINTAINER NOTE:
              * These device listings come from the Vivado Block Design files,
              * amdc_revd.bd and amdc_reve.bd,
@@ -409,8 +398,7 @@ int cmd_hw(int argc, char **argv)
             sts_mux_set_device(sts_port - 1, device);
 
             return CMD_SUCCESS;
-        }
-        else if(argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])){
+        } else if (argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])) {
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             cmd_resp_print("AMDC REV D sts device numbers:\r\n");
             // TODO: FILL IN BELOW AND REMOVE NEXT LINE
