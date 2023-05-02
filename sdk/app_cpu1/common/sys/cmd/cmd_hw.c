@@ -365,6 +365,11 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
         else if(argc == 4 && STREQ("gpio", argv[2]) && STREQ("list", argv[3])){
+            /* MAINTAINER NOTE:
+             * These device listings come from the Vivado Block Design files,
+             * amdc_revd.bd and amdc_reve.bd,
+             * and should be kept in sync.
+             */
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             cmd_resp_print("AMDC REV D gpio device numbers:\r\n");
             cmd_resp_print("1. Eddy Current Sensor\r\n");
@@ -407,10 +412,10 @@ int cmd_hw(int argc, char **argv)
         }
         else if(argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])){
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
-            cmd_resp_print("AMDC REV D sts device numbers: TODO\r\n");
-
+            cmd_resp_print("AMDC REV D sts device numbers:\r\n");
+            cmd_resp_print("Please check the block design by opening hw/amdc_revd.bd in Vivado.\r\n"); //TODO: FILL IN BELOW AND REMOVE THIS LINE
             /*
-            cmd_resp_print("1. \r\n");          TODO: FILL ME IN
+            cmd_resp_print("1. \r\n");
             cmd_resp_print("2. \r\n");
             cmd_resp_print("3. \r\n");
             cmd_resp_print("4. \r\n");
@@ -422,10 +427,10 @@ int cmd_hw(int argc, char **argv)
             */
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            cmd_resp_print("AMDC REV E sts device numbers: TODO\r\n");
-
+            cmd_resp_print("AMDC REV E sts device numbers:\r\n");
+            cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n"); //TODO: FILL IN BELOW AND REMOVE THIS LINE
             /*
-            cmd_resp_print("1. \r\n");          TODO: FILL ME IN
+            cmd_resp_print("1. \r\n");
             cmd_resp_print("2. \r\n");
             cmd_resp_print("3. \r\n");
             cmd_resp_print("4. \r\n");
