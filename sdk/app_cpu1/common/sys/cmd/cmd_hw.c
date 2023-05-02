@@ -246,8 +246,8 @@ int cmd_hw(int argc, char **argv)
     if (argc >= 5 && STREQ("gpio", argv[1])) {
 
         // NOTE:
-        // Users should enter ports and pins that are 1-indexed.
-        // However, the functions in gpio_direct.c require 0-indexed 
+        // Users should enter ports and pins that are 1-indexed
+        // However, the functions in gpio_direct.c require 0-indexed
         // arguments. That is why we subtract 1 from the user cmd input
         uint8_t gpio_port = atoi(argv[3]);
         uint8_t pin = atoi(argv[4]);
@@ -413,7 +413,8 @@ int cmd_hw(int argc, char **argv)
         else if(argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])){
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             cmd_resp_print("AMDC REV D sts device numbers:\r\n");
-            cmd_resp_print("Please check the block design by opening hw/amdc_revd.bd in Vivado.\r\n"); //TODO: FILL IN BELOW AND REMOVE THIS LINE
+            // TODO: FILL IN BELOW AND REMOVE NEXT LINE
+            cmd_resp_print("Please check the block design by opening hw/amdc_revd.bd in Vivado.\r\n");
             /*
             cmd_resp_print("1. \r\n");
             cmd_resp_print("2. \r\n");
@@ -428,7 +429,8 @@ int cmd_hw(int argc, char **argv)
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
             cmd_resp_print("AMDC REV E sts device numbers:\r\n");
-            cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n"); //TODO: FILL IN BELOW AND REMOVE THIS LINE
+            // TODO: FILL IN BELOW AND REMOVE NEXT LINE
+            cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n");
             /*
             cmd_resp_print("1. \r\n");
             cmd_resp_print("2. \r\n");
