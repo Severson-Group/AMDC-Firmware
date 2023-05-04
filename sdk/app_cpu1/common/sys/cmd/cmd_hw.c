@@ -4,6 +4,7 @@
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
+#include "drv/gpio_direct.h"
 #include "drv/gpio_mux.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
@@ -33,6 +34,8 @@ static command_help_t cmd_help[] = {
     { "timer <fpga|cpu> now", "Read value from hardware timer" },
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
+    { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
+    { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
 };
 
 void cmd_hw_register(void)
@@ -235,6 +238,71 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
+    // Handle 'gpio' sub-command
+    // hw gpio read <port> <pin>
+    // hw gpio write <port> <pin> <HIGH|LOW>
+    // hw gpio toggle <port> <pin>
+    if (argc >= 5 && STREQ("gpio", argv[1])) {
+
+        // NOTE:
+        // Users should enter ports and pins that are 1-indexed
+        // However, the functions in gpio_direct.c require 0-indexed
+        // arguments. That is why we subtract 1 from the user cmd input
+        uint8_t gpio_port = atoi(argv[3]);
+        uint8_t pin = atoi(argv[4]);
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+        if (gpio_port < 1 || gpio_port > 2)
+            return CMD_INVALID_ARGUMENTS;
+
+        if (pin < 1 || pin > 2)
+            return CMD_INVALID_ARGUMENTS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+        if (gpio_port < 1 || gpio_port > 4)
+            return CMD_INVALID_ARGUMENTS;
+
+        if (pin < 1 || pin > 3)
+            return CMD_INVALID_ARGUMENTS;
+#endif
+
+        if (argc == 5 && STREQ("read", argv[2])) {
+
+            gpio_direct_level_t level = gpio_direct_read(gpio_port - 1, pin - 1);
+
+            if (level == GPIO_DIRECT_HIGH) {
+                cmd_resp_print("Read Result: HIGH\r\n");
+            } else if (level == GPIO_DIRECT_LOW) {
+                cmd_resp_print("Read Result: LOW\r\n");
+            }
+
+            return CMD_SUCCESS;
+        } // end if "read"
+
+        if (argc == 6 && STREQ("write", argv[2])) {
+
+            char *level = argv[5];
+
+            if (STREQ("HIGH", level)) {
+                gpio_direct_write(gpio_port - 1, pin - 1, 1);
+            } else if (STREQ("LOW", level)) {
+                gpio_direct_write(gpio_port - 1, pin - 1, 0);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            return CMD_SUCCESS;
+        } // end if "write"
+
+        if (argc == 5 && STREQ("toggle", argv[2])) {
+
+            gpio_direct_toggle(gpio_port - 1, pin - 1);
+
+            return CMD_SUCCESS;
+        } // end if "write"
+
+    } // end if "gpio" sub-command
+
     // Handle 'mux' sub-command
     // mux gpio <port#> <device#>
     if (argc >= 2 && STREQ("mux", argv[1])) {
@@ -242,17 +310,22 @@ int cmd_hw(int argc, char **argv)
             int gpio_port = atoi(argv[3]);
             int device = atoi(argv[4]);
 
-            if (device < 0 || device > 4) {
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            if (device < 0 || device > GPIO_MUX_DEVICE_COUNT) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
             if (gpio_port < 1 || gpio_port > 2) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
             gpio_mux_set_device(gpio_port - 1, device);
+
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            if (device < 0 || device > GP3IO_MUX_DEVICE_COUNT) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
             if (gpio_port < 1 || gpio_port > 4) {
                 return CMD_INVALID_ARGUMENTS;
             }
@@ -274,9 +347,41 @@ int cmd_hw(int argc, char **argv)
                 return CMD_INVALID_ARGUMENTS;
                 break;
             }
-#endif
+
+#endif // USER_CONFIG_HARDWARE_TARGET
 
             return CMD_SUCCESS;
+        } else if (argc == 4 && STREQ("gpio", argv[2]) && STREQ("list", argv[3])) {
+            /* MAINTAINER NOTE:
+             * These device listings come from the Vivado Block Design files,
+             * amdc_revd.bd and amdc_reve.bd,
+             * and should be kept in sync.
+             */
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            cmd_resp_print("AMDC REV D gpio device numbers:\r\n");
+            cmd_resp_print("1. Eddy Current Sensor\r\n");
+            cmd_resp_print("2. AMDS\r\n");
+            cmd_resp_print("3. ILD1420 Proximity Sensor 1\r\n");
+            cmd_resp_print("4. ILD1420 Proximity Sensor 2\r\n");
+            cmd_resp_print("5. GPIO Direct (Port 1)\r\n");
+            cmd_resp_print("6. GPIO Direct (Port 2)\r\n");
+            cmd_resp_print("7. UNUSED\r\n");
+            cmd_resp_print("8. UNUSED\r\n");
+            return CMD_SUCCESS;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            cmd_resp_print("AMDC REV E gpio device numbers:\r\n");
+            cmd_resp_print("1. AMDS\r\n");
+            cmd_resp_print("2. Eddy Current Sensor\r\n");
+            cmd_resp_print("3. ILD1420 Proximity Sensor\r\n");
+            cmd_resp_print("4. GPIO Direct\r\n");
+            cmd_resp_print("5. UNUSED\r\n");
+            cmd_resp_print("6. UNUSED\r\n");
+            cmd_resp_print("7. UNUSED\r\n");
+            cmd_resp_print("8. UNUSED\r\n");
+            return CMD_SUCCESS;
+
+#endif // USER_CONFIG_HARDWARE_TARGET for hw mux gpio list
         }
 
         if (argc == 5 && STREQ("sts", argv[2])) {
@@ -291,6 +396,40 @@ int cmd_hw(int argc, char **argv)
             sts_mux_set_device(sts_port - 1, device);
 
             return CMD_SUCCESS;
+        } else if (argc == 4 && STREQ("sts", argv[2]) && STREQ("list", argv[3])) {
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+            cmd_resp_print("AMDC REV D sts device numbers:\r\n");
+            // TODO: FILL IN BELOW AND REMOVE NEXT LINE
+            cmd_resp_print("Please check the block design by opening hw/amdc_revd.bd in Vivado.\r\n");
+            /*
+            cmd_resp_print("1. \r\n");
+            cmd_resp_print("2. \r\n");
+            cmd_resp_print("3. \r\n");
+            cmd_resp_print("4. \r\n");
+            cmd_resp_print("5. \r\n");
+            cmd_resp_print("6. \r\n");
+            cmd_resp_print("7. \r\n");
+            cmd_resp_print("8. \r\n");
+            return CMD_SUCCESS;
+            */
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+            cmd_resp_print("AMDC REV E sts device numbers:\r\n");
+            // TODO: FILL IN BELOW AND REMOVE NEXT LINE
+            cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n");
+            /*
+            cmd_resp_print("1. \r\n");
+            cmd_resp_print("2. \r\n");
+            cmd_resp_print("3. \r\n");
+            cmd_resp_print("4. \r\n");
+            cmd_resp_print("5. \r\n");
+            cmd_resp_print("6. \r\n");
+            cmd_resp_print("7. \r\n");
+            cmd_resp_print("8. \r\n");
+            return CMD_SUCCESS;
+            */
+
+#endif // USER_CONFIG_HARDWARE_TARGET for hw mux sts list
         }
     }
 

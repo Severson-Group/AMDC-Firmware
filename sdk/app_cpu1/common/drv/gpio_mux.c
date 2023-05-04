@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define GPIO_MUX_BASE_ADDR (0x43C70000)
+#define GPIO_MUX_BASE_ADDR (XPAR_AMDC_GPIO_MUX_0_S00_AXI_BASEADDR)
 
 static int ports[] = { GPIO_PORT1, GPIO_PORT2 };
 
