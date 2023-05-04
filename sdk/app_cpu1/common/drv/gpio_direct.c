@@ -111,10 +111,10 @@ void gpio_direct_write(gpio_direct_port_t port, gpio_direct_pin_t pin, gpio_dire
     // Therefore it is at the port's base_addr + sizeof(uint32_t)
     current = Xil_In32(base_addr + sizeof(uint32_t));
 
-    if (level) { 
+    if (level) {
         // SET
         Xil_Out32(base_addr + sizeof(uint32_t), current | (1 << pin));
-    } else { 
+    } else {
         // CLEAR
         Xil_Out32(base_addr + sizeof(uint32_t), current & ~(1 << pin));
     }

@@ -274,8 +274,6 @@ int cmd_hw(int argc, char **argv)
                 cmd_resp_print("Read Result: HIGH\r\n");
             } else if (level == GPIO_DIRECT_LOW) {
                 cmd_resp_print("Read Result: LOW\r\n");
-            } else {
-                return CMD_FAILURE; // gpio_direct_read() returned error, see REVIEW comment in drv/gpio_direct.c
             }
 
             return CMD_SUCCESS;
