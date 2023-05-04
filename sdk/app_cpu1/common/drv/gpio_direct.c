@@ -57,37 +57,29 @@ void gpio_direct_init()
 
 gpio_direct_level_t gpio_direct_read(gpio_direct_port_t port, gpio_direct_pin_t pin)
 {
+    uint32_t base_addr = 0;
+
     switch (port) {
     case GPIO_DIRECT_PORT1:
-        if (Xil_In32(GPIO1_DIRECT_BASE_ADDR) & (1 << pin))
-            return GPIO_DIRECT_HIGH;
-        else
-            return GPIO_DIRECT_LOW;
+        base_addr = GPIO1_DIRECT_BASE_ADDR;
         break;
     case GPIO_DIRECT_PORT2:
-        if (Xil_In32(GPIO2_DIRECT_BASE_ADDR) & (1 << pin))
-            return GPIO_DIRECT_HIGH;
-        else
-            return GPIO_DIRECT_LOW;
+        base_addr = GPIO2_DIRECT_BASE_ADDR;
         break;
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     case GPIO_DIRECT_PORT3:
-        if (Xil_In32(GPIO3_DIRECT_BASE_ADDR) & (1 << pin))
-            return GPIO_DIRECT_HIGH;
-        else
-            return GPIO_DIRECT_LOW;
+        base_addr = GPIO3_DIRECT_BASE_ADDR;
         break;
     case GPIO_DIRECT_PORT4:
-        if (Xil_In32(GPIO4_DIRECT_BASE_ADDR) & (1 << pin))
-            return GPIO_DIRECT_HIGH;
-        else
-            return GPIO_DIRECT_LOW;
+        base_addr = GPIO4_DIRECT_BASE_ADDR;
         break;
 #endif
-    default:
-        return GPIO_DIRECT_LOW; // REVIEW: Should this return some error condition (-1) instead??
-        break;
     }
+
+    if (Xil_In32(base_addr) & (1 << pin))
+        return GPIO_DIRECT_HIGH;
+    else
+        return GPIO_DIRECT_LOW;
 }
 
 void gpio_direct_write(gpio_direct_port_t port, gpio_direct_pin_t pin, gpio_direct_level_t level)
@@ -130,28 +122,25 @@ void gpio_direct_write(gpio_direct_port_t port, gpio_direct_pin_t pin, gpio_dire
 
 void gpio_direct_toggle(gpio_direct_port_t port, gpio_direct_pin_t pin)
 {
+    uint32_t base_addr = 0;
+
     switch (port) {
     case GPIO_DIRECT_PORT1:
-        // Get current register value using Xil_In, then toggle the desired bit
-        Xil_Out32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t),
-                  Xil_In32(GPIO1_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
+        base_addr = GPIO1_DIRECT_BASE_ADDR;
         break;
     case GPIO_DIRECT_PORT2:
-        // Get current register value using Xil_In, then toggle the desired bit
-        Xil_Out32(GPIO2_DIRECT_BASE_ADDR + sizeof(uint32_t),
-                  Xil_In32(GPIO2_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
+        base_addr = GPIO2_DIRECT_BASE_ADDR;
         break;
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     case GPIO_DIRECT_PORT3:
-        // Get current register value using Xil_In, then toggle the desired bit
-        Xil_Out32(GPIO3_DIRECT_BASE_ADDR + sizeof(uint32_t),
-                  Xil_In32(GPIO3_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
+        base_addr = GPIO3_DIRECT_BASE_ADDR;
         break;
     case GPIO_DIRECT_PORT4:
-        // Get current register value using Xil_In, then toggle the desired bit
-        Xil_Out32(GPIO4_DIRECT_BASE_ADDR + sizeof(uint32_t),
-                  Xil_In32(GPIO4_DIRECT_BASE_ADDR + sizeof(uint32_t)) ^ (1 << pin));
+        base_addr = GPIO4_DIRECT_BASE_ADDR;
         break;
 #endif
     }
+
+    // Get current register value using Xil_In, then toggle the desired bit
+    Xil_Out32(base_addr + sizeof(uint32_t), Xil_In32(base_addr + sizeof(uint32_t)) ^ (1 << pin));
 }
