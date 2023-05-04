@@ -3,7 +3,7 @@
 This driver is used to control and configure the GPIO mux IP core in the FPGA through the AXI4-Lite interface.
 
 ## Files
-All files for the GPIO mux driver are in the driver directory ([`common/drv/`](/sdk/common/drv/)).
+All files for the GPIO mux driver are in the driver directory ([`/sdk/app_cpu1/common/drv/`](/sdk/app_cpu1/common/drv/)).
 
 ```
 drv/
