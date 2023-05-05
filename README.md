@@ -1,6 +1,6 @@
 # Advanced Motor Drive Controller (AMDC) Firmware
 
-![CI badge](https://github.com/Severson-Group/AMDC-Firmware/actions/workflows/main.yml/badge.svg)
+![CI badge](https://github.com/Severson-Group/AMDC-Firmware/actions/workflows/check-format.yml/badge.svg)
 
 *The Advanced Motor Drive Controller (AMDC) is an open-source project from the [Severson Research Group](https://severson.wempec.wisc.edu/) at [UW-Madison](http://www.engr.wisc.edu/department/electrical-computer-engineering/), affiliated with [Wisconsin Electric Machines and Power Electronics Consortium (WEMPEC)](https://wempec.wisc.edu/).*
 
