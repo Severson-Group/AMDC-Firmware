@@ -1,149 +1,297 @@
-    // Rising edge of cnv triggers conversion
-    // Previous conversion data is available to read after the  
-    // cnv rising edge
-    // cnv must be high for TQUIET1 after cnv is brought high before bringing low
-    // must wait TQUIET2 after last SCLK low until cnv is brought high
-    // capturing on falling edge is best
+`default_nettype none 
 
-    // TQUIET 1 is 190 ns min
-    // TQUIET 2 is 60 ns min
+module amdc_spi_master(
+    // INPUTS
+    clk, rst_n, 
+    start, 
+    miso_x, miso_y, 
+    
+    // OUTPUTS
+    sclk, cnv, 
+    sensor_data_x, sensor_data_y, 
+    done
+    );
 
-module amdc_spi_master(clk, rst_n, trig, miso_x, miso_y, sclk, cnv, sensor_data_x, sensor_data_y, data_ready);
+	///////////////////////////////////////////////
+	//
+	//  SPI Driver for AD4011 ADC in Kaman Eddy Current Sensor
+	//
+	///////////////////////////////////////////
 
-    input clk, rst_n, trig;
-    input miso_x, miso_y;
+    /////////////////////////
+    // PARAMETERS
+    //////////////////////
+    localparam AXI_CLK_FREQ = 8'd200; // MEGAHERTZ
+    localparam AXI_CLK_PERIOD = 8'd5; // NANOSECONDS
 
+    // SCLK needs to toggle every 50ns, so every 10 AXI CLK periods (50 / AXI_CLK_PERIOD)
+    localparam sclk_cnt = 8'd10;
+
+    // We need to give the ADC 320ns to handle conversion, or 64 AXI CLK periods (320 / AXI_CLK_PERIOD)
+    localparam cnv_cnt = 8'd64;
+	
+
+    ///////////////////////
+    // INPUTS
+    /////////////////////
+	input wire clk, rst_n;
+    input wire start_cnv;
+    input wire miso_x, miso_y;
+
+
+    ///////////////////////
+    // OUTPUTS
+    /////////////////////
+	output reg sclk;
+    output reg cnv;
     output reg [17:0] sensor_data_x, sensor_data_y;
-    output reg sclk, cnv;
-    output reg data_ready;
-
-    localparam CNV = 2'b00;
-    localparam RX = 2'b01;
-    localparam HOLD = 2'b10;
-
-    localparam TQUIET_1 = 6'h36;  // Minimum CNV hold time
-    localparam TQUIET_2 = 6'h36;  // Minimum time between last SCLK and new conversion
-    localparam LAST_BIT = 5'd18;
+    output reg done;
 
 
-    reg [3:0] clk_div, clk_div_clr;
-    reg [4:0] bit_cntr;
-    reg [5:0] cnv_cntr;
+    ///////////////////////////////////////////
+    // Internal regs and control signals
+    ////////////////////////////////////////
+    reg [3:0] sclk_div;
+    reg miso_x_1, miso_x_2;
+    reg miso_y_1, miso_y_2;
+    reg [4:0] bit_cnt;
+    reg [7:0] cnv_div;
 
-    reg [1:0] state, next_state;
+    wire clr_cnv, cnv_cmplt;
+    wire clr_sclk;
 
-    reg clk_div_f;
-    reg cnv_cntr_f, cnv_cntr_clr;
-    reg shift_f;
 
-    // Conversion wait time counter
+
+    // CNV TIMER
+    //   According to the AD4011 ADC's datasheet, the CoNVersion phase is initiated by setting and holding high the 'cnv' line for as much as 320ns
+    //   This is done during the CNV state, and because the ADC does not send a signal when the CoNVersion is complete, we have to have a timer for this state
+    //   and create our own SM input for when we want to move from the CNV to RX state
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) cnv_cntr <= 6'h00;
-        else if(trig) begin
-          if (cnv_cntr_clr) cnv_cntr <= 6'h00;
-          else if (~&cnv_cntr && cnv_cntr_f) cnv_cntr <= cnv_cntr + 1'b1;
-        end
+        if(!rst_n)
+            cnv_div <= 8'b0;
+        else if(clr_cnv)                    // From SM: in all states except CNV, we should not run up cnv_div 
+            cnv_div <= 8'b0;
+        else                                // Else keep running up cnv_div
+            cnv_div <= cnv_div + 1;
     end
 
-    // Clock divider counter
+    assign cnv_cmplt = (cnv_div == cnv_cnt); // SM input
+
+
+    // SCLK GENERATION
+    //   Kaman has the AD4011 ADC connected to VIO = 3.3V, therefore the minimum SCLK period is 9.8ns, so I'll use 10ns (5ns low/5ns high) or SLCK_FREQ = 100MHz
+    //   If our AXI_CLK_FREQ is 200MHz (period of 5ns), we can just flip SCLK on every rising edge of the AXI clk
+    //   In the future, we might slow the AXI_CLK_FREQ to 100MHz (period of 10ns), so that would mean our SCLK freq would be capped at a period of 20ns (10ns low/10ns high), or SLCK_FREQ = 50MHz
+    //
+    //   But actaully, nevermind all that because we are using the diff/single transceivers, which have a bottleneck of 10MHz (period 100ns, 50ns low/50ns high)
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) clk_div <= 4'h0;
-        else if(trig) begin
-          if(clk_div_clr) clk_div <= 4'h0;
-          else if(clk_div_f) clk_div <= clk_div + 1'b1;
-        end
+        if(!rst_n)
+            sclk <= 1'b0;
+        else if(clr_sclk)
+            sclk <= 1'b0;
+        else if(sclk_div == sclk_cnt)       // Toggle SCLK if the appropriate number of AXI clock cycles have passed
+            sclk <= ~sclk;
     end
 
-    // Bit counter
+    // SCLK divider, uses the SCLK_cnt parameter defined above, which is based on the AXI CLK frequency
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) bit_cntr <= 5'h00;
-        else if(trig) begin
-          if (clk_div_clr) bit_cntr <= 5'h00;
-          else if (shift_f) bit_cntr <= bit_cntr + 1'b1;   
-        end
+        if(!rst_n)
+            sclk_div <= 4'b0;
+        else if(clr_sclk)                   // From SM: in states where SCLK should not toggle (all except RX), we should not run sclk_div 
+            sclk_div <= 4'b0;
+        else if (sclk_div == sclk_cnt)      // If the appropriate number of AXI clock cycles have passed, we will toggle sclk (meaning we should also reset the sclk_div)
+            sclk_div <= 4'b0;
+        else                                // Else keep running up sclk_div
+            sclk_div <= sclk_div + 1;
     end
 
-    // Sensor data shifter
+
+
+    // DATA READ-IN
+    //   This includes double-flopping both miso_x and miso_y lines to account for crossing clock domains,
+    //   as well as shifting these flopped values into our result registers
+    
+    // Double-flop
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n) begin
-            sensor_data_x <= 18'h00000;
-            sensor_data_y <= 18'h00000;
+            miso_x_1 <= 1'b0;
+            miso_x_2 <= 1'b0;
+            miso_y_1 <= 1'b0;
+            miso_y_2 <= 1'b0;
         end
-        else if(trig) begin
-          if (shift_f) begin
-              sensor_data_x <= {sensor_data_x[16:0], miso_x};
-              sensor_data_y <= {sensor_data_y[16:0], miso_y};
-          end
+        else begin
+            miso_x_1 <= miso_x;
+            miso_x_2 <= miso_x_1;
+            miso_y_1 <= miso_y;
+            miso_y_2 <= miso_y_1;
         end
     end
 
-    // SCLK FF
+    // SCLK falling edge detector
+    reg sclk_1;
+    wire sclk_fall;
+
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) sclk <= 1'b0;
-        else if(trig) begin
-          if (clk_div_f) sclk <= clk_div >= 4'h8 ? 1'b1 : 1'b0;
-        end
+        if(!rst_n)
+            sclk_1 <= 1'b0;
+        else
+            sclk_1 <= sclk;
     end
 
-    // State FF
+    assign sclk_fall = (sclk_1 & ~sclk);
+
+    // Shift registers
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) state <= CNV;
-        else if(trig) begin
-          state <= next_state;
+        if(!rst_n) begin
+            sensor_data_x = 18'b0;
+            sensor_data_y = 18'b0;
+        end
+        else if(start_cnv) begin
+            sensor_data_x = 18'b0;
+            sensor_data_y = 18'b0;
+        end
+        else if(sclk_fall) begin
+            sensor_data_x = {sensor_data_x[16:0], miso_x_2};
+            sensor_data_y = {sensor_data_y[16:0], miso_y_2};
         end
     end
-    
-    always @(*) begin
-        cnv = 1'b0;
-        cnv_cntr_f = 1'b0;
-        cnv_cntr_clr = 1'b0;
 
-        clk_div_f = 1'b0;
-        clk_div_clr = 1'b0;
-        shift_f = 1'b0;
 
-        next_state = CNV;
-        data_ready = 1'b0;
 
-        case(state)
-            CNV: begin
-                // CNV is held high while data is ready to be read
-                cnv = 1'b1;
-                data_ready = 1'b1;
 
-                // CNV counter is running until TQUIET1 time has passed
-                cnv_cntr_f = 1'b1;
-
-                if(cnv_cntr >= TQUIET_1) begin
-                    // Reset cnv_cntr and begin receiving data
-                    cnv_cntr_clr = 1'b1;
-                    next_state = RX;
-                end
-            end
-            RX: begin
-                // SCLK start low and begins running
-                clk_div_f = 1'b1;
-
-                // Shift MSB left on falling edge of SCLK
-                if(~|clk_div) shift_f = 1'b1;
-
-                // Move to HOLD if the LSB was shifted in
-                if(bit_cntr > LAST_BIT) begin
-                    // Clear divider for next receive
-                    clk_div_clr = 1'b1;
-                    next_state = HOLD;
-                end
-                else next_state = RX;
-            end
-            HOLD: begin
-                // CNV counter is running until TQUIET2 time has passed
-                cnv_cntr_f = 1'b1;
-
-                if(cnv_cntr < TQUIET_2) next_state = HOLD;
-                else cnv_cntr_clr = 1'b1;
-            end
-            default: next_state = CNV;
-        endcase
+    // BIT COUNTER
+    //   Counts that 18 bits have been shifted in (done18), completing the RX state
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            bit_cnt <= 5'b0;
+        else if(start_cnv)
+            bit_cnt <= 5'b0;
+        else if(sclk_fall)
+            bit_cnt = bit_cnt + 1;
     end
+
+    wire done18;
+    assign done18 = (bit_cnt == 5'b10010); // Input for SM
+
+
+
+    // DONE FF
+    //   Set and cleared by SM
+    //   'done' goes back out of the eddy current IP block signaling that a whole CONVERT/RECIEVE cycle has completed and the data is valid
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            done <= 1'b0;
+        else if(clr_done)
+            done <= 1'b0;
+        else if(set_done)
+            done <= 1'b1;
+    end
+
+	
+    ////////////////////////////////////////
+	//
+	//  STATE MACHINE LOGIC
+	//
+	////////////////////////////////////
+	
+	reg [1:0] state, nxt_state;
+
+    localparam IDLE = 2'b00;
+    localparam CNV = 2'b01;
+    localparam RX = 2'b10;
+    // There is no need for a HOLD/WAIT state between the completion of RX and the beginning of a new CoNVersion
+    //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow 100kHz
+    //    so after RX completes, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
+
+  
+	// NEXT STATE
+	always @(posedge clk, negedge rst_n) begin
+		if(!rst_n) begin
+			state <= IDLE;
+		end
+		else begin
+			state <= nxt_state;
+		end
+	end
+  
+  
+	// STATE TRANSITIONS (input/outputs)
+    // SM Inputs:
+    //    start
+    //    cnv_cmplt
+    //    done18
+    //   
+    // SM Outputs:
+    //    clr_cnv  - reset cnv_div 
+    //    clr_sclk - hold sclk low when not in RX state, and reset sclk_div
+    //    clr_done - clr 'done' when we begin a new CNV/RX cycle
+    //    set_done - set 'done' when RX is completed, meaning data is valid
+	always @(*) begin
+  
+		// default nxt_state and outputs
+		nxt_state = IDLE;
+        clr_cnv = 1'b1;
+        clr_sclk = 1'b1;
+        clr_done = 1'b0;
+        set_done = 1'b0;
+	  
+		case(state)
+			IDLE: 
+				if(start) begin
+					nxt_state = CNV;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b1;
+                    set_done = 1'b0;
+				end
+				else begin
+					nxt_state = IDLE;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+				end
+			CNV: 
+				if(cnv_cmplt) begin
+					nxt_state = RX;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b0;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+				end
+				else begin
+					nxt_state = CNV;
+                    clr_cnv = 1'b0;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+				end
+			RX: 
+				if(done18) begin
+					nxt_state = IDLE;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b0;
+                    set_done = 1'b1;
+				end
+				else begin
+					nxt_state = RX;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b0;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+				end
+			default:
+				begin
+					nxt_state = IDLE;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b1;
+                    set_done = 1'b0;
+				end
+		endcase
+	end
 
 endmodule
+
+`default_nettype wire

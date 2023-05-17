@@ -15,10 +15,14 @@
 	)
 	(
 		// Users to add ports here
-        output wire sclk,
-        output wire cnv,
         input wire miso_x,
         input wire miso_y,
+		input wire pwm_carrier_high,
+		input wire pwm_carrier_low,
+
+		output wire sclk,
+        output wire cnv,
+		output wire done,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -447,50 +451,76 @@
 	end    
 
 	// Add user logic here
-    wire data_ready;
+    //wire data_ready;
+	wire start, enable;
+	wire trigger_on_high, trigger_on_low; // Configured by writting to the config en reg TODO implement in C code, default to both enabled
+
+	assign enable = ((slv_reg3 & 1'b1) == 1'b1);
+	assign trigger_on_high = ((slv_reg3 & 2'b10) == 2'b10);
+	assign trigger_on_low = ((slv_reg3 & 3'b100) == 3'b100);
+	assign start = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
+
     wire [17:0] sensor_data_x, sensor_data_y;
-    wire [7:0] clk_divider;
-    wire enable;
-    reg [7:0] clk_counter;
-    reg clk_trigger;
+   	// wire [7:0] clk_divider;
+    //reg [7:0] clk_counter;
+	//reg clk_trigger;
 	
-    amdc_spi_master spi(
+    amdc_spi_master iSPI_MASTER(
+			/////////////////
+			// INPUTS
+			//////////////
+
+			// From AXI
             .clk(S_AXI_ACLK), 
             .rst_n(S_AXI_ARESETN), 
-            .trig(clk_trigger),
+
+			// From 
+            //.trig(clk_trigger),
+			.start(enable & start)
+
+			// From ADCs
             .miso_x(miso_x),
             .miso_y(miso_y),
+
+			//////////////////
+			// OUTPUTS
+			////////////////
+
+			// To ADCs
             .sclk(sclk),
             .cnv(cnv),
+
+			// Out
             .sensor_data_x(sensor_data_x),
             .sensor_data_y(sensor_data_y),
-            .data_ready(data_ready)
+			.done(done)
+            //.data_ready(data_ready)
         );	// User logic ends
     
-    assign clk_divider = slv_reg2;
-    assign enable = slv_reg3 == 1 ? 1'b1 : 1'b0;
+    //assign clk_divider = slv_reg2;
+    
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-      if(!S_AXI_ARESETN) 
-        clk_counter <= 0;
-      else if(enable) begin
-        if(clk_counter == clk_divider)
-            clk_counter <= 0;
-        else 
-            clk_counter <= clk_counter + 1;
-      end
-    end
+    // always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    //   if(!S_AXI_ARESETN) 
+    //     clk_counter <= 0;
+    //   else if(enable) begin
+    //     if(clk_counter == clk_divider)
+    //         clk_counter <= 0;
+    //     else 
+    //         clk_counter <= clk_counter + 1;
+    //   end
+    // end
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-      if(!S_AXI_ARESETN) 
-        clk_trigger = 0;
-      else if(enable) begin
-          if(clk_counter == clk_divider)
-            clk_trigger = 1;
-          else 
-            clk_trigger = 0;
-      end
-    end
+    // always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    //   if(!S_AXI_ARESETN) 
+    //     clk_trigger = 0;
+    //   else if(enable) begin
+    //       if(clk_counter == clk_divider)
+    //         clk_trigger = 1;
+    //       else 
+    //         clk_trigger = 0;
+    //   end
+    // end
     
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
         if(!S_AXI_ARESETN) begin
