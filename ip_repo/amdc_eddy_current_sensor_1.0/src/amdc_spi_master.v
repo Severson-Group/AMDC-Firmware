@@ -35,7 +35,7 @@ module amdc_spi_master(
     // INPUTS
     /////////////////////
 	input wire clk, rst_n;
-    input wire start_cnv;
+    input wire start;
     input wire miso_x, miso_y;
 
 
@@ -57,8 +57,10 @@ module amdc_spi_master(
     reg [4:0] bit_cnt;
     reg [7:0] cnv_div;
 
-    wire clr_cnv, cnv_cmplt;
-    wire clr_sclk;
+    reg clr_cnv;
+    wire cnv_cmplt;
+    reg clr_sclk;
+    reg set_done, clr_done;
 
 
 
@@ -146,7 +148,7 @@ module amdc_spi_master(
             sensor_data_x = 18'b0;
             sensor_data_y = 18'b0;
         end
-        else if(start_cnv) begin
+        else if(start) begin
             sensor_data_x = 18'b0;
             sensor_data_y = 18'b0;
         end
@@ -164,7 +166,7 @@ module amdc_spi_master(
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             bit_cnt <= 5'b0;
-        else if(start_cnv)
+        else if(start)
             bit_cnt <= 5'b0;
         else if(sclk_fall)
             bit_cnt = bit_cnt + 1;
@@ -222,6 +224,7 @@ module amdc_spi_master(
     //    done18
     //   
     // SM Outputs:
+    //    cnv      - the cnv line to the ADC
     //    clr_cnv  - reset cnv_div 
     //    clr_sclk - hold sclk low when not in RX state, and reset sclk_div
     //    clr_done - clr 'done' when we begin a new CNV/RX cycle
@@ -230,13 +233,14 @@ module amdc_spi_master(
   
 		// default nxt_state and outputs
 		nxt_state = IDLE;
+        cnv = 1'b0;
         clr_cnv = 1'b1;
         clr_sclk = 1'b1;
         clr_done = 1'b0;
         set_done = 1'b0;
 	  
 		case(state)
-			IDLE: 
+			IDLE: begin
 				if(start) begin
 					nxt_state = CNV;
                     clr_cnv = 1'b1;
@@ -251,7 +255,9 @@ module amdc_spi_master(
                     clr_done = 1'b0;
                     set_done = 1'b0;
 				end
-			CNV: 
+            end 
+			CNV: begin
+                cnv = 1'b1;
 				if(cnv_cmplt) begin
 					nxt_state = RX;
                     clr_cnv = 1'b1;
@@ -266,7 +272,8 @@ module amdc_spi_master(
                     clr_done = 1'b0;
                     set_done = 1'b0;
 				end
-			RX: 
+            end
+			RX: begin
 				if(done18) begin
 					nxt_state = IDLE;
                     clr_cnv = 1'b1;
@@ -281,9 +288,11 @@ module amdc_spi_master(
                     clr_done = 1'b0;
                     set_done = 1'b0;
 				end
+            end
 			default:
 				begin
 					nxt_state = IDLE;
+                    cnv = 0;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b1;
