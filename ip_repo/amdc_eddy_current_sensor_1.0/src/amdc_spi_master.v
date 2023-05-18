@@ -12,11 +12,11 @@ module amdc_spi_master(
     done
     );
 
-	///////////////////////////////////////////////
-	//
-	//  SPI Driver for AD4011 ADC in Kaman Eddy Current Sensor
-	//
-	///////////////////////////////////////////
+    ///////////////////////////////////////////////
+    //
+    //  SPI Driver for AD4011 ADC in Kaman Eddy Current Sensor
+    //
+    ///////////////////////////////////////////
 
     /////////////////////////
     // PARAMETERS
@@ -29,12 +29,12 @@ module amdc_spi_master(
 
     // We need to give the ADC 320ns to handle conversion, or 64 AXI CLK periods (320 / AXI_CLK_PERIOD)
     localparam cnv_cnt = 8'd64;
-	
+    
 
     ///////////////////////
     // INPUTS
     /////////////////////
-	input wire clk, rst_n;
+    input wire clk, rst_n;
     input wire start;
     input wire miso_x, miso_y;
 
@@ -42,7 +42,7 @@ module amdc_spi_master(
     ///////////////////////
     // OUTPUTS
     /////////////////////
-	output reg sclk;
+    output reg sclk;
     output reg cnv;
     output reg [17:0] sensor_data_x, sensor_data_y;
     output reg done;
@@ -80,12 +80,14 @@ module amdc_spi_master(
     assign cnv_cmplt = (cnv_div == cnv_cnt); // SM input
 
 
+
     // SCLK GENERATION
     //   Kaman has the AD4011 ADC connected to VIO = 3.3V, therefore the minimum SCLK period is 9.8ns, so I'll use 10ns (5ns low/5ns high) or SLCK_FREQ = 100MHz
-    //   If our AXI_CLK_FREQ is 200MHz (period of 5ns), we can just flip SCLK on every rising edge of the AXI clk
+    //   If our AXI_CLK_FREQ is 200MHz (period of 5ns), we can just flip SCLK on every rising edge of the AXI CLK
     //   In the future, we might slow the AXI_CLK_FREQ to 100MHz (period of 10ns), so that would mean our SCLK freq would be capped at a period of 20ns (10ns low/10ns high), or SLCK_FREQ = 50MHz
     //
     //   But actaully, nevermind all that because we are using the diff/single transceivers, which have a bottleneck of 10MHz (period 100ns, 50ns low/50ns high)
+    //   So instead, we will toggle SCLK every 10 AXI CLK cycles
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk <= 1'b0;
@@ -160,7 +162,6 @@ module amdc_spi_master(
 
 
 
-
     // BIT COUNTER
     //   Counts that 18 bits have been shifted in (done18), completing the RX state
     always @(posedge clk, negedge rst_n) begin
@@ -189,14 +190,15 @@ module amdc_spi_master(
             done <= 1'b1;
     end
 
-	
+    
+
     ////////////////////////////////////////
-	//
-	//  STATE MACHINE LOGIC
-	//
-	////////////////////////////////////
-	
-	reg [1:0] state, nxt_state;
+    //
+    //  STATE MACHINE LOGIC
+    //
+    ////////////////////////////////////
+    
+    reg [1:0] state, nxt_state;
 
     localparam IDLE = 2'b00;
     localparam CNV = 2'b01;
@@ -205,19 +207,19 @@ module amdc_spi_master(
     //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow 100kHz
     //    so after RX completes, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
 
+
+    // NEXT STATE
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n) begin
+            state <= IDLE;
+        end
+        else begin
+            state <= nxt_state;
+        end
+    end
   
-	// NEXT STATE
-	always @(posedge clk, negedge rst_n) begin
-		if(!rst_n) begin
-			state <= IDLE;
-		end
-		else begin
-			state <= nxt_state;
-		end
-	end
   
-  
-	// STATE TRANSITIONS (input/outputs)
+    // STATE TRANSITIONS (input/outputs)
     // SM Inputs:
     //    start
     //    cnv_cmplt
@@ -229,77 +231,77 @@ module amdc_spi_master(
     //    clr_sclk - hold sclk low when not in RX state, and reset sclk_div
     //    clr_done - clr 'done' when we begin a new CNV/RX cycle
     //    set_done - set 'done' when RX is completed, meaning data is valid
-	always @(*) begin
+    always @(*) begin
   
-		// default nxt_state and outputs
-		nxt_state = IDLE;
+        // default nxt_state and outputs
+        nxt_state = IDLE;
         cnv = 1'b0;
         clr_cnv = 1'b1;
         clr_sclk = 1'b1;
         clr_done = 1'b0;
         set_done = 1'b0;
-	  
-		case(state)
-			IDLE: begin
-				if(start) begin
-					nxt_state = CNV;
+      
+        case(state)
+            IDLE: begin
+                if(start) begin
+                    nxt_state = CNV;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b1;
                     set_done = 1'b0;
-				end
-				else begin
-					nxt_state = IDLE;
+                end
+                else begin
+                    nxt_state = IDLE;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b0;
                     set_done = 1'b0;
-				end
+                end
             end 
-			CNV: begin
+            CNV: begin
                 cnv = 1'b1;
-				if(cnv_cmplt) begin
-					nxt_state = RX;
+                if(cnv_cmplt) begin
+                    nxt_state = RX;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b0;
                     clr_done = 1'b0;
                     set_done = 1'b0;
-				end
-				else begin
-					nxt_state = CNV;
+                end
+                else begin
+                    nxt_state = CNV;
                     clr_cnv = 1'b0;
                     clr_sclk = 1'b1;
                     clr_done = 1'b0;
                     set_done = 1'b0;
-				end
+                end
             end
-			RX: begin
-				if(done18) begin
-					nxt_state = IDLE;
+            RX: begin
+                if(done18) begin
+                    nxt_state = IDLE;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b0;
                     set_done = 1'b1;
-				end
-				else begin
-					nxt_state = RX;
+                end
+                else begin
+                    nxt_state = RX;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b0;
                     clr_done = 1'b0;
                     set_done = 1'b0;
-				end
+                end
             end
-			default:
-				begin
-					nxt_state = IDLE;
+            default:
+                begin
+                    nxt_state = IDLE;
                     cnv = 0;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b1;
                     set_done = 1'b0;
-				end
-		endcase
-	end
+                end
+        endcase
+    end
 
 endmodule
 
