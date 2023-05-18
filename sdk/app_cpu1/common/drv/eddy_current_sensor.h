@@ -23,9 +23,6 @@
 
 void eddy_current_sensor_init(void);
 
-void eddy_current_sensor_enable(uint32_t base_addr);
-void eddy_current_sensor_disable(uint32_t base_addr);
-
 void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr);

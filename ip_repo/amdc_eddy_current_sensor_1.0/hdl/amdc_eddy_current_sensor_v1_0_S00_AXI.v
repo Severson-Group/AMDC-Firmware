@@ -17,6 +17,7 @@
         // Users to add ports here
         input wire miso_x,
         input wire miso_y,
+		input wire enable,
         input wire pwm_carrier_high,
         input wire pwm_carrier_low,
 
@@ -451,12 +452,10 @@
     end    
 
     // Add user logic here
-    wire start, enable;
-    wire trigger_on_high, trigger_on_low; // Configured by writting to the config en reg
+    wire trigger_on_high, trigger_on_low, start; // Configured by writting to the config en reg
 
-    assign enable = ((slv_reg3 & 1'b1) == 1'b1);
-    assign trigger_on_high = ((slv_reg3 & 2'b10) == 2'b10);
-    assign trigger_on_low = ((slv_reg3 & 3'b100) == 3'b100);
+    assign trigger_on_high = ((slv_reg3 & 1'b1) == 1'b1);
+    assign trigger_on_low = ((slv_reg3 & 2'b10) == 2'b10);
     assign start = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
 
     // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
@@ -477,6 +476,9 @@
             // From ADCs
             .miso_x(miso_x),
             .miso_y(miso_y),
+
+            // SCLK frequency parameter configured by C driver 
+            .sclk_cnt(),
 
             //////////////////
             // OUTPUTS

@@ -16,6 +16,7 @@
 	(
 		// Users to add ports here
 		input wire [1:0] sensor_data_in,
+		input wire enable,
 		input wire pwm_carrier_high,
 		input wire pwm_carrier_low,
 
@@ -76,6 +77,7 @@
 		.S_AXI_RREADY(s00_axi_rready),
 		.miso_x(sensor_data_in[0]),
 		.miso_y(sensor_data_in[1]),
+		.enable(enable),
 		.pwm_carrier_high(pwm_carrier_high),
 		.pwm_carrier_low(pwm_carrier_low),
 		.sclk(sensor_control_out[0]),
