@@ -20,8 +20,8 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | -- | -- | -- | -- |
 | 0x00 | SENSOR_DATA_X | R | IP DATA REGISTER |
 | 0x04 | SENSOR_DATA_Y | R | IP DATA REGISTER |
-| 0x08 | CLOCK_DIVIDER | W | IP Configuration Register |
-| 0x0C | CONVERSION_EN | W | IP Configuration Register |
+| 0x08 | SPI_DIVIDER   | W | IP Configuration Register |
+| 0x0C | PWM_TRIGGERS  | W | IP Configuration Register |
 
 
 ### SENSOR_DATA_X
@@ -36,15 +36,16 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 31:18 | SIGN_EXT | Sign extended bit 17 |
 | 17:0  | DATA | 2's compliment 18 bit positional data of the Y direction |
 
-### CLOCK_DIVIDER
+### SPI_DIVIDER
 | Bits | Name | Description |
 | -- | -- | -- |
-| 7:0 | DIVIDER | Divides the SPI clock and conversion signal transition times by the value in the register plus one|
+| 7:0 | DIVIDER | SCLK will toggle after a number of AXI CLK cycles equal to this register value, default 10 <br /> Since AXI CLK period is 5ns, this will be 50ns high/50ns low, or 10MHz for SCLK |
 
-### CONVERSION_EN
+### PWM_TRIGGERS
 | Bits | Name | Description |
 | -- | -- | -- |
-| 0 | ENABLE | Enables the SPI clock and conversion signals to transition. A value of 0x1 enables the SPI interface. While enabled the IP core will continuously read from the eddy current sensor's ADCs |
+| 0 | PWM_HIGH_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its max value (default 1) |
+| 1 | PWM_LOW_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its min value (default 1) |
 
 
 
