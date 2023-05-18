@@ -26,8 +26,10 @@ void eddy_current_sensor_init(void);
 void eddy_current_sensor_enable(uint32_t base_addr);
 void eddy_current_sensor_disable(uint32_t base_addr);
 
-void eddy_current_sensor_set_sample_rate(uint32_t base_addr, double sample_rate);
-void eddy_current_sensor_set_divider(uint32_t base_addr, uint8_t divider);
+void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr);
+void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr);
+void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr);
+void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr);
 
 double eddy_current_sensor_read_x_voltage(uint32_t base_addr);
 double eddy_current_sensor_read_y_voltage(uint32_t base_addr);

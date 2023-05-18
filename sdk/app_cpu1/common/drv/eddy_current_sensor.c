@@ -9,36 +9,56 @@ void eddy_current_sensor_init(void)
 {
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
-    // Set sampling rate to 20kHz
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 20000);
+    // Set eddy current sensors to sample on both PWM high and PWM low by default
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 20000);
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 20000);
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 20000);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
 #endif
 }
 
 void eddy_current_sensor_enable(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 1);
+    // Get the current value of the config register and set the enable bit
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x1));
 }
 
 void eddy_current_sensor_disable(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 0);
+    // Get the current value of the config register and clear the enable bit
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x1));
 }
 
-void eddy_current_sensor_set_sample_rate(uint32_t base_addr, double sample_rate)
+void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr)
 {
-    uint8_t divider = (uint8_t)(500000 / sample_rate);
-
-    eddy_current_sensor_set_divider(base_addr, divider - 1);
+    // Get the current value of the config register and set the pwm_high trigger bit
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x2));
 }
 
-void eddy_current_sensor_set_divider(uint32_t base_addr, uint8_t divider)
+void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (2 * sizeof(uint32_t)), divider);
+    // Get the current value of the config register and set the pwm_low trigger bit
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x4));
+}
+
+void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr)
+{
+    // Get the current value of the config register and set both the pwm_high and pwm_low trigger bits
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x6));
+}
+
+void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
+{
+    // Get the current value of the config register and clear both the pwm_high and pwm_low trigger bits
+    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x6));  
 }
 
 static double bits_to_voltage(uint32_t data)
