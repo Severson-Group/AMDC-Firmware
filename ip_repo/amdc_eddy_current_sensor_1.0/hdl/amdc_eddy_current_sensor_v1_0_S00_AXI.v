@@ -471,7 +471,7 @@
             .rst_n(S_AXI_ARESETN), 
 
             // PWM-Synchronized Conversion Initiation
-            .start(enable & start)
+            .start(enable & start),
 
             // From ADCs
             .miso_x(miso_x),
