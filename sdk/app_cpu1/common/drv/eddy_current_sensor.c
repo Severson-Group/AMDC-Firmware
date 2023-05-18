@@ -10,12 +10,17 @@ void eddy_current_sensor_init(void)
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
     // Set eddy current sensors to sample on both PWM high and PWM low by default
+    //   with an SCLK frequency of 10MHz (max)
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 10000);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 10000);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 10000);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 10000);
 #endif
 }
 
@@ -45,6 +50,24 @@ void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
     // Get the current value of the config register and clear both the pwm_high and pwm_low trigger bits
     uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x3));
+}
+
+void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint16_t sclk_freq_khz)
+{
+    // 10 MHz is max frequency
+    if (sclk_freq_khz > 10000) {
+        sclk_freq_khz = 10000;
+    }
+
+    // This is period in ns for one half of the sclk period
+    // We want half a period since sclk_cnt is the number of AXI CLK cycles to wait before toggling SCLK
+    uint16_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
+
+    uint16_t axi_period_ns = 1000 / AXI_CLK_FREQ_MHZ;
+
+    uint32_t sclk_cnt = sclk_half_period_ns / axi_period_ns;
+
+    Xil_Out32(base_addr + (2 * sizeof(uint32_t)), sclk_cnt);
 }
 
 static double bits_to_voltage(uint32_t data)

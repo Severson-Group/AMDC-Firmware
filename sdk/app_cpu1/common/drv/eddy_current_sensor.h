@@ -8,6 +8,8 @@
 
 #include "xparameters.h"
 
+#define AXI_CLK_FREQ_MHZ 200
+
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
 #define EDDY_CURRENT_SENSOR_MAX_IP_CORES (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES)
 #define EDDY_CURRENT_SENSOR_1_BASE_ADDR  (XPAR_AMDC_EDDY_CURRENT_SE_0_S00_AXI_BASEADDR)
@@ -27,6 +29,8 @@ void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr);
+
+void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint16_t sclk_freq_khz);
 
 double eddy_current_sensor_read_x_voltage(uint32_t base_addr);
 double eddy_current_sensor_read_y_voltage(uint32_t base_addr);
