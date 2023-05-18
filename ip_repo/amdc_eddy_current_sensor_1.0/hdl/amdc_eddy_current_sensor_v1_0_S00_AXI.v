@@ -451,19 +451,16 @@
     end    
 
     // Add user logic here
-    //wire data_ready;
     wire start, enable;
-    wire trigger_on_high, trigger_on_low; // Configured by writting to the config en reg TODO implement in C code, default to both enabled
+    wire trigger_on_high, trigger_on_low; // Configured by writting to the config en reg
 
     assign enable = ((slv_reg3 & 1'b1) == 1'b1);
     assign trigger_on_high = ((slv_reg3 & 2'b10) == 2'b10);
     assign trigger_on_low = ((slv_reg3 & 3'b100) == 3'b100);
     assign start = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
 
+    // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
     wire [17:0] sensor_data_x, sensor_data_y;
-    // wire [7:0] clk_divider;
-    //reg [7:0] clk_counter;
-    //reg clk_trigger;
     
     amdc_spi_master iSPI_MASTER(
             /////////////////
@@ -474,8 +471,7 @@
             .clk(S_AXI_ACLK), 
             .rst_n(S_AXI_ARESETN), 
 
-            // From 
-            //.trig(clk_trigger),
+            // PWM-Synchronized Conversion Initiation
             .start(enable & start)
 
             // From ADCs
@@ -486,7 +482,7 @@
             // OUTPUTS
             ////////////////
 
-            // To ADCs
+            // To x and y ADCs
             .sclk(sclk),
             .cnv(cnv),
 
@@ -494,40 +490,17 @@
             .sensor_data_x(sensor_data_x),
             .sensor_data_y(sensor_data_y),
             .done(done)
-            //.data_ready(data_ready)
-        );    // User logic ends
-    
-    //assign clk_divider = slv_reg2;
-    
-
-    // always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-    //   if(!S_AXI_ARESETN) 
-    //     clk_counter <= 0;
-    //   else if(enable) begin
-    //     if(clk_counter == clk_divider)
-    //         clk_counter <= 0;
-    //     else 
-    //         clk_counter <= clk_counter + 1;
-    //   end
-    // end
-
-    // always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-    //   if(!S_AXI_ARESETN) 
-    //     clk_trigger = 0;
-    //   else if(enable) begin
-    //       if(clk_counter == clk_divider)
-    //         clk_trigger = 1;
-    //       else 
-    //         clk_trigger = 0;
-    //   end
-    // end
+        );    
     
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
         if(!S_AXI_ARESETN) begin
             data_x_out <= 32'b0;
             data_y_out <= 32'b0;
         end
-        else if(data_ready) begin
+        // REVIEW:
+        //   If not 'done', if data is not valid, should these data_out registers hold the previous valid value, as is implemented now, 
+        //   or should they be cleared to x/z/0?
+        else if(done) begin
             data_x_out <= {{14{sensor_data_x[17]}},sensor_data_x};
             data_y_out <= {{14{sensor_data_y[17]}},sensor_data_y};
         end
