@@ -22,43 +22,43 @@ void eddy_current_sensor_init(void)
 void eddy_current_sensor_enable(uint32_t base_addr)
 {
     // Get the current value of the config register and set the enable bit
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x1));
 }
 
 void eddy_current_sensor_disable(uint32_t base_addr)
 {
     // Get the current value of the config register and clear the enable bit
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x1));
 }
 
 void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr)
 {
     // Get the current value of the config register and set the pwm_high trigger bit
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x2));
 }
 
 void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr)
 {
     // Get the current value of the config register and set the pwm_low trigger bit
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x4));
 }
 
 void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr)
 {
     // Get the current value of the config register and set both the pwm_high and pwm_low trigger bits
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x6));
 }
 
 void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
 {
     // Get the current value of the config register and clear both the pwm_high and pwm_low trigger bits
-    config_reg_address = base_addr + (3 * sizeof(uint32_t))
-    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x6));  
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x6));
 }
 
 static double bits_to_voltage(uint32_t data)
