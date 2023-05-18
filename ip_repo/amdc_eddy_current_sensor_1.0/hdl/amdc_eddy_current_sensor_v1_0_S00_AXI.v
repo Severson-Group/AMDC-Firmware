@@ -17,7 +17,7 @@
         // Users to add ports here
         input wire miso_x,
         input wire miso_y,
-		input wire enable,
+        input wire enable,
         input wire pwm_carrier_high,
         input wire pwm_carrier_low,
 
@@ -460,6 +460,9 @@
 
     // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
     wire [17:0] sensor_data_x, sensor_data_y;
+    wire [7:0] sclk_cnt;
+
+    assign sclk_cnt = slv_reg2[7:0];
     
     amdc_spi_master iSPI_MASTER(
             /////////////////
@@ -478,7 +481,7 @@
             .miso_y(miso_y),
 
             // SCLK frequency parameter configured by C driver 
-            .sclk_cnt(),
+            .sclk_cnt(sclk_cnt),
 
             //////////////////
             // OUTPUTS

@@ -54,7 +54,7 @@ module amdc_spi_master(
     ///////////////////////////////////////////
     // Internal regs and control signals
     ////////////////////////////////////////
-    reg [3:0] sclk_div;
+    reg [7:0] sclk_div;
     reg miso_x_1, miso_x_2;
     reg miso_y_1, miso_y_2;
     reg [4:0] bit_cnt;
@@ -103,11 +103,11 @@ module amdc_spi_master(
     // SCLK divider, uses the SCLK_cnt parameter defined above, which is based on the AXI CLK frequency
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
-            sclk_div <= 4'b0;
+            sclk_div <= 8'b0;
         else if(clr_sclk)                   // From SM: in states where SCLK should not toggle (all except RX), we should not run sclk_div 
-            sclk_div <= 4'b0;
+            sclk_div <= 8'b0;
         else if (sclk_div == sclk_cnt)      // If the appropriate number of AXI clock cycles have passed, we will toggle sclk (meaning we should also reset the sclk_div)
-            sclk_div <= 4'b0;
+            sclk_div <= 8'b0;
         else                                // Else keep running up sclk_div
             sclk_div <= sclk_div + 1;
     end
