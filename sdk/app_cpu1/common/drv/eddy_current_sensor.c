@@ -52,18 +52,25 @@ void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x3));
 }
 
-void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint16_t sclk_freq_khz)
+void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint32_t sclk_freq_khz)
 {
-    // 10 MHz is max frequency
+    // 10 MHz is max frequency (faster frequencies limited by diff/single transceivers)
+    //   should give sclk_cnt = 10 axi cycles
     if (sclk_freq_khz > 10000) {
         sclk_freq_khz = 10000;
     }
 
+    // 500 kHz is min frequency (slower frequencies won't complete in a PWM carrier cycle)
+    //   should give sclk_cnt = 200 axi cycles
+    if (sclk_freq_khz < 500) {
+        sclk_freq_khz = 500;
+    }
+
     // This is period in ns for one half of the sclk period
     // We want half a period since sclk_cnt is the number of AXI CLK cycles to wait before toggling SCLK
-    uint16_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
+    uint32_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
 
-    uint16_t axi_period_ns = 1000 / AXI_CLK_FREQ_MHZ;
+    uint32_t axi_period_ns = 1000 / AXI_CLK_FREQ_MHZ;
 
     uint32_t sclk_cnt = sclk_half_period_ns / axi_period_ns;
 

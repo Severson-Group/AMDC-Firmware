@@ -30,7 +30,7 @@ void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr);
 void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr);
 
-void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint16_t sclk_freq_khz);
+void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint32_t sclk_freq_khz);
 
 double eddy_current_sensor_read_x_voltage(uint32_t base_addr);
 double eddy_current_sensor_read_y_voltage(uint32_t base_addr);

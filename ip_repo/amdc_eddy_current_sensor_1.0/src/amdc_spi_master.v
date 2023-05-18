@@ -22,12 +22,12 @@ module amdc_spi_master(
     /////////////////////////
     // PARAMETERS
     //////////////////////
-    localparam AXI_CLK_FREQ = 8'd200; // MEGAHERTZ
-    localparam AXI_CLK_PERIOD = 8'd5; // NANOSECONDS
+
+    // AXI_CLK_FREQ = 200 MEGAHERTZ
+    // AXI_CLK_PERIOD = 5 NANOSECONDS
 
     // For 10MHz, SCLK needs to toggle every 50ns, so every 10 AXI CLK periods (50 / AXI_CLK_PERIOD)
-    // This is moved to an input that is configurable by the C driver (default is 10)
-    //localparam sclk_cnt = 8'd10;
+    // This is an input that is configurable by the C driver (default is 10)
 
     // We need to give the ADC 320ns to handle conversion, or 64 AXI CLK periods (320 / AXI_CLK_PERIOD)
     localparam cnv_cnt = 8'd64;
