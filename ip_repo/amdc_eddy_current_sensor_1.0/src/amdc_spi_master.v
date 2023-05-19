@@ -134,18 +134,25 @@ module amdc_spi_master(
         end
     end
 
-    // SCLK falling edge detector
-    reg sclk_1;
+    // SCLK DELAYED falling edge detector
+    //   Sampling on the falling edge is a little too quick, so we delay a couple clock cycles
+    reg sclk_1, sclk_2, sclk_3, sclk_4;
     wire sclk_fall;
 
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk_1 <= 1'b0;
+            sclk_2 <= 1'b0;
+            sclk_3 <= 1'b0;
+            sclk_4 <= 1'b0;
         else
             sclk_1 <= sclk;
+            sclk_2 <= sclk_1;
+            sclk_3 <= sclk_2;
+            sclk_4 <= sclk_3;
     end
 
-    assign sclk_fall = (sclk_1 & ~sclk);
+    assign sclk_fall = (sclk_4 & ~sclk_3);
 
     // Shift registers
     always @(posedge clk, negedge rst_n) begin
