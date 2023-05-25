@@ -22,6 +22,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 0x04 | SENSOR_DATA_Y | R | IP DATA REGISTER |
 | 0x08 | SPI_DIVIDER   | W | IP Configuration Register |
 | 0x0C | PWM_TRIGGERS  | W | IP Configuration Register |
+| 0x10 | SHIFT_INDEX   | W | IP Configuration Register |
 
 
 ### SENSOR_DATA_X
@@ -47,6 +48,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 0 | PWM_HIGH_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its max value (default 1) |
 | 1 | PWM_LOW_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its min value (default 1) |
 
-
-
-
+### SHIFT_INDEX
+| Bits | Name | Description |
+| -- | -- | -- |
+| 7:0 | SHIFT_INDEX | Which flip-flop in the "shift" signal shift register we should use as our actual "shift" signal. <br /> This is needed to delay our shifting to align with the Kaman adapter board's propogation delay |

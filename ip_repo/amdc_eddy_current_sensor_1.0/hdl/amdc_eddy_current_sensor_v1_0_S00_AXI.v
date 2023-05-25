@@ -452,10 +452,12 @@
     end    
 
     // Add user logic here
+    wire [7:0] shift_index;
     wire trigger_on_high, trigger_on_low, start; // Configured by writting to the config en reg
 
     assign trigger_on_high = slv_reg3[0];
     assign trigger_on_low = slv_reg3[1];
+    assign shift_index = slv_reg4[7:0];
     assign start = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
 
     // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
@@ -482,6 +484,9 @@
 
             // SCLK frequency parameter configured by C driver 
             .sclk_cnt(sclk_cnt),
+
+            // How long to delay shift signal (depends on RC filter on adapter board)
+            .shift_index(shift_index),
 
             //////////////////
             // OUTPUTS

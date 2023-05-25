@@ -12,15 +12,15 @@ void eddy_current_sensor_init(void)
     // Set eddy current sensors to sample on both PWM high and PWM low by default
     //   with an SCLK frequency of 10MHz (max)
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000, 270);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 2000);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 2000, 270);
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 2000);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 2000, 270);
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 2000);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 2000, 270);
 #endif
 }
 
@@ -52,7 +52,7 @@ void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
     Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x3));
 }
 
-void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint32_t sclk_freq_khz)
+void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, uint32_t propogation_delay_ns)
 {
     // 10 MHz is max frequency (faster frequencies limited by diff/single transceivers)
     //   should give sclk_cnt = 10 axi cycles
@@ -75,6 +75,26 @@ void eddy_current_sensor_set_sclk_freq_khz(uint32_t base_addr, uint32_t sclk_fre
     uint32_t sclk_cnt = sclk_half_period_ns / axi_period_ns;
 
     Xil_Out32(base_addr + (2 * sizeof(uint32_t)), sclk_cnt);
+
+
+    // SHIFT delayer
+    //   Why is this needed? The Kaman adapter board's filtering introduces a significant propogation delay into the system. On the FPGA side, the SCLK signal
+    //   being generated will fall, which is when we would like to sample the MISO line. However, the fall of SCLK will take a while to propogate through the adapter
+    //   board (270ns for example) and then the valid data on the MISO lines will take a while (again, 270ns for example) to propogate back. In the example, this is
+    //   a total round-trip propogation delay of 540ns. The actual delay depends on the RC filters used on the Kaman adapter board.
+    //
+    //   This code takes the ONE-WAY propogation delay in nanoseconds of the Kaman adapter board's filtering, doubles it for the round-trip propogation delay, and then
+    //   adds half of the user-requested SCLK period so that the shifting occurs halfway through when the bit is valid. See the amdc_spi_master.v for details on how
+    //   the shift signal is propogated through a shift register and then the appropriate delay is selected by the shift_index value calculated below.
+    uint32_t delay_time = (2*propogation_delay_ns) + sclk_half_period_ns;
+
+    uint32_t shift_index = delay_time / axi_period_ns;
+
+    if(shift_index > 255){
+        shift_index = 255;
+    }
+
+    Xil_Out32(base_addr + (4 * sizeof(uint32_t)), shift_index);
 }
 
 static double bits_to_voltage(uint32_t data)

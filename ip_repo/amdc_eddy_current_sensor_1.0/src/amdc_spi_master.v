@@ -6,6 +6,7 @@ module amdc_spi_master(
     start, 
     miso_x, miso_y, 
     sclk_cnt,
+    shift_index,
     
     // OUTPUTS
     sclk, cnv, 
@@ -40,6 +41,7 @@ module amdc_spi_master(
     input wire start;
     input wire miso_x, miso_y;
     input wire [7:0] sclk_cnt;
+    input wire [7:0] shift_index;
 
 
     ///////////////////////
@@ -150,23 +152,29 @@ module amdc_spi_master(
     assign sclk_fall = (sclk_1 & ~sclk);
 
     // SHIFT delayer
-    //   Sampling on the falling edge of is a little too quick, so we delay a couple clock cycles
-    reg sclk_fall_1, sclk_fall_2, sclk_fall_3, shift;
+    //   Why is this needed? The Kaman adapter board's filtering introduces a significant propogation delay into the system. On the FPGA side, the SCLK signal
+    //   being generated will fall, which is when we would like to sample the MISO line. However, the fall of SCLK will take a while to propogate through the adapter
+    //   board (270ns for example) and then the valid data on the MISO lines will take a while (again, 270ns for example) to propogate back. In the example, this is
+    //   a total round-trip propogation delay of 540ns. The actual delay depends on the RC filters used on the Kaman adapter board.
+    //
+    //   To account for this 540ns data propogation delay, we need to delay our "shift" signal by the total round-trip propogation delay, plus half the SCLK period
+    //   (so that the sample occurs halfway through the bit period). The shift signal delay is implemented in the FPGA below used a "shift" signal shift register.
+    //   The flip-flop we care about in this shift register is selected by "shift_index"; the C code driver (eddy_current_sensor.c) function 
+    //   "eddy_current_sensor_set_timing()" allows the user to specify both the desired SCLK frequency, as well as the Kaman board's one-way propogation delay, and
+    //   will set "shift_index" to the correct value.
+    wire shift;
+    reg [255:0] shift_delay;
 
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n) begin
-            sclk_fall_1 <= 1'b0;
-            sclk_fall_2 <= 1'b0;
-            sclk_fall_3 <= 1'b0;
-            shift <= 1'b0;
+            shift_delay <= 256'b0;
         end
         else begin
-            sclk_fall_1 <= sclk_fall;
-            sclk_fall_2 <= sclk_fall_1;
-            sclk_fall_3 <= sclk_fall_2;
-            shift <= sclk_fall_3;
+            shift_delay <= {shift_delay[254:0], sclk_fall};
         end
     end
+
+    assign shift = shift_delay[shift_index];
 
 
 
