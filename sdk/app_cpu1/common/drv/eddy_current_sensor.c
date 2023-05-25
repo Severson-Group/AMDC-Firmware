@@ -11,16 +11,16 @@ void eddy_current_sensor_init(void)
 
     // Set eddy current sensors to sample on both PWM high and PWM low by default
     //   with an SCLK frequency of 10MHz (max)
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 10000);
+    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 10000);
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 10000);
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
-    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 10000);
+    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 2000);
+    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 2000);
+    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
+    eddy_current_sensor_set_sclk_freq_khz(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 2000);
 #endif
 }
 

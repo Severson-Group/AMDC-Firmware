@@ -134,39 +134,55 @@ module amdc_spi_master(
         end
     end
 
-    // SCLK DELAYED falling edge detector
-    //   Sampling on the falling edge is a little too quick, so we delay a couple clock cycles
-    reg sclk_1, sclk_2, sclk_3, sclk_4;
+
+
+    // SCLK falling edge detector
+    reg sclk_1;
     wire sclk_fall;
 
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n)
+        if(!rst_n) 
             sclk_1 <= 1'b0;
-            sclk_2 <= 1'b0;
-            sclk_3 <= 1'b0;
-            sclk_4 <= 1'b0;
         else
             sclk_1 <= sclk;
-            sclk_2 <= sclk_1;
-            sclk_3 <= sclk_2;
-            sclk_4 <= sclk_3;
     end
 
-    assign sclk_fall = (sclk_4 & ~sclk_3);
+    assign sclk_fall = (sclk_1 & ~sclk);
+
+    // SHIFT delayer
+    //   Sampling on the falling edge of is a little too quick, so we delay a couple clock cycles
+    reg sclk_fall_1, sclk_fall_2, sclk_fall_3, shift;
+
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n) begin
+            sclk_fall_1 <= 1'b0;
+            sclk_fall_2 <= 1'b0;
+            sclk_fall_3 <= 1'b0;
+            shift <= 1'b0;
+        end
+        else begin
+            sclk_fall_1 <= sclk_fall;
+            sclk_fall_2 <= sclk_fall_1;
+            sclk_fall_3 <= sclk_fall_2;
+            shift <= sclk_fall_3;
+        end
+    end
+
+
 
     // Shift registers
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n) begin
-            sensor_data_x = 18'b0;
-            sensor_data_y = 18'b0;
+            sensor_data_x <= 18'b0;
+            sensor_data_y <= 18'b0;
         end
         else if(start) begin
-            sensor_data_x = 18'b0;
-            sensor_data_y = 18'b0;
+            sensor_data_x <= 18'b0;
+            sensor_data_y <= 18'b0;
         end
-        else if(sclk_fall) begin
-            sensor_data_x = {sensor_data_x[16:0], miso_x_2};
-            sensor_data_y = {sensor_data_y[16:0], miso_y_2};
+        else if(shift) begin
+            sensor_data_x <= {sensor_data_x[16:0], miso_x_2};
+            sensor_data_y <= {sensor_data_y[16:0], miso_y_2};
         end
     end
 
@@ -179,8 +195,8 @@ module amdc_spi_master(
             bit_cnt <= 5'b0;
         else if(start)
             bit_cnt <= 5'b0;
-        else if(sclk_fall)
-            bit_cnt = bit_cnt + 1;
+        else if(shift)
+            bit_cnt <= bit_cnt + 1;
     end
 
     wire done18;
