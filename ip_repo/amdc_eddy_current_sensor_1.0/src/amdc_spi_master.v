@@ -203,7 +203,7 @@ module amdc_spi_master(
             bit_cnt <= 5'b0;
         else if(start)
             bit_cnt <= 5'b0;
-        else if(shift)
+        else if(sclk_fall)
             bit_cnt <= bit_cnt + 1;
     end
 

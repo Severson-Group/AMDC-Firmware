@@ -76,21 +76,27 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
 
     Xil_Out32(base_addr + (2 * sizeof(uint32_t)), sclk_cnt);
 
-
     // SHIFT delayer
-    //   Why is this needed? The Kaman adapter board's filtering introduces a significant propogation delay into the system. On the FPGA side, the SCLK signal
-    //   being generated will fall, which is when we would like to sample the MISO line. However, the fall of SCLK will take a while to propogate through the adapter
-    //   board (270ns for example) and then the valid data on the MISO lines will take a while (again, 270ns for example) to propogate back. In the example, this is
-    //   a total round-trip propogation delay of 540ns. The actual delay depends on the RC filters used on the Kaman adapter board.
+    //   Why is this needed? The Kaman adapter board's filtering introduces a significant
+    //   propogation delay into the system. On the FPGA side, the SCLK signal
+    //   being generated will fall, which is when we would like to sample the MISO line.
+    //   However, the fall of SCLK will take a while to propogate through the adapter
+    //   board (270ns for example) and then the valid data on the MISO lines will take a
+    //   while (again, 270ns for example) to propogate back. In the example, this is
+    //   a total round-trip propogation delay of 540ns. The actual delay depends on the
+    //   RC filters used on the Kaman adapter board.
     //
-    //   This code takes the ONE-WAY propogation delay in nanoseconds of the Kaman adapter board's filtering, doubles it for the round-trip propogation delay, and then
-    //   adds half of the user-requested SCLK period so that the shifting occurs halfway through when the bit is valid. See the amdc_spi_master.v for details on how
-    //   the shift signal is propogated through a shift register and then the appropriate delay is selected by the shift_index value calculated below.
-    uint32_t delay_time = (2*propogation_delay_ns) + sclk_half_period_ns;
+    //   This code takes the ONE-WAY propogation delay in nanoseconds of the Kaman adapter
+    //   board's filtering, doubles it for the round-trip propogation delay, and then
+    //   adds half of the user-requested SCLK period so that the shifting occurs halfway
+    //   through when the bit is valid. See the amdc_spi_master.v for details on how
+    //   the shift signal is propogated through a shift register and then the appropriate delay
+    //   is selected by the shift_index value calculated below.
+    uint32_t delay_time = (2 * propogation_delay_ns) + sclk_half_period_ns;
 
     uint32_t shift_index = delay_time / axi_period_ns;
 
-    if(shift_index > 255){
+    if (shift_index > 255) {
         shift_index = 255;
     }
 
