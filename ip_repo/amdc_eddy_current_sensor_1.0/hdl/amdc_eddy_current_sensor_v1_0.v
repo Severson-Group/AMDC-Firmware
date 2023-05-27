@@ -22,6 +22,7 @@
 
         output wire [1:0] sensor_control_out,
 		output wire done,
+		output wire [2:0] debug,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -82,7 +83,8 @@
 		.pwm_carrier_low(pwm_carrier_low),
 		.sclk(sensor_control_out[0]),
 		.cnv(sensor_control_out[1]),
-		.done(done)
+		.done(done),
+		.debug(debug)
 	);
 
 	// Add user logic here

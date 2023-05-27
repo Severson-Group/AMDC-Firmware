@@ -9,8 +9,8 @@ void eddy_current_sensor_init(void)
 {
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
-    // Set eddy current sensors to sample on both PWM high and PWM low by default
-    //   with an SCLK frequency of 10MHz (max)
+    // Set eddy current sensors to sample on PWM high by default
+    //   with an SCLK frequency of 3 MHz 
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
     eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000, 270);
 
@@ -92,7 +92,7 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
     //   through when the bit is valid. See the amdc_spi_master.v for details on how
     //   the shift signal is propogated through a shift register and then the appropriate delay
     //   is selected by the shift_index value calculated below.
-    uint32_t delay_time = (2 * propogation_delay_ns) + sclk_half_period_ns;
+    uint32_t delay_time = (2 * propogation_delay_ns) + (1 * sclk_half_period_ns);
 
     uint32_t shift_index = delay_time / axi_period_ns;
 

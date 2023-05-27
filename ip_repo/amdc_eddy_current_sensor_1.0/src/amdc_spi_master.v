@@ -11,7 +11,8 @@ module amdc_spi_master(
     // OUTPUTS
     sclk, cnv, 
     sensor_data_x, sensor_data_y, 
-    done
+    done,
+    debug
     );
 
     ///////////////////////////////////////////////
@@ -51,6 +52,7 @@ module amdc_spi_master(
     output reg cnv;
     output reg [17:0] sensor_data_x, sensor_data_y;
     output reg done;
+    output wire [2:0] debug;
 
 
     ///////////////////////////////////////////
@@ -59,7 +61,7 @@ module amdc_spi_master(
     reg [7:0] sclk_div;
     reg miso_x_1, miso_x_2;
     reg miso_y_1, miso_y_2;
-    reg [4:0] bit_cnt;
+    reg [4:0] sclk_fall_cnt, shift_cnt;
     reg [7:0] cnv_div;
 
     reg clr_cnv;
@@ -196,19 +198,36 @@ module amdc_spi_master(
 
 
 
-    // BIT COUNTER
-    //   Counts that 18 bits have been shifted in (done18), completing the RX state
+    // SCLK FALL COUNTER
+    //   Counts that 18 SCLK falls have occured (sclk_fall_18), completing the RX state
+    //   However, because of the propogation delay, not all 18 bits coming on MISO have actually
+    //   been shifted. Therefore, we need the WAIT state
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
-            bit_cnt <= 5'b0;
+            sclk_fall_cnt <= 5'b0;
         else if(start)
-            bit_cnt <= 5'b0;
+            sclk_fall_cnt <= 5'b0;
         else if(sclk_fall)
-            bit_cnt <= bit_cnt + 1;
+            sclk_fall_cnt <= sclk_fall_cnt + 1;
     end
 
-    wire done18;
-    assign done18 = (bit_cnt == 5'b10010); // Input for SM
+    wire sclk_fall_18;
+    assign sclk_fall_18 = (sclk_fall_cnt == 5'b10010); // Input for SM
+
+    // SHIFT COUNTER
+    //   Counts that 18 bits have been actaully been shifted in, completing the WAIT state
+    //   Then we have valid data and can assert 'done'
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            shift_cnt <= 5'b0;
+        else if(start)
+            shift_cnt <= 5'b0;
+        else if(shift)
+            shift_cnt <= shift_cnt + 1;
+    end
+
+    wire shift_18;
+    assign shift_18 = (shift_cnt == 5'b10010); // Input for SM
 
 
 
@@ -237,9 +256,10 @@ module amdc_spi_master(
     localparam IDLE = 2'b00;
     localparam CNV = 2'b01;
     localparam RX = 2'b10;
-    // There is no need for a HOLD/WAIT state between the completion of RX and the beginning of a new CoNVersion
-    //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow 100kHz
-    //    so after RX completes, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
+    localparam WAIT = 2'b11;
+    // There is no need for an addition QUIET state between the completion of WAIT and the beginning of a new CoNVersion
+    //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow frequency
+    //    so after RX/WAIT complete, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
 
 
     // NEXT STATE
@@ -310,17 +330,44 @@ module amdc_spi_master(
                 end
             end
             RX: begin
-                if(done18) begin
+                if(sclk_fall_18) begin
+                    nxt_state = WAIT;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+                end
+                else begin
+                    nxt_state = RX;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b0;
+                    clr_done = 1'b0;
+                    set_done = 1'b0;
+                end
+            end
+            WAIT: begin
+                if(shift_18) begin
                     nxt_state = IDLE;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b0;
                     set_done = 1'b1;
                 end
-                else begin
-                    nxt_state = RX;
+                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IN WAIT IF THE USER SETS BAD TIMING PARAMETERS
+                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
+                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
+                //   Done is cleared, since the data is obviously not yet valid
+                if(start) begin 
+                    nxt_state = IDLE;
                     clr_cnv = 1'b1;
-                    clr_sclk = 1'b0;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b1;
+                    set_done = 1'b0;
+                end
+                else begin
+                    nxt_state = WAIT;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
                     clr_done = 1'b0;
                     set_done = 1'b0;
                 end
@@ -336,6 +383,24 @@ module amdc_spi_master(
                 end
         endcase
     end
+
+
+    //////////////////////////////////////
+    // DEBUG PORTS
+    ////////////////////////////////////
+
+    reg shift_debug;
+
+    always@(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            shift_debug <= 1'b0;
+        else if(shift)
+            shift_debug <= ~shift_debug;
+    end
+
+    assign debug[0] = shift_debug;
+    assign debug[1] = 1'b1;
+    assign debug[2] = 1'b1;
 
 endmodule
 

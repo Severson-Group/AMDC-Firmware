@@ -24,6 +24,7 @@
         output wire sclk,
         output wire cnv,
         output wire done,
+        output wire [2:0] debug,
         // User ports ends
         // Do not modify the ports beyond this line
 
@@ -499,7 +500,8 @@
             // Out
             .sensor_data_x(sensor_data_x),
             .sensor_data_y(sensor_data_y),
-            .done(done)
+            .done(done),
+            .debug(debug)
         );    
     
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
