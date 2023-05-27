@@ -9,8 +9,13 @@ void eddy_current_sensor_init(void)
 {
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
-    // Set eddy current sensors to sample on PWM high by default
-    //   with an SCLK frequency of 3 MHz 
+    // Default PWM carrier frequency for AMDC is 100 kHz
+    //   Triggering on both PWM high and low would be an effective sample frequency of 200 kHz,
+    //   either high OR low, being effectively 100 kHz sampling.
+    //   To meet this timing, SCLK would need to be VERY fast.
+    //   Therefore, set eddy current sensors to only sample on PWM high by default
+    //   with an SCLK frequency of only 2 MHz. Because this won't fit into the 10us interval,
+    //   every other PWM trigger will be ignored for an effective sampling rate of 50 kHz
     eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
     eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000, 270);
 

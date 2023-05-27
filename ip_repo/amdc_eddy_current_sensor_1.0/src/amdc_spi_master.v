@@ -3,7 +3,7 @@
 module amdc_spi_master(
     // INPUTS
     clk, rst_n, 
-    start, 
+    trigger, 
     miso_x, miso_y, 
     sclk_cnt,
     shift_index,
@@ -39,7 +39,7 @@ module amdc_spi_master(
     // INPUTS
     /////////////////////
     input wire clk, rst_n;
-    input wire start;
+    input wire trigger;
     input wire miso_x, miso_y;
     input wire [7:0] sclk_cnt;
     input wire [7:0] shift_index;
@@ -68,6 +68,12 @@ module amdc_spi_master(
     wire cnv_cmplt;
     reg clr_sclk;
     reg set_done, clr_done;
+    
+    // "trigger" (input) vs "start" (SM output)
+    //   trigger is a module input that TRIES to start a new conversion/recieve cycle with the PWM settings requested by the user
+    //   start, however, is the ACTUAL start signal. If a new trigger comes in and tries to start a new transaction BEFORE the previous
+    //   transaction has completed, it will be ignored.
+    reg start;
 
 
 
@@ -168,12 +174,12 @@ module amdc_spi_master(
     reg [255:0] shift_delay;
 
     always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) begin
+        if(!rst_n)
             shift_delay <= 256'b0;
-        end
-        else begin
+        else if(start)
+            shift_delay <= 256'b0;
+        else
             shift_delay <= {shift_delay[254:0], sclk_fall};
-        end
     end
 
     assign shift = shift_delay[shift_index];
@@ -275,11 +281,12 @@ module amdc_spi_master(
   
     // STATE TRANSITIONS (input/outputs)
     // SM Inputs:
-    //    start
+    //    trigger - Synced with the user-requested PWM triggers
     //    cnv_cmplt
     //    done18
     //   
     // SM Outputs:
+    //    start    - output when trigger is received while in the IDLE state to start a new transaction
     //    cnv      - the cnv line to the ADC
     //    clr_cnv  - reset cnv_div 
     //    clr_sclk - hold sclk low when not in RX state, and reset sclk_div
@@ -294,114 +301,55 @@ module amdc_spi_master(
         clr_sclk = 1'b1;
         clr_done = 1'b0;
         set_done = 1'b0;
+        start = 1'b0;
       
         case(state)
             IDLE: begin
-                if(start) begin
+                if(trigger) begin
                     nxt_state = CNV;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
                     clr_done = 1'b1;
-                    set_done = 1'b0;
-                end
-                else begin
-                    nxt_state = IDLE;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
+                    start = 1'b1;
                 end
             end 
             CNV: begin
-                cnv = 1'b1;
                 if(cnv_cmplt) begin
                     nxt_state = RX;
-                    clr_cnv = 1'b1;
+                    cnv = 1'b1;
                     clr_sclk = 1'b0;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
-                end
-                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
-                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
-                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
-                //   Done is cleared, since the data is obviously not yet valid
-                else if(start) begin 
-                    nxt_state = IDLE;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b1;
-                    set_done = 1'b0;
                 end
                 else begin
                     nxt_state = CNV;
+                    cnv = 1'b1;
                     clr_cnv = 1'b0;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
                 end
             end
             RX: begin
                 if(sclk_fall_18) begin
                     nxt_state = WAIT;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
-                end
-                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
-                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
-                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
-                //   Done is cleared, since the data is obviously not yet valid
-                else if(start) begin 
-                    nxt_state = IDLE;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b1;
-                    set_done = 1'b0;
                 end
                 else begin
                     nxt_state = RX;
-                    clr_cnv = 1'b1;
                     clr_sclk = 1'b0;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
                 end
             end
             WAIT: begin
                 if(shift_18) begin
                     nxt_state = IDLE;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b0;
                     set_done = 1'b1;
-                end
-                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
-                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
-                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
-                //   Done is cleared, since the data is obviously not yet valid
-                else if(start) begin 
-                    nxt_state = IDLE;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b1;
-                    set_done = 1'b0;
                 end
                 else begin
                     nxt_state = WAIT;
-                    clr_cnv = 1'b1;
-                    clr_sclk = 1'b1;
-                    clr_done = 1'b0;
-                    set_done = 1'b0;
                 end
             end
             default:
                 begin
                     nxt_state = IDLE;
-                    cnv = 0;
+                    cnv = 1'b0;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b1;
                     set_done = 1'b0;
+                    start = 1'b0;
                 end
         endcase
     end

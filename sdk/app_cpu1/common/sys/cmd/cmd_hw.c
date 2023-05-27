@@ -1,12 +1,12 @@
 #include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/cpu_timer.h"
+#include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_direct.h"
 #include "drv/gpio_mux.h"
-#include "drv/eddy_current_sensor.h"
 #include "drv/ild1420.h"
 #include "drv/led.h"
 #include "drv/pwm.h"
@@ -23,23 +23,24 @@
 
 static command_entry_t cmd_entry;
 
-static command_help_t cmd_help[] = {
-    { "pwm <on|off>", "Turn on/off PWM switching" },
-    { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
-    { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
-    { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
-    { "ild read", "Read the latest packet from ILD1420 sensor" },
-    { "enc steps", "Read encoder steps from power-up" },
-    { "enc pos", "Read encoder position" },
-    { "enc init", "Turn on blue LED until Z pulse found" },
-    { "timer <fpga|cpu> now", "Read value from hardware timer" },
-    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
-    { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
-    { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
-    { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
-    { "eddy trigger <port> <HIGH|LOW|BOTH>", "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
-    { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>", "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" }
-};
+static command_help_t cmd_help[]
+    = { { "pwm <on|off>", "Turn on/off PWM switching" },
+        { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
+        { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
+        { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+        { "ild read", "Read the latest packet from ILD1420 sensor" },
+        { "enc steps", "Read encoder steps from power-up" },
+        { "enc pos", "Read encoder position" },
+        { "enc init", "Turn on blue LED until Z pulse found" },
+        { "timer <fpga|cpu> now", "Read value from hardware timer" },
+        { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+        { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
+        { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
+        { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
+        { "eddy trigger <port> <HIGH|LOW|BOTH>",
+          "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
+        { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
+          "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" } };
 
 void cmd_hw_register(void)
 {
@@ -195,32 +196,25 @@ int cmd_hw(int argc, char **argv)
     if (argc >= 5 && STREQ("eddy", argv[1])) {
 
         int32_t port = atoi(argv[3]);
-
-        cmd_resp_printf("here1 port: %lu\r\n", port);
-
         uint32_t base_addr = 0;
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
         if (port < 1 || port > 2)
             return CMD_INVALID_ARGUMENTS;
-            cmd_resp_printf("here2 port: %lu\r\n", port);
         else
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-            cmd_resp_printf("here3 port: %lu\r\n", port);
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
         if (port == 1)
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-        if (port == 2)
+        else if (port == 2)
             base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
-            cmd_resp_printf("here4 port: %lu\r\n", port);
-        if (port == 3)
+        else if (port == 3)
             base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
-        if (port == 4)
+        else if (port == 4)
             base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
         else
             return CMD_INVALID_ARGUMENTS;
-            cmd_resp_printf("here5 port: %lu\r\n", port);
 #endif
 
         // hw eddy trigger <port> <HIGH | LOW | BOTH>
@@ -234,7 +228,6 @@ int cmd_hw(int argc, char **argv)
             else if (STREQ("BOTH", argv[4]))
                 eddy_current_sensor_trigger_on_pwm_both(base_addr);
             else
-                cmd_resp_printf("here6 port: %lu\r\n", port);
                 return CMD_INVALID_ARGUMENTS;
 
             return CMD_SUCCESS;

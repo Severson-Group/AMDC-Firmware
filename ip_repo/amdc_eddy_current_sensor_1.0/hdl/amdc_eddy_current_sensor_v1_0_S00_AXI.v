@@ -454,12 +454,12 @@
 
     // Add user logic here
     wire [7:0] shift_index;
-    wire trigger_on_high, trigger_on_low, start; // Configured by writting to the config en reg
+    wire trigger_on_high, trigger_on_low, trigger; // Configured by writting to the config en reg
 
     assign trigger_on_high = slv_reg3[0];
     assign trigger_on_low = slv_reg3[1];
     assign shift_index = slv_reg4[7:0];
-    assign start = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
+    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
 
     // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
     wire [17:0] sensor_data_x, sensor_data_y;
@@ -477,7 +477,7 @@
             .rst_n(S_AXI_ARESETN), 
 
             // PWM-Synchronized Conversion Initiation
-            .start(enable & start),
+            .trigger(enable & trigger),
 
             // From ADCs
             .miso_x(miso_x),
