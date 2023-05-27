@@ -321,6 +321,17 @@ module amdc_spi_master(
                     clr_done = 1'b0;
                     set_done = 1'b0;
                 end
+                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
+                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
+                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
+                //   Done is cleared, since the data is obviously not yet valid
+                else if(start) begin 
+                    nxt_state = IDLE;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b1;
+                    set_done = 1'b0;
+                end
                 else begin
                     nxt_state = CNV;
                     clr_cnv = 1'b0;
@@ -335,6 +346,17 @@ module amdc_spi_master(
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
                     clr_done = 1'b0;
+                    set_done = 1'b0;
+                end
+                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
+                //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
+                //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
+                //   Done is cleared, since the data is obviously not yet valid
+                else if(start) begin 
+                    nxt_state = IDLE;
+                    clr_cnv = 1'b1;
+                    clr_sclk = 1'b1;
+                    clr_done = 1'b1;
                     set_done = 1'b0;
                 end
                 else begin
@@ -353,11 +375,11 @@ module amdc_spi_master(
                     clr_done = 1'b0;
                     set_done = 1'b1;
                 end
-                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IN WAIT IF THE USER SETS BAD TIMING PARAMETERS
+                // THIS IS TO PREVENT THE SM FROM GETTING STUCK IF THE USER SETS BAD TIMING PARAMETERS
                 //   The SM will be stuck in WAIT, waiting for a shift_18 signal that will never complete
                 //   Receiving 'start' should kick us into IDLE, where we wait again for 'start' to kick off another conversion
                 //   Done is cleared, since the data is obviously not yet valid
-                if(start) begin 
+                else if(start) begin 
                     nxt_state = IDLE;
                     clr_cnv = 1'b1;
                     clr_sclk = 1'b1;
