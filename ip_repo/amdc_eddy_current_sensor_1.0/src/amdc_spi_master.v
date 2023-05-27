@@ -70,8 +70,8 @@ module amdc_spi_master(
     reg set_done, clr_done;
     
     // "trigger" (input) vs "start" (SM output)
-    //   trigger is a module input that TRIES to start a new conversion/recieve cycle with the PWM settings requested by the user
-    //   start, however, is the ACTUAL start signal. If a new trigger comes in and tries to start a new transaction BEFORE the previous
+    //   "trigger" is a module input that TRIES to start a new conversion/recieve transaction with the PWM settings requested by the user.
+    //   "start" is the ACTUAL start signal. If a new trigger comes in and tries to start a new transaction BEFORE the previous
     //   transaction has completed, it will be ignored.
     reg start;
 
@@ -100,7 +100,6 @@ module amdc_spi_master(
     //   In the future, we might slow the AXI_CLK_FREQ to 100MHz (period of 10ns), so that would mean our SCLK freq would be capped at a period of 20ns (10ns low/10ns high), or SLCK_FREQ = 50MHz
     //
     //   But actaully, nevermind all that because we are using the diff/single transceivers, which have a bottleneck of 10MHz (period 100ns, 50ns low/50ns high)
-    //   So instead, we will toggle SCLK every 10 AXI CLK cycles
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk <= 1'b0;
@@ -122,30 +121,6 @@ module amdc_spi_master(
             sclk_div <= sclk_div + 1;
     end
 
-
-
-    // DATA READ-IN
-    //   This includes double-flopping both miso_x and miso_y lines to account for crossing clock domains,
-    //   as well as shifting these flopped values into our result registers
-    
-    // Double-flop
-    always @(posedge clk, negedge rst_n) begin
-        if(!rst_n) begin
-            miso_x_1 <= 1'b0;
-            miso_x_2 <= 1'b0;
-            miso_y_1 <= 1'b0;
-            miso_y_2 <= 1'b0;
-        end
-        else begin
-            miso_x_1 <= miso_x;
-            miso_x_2 <= miso_x_1;
-            miso_y_1 <= miso_y;
-            miso_y_2 <= miso_y_1;
-        end
-    end
-
-
-
     // SCLK falling edge detector
     reg sclk_1;
     wire sclk_fall;
@@ -158,6 +133,25 @@ module amdc_spi_master(
     end
 
     assign sclk_fall = (sclk_1 & ~sclk);
+
+
+    // SCLK FALL COUNTER
+    //   Counts that 18 SCLK falls have occured (sclk_fall_18), completing the RX state
+    //   However, because of the propogation delay, not all 18 bits coming on MISO have actually
+    //   been shifted. Therefore, we need the WAIT state
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            sclk_fall_cnt <= 5'b0;
+        else if(start)
+            sclk_fall_cnt <= 5'b0;
+        else if(sclk_fall)
+            sclk_fall_cnt <= sclk_fall_cnt + 1;
+    end
+
+    wire sclk_fall_18;
+    assign sclk_fall_18 = (sclk_fall_cnt == 5'b10010); // Input for SM
+
+
 
     // SHIFT delayer
     //   Why is this needed? The Kaman adapter board's filtering introduces a significant propogation delay into the system. On the FPGA side, the SCLK signal
@@ -185,6 +179,42 @@ module amdc_spi_master(
     assign shift = shift_delay[shift_index];
 
 
+    // SHIFT COUNTER
+    //   Counts that 18 bits have been actaully been shifted in, completing the WAIT state
+    //   Then we have valid data and can assert 'done'
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            shift_cnt <= 5'b0;
+        else if(start)
+            shift_cnt <= 5'b0;
+        else if(shift)
+            shift_cnt <= shift_cnt + 1;
+    end
+
+    wire shift_18;
+    assign shift_18 = (shift_cnt == 5'b10010); // Input for SM
+
+
+
+    // DATA READ-IN
+    //   This includes double-flopping both miso_x and miso_y lines to account for crossing clock domains,
+    //   as well as shifting these flopped values into our result registers
+    
+    // Double-flop
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n) begin
+            miso_x_1 <= 1'b0;
+            miso_x_2 <= 1'b0;
+            miso_y_1 <= 1'b0;
+            miso_y_2 <= 1'b0;
+        end
+        else begin
+            miso_x_1 <= miso_x;
+            miso_x_2 <= miso_x_1;
+            miso_y_1 <= miso_y;
+            miso_y_2 <= miso_y_1;
+        end
+    end
 
     // Shift registers
     always @(posedge clk, negedge rst_n) begin
@@ -204,39 +234,6 @@ module amdc_spi_master(
 
 
 
-    // SCLK FALL COUNTER
-    //   Counts that 18 SCLK falls have occured (sclk_fall_18), completing the RX state
-    //   However, because of the propogation delay, not all 18 bits coming on MISO have actually
-    //   been shifted. Therefore, we need the WAIT state
-    always @(posedge clk, negedge rst_n) begin
-        if(!rst_n)
-            sclk_fall_cnt <= 5'b0;
-        else if(start)
-            sclk_fall_cnt <= 5'b0;
-        else if(sclk_fall)
-            sclk_fall_cnt <= sclk_fall_cnt + 1;
-    end
-
-    wire sclk_fall_18;
-    assign sclk_fall_18 = (sclk_fall_cnt == 5'b10010); // Input for SM
-
-    // SHIFT COUNTER
-    //   Counts that 18 bits have been actaully been shifted in, completing the WAIT state
-    //   Then we have valid data and can assert 'done'
-    always @(posedge clk, negedge rst_n) begin
-        if(!rst_n)
-            shift_cnt <= 5'b0;
-        else if(start)
-            shift_cnt <= 5'b0;
-        else if(shift)
-            shift_cnt <= shift_cnt + 1;
-    end
-
-    wire shift_18;
-    assign shift_18 = (shift_cnt == 5'b10010); // Input for SM
-
-
-
     // DONE FF
     //   Set and cleared by SM
     //   'done' goes back out of the eddy current IP block signaling that a whole CONVERT/RECIEVE cycle has completed and the data is valid
@@ -253,7 +250,7 @@ module amdc_spi_master(
 
     ////////////////////////////////////////
     //
-    //  STATE MACHINE LOGIC
+    //  STATE MACHINE
     //
     ////////////////////////////////////
     
@@ -263,7 +260,7 @@ module amdc_spi_master(
     localparam CNV = 2'b01;
     localparam RX = 2'b10;
     localparam WAIT = 2'b11;
-    // There is no need for an addition QUIET state between the completion of WAIT and the beginning of a new CoNVersion
+    // There is no need for an additional QUIET state between the completion of WAIT and the beginning of a new CoNVersion
     //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow frequency
     //    so after RX/WAIT complete, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
 
@@ -281,9 +278,10 @@ module amdc_spi_master(
   
     // STATE TRANSITIONS (input/outputs)
     // SM Inputs:
-    //    trigger - Synced with the user-requested PWM triggers
-    //    cnv_cmplt
-    //    done18
+    //    trigger        - Synced with the user-requested PWM triggers
+    //    cnv_cmplt      - The appropriate amount of time has elapsed in the CNV state
+    //    sclk_fall_18   - SCLK has fallen 18 times, so we can stop toggling it and just wait for the data to appear on MISO (RX -> WAIT)
+    //    shift_18       - All 18 data bits on MISO have been shifted into our shift registers, so we are done (WAIT -> IDLE)
     //   
     // SM Outputs:
     //    start    - output when trigger is received while in the IDLE state to start a new transaction
@@ -295,13 +293,13 @@ module amdc_spi_master(
     always @(*) begin
   
         // default nxt_state and outputs
+        start = 1'b0;
         nxt_state = IDLE;
         cnv = 1'b0;
         clr_cnv = 1'b1;
         clr_sclk = 1'b1;
         clr_done = 1'b0;
         set_done = 1'b0;
-        start = 1'b0;
       
         case(state)
             IDLE: begin

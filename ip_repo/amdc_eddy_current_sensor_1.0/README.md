@@ -4,8 +4,9 @@ This IP core is a driver for the digital interface of the eddy current sensor us
 
 ## Features
 
-- 12.5 MHz - 50 kHz SPI clock
-- 500KSps - 2KSps sample rate
+
+- Configurable sample rate synced to AMDC PWM Carrier
+- 500 kHz - 10 MHz SPI clock
 - 3-Wire operation 
 
 More details specific to the ADC timing requirements can be found in the [datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf)

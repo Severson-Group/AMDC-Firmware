@@ -444,7 +444,7 @@
         begin    
           // When there is a valid read address (S_AXI_ARVALID) with 
           // acceptance of read address by the slave (axi_arready), 
-          // output the read dada 
+          // output the read data 
           if (slv_reg_rden)
             begin
               axi_rdata <= reg_data_out;     // register read data
@@ -454,14 +454,14 @@
 
     // Add user logic here
     wire [7:0] shift_index;
-    wire trigger_on_high, trigger_on_low, trigger; // Configured by writting to the config en reg
+    wire trigger_on_high, trigger_on_low, trigger; // Configured by writing to the config en reg
 
     assign trigger_on_high = slv_reg3[0];
     assign trigger_on_low = slv_reg3[1];
     assign shift_index = slv_reg4[7:0];
-    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchrize SPI master ADC driver to start with the PWM carrier
+    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchronize SPI master ADC driver to start with the PWM carrier
 
-    // These are used to capture the output of the SPI Master (shift registers) and put in the AX memory-mapped registers (see below) to be read by C driver
+    // These are used to capture the output of the SPI Master (shift registers) and put in the AXI memory-mapped registers (see below) to be read by C driver
     wire [17:0] sensor_data_x, sensor_data_y;
     wire [7:0] sclk_cnt;
 
@@ -509,9 +509,6 @@
             data_x_out <= 32'b0;
             data_y_out <= 32'b0;
         end
-        // REVIEW:
-        //   If not 'done', if data is not valid, should these data_out registers hold the previous valid value, as is implemented now, 
-        //   or should they be cleared to x/z/0?
         else if(done) begin
             data_x_out <= {{14{sensor_data_x[17]}},sensor_data_x};
             data_y_out <= {{14{sensor_data_y[17]}},sensor_data_y};
