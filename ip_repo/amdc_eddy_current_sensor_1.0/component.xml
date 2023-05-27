@@ -1020,6 +1020,11 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@6de17b6e_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@78c41cd8_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7300e831_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a54a8b7_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5fe2cdda_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1677754b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@699cff1_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68c58873_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
