@@ -20,7 +20,7 @@
 		input wire pwm_carrier_high,
 		input wire pwm_carrier_low,
 
-        output wire [1:0] sensor_control_out,
+		output wire [1:0] sensor_control_out,
 		output wire done,
 		output wire [2:0] debug,
 		// User ports ends

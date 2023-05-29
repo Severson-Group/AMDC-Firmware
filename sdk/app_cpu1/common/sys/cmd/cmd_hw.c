@@ -23,24 +23,25 @@
 
 static command_entry_t cmd_entry;
 
-static command_help_t cmd_help[]
-    = { { "pwm <on|off>", "Turn on/off PWM switching" },
-        { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
-        { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
-        { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
-        { "ild read", "Read the latest packet from ILD1420 sensor" },
-        { "enc steps", "Read encoder steps from power-up" },
-        { "enc pos", "Read encoder position" },
-        { "enc init", "Turn on blue LED until Z pulse found" },
-        { "timer <fpga|cpu> now", "Read value from hardware timer" },
-        { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
-        { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
-        { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
-        { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
-        { "eddy trigger <port> <HIGH|LOW|BOTH>",
-          "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
-        { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
-          "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" } };
+static command_help_t cmd_help[] = {
+    { "pwm <on|off>", "Turn on/off PWM switching" },
+    { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
+    { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
+    { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
+    { "ild read", "Read the latest packet from ILD1420 sensor" },
+    { "enc steps", "Read encoder steps from power-up" },
+    { "enc pos", "Read encoder position" },
+    { "enc init", "Turn on blue LED until Z pulse found" },
+    { "timer <fpga|cpu> now", "Read value from hardware timer" },
+    { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
+    { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
+    { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
+    { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
+    { "eddy trigger <port> <HIGH|LOW|BOTH>",
+      "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
+    { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
+      "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
+};
 
 void cmd_hw_register(void)
 {

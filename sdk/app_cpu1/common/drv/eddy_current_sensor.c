@@ -59,25 +59,23 @@ void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
 
 void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, uint32_t propogation_delay_ns)
 {
-    // 10 MHz is max frequency (faster frequencies limited by diff/single transceivers)
-    //   should give sclk_cnt = 10 axi cycles
+    // 10 MHz is max SCLK frequency (faster frequencies limited by diff/single transceivers)
     if (sclk_freq_khz > 10000) {
         sclk_freq_khz = 10000;
     }
 
     // 500 kHz is min frequency (slower frequencies won't complete in a PWM carrier cycle)
-    //   should give sclk_cnt = 200 axi cycles
     if (sclk_freq_khz < 500) {
         sclk_freq_khz = 500;
     }
 
     // This is period in ns for one half of the sclk period
-    // We want half a period since sclk_cnt is the number of AXI CLK cycles to wait before toggling SCLK
+    // We want half a period since sclk_cnt is the number of FPGA CLK cycles to wait before toggling SCLK
     uint32_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
 
-    uint32_t axi_period_ns = 1000 / AXI_CLK_FREQ_MHZ;
+    uint32_t fpga_period_ns = 1000 / FPGA_CLK_FREQ_MHZ;
 
-    uint32_t sclk_cnt = sclk_half_period_ns / axi_period_ns;
+    uint32_t sclk_cnt = sclk_half_period_ns / fpga_period_ns;
 
     Xil_Out32(base_addr + (2 * sizeof(uint32_t)), sclk_cnt);
 
@@ -99,7 +97,7 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
     //   is selected by the shift_index value calculated below.
     uint32_t delay_time = (2 * propogation_delay_ns) + (1 * sclk_half_period_ns);
 
-    uint32_t shift_index = delay_time / axi_period_ns;
+    uint32_t shift_index = delay_time / fpga_period_ns;
 
     if (shift_index > 255) {
         shift_index = 255;
