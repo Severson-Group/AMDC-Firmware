@@ -121,9 +121,9 @@ module amdc_spi_master(
             sclk_div <= sclk_div + 1;
     end
 
-    // SCLK falling edge detector
+    // SCLK edge detector
     reg sclk_1;
-    wire sclk_fall;
+    wire sclk_fall, sclk_rise;
 
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n) 
@@ -133,12 +133,13 @@ module amdc_spi_master(
     end
 
     assign sclk_fall = (sclk_1 & ~sclk);
+    assign sclk_rise = (~sclk_1 & sclk);
 
 
     // SCLK FALL COUNTER
     //   Counts that 18 SCLK falls have occured (sclk_fall_18), completing the RX state
-    //   However, because of the propogation delay, not all 18 bits coming on MISO have actually
-    //   been shifted. Therefore, we need the WAIT state
+    //   However, because of the propogation delay, it is possible that not all 18 bits coming on 
+    //   MISO have actually been shifted. Therefore, we need the WAIT state.
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk_fall_cnt <= 5'b0;
@@ -149,21 +150,19 @@ module amdc_spi_master(
     end
 
     wire sclk_fall_18;
-    assign sclk_fall_18 = (sclk_fall_cnt == 5'b10010); // Input for SM
+    assign sclk_fall_18 = (sclk_fall_cnt == 5'd18); // Input for SM
 
 
 
     // SHIFT delayer
-    //   Why is this needed? The Kaman adapter board's filtering introduces a significant propogation delay into the system. On the FPGA side, the SCLK signal
-    //   being generated will fall, which is when we would like to sample the MISO line. However, the fall of SCLK will take a while to propogate through the adapter
-    //   board (270ns for example) and then the valid data on the MISO lines will take a while (again, 270ns for example) to propogate back. In the example, this is
-    //   a total round-trip propogation delay of 540ns. The actual delay depends on the RC filters used on the Kaman adapter board.
+    //   Why is this needed? The Kaman adapter board's filtering may introduce a significant propogation delay into the system. On the FPGA side, the SCLK signal
+    //   being generated will rise (sclk_rise), which is when we would like to sample the MISO line. However, this rise may take a while to propogate through the adapter
+    //   board and then the valid data on the MISO lines may take a while to propogate back. This delay depends on the RC filters used on the Kaman adapter board.
     //
-    //   To account for this 540ns data propogation delay, we need to delay our "shift" signal by the total round-trip propogation delay, plus half the SCLK period
-    //   (so that the sample occurs halfway through the bit period). The shift signal delay is implemented in the FPGA below used a "shift" signal shift register.
-    //   The flip-flop we care about in this shift register is selected by "shift_index"; the C code driver (eddy_current_sensor.c) function 
-    //   "eddy_current_sensor_set_timing()" allows the user to specify both the desired SCLK frequency, as well as the Kaman board's one-way propogation delay, and
-    //   will set "shift_index" to the correct value.
+    //   To account for this propogation delay, we need to delay our sclk_rise "shift" signal by the total round-trip propogation delay.
+    //   The shift signal delay is implemented in the FPGA below used a "shift" signal shift register. The flip-flop we care about in this shift
+    //   register is selected by "shift_index"; the C code driver (eddy_current_sensor.c) function "eddy_current_sensor_set_timing()" allows the user to
+    //   specify both the desired SCLK frequency, as well as the Kaman board's one-way propogation delay, and will set "shift_index" to the correct value.
     wire shift;
     reg [255:0] shift_delay;
 
@@ -173,7 +172,7 @@ module amdc_spi_master(
         else if(start)
             shift_delay <= 256'b0;
         else
-            shift_delay <= {shift_delay[254:0], sclk_fall};
+            shift_delay <= {shift_delay[254:0], sclk_rise};
     end
 
     assign shift = shift_delay[shift_index];
@@ -191,8 +190,16 @@ module amdc_spi_master(
             shift_cnt <= shift_cnt + 1;
     end
 
-    wire shift_18;
-    assign shift_18 = (shift_cnt == 5'b10010); // Input for SM
+    reg shift_18; // Input for SM
+
+    always @(posedge clk, negedge rst_n) begin
+        if(!rst_n)
+            shift_18 <= 1'b0;
+        else if(start)
+            shift_18 <= 1'b0;
+        else if(shift_cnt == 5'd18)
+            shift_18 <= 1'b1;
+    end
 
 
 
@@ -280,7 +287,7 @@ module amdc_spi_master(
     // SM Inputs:
     //    trigger        - Synced with the user-requested PWM triggers
     //    cnv_cmplt      - The appropriate amount of time has elapsed in the CNV state
-    //    sclk_fall_18   - SCLK has fallen 18 times, so we can stop toggling it and just wait for the data to appear on MISO (RX -> WAIT)
+    //    sclk_fall_18   - SCLK has fallen 18 times, so we can stop toggling it (RX -> WAIT)
     //    shift_18       - All 18 data bits on MISO have been shifted into our shift registers, so we are done (WAIT -> IDLE)
     //   
     // SM Outputs:
@@ -322,7 +329,13 @@ module amdc_spi_master(
                 end
             end
             RX: begin
-                if(sclk_fall_18) begin
+                // If the timing is fast enough, we can skip the WAIT state
+                if(shift_18 & sclk_fall_18) begin 
+                    nxt_state = IDLE;
+                    set_done = 1'b1;
+                end
+                // However, if we are done toggling SCLK and not all bits have been shifted, we must WAIT
+                else if(sclk_fall_18) begin 
                     nxt_state = WAIT;
                 end
                 else begin

@@ -11,21 +11,29 @@ void eddy_current_sensor_init(void)
 
     // Default PWM carrier frequency for AMDC is 100 kHz
     //   Triggering on both PWM high and low would be an effective sample frequency of 200 kHz,
-    //   either high OR low, being effectively 100 kHz sampling.
+    //   while either high OR low is effectively 100 kHz sampling.
     //   To meet this timing, SCLK would need to be VERY fast.
-    //   Therefore, set eddy current sensors to only sample on PWM high by default
-    //   with an SCLK frequency of only 2 MHz. Because this won't fit into the 10us interval,
-    //   every other PWM trigger will be ignored for an effective sampling rate of 50 kHz
-    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 2000, 270);
+    //   We can set eddy current sensors to sample on PWM high and low, but
+    //   with an SCLK frequency of only 3 MHz, this won't fit into the 5us interval, so
+    //   every other PWM trigger will be ignored for an effective sampling rate of 100 kHz
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 
+        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
+        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 2000, 270);
-    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 2000, 270);
-    eddy_current_sensor_trigger_on_pwm_high(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 2000, 270);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 
+        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
+        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 
+        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
+        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 
+        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
+        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 #endif
 }
 
@@ -59,9 +67,10 @@ void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
 
 void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, uint32_t propogation_delay_ns)
 {
-    // 10 MHz is max SCLK frequency (faster frequencies limited by diff/single transceivers)
-    if (sclk_freq_khz > 10000) {
-        sclk_freq_khz = 10000;
+    // 5 MHz is max SCLK frequency (weird behaviour beyond 5 MHz)
+    //   This is still sufficiently fast to complete at a sampling frequency of 200 kHz
+    if (sclk_freq_khz > 5000) {
+        sclk_freq_khz = 5000;
     }
 
     // 500 kHz is min frequency (slower frequencies won't complete in a PWM carrier cycle)
@@ -95,10 +104,11 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
     //   through when the bit is valid. See the amdc_spi_master.v for details on how
     //   the shift signal is propogated through a shift register and then the appropriate delay
     //   is selected by the shift_index value calculated below.
-    uint32_t delay_time = (2 * propogation_delay_ns) + (1 * sclk_half_period_ns);
+    uint32_t delay_time = 2 * propogation_delay_ns;
 
     uint32_t shift_index = delay_time / fpga_period_ns;
 
+    // 255 is an FPGA-imposed limit, as the SHIFT_INDEX register field is only 8-bit
     if (shift_index > 255) {
         shift_index = 255;
     }

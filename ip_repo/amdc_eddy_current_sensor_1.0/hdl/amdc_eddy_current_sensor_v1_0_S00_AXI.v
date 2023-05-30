@@ -453,66 +453,78 @@
     end    
 
     // Add user logic here
-    wire [7:0] shift_index;
-    wire trigger_on_high, trigger_on_low, trigger; // Configured by writing to the config en reg
+    reg [7:0] sclk_cnt, shift_index;
+    reg trigger_on_high, trigger_on_low;
+    
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+      if(!S_AXI_ARESETN) begin
+        sclk_cnt <= 8'b0;
+        trigger_on_high <= 1'b0;
+        trigger_on_low <= 1'b0;
+        shift_index <= 8'b0;
+      end
+      else if(pwm_carrier_high | pwm_carrier_low) begin
+        sclk_cnt <= slv_reg2[7:0];
+        trigger_on_high <= slv_reg3[0];
+        trigger_on_low <= slv_reg3[1];
+        shift_index <= slv_reg4[7:0];
+      end
+    end
 
-    assign trigger_on_high = slv_reg3[0];
-    assign trigger_on_low = slv_reg3[1];
-    assign shift_index = slv_reg4[7:0];
-    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low); // Synchronize SPI master ADC driver to start with the PWM carrier
+    // Synchronize SPI master ADC driver to start with the PWM carrier
+    wire trigger;
+    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low);
 
-    // These are used to capture the output of the SPI Master (shift registers) and put in the AXI memory-mapped registers (see below) to be read by C driver
+    // These are used to capture the output of the SPI Master (shift registers) and put 
+    // in the AXI memory-mapped registers (see below) to be read by C driver
     wire [17:0] sensor_data_x, sensor_data_y;
-    wire [7:0] sclk_cnt;
-
-    assign sclk_cnt = slv_reg2[7:0];
     
     amdc_spi_master iSPI_MASTER(
-            /////////////////
-            // INPUTS
-            //////////////
+        /////////////////
+        // INPUTS
+        //////////////
 
-            // From AXI
-            .clk(S_AXI_ACLK), 
-            .rst_n(S_AXI_ARESETN), 
+        // From AXI
+        .clk(S_AXI_ACLK), 
+        .rst_n(S_AXI_ARESETN), 
 
-            // PWM-Synchronized Conversion Initiation
-            .trigger(enable & trigger),
+        // PWM-Synchronized Conversion Initiation
+        .trigger(enable & trigger),
 
-            // From ADCs
-            .miso_x(miso_x),
-            .miso_y(miso_y),
+        // From ADCs
+        .miso_x(miso_x),
+        .miso_y(miso_y),
 
-            // SCLK frequency parameter configured by C driver 
-            .sclk_cnt(sclk_cnt),
+        // SCLK frequency parameter configured by C driver 
+        .sclk_cnt(sclk_cnt),
 
-            // How long to delay shift signal (depends on RC filter on adapter board)
-            .shift_index(shift_index),
+        // How long to delay shift signal (depends on RC filter on adapter board)
+        .shift_index(shift_index),
 
-            //////////////////
-            // OUTPUTS
-            ////////////////
+        //////////////////
+        // OUTPUTS
+        ////////////////
 
-            // To x and y ADCs
-            .sclk(sclk),
-            .cnv(cnv),
+        // To x and y ADCs
+        .sclk(sclk),
+        .cnv(cnv),
 
-            // Out
-            .sensor_data_x(sensor_data_x),
-            .sensor_data_y(sensor_data_y),
-            .done(done),
-            .debug(debug)
+        // Out
+        .sensor_data_x(sensor_data_x),
+        .sensor_data_y(sensor_data_y),
+        .done(done),
+        .debug(debug)
         );    
     
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-        if(!S_AXI_ARESETN) begin
-            data_x_out <= 32'b0;
-            data_y_out <= 32'b0;
-        end
-        else if(done) begin
-            data_x_out <= {{14{sensor_data_x[17]}},sensor_data_x};
-            data_y_out <= {{14{sensor_data_y[17]}},sensor_data_y};
-        end
+      if(!S_AXI_ARESETN) begin
+        data_x_out <= 32'b0;
+        data_y_out <= 32'b0;
+      end
+      else if(done) begin
+        data_x_out <= {{14{sensor_data_x[17]}},sensor_data_x};
+        data_y_out <= {{14{sensor_data_y[17]}},sensor_data_y};
+      end
     end
     // User logic ends
 
