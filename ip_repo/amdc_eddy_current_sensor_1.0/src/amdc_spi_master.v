@@ -15,23 +15,22 @@ module amdc_spi_master(
     debug
     );
 
-    ///////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
     //
-    //  SPI Driver for AD4011 ADC in Kaman Eddy Current Sensor
+    //  SPI Driver for AD4011 ADC in Kaman Eddy Current Sensor Box
     //
-    ///////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
 
     /////////////////////////
     // PARAMETERS
     //////////////////////
 
-    // AXI_CLK_FREQ = 200 MEGAHERTZ
-    // AXI_CLK_PERIOD = 5 NANOSECONDS
+    // FPGA_CLK_FREQ = 200 MEGAHERTZ
+    // FPGA_CLK_PERIOD = 5 NANOSECONDS
 
-    // For 10MHz, SCLK needs to toggle every 50ns, so every 10 AXI CLK periods (50 / AXI_CLK_PERIOD)
-    // This is an input that is configurable by the C driver (default is 10)
+    // For 5 MHz, SCLK needs to toggle every 100ns, so every 20 FPGA CLK periods (100 / FPGA_CLK_PERIOD)
 
-    // We need to give the ADC 320ns to handle conversion, or 64 AXI CLK periods (320 / AXI_CLK_PERIOD)
+    // We need to give the ADC 320ns to handle conversion, or 64 FPGA CLK periods (320 / FPGA_CLK_PERIOD)
     localparam cnv_cnt = 8'd64;
     
 
@@ -96,26 +95,26 @@ module amdc_spi_master(
 
     // SCLK GENERATION
     //   Kaman has the AD4011 ADC connected to VIO = 3.3V, therefore the minimum SCLK period is 9.8ns, so I'll use 10ns (5ns low/5ns high) or SLCK_FREQ = 100MHz
-    //   If our AXI_CLK_FREQ is 200MHz (period of 5ns), we can just flip SCLK on every rising edge of the AXI CLK
-    //   In the future, we might slow the AXI_CLK_FREQ to 100MHz (period of 10ns), so that would mean our SCLK freq would be capped at a period of 20ns (10ns low/10ns high), or SLCK_FREQ = 50MHz
+    //   If our FPGA_CLK_FREQ is 200MHz (period of 5ns), we can just flip SCLK on every rising edge of the FPGA CLK
+    //   In the future, we might slow the FPGA_CLK_FREQ to 100MHz (period of 10ns), so that would mean our SCLK freq would be capped at a period of 20ns (10ns low/10ns high), or SLCK_FREQ = 50MHz
     //
-    //   But actaully, nevermind all that because we are using the diff/single transceivers, which have a bottleneck of 10MHz (period 100ns, 50ns low/50ns high)
+    //   But actaully, nevermind all that because we are using the diff/single transceivers, which have a bottleneck of 10 MHz (period 100ns, 50ns low/50ns high)
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk <= 1'b0;
         else if(clr_sclk)
             sclk <= 1'b0;
-        else if(sclk_div == sclk_cnt)       // Toggle SCLK if the appropriate number of AXI clock cycles have passed
+        else if(sclk_div == sclk_cnt)       // Toggle SCLK if the appropriate number of FPGA clock cycles have passed
             sclk <= ~sclk;
     end
 
-    // SCLK divider, uses the SCLK_cnt parameter defined above, which is based on the AXI CLK frequency
+    // SCLK divider, uses the SCLK_cnt parameter defined above, which is based on the FPGA CLK frequency
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             sclk_div <= 8'b0;
         else if(clr_sclk)                   // From SM: in states where SCLK should not toggle (all except RX), we should not run sclk_div 
             sclk_div <= 8'b0;
-        else if (sclk_div == sclk_cnt)      // If the appropriate number of AXI clock cycles have passed, we will toggle sclk (meaning we should also reset the sclk_div)
+        else if (sclk_div == sclk_cnt)      // If the appropriate number of FPGA clock cycles have passed, we will toggle sclk (meaning we should also reset the sclk_div)
             sclk_div <= 8'b0;
         else                                // Else keep running up sclk_div
             sclk_div <= sclk_div + 1;
@@ -155,14 +154,17 @@ module amdc_spi_master(
 
 
     // SHIFT delayer
-    //   Why is this needed? The Kaman adapter board's filtering may introduce a significant propogation delay into the system. On the FPGA side, the SCLK signal
-    //   being generated will rise (sclk_rise), which is when we would like to sample the MISO line. However, this rise may take a while to propogate through the adapter
-    //   board and then the valid data on the MISO lines may take a while to propogate back. This delay depends on the RC filters used on the Kaman adapter board.
+    //   Why is this needed? The Kaman adapter board's filtering may introduce a significant propogation delay 
+    //  into the system. On the FPGA side, the SCLK signal being generated will rise (sclk_rise), which is when we 
+    //  would like to sample the MISO line. However, this rise may take a while to propogate through the adapter
+    //  board and then the valid data on the MISO lines may take a while to propogate back. This delay depends on 
+    //  the RC filters used on the Kaman adapter board.
     //
-    //   To account for this propogation delay, we need to delay our sclk_rise "shift" signal by the total round-trip propogation delay.
-    //   The shift signal delay is implemented in the FPGA below used a "shift" signal shift register. The flip-flop we care about in this shift
-    //   register is selected by "shift_index"; the C code driver (eddy_current_sensor.c) function "eddy_current_sensor_set_timing()" allows the user to
-    //   specify both the desired SCLK frequency, as well as the Kaman board's one-way propogation delay, and will set "shift_index" to the correct value.
+    //  To account for this propogation delay, we need to delay our sclk_rise "shift" signal by the total round-trip 
+    //  propogation delay. The shift signal delay is implemented in the FPGA below used a "shift" signal shift register. 
+    //  The flip-flop we care about in this shift register is selected by "shift_index"; the C code driver (eddy_current_sensor.c) 
+    //  function "eddy_current_sensor_set_timing()" allows the user to specify both the desired SCLK frequency, as well as the 
+    //  Kaman board's one-way propogation delay, and will set "shift_index" to the correct value.
     wire shift;
     reg [255:0] shift_delay;
 
@@ -243,7 +245,8 @@ module amdc_spi_master(
 
     // DONE FF
     //   Set and cleared by SM
-    //   'done' goes back out of the eddy current IP block signaling that a whole CONVERT/RECIEVE cycle has completed and the data is valid
+    //   'done' goes back out of the eddy current IP block signaling that a whole 
+    //   CONVERT/RECIEVE cycle has completed and the data is valid
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
             done <= 1'b0;
@@ -268,8 +271,9 @@ module amdc_spi_master(
     localparam RX = 2'b10;
     localparam WAIT = 2'b11;
     // There is no need for an additional QUIET state between the completion of WAIT and the beginning of a new CoNVersion
-    //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively slow frequency
-    //    so after RX/WAIT complete, we will hang out in idle for a while before the next PWM_high or PWM_low kicks off another CoNVersion
+    //    This is because our 'start' signal that kicks off the process is synced to our PWM carrier, running at a relatively 
+    //    slow frequency so after RX/WAIT complete, we will hang out in idle for a while before the next PWM_high or PWM_low kicks 
+    //    off another CoNVersion
 
 
     // NEXT STATE

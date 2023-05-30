@@ -56,7 +56,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 
 #### Propogation Delay and Shift Index
 
-The [Kaman Adapter Board](https://github.com/Severson-Group/AMDC-Hardware/tree/develop/Accessories/Kaman_IO_ConverterBoard) has two filtering lanes (from the AMDC/FPGA side to the Kaman ADC, and vice-versa). These two filtering lanes are each comprised of two Schmitt-Trigger glitch filter ICs, as well as some RC filtering. This causes significant signal propogation delay between SCLK being generated on the FPGA side, and the response from the Kaman device on the X/Y MISO lines to make their way back to the FPGA to be sampled.
+The [Kaman Adapter Board](https://github.com/Severson-Group/AMDC-Hardware/tree/develop/Accessories/Kaman_IO_ConverterBoard) has two filtering lanes (from the AMDC/FPGA side to the Kaman ADC, and vice-versa). These two filtering lanes are each comprised of two Schmitt-Trigger glitch filter ICs, as well as some RC filtering. This can cause significant signal propogation delay between SCLK being generated on the FPGA side, and the response from the Kaman device on the X/Y MISO lines to make their way back to the FPGA to be sampled.
 
 To correct for this propogation delay and shift the new bits on the MISO lines into the X/Y data registers at the correct time, the `shift_delay` shift register was created. This shift register takes in the `sclk_rise` signal (which is when we would want to shift in our data bits if there was no delay), and shifts it through the chain. The value `shift_index` is used to select which flop is used for the final `shift` signal (or in other words, how much delay is needed).
 
@@ -64,7 +64,7 @@ To correct for this propogation delay and shift the new bits on the MISO lines i
 
 This `shift_index` value is its own register, and is configured by writing to the register via the C code driver function `eddy_current_sensor_set_timing()` found in [sdk/app_cpu1/common/drv/eddy_current_sensor.c](https://github.com/Severson-Group/AMDC-Firmware/blob/v1.0.x/sdk/app_cpu1/common/drv/eddy_current_sensor.c). The driver calculates the required value of `shift_index` using the user-specified SCLK frequency and one-way Kaman Adapter Board propogation delay.
 
-The one-way propogation delay can be measured on the scope by looking at the delay between the two SCLK test points (pink and blue in the image below). The cursor in the image below shows this delay between the falling edge of SCLK on the FPGA side (pink) and the corresponding delayed falling edge on the Kaman side (blue). Yellow is the CNV line to the ADC in the Kaman device, and green is the X MISO line on the FPGA side, which is significantly delayed from the pink SCLK (also on the FPGA side)
+The one-way propogation delay can be measured on the scope by looking at the delay between the two SCLK test points (pink and blue in the image below). The cursor in the image below shows this delay between the falling edge of SCLK on the FPGA side (pink) and the corresponding delayed falling edge on the Kaman side (blue). Yellow is the CNV line to the ADC in the Kaman device, and green is the X MISO line on the FPGA side, which is significantly delayed from the pink SCLK (also on the FPGA side) in this example.
 
 ![Scope delay and REV C Kaman Adapter Board](scope_delay.png)
 

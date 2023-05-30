@@ -10,30 +10,26 @@ void eddy_current_sensor_init(void)
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
     // Default PWM carrier frequency for AMDC is 100 kHz
-    //   Triggering on both PWM high and low would be an effective sample frequency of 200 kHz,
-    //   while either high OR low is effectively 100 kHz sampling.
-    //   To meet this timing, SCLK would need to be VERY fast.
-    //   We can set eddy current sensors to sample on PWM high and low, but
-    //   with an SCLK frequency of only 3 MHz, this won't fit into the 5us interval, so
-    //   every other PWM trigger will be ignored for an effective sampling rate of 100 kHz
+    //   To trigger on both the peak and valley of the PWM carrier (200 kHz), SCLK needs to be quite fast.
+    //   The default SCLK frequency of 5 MHz allows us to fit a conversion cycle into the 5us interval.
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 
-        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
-        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 
-        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
-        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 
-        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
-        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
-    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 
-        EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ, 
-        EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 #endif
 }
 
