@@ -1,19 +1,22 @@
 # AMDC IP: `amdc_eddy_current_sensor_1.0`
 
-This IP core is a driver for the digital interface of the eddy current sensor used for levitation control in the CRAMB. The IP is designed as the SPI master to the dual [AD4011](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf) ADCs that are integrated into the eddy current sensor.
+This IP core is a driver for the digital interface of the Kaman eddy current sensor `KD-5690-FE`. The IP is designed as the SPI master to the dual [AD4011](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf) ADCs that are integrated into the eddy current sensor electronics box.
 
 ## Features
 
+- Sample rate synced to AMDC PWM carrier
+- Sample on PWM carrier high, low, or both
+- 500 kHz to 5 MHz SPI clock
+- Configurable bit sampling delay to account for signal propagation through glitch filters
+- 3-wire operation
 
-- Configurable sample rate synced to AMDC PWM Carrier
-- 500 kHz - 10 MHz SPI clock
-- 3-Wire operation 
+The Kaman sensor electronics box has configured its internal ADC for 3-wire operation, `CS mode`, and turbo mode is NOT enabled.
 
-More details specific to the ADC timing requirements can be found in the [datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf)
+Details specific to the ADC timing requirements can be found in the [datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf).
     
 ## IP Interface
 
-The IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface retrieves X and Y positional data from the eddy current sensor through control of its integrated ADCs
+The IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface retrieves X and Y positional data from the eddy current sensor through control of its integrated ADCs.
 
 ## Register Map
 
@@ -68,4 +71,4 @@ The one-way propogation delay can be measured on the scope by looking at the del
 
 ![Scope delay and REV C Kaman Adapter Board](scope_delay.png)
 
-Once the propogation delay (in nanoseconds) is measured, and the desired SCLK frequency (in Megahertz) is selected, the driver calculates the required `shift_index` to write to the IP by multiplying the one-way propogation delay by two for the round-trip delay and dividing by the FPGA clock frequency to determine how many flops the `sclk_rise` signal needs to propogate through before the MISO data is valid to shift in.
+Once the propogation delay (in nanoseconds) is measured, and the desired SCLK frequency (in kilohertz) is selected, the driver calculates the required `shift_index` to write to the IP by multiplying the one-way propogation delay by two for the round-trip delay and dividing by the FPGA clock frequency to determine how many flops the `sclk_rise` signal needs to propogate through before the MISO data is valid to shift in.
