@@ -9,36 +9,107 @@ void eddy_current_sensor_init(void)
 {
     printf("EDDY CURRENT SENSOR:\tInitializing...\n");
 
-    // Set sampling rate to 20kHz
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_1_BASE_ADDR, 20000);
+    // Default PWM carrier frequency for AMDC is 100 kHz
+    //   To trigger on both the peak and valley of the PWM carrier (200 kHz), SCLK needs to be quite fast.
+    //   The default SCLK frequency of 5 MHz allows us to fit a conversion cycle into the 5us interval.
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 
 #if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_2_BASE_ADDR, 20000);
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_3_BASE_ADDR, 20000);
-    eddy_current_sensor_set_sample_rate(EDDY_CURRENT_SENSOR_4_BASE_ADDR, 20000);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
+    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_3_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
+    eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_4_BASE_ADDR,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
+                                   EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 #endif
 }
 
-void eddy_current_sensor_enable(uint32_t base_addr)
+void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 1);
+    // Get the current value of the config register and set the pwm_high trigger bit
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x1));
 }
 
-void eddy_current_sensor_disable(uint32_t base_addr)
+void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (3 * sizeof(uint32_t)), 0);
+    // Get the current value of the config register and set the pwm_low trigger bit
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x2));
 }
 
-void eddy_current_sensor_set_sample_rate(uint32_t base_addr, double sample_rate)
+void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr)
 {
-    uint8_t divider = (uint8_t)(500000 / sample_rate);
-
-    eddy_current_sensor_set_divider(base_addr, divider - 1);
+    // Get the current value of the config register and set both the pwm_high and pwm_low trigger bits
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x3));
 }
 
-void eddy_current_sensor_set_divider(uint32_t base_addr, uint8_t divider)
+void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
 {
-    Xil_Out32(base_addr + (2 * sizeof(uint32_t)), divider);
+    // Get the current value of the config register and clear both the pwm_high and pwm_low trigger bits
+    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
+    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x3));
+}
+
+void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, uint32_t propogation_delay_ns)
+{
+    // 5 MHz is max SCLK frequency (weird behaviour beyond 5 MHz)
+    //   This is still sufficiently fast to complete at a sampling frequency of 200 kHz
+    if (sclk_freq_khz > 5000) {
+        sclk_freq_khz = 5000;
+    }
+
+    // 500 kHz is min frequency (slower frequencies won't complete in a PWM carrier cycle)
+    if (sclk_freq_khz < 500) {
+        sclk_freq_khz = 500;
+    }
+
+    // This is period in ns for one half of the sclk period
+    // We want half a period since sclk_cnt is the number of FPGA CLK cycles to wait before toggling SCLK
+    uint32_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
+
+    uint32_t fpga_period_ns = 1000 / FPGA_CLK_FREQ_MHZ;
+
+    uint32_t sclk_cnt = sclk_half_period_ns / fpga_period_ns;
+
+    Xil_Out32(base_addr + (2 * sizeof(uint32_t)), sclk_cnt);
+
+    // SHIFT delayer
+    //   Why is this needed? The Kaman adapter board's filtering introduces a significant
+    //   propogation delay into the system. On the FPGA side, the SCLK signal
+    //   being generated will fall, which is when we would like to sample the MISO line.
+    //   However, the fall of SCLK will take a while to propogate through the adapter
+    //   board (270ns for example) and then the valid data on the MISO lines will take a
+    //   while (again, 270ns for example) to propogate back. In the example, this is
+    //   a total round-trip propogation delay of 540ns. The actual delay depends on the
+    //   RC filters used on the Kaman adapter board.
+    //
+    //   This code takes the ONE-WAY propogation delay in nanoseconds of the Kaman adapter
+    //   board's filtering, doubles it for the round-trip propogation delay, and then
+    //   adds half of the user-requested SCLK period so that the shifting occurs halfway
+    //   through when the bit is valid. See the amdc_spi_master.v for details on how
+    //   the shift signal is propogated through a shift register and then the appropriate delay
+    //   is selected by the shift_index value calculated below.
+    uint32_t delay_time = 2 * propogation_delay_ns;
+
+    uint32_t shift_index = delay_time / fpga_period_ns;
+
+    // 255 is an FPGA-imposed limit, as the SHIFT_INDEX register field is only 8-bit
+    if (shift_index > 255) {
+        shift_index = 255;
+    }
+
+    Xil_Out32(base_addr + (4 * sizeof(uint32_t)), shift_index);
 }
 
 static double bits_to_voltage(uint32_t data)

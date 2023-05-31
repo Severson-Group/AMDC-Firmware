@@ -15,8 +15,14 @@
 	)
 	(
 		// Users to add ports here
-        output wire [1:0] sensor_control_out,
-        input wire [1:0] sensor_data_in,
+		input wire [1:0] sensor_data_in,
+		input wire enable,
+		input wire pwm_carrier_high,
+		input wire pwm_carrier_low,
+
+		output wire [1:0] sensor_control_out,
+		output wire done,
+		output wire [2:0] debug,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -70,10 +76,15 @@
 		.S_AXI_RRESP(s00_axi_rresp),
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
+		.miso_x(sensor_data_in[0]),
+		.miso_y(sensor_data_in[1]),
+		.enable(enable),
+		.pwm_carrier_high(pwm_carrier_high),
+		.pwm_carrier_low(pwm_carrier_low),
 		.sclk(sensor_control_out[0]),
 		.cnv(sensor_control_out[1]),
-		.miso_x(sensor_data_in[0]),
-		.miso_y(sensor_data_in[1])
+		.done(done),
+		.debug(debug)
 	);
 
 	// Add user logic here

@@ -199,7 +199,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_RST.POLARITY" spirit:choiceRef="choice_list_74b5137e">ACTIVE_LOW</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.S00_AXI_RST.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -266,7 +266,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f56073e3</spirit:value>
+            <spirit:value>b3110352</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -282,7 +282,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f56073e3</spirit:value>
+            <spirit:value>b3110352</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -296,7 +296,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>643c3b67</spirit:value>
+            <spirit:value>ca4489fd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -310,7 +310,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>dda4df14</spirit:value>
+            <spirit:value>fd592ead</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -324,7 +324,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>16328387</spirit:value>
+            <spirit:value>45a2f450</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -348,6 +348,36 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
+        <spirit:name>done</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>debug</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">2</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>sensor_data_in</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
@@ -355,6 +385,45 @@
             <spirit:left spirit:format="long">1</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>enable</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>pwm_carrier_high</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>pwm_carrier_low</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
             <spirit:wireTypeDef>
               <spirit:typeName>wire</spirit:typeName>
@@ -695,7 +764,7 @@
       <spirit:enumeration>32</spirit:enumeration>
     </spirit:choice>
     <spirit:choice>
-      <spirit:name>choice_list_74b5137e</spirit:name>
+      <spirit:name>choice_list_9d8b0d81</spirit:name>
       <spirit:enumeration>ACTIVE_HIGH</spirit:enumeration>
       <spirit:enumeration>ACTIVE_LOW</spirit:enumeration>
     </spirit:choice>
@@ -719,7 +788,7 @@
       <spirit:file>
         <spirit:name>hdl/amdc_eddy_current_sensor_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_e0b4befa</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_4c903dd1</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -852,8 +921,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_eddy_current_sensor_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>2</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2021-02-08T17:11:27Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>16</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-05-30T18:22:12Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4e29ac91_ARCHIVE_LOCATION">c:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@16243a22_ARCHIVE_LOCATION">c:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
@@ -878,14 +947,113 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4096a5c6_ARCHIVE_LOCATION">c:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@39cad7cc_ARCHIVE_LOCATION">c:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@77a50227_ARCHIVE_LOCATION">c:/Users/Brandt/Desktop/AMDC-Firmware_Repos/EDDY_CURRENT_SENSOR/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@17140642_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7abb38c2_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e614f99_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2afebfdd_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@36b1a047_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6fb06f7c_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@132e6518_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7f4a6ac4_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7aa049d0_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7ed81e4_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65d5fefb_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5422a020_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@785cae2b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@25f7ae4a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4149542f_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4cb3a18e_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1dc82aaf_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2652dd8b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@506c6f79_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b2cc88a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3cbc53af_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@a83bc3d_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@704a5482_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13a88ede_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@297a28bd_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@67c63016_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@51a2ad5f_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@43bfadc8_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4db169bf_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@380b2847_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5210cee2_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@380449a3_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4d8d9c13_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@16868a55_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53b6f53f_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@142f2c1d_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@75198cf0_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39094648_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1b71cb22_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@27a84613_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@272eba30_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@213a16e6_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53c602aa_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7361372d_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2fe24eba_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2513b827_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5bd6d8bd_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d774397_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f8c1d23_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3289498a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64e55c13_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@23359d6b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6075fbe9_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@73543756_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@bf827d2_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@16fbb9c5_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39ac58fc_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4fc11756_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@26c91494_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1ca5abf_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65525361_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21cb197_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34503abc_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7a8a89b6_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@235c95b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@13d6eaef_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69dba9b6_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@696ff_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4fc48e8b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@37bb4d0a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6de17b6e_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@78c41cd8_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7300e831_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a54a8b7_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5fe2cdda_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1677754b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@699cff1_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68c58873_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-d/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2eedf320_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2210c48c_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a2f9ade_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34275dbd_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48acc250_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@486c806e_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3bf1b749_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2c9cf8e5_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b75d6e4_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2f31500_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3476f036_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@50e2b511_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@27b3ea68_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59098807_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59e7f54a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1adc8e3d_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5d994a86_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1fa236d_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53010673_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@f0a1b99_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@423ad6ee_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="20621278"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="206b0a70"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="e7ae4bfc"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="3af1598b"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="d686c927"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="4f5683f6"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="2e811c89"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="579bd039"/>
     </xilinx:packagingInfo>

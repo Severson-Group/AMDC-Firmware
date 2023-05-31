@@ -1,6 +1,7 @@
 #include "sys/cmd/cmd_hw.h"
 #include "drv/analog.h"
 #include "drv/cpu_timer.h"
+#include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
 #include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
@@ -36,6 +37,10 @@ static command_help_t cmd_help[] = {
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
     { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
     { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
+    { "eddy trigger <port> <HIGH|LOW|BOTH>",
+      "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
+    { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
+      "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
 };
 
 void cmd_hw_register(void)
@@ -183,6 +188,59 @@ int cmd_hw(int argc, char **argv)
 
         if (argc == 3 && STREQ("init", argv[2])) {
             encoder_find_z();
+
+            return CMD_SUCCESS;
+        }
+    }
+
+    // Handle 'eddy' sub-command
+    if (argc >= 5 && STREQ("eddy", argv[1])) {
+
+        int32_t port = atoi(argv[3]);
+        uint32_t base_addr = 0;
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D
+        if (port < 1 || port > 2)
+            return CMD_INVALID_ARGUMENTS;
+        else
+            base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
+
+#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+        if (port == 1)
+            base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
+        else if (port == 2)
+            base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
+        else if (port == 3)
+            base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
+        else if (port == 4)
+            base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
+        else
+            return CMD_INVALID_ARGUMENTS;
+#endif
+
+        // hw eddy trigger <port> <HIGH | LOW | BOTH>
+        if (argc == 5 && STREQ("trigger", argv[2])) {
+            eddy_current_sensor_trigger_on_pwm_clear(base_addr);
+
+            if (STREQ("HIGH", argv[4]))
+                eddy_current_sensor_trigger_on_pwm_high(base_addr);
+            else if (STREQ("LOW", argv[4]))
+                eddy_current_sensor_trigger_on_pwm_low(base_addr);
+            else if (STREQ("BOTH", argv[4]))
+                eddy_current_sensor_trigger_on_pwm_both(base_addr);
+            else
+                return CMD_INVALID_ARGUMENTS;
+
+            return CMD_SUCCESS;
+        }
+
+        // hw eddy timing <port> sclk_freq_khz prop_delay_ns
+        if (argc == 6 && STREQ("timing", argv[2])) {
+
+            uint32_t sclk_freq_khz = (uint32_t) atoi(argv[4]);
+            uint32_t propogation_delay_ns = (uint32_t) atoi(argv[5]);
+
+            eddy_current_sensor_set_timing(base_addr, sclk_freq_khz, propogation_delay_ns);
 
             return CMD_SUCCESS;
         }
