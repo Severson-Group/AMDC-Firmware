@@ -16,6 +16,14 @@
 #include "usr/blink/app_blink.h"
 #endif
 
+#ifdef APP_CONTROLLER
+#include <usr/controller/app_controller.h>
+#endif
+
+#ifdef APP_ADDER
+#include "usr/adder/app_adder.h"
+#endif
+
 #ifdef APP_BETA_LABS
 #include "usr/beta_labs/app_beta_labs.h"
 #endif
@@ -36,6 +44,14 @@ void user_apps_init(void)
 
 #ifdef APP_BLINK
     app_blink_init();
+#endif
+
+#ifdef APP_CONTROLLER
+    app_controller_init();
+#endif
+
+#ifdef APP_ADDER
+    app_adder_init();
 #endif
 
 #ifdef APP_BETA_LABS
