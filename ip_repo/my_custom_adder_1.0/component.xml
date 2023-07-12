@@ -813,8 +813,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>my_custom_adder_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>5</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-06-27T20:34:18Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>6</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-07-07T19:57:56Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2ffe4d6b_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1c1465a9_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
@@ -845,6 +845,11 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4a04bd62_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4463bfe_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4bbebc29_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@65535c67_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@415610e2_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7d5a37fa_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@792b387b_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@45a3f851_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/my_custom_adder_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
