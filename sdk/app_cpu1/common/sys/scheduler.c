@@ -220,9 +220,12 @@ void scheduler_run(void)
         // NOTE: this is specifically before the while loop below so that the new
         // data arrives before it is needed in the next control loop.
         motherboard_request_new_data(MOTHERBOARD_1_BASE_ADDR);
+
+#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
         motherboard_request_new_data(MOTHERBOARD_2_BASE_ADDR);
         motherboard_request_new_data(MOTHERBOARD_3_BASE_ADDR);
         motherboard_request_new_data(MOTHERBOARD_4_BASE_ADDR);
+#endif
 #endif
 
         // Wait here until unpaused (i.e. when SysTick fires)
