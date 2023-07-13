@@ -1,4 +1,4 @@
-# AMDC IP: `amdc_eddy_current_sensor_1.0`
+# AMDC IP: `amdc_eddy_current_sensor_2.0`
 
 This IP core is a driver for the digital interface of the Kaman eddy current sensor `KD-5690-FE`. The IP is designed as the SPI master to the dual [AD4011](https://www.analog.com/media/en/technical-documentation/data-sheets/AD4003-4007-4011.pdf) ADCs that are integrated into the eddy current sensor electronics box.
 
