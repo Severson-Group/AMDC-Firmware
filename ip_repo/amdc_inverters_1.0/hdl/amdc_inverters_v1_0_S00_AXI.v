@@ -949,8 +949,8 @@
 		
 		else begin
 			// Only latch in the requested duty ratios
-			// when the carrier is low
-			if (carrier_low & pwm_en) begin
+			// when the carrier is low or high
+			if ((carrier_low | carrier_high) & pwm_en) begin
 				D_L[0] = slv_reg0[15:0];
 				D_L[1] = slv_reg1[15:0];
 				D_L[2] = slv_reg2[15:0];
