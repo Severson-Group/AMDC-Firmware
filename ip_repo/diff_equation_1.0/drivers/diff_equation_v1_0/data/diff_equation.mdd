@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER diff_equation
+	OPTION supported_peripherals = (diff_equation);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = diff_equation;
+END DRIVER
