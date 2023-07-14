@@ -34,12 +34,12 @@ module dy_dt_fp (
 // See the comments for the value to be entered
 // Website for convertion: https://www.h-schmidt.net/FloatConverter/IEEE754.html
 // -------- start modifying values ---------------
-parameter inv_L = 32'h47898b45;    // 1/L = 70422.5352112676/H
-parameter R_div_L = 32'h469bb328;  // R/L = 19929.5774647887 ohm/H
-parameter k_e_div_L = 32'h4423615a; // k_e/L = 653.5211267606
-parameter kt_div_J = 32'h43ae6fa4; //kt/J = 348.8721804511
-parameter b_div_J = 32'h40552c45; // b/J = 3.3308270677
-parameter inv_J = 32'h4712d9fc; //   1/J = 37593.984962406
+parameter inv_L = 32'h47898b45;    // 1/L = 7.042253521126760e+04/H 
+parameter R_div_L = 32'h469bb328;  // R/L = 1.992957746478873e+04 ohm/H
+parameter k_e_div_L = 32'h4423615a; // k_e/L = 6.535211267605634e+02
+parameter kt_div_J = 32'h455a0b8d; //kt/J = 3.488721804511278e+03
+parameter b_div_J = 32'h40552c45; // b/J = 3.330827067669173
+parameter inv_J = 32'h48b7907b; //   1/J = 3.759398496240602e+05
 // -------- end modifying values ---------------
 
 wire [31:0] inv_L_X_v, R_div_L_X_i, k_e_div_L_X_w, kt_div_J_X_i, b_div_J_X_w, inv_L_X_load, di_dt_intermediate, dw_dt_intermediate;
