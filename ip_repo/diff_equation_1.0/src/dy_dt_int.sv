@@ -45,23 +45,23 @@ module dy_dt_int (
 // For example, representation of 0.255 can also be 4 with exponent of 4, wich is 0.25
 //              but representation of 0.255 can be 16712 with exponent of 16, which is 0.25500488281 (much better precision)
 
-parameter inv_L = 70423;    // 70423
-parameter inv_L_EXPONENT = 0;
+parameter inv_L = 64'h898B4481CD857;    // 7.042253521126760e+04/H
+parameter inv_L_EXPONENT = 35;
 
-parameter R_div_L = 20141;  // 20141
-parameter R_div_L_EXPONENT = 0;
+parameter R_div_L = 64'h26ECC9EA5DBF2;  // 1.992957746478873e+04 ohm/H
+parameter R_div_L_EXPONENT = 35;
 
-parameter k_e_div_L = 654; // 654
-parameter k_e_div_L_EXPONENT = 0;
+parameter k_e_div_L = 64'h146C2B4481CE; // 6.535211267605634e+02
+parameter k_e_div_L_EXPONENT = 35;
 
-parameter kt_div_J = 3489;
-parameter kt_div_J_EXPONENT = 0; 
+parameter kt_div_J = 64'h6D05C6417190; //3.488721804511278e+03
+parameter kt_div_J_EXPONENT = 35; 
 
-parameter b_div_J = 3411;  //3411 * 2^-10
-parameter b_div_J_EXPONENT = 10;
+parameter b_div_J = 64'h1AA588A962;  //3.330827067669173
+parameter b_div_J_EXPONENT = 35;
 
-parameter inv_J = 375940;
-parameter inv_J_EXPONENT = 0;
+parameter inv_J = 64'h16F20F6603D98; //7.042253521126760e+04/H
+parameter inv_J_EXPONENT = 30;
 
 assign di_dt = ((inv_L * v) >> inv_L_EXPONENT) - ((R_div_L * i) >> R_div_L_EXPONENT) - ((k_e_div_L * w) >> k_e_div_L_EXPONENT);
 assign dw_dt = ((kt_div_J * i) >> kt_div_J_EXPONENT) - ((b_div_J * w) >> b_div_J_EXPONENT) - ((inv_J * load) >> inv_J_EXPONENT);
