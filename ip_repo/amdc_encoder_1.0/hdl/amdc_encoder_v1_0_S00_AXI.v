@@ -18,6 +18,8 @@
         input wire A,
         input wire B,
         input wire Z,
+		input wire pwm_carrier_high,
+		input wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -85,6 +87,8 @@
 
 	wire [31:0] counter;
 	wire [31:0] position;
+	wire [31:0] steps_synced;
+	wire [31:0] position_synced;
 	
 	// AXI4LITE signals
 	reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
@@ -377,8 +381,8 @@
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
 	        2'h0   : reg_data_out <= counter;
 	        2'h1   : reg_data_out <= position;
-	        2'h2   : reg_data_out <= slv_reg2;
-	        2'h3   : reg_data_out <= slv_reg3;
+	        2'h2   : reg_data_out <= steps_synced;
+	        2'h3   : reg_data_out <= position_synced;
 	        default : reg_data_out <= 0;
 	      endcase
 	end
@@ -411,7 +415,11 @@
 		.Z(Z),
         .counter(counter),
 		.position(position),
-		.pulses_per_rev_bits(slv_reg2)
+		.pulses_per_rev(slv_reg2),
+		.pwm_carrier_high(pwm_carrier_high),
+		.pwm_carrier_low(pwm_carrier_low),
+		.position_synced(position_synced),
+		.steps_synced(steps_synced)
     );
 
 

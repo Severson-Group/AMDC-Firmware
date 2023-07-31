@@ -22,6 +22,8 @@
         input wire alarm_B,
         input wire alarm_Z,
         input wire alarm_D,
+        input wire pwm_carrier_low,
+        input wire pwm_carrier_high,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -77,7 +79,9 @@
 		.S_AXI_RREADY(s00_axi_rready),
 		.A(A),
 		.B(B),
-		.Z(Z)
+		.Z(Z),
+		.pwm_carrier_high(pwm_carrier_high),
+		.pwm_carrier_low(pwm_carrier_low)
 	);
 
 	// Add user logic here
