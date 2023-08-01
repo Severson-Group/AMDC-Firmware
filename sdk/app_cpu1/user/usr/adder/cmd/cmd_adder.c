@@ -25,7 +25,7 @@ void cmd_adder_register(void)
     commands_cmd_register(&cmd_entry);
 }
 
-int cmd_adder(int argc, char **argv) 
+int cmd_adder(int argc, char **argv)
 {
     if (argc == 6 && STREQ("test", argv[1])) {
         int N = atoi(argv[3]);
@@ -73,7 +73,7 @@ int cmd_adder(int argc, char **argv)
 
         double total_time_usec = cpu_timer_ticks_to_usec(total_time);
         cmd_resp_printf("out: %d\r\n", out);
-	cmd_resp_printf("average time [us] per operation: %f\r\n", total_time_usec / ((double) N));
+        cmd_resp_printf("average time [us] per operation: %f\r\n", total_time_usec / ((double) N));
 
         return CMD_SUCCESS;
     }
