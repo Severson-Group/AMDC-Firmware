@@ -1,14 +1,14 @@
 #ifdef APP_CONTROLLER
 
 #include "usr/controller/cmd/cmd_ctrl.h"
+#include "drv/cpu_timer.h"
+#include "drv/pwm.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/util.h"
 #include "usr/controller/task_controller.h"
-#include "drv/pwm.h"
 #include <stdlib.h>
 #include <string.h>
-#include "drv/cpu_timer.h"
 
 // Stores command entry for command system module
 static command_entry_t cmd_entry;
@@ -20,14 +20,13 @@ static command_help_t cmd_help[] = {
     { "deinit", "Stop task" },
     { "freq <freq>", "Set frequency of voltage output (rad/s)" },
     { "amplitude <amp>", "Set amplitude of voltage output (0 to 1)" },
-	{ "stats print", "Print stats to screen" },
-	{ "stats reset", "Reset the task timing stats" },
+    { "stats print", "Print stats to screen" },
+    { "stats reset", "Reset the task timing stats" },
 };
 
 void cmd_ctrl_register(void)
 {
-    commands_cmd_init(&cmd_entry, "ctrl", "Controller commands",
-                        cmd_help, ARRAY_SIZE(cmd_help), cmd_ctrl);
+    commands_cmd_init(&cmd_entry, "ctrl", "Controller commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_ctrl);
     commands_cmd_register(&cmd_entry);
 }
 
