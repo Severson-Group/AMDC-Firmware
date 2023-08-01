@@ -1,8 +1,8 @@
 #ifdef APP_CONTROLLER
 
 #include "usr/controller/task_controller.h"
-#include "sys/scheduler.h"
 #include "drv/pwm.h"
+#include "sys/scheduler.h"
 #include <math.h>
 
 // Scheduler TCB which holds task "context"
@@ -15,8 +15,7 @@ int task_controller_init(void)
     }
 
     // Fill TCB with parameters
-    scheduler_tcb_init(&tcb, task_controller_callback,
-                        NULL, "controller", TASK_CONTROLLER_INTERVAL_USEC);
+    scheduler_tcb_init(&tcb, task_controller_callback, NULL, "controller", TASK_CONTROLLER_INTERVAL_USEC);
 
     task_stats_enable(&tcb.stats);
 
@@ -29,10 +28,10 @@ int task_controller_deinit(void)
     return scheduler_tcb_unregister(&tcb);
 }
 
-double Ts    = 1.0 / (double) TASK_CONTROLLER_UPDATES_PER_SEC;
-double theta = 0.0;    // [rad]
-double omega = 377.0;  // [rad/s]
-double Do    = 0.8;    // [--]
+double Ts = 1.0 / (double) TASK_CONTROLLER_UPDATES_PER_SEC;
+double theta = 0.0;   // [rad]
+double omega = 377.0; // [rad/s]
+double Do = 0.8;      // [--]
 
 void task_controller_callback(void *arg)
 {
@@ -43,9 +42,9 @@ void task_controller_callback(void *arg)
     theta = fmod(theta, 2.0 * M_PI);
 
     // Calculate desired duty ratios
-    double duty_a = 0.5 + Do/2.0 * cos(theta);
-    double duty_b = 0.5 + Do/2.0 * cos(theta - 2.0*M_PI/3.0);
-    double duty_c = 0.5 + Do/2.0 * cos(theta - 4.0*M_PI/3.0);
+    double duty_a = 0.5 + Do / 2.0 * cos(theta);
+    double duty_b = 0.5 + Do / 2.0 * cos(theta - 2.0 * M_PI / 3.0);
+    double duty_c = 0.5 + Do / 2.0 * cos(theta - 4.0 * M_PI / 3.0);
 
     // Update PWM peripheral in FPGA
     pwm_set_duty(0, duty_a); // Set HB1 duty ratio (INV1, PWM1 and PWM2)
