@@ -5,10 +5,10 @@
 #include "sys/defines.h"
 #include "sys/util.h"
 // #include "drv/pwm.h"
-#include <stdlib.h>
-#include <string.h>
 #include "drv/cpu_timer.h"
 #include "xil_io.h"
+#include <stdlib.h>
+#include <string.h>
 
 // Stores command entry for command system module
 static command_entry_t cmd_entry;
@@ -16,17 +16,17 @@ static command_entry_t cmd_entry;
 // Defines help content displayed for this command
 // when user types "help" at command prompt
 static command_help_t cmd_help[] = {
-	{ "test", "return the average execution time" },
+    { "test", "return the average execution time" },
 };
 
 void cmd_adder_register(void)
 {
-    commands_cmd_init(&cmd_entry, "adder", "Controller commands",
-                        cmd_help, ARRAY_SIZE(cmd_help), cmd_adder);
+    commands_cmd_init(&cmd_entry, "adder", "Controller commands", cmd_help, ARRAY_SIZE(cmd_help), cmd_adder);
     commands_cmd_register(&cmd_entry);
 }
 
-int cmd_adder(int argc, char **argv) {
+int cmd_adder(int argc, char **argv) 
+{
     if (argc == 6 && STREQ("test", argv[1])) {
         int N = atoi(argv[3]);
         if (N < 1) {
@@ -41,10 +41,10 @@ int cmd_adder(int argc, char **argv) {
         uint32_t total_time = 0; // in units of CPU cycles
         if (STREQ("cpu", argv[2])) {
             for (int i = 0; i < N; i++) {
-            	asm volatile("MRC p15, 0, %0, c9, c13, 0\t\n" : "=r"(now_start));
+                asm volatile("MRC p15, 0, %0, c9, c13, 0\t\n" : "=r"(now_start));
 
                 // Compute result using CPU
-                out = 8*in1 + in2/4 - 10203;
+                out = 8 * in1 + in2 / 4 - 10203;
 
                 asm volatile("MRC p15, 0, %0, c9, c13, 0\t\n" : "=r"(now_stop));
                 total_time += (now_stop - now_start);
@@ -54,7 +54,7 @@ int cmd_adder(int argc, char **argv) {
             volatile uint32_t *base_addr = (volatile uint32_t *) 0x43DB0000;
 
             for (int i = 0; i < N; i++) {
-            	asm volatile("MRC p15, 0, %0, c9, c13, 0\t\n" : "=r"(now_start));
+                asm volatile("MRC p15, 0, %0, c9, c13, 0\t\n" : "=r"(now_start));
 
                 // Compute result using FPGA
                 base_addr[0] = in1;
@@ -73,8 +73,7 @@ int cmd_adder(int argc, char **argv) {
 
         double total_time_usec = cpu_timer_ticks_to_usec(total_time);
         cmd_resp_printf("out: %d\r\n", out);
-        cmd_resp_printf("average time [us] per operation: %f\r\n",
-                            total_time_usec / ((double) N));
+	cmd_resp_printf("average time [us] per operation: %f\r\n", total_time_usec / ((double) N));
 
         return CMD_SUCCESS;
     }
