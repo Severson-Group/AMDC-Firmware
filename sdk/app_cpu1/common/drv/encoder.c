@@ -4,7 +4,6 @@
 #include "xil_io.h"
 #include <math.h>
 #include <stdio.h>
-
 #define ENCODER_BASE_ADDR (0x43C10000)
 
 void encoder_init(void)
