@@ -15,7 +15,7 @@
 
 // Configure the ratio between the carrier frequency to the control frequency
 // System uses 20Hz by default
-#define SYS_PWM_CARRIER_CONTROL_RATIO (20) //Hz
+#define SYS_PWM_CARRIER_CONTROL_RATIO (20) // Hz
 
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
