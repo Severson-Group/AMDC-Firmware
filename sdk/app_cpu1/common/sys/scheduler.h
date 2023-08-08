@@ -43,6 +43,7 @@ typedef struct task_control_block_t {
     struct task_control_block_t *next;
 } task_control_block_t;
 
+void scheduler_set_ratio (uint32_t ratio);
 void scheduler_init(void);
 void scheduler_run(void);
 
