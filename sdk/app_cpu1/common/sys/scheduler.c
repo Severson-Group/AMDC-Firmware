@@ -62,12 +62,12 @@ uint32_t scheduler_get_elapsed_usec(void)
     return elapsed_usec;
 }
 
-void scheduler_set_ratio (uint32_t ratio)
+void scheduler_set_ratio(uint32_t ratio)
 {
-	// default PWM carrier freq is 100 kHz
-	// default control rate is 10 kHz
-	volatile uint32_t *base_addr = (volatile uint32_t *) 0x43DF0000;
-	base_addr[0] = ratio;
+    // default PWM carrier freq is 100 kHz
+    // default control rate is 10 kHz
+    volatile uint32_t *base_addr = (volatile uint32_t *) 0x43DF0000;
+    base_addr[0] = ratio;
 }
 
 void scheduler_init(void)
