@@ -13,7 +13,7 @@ void encoder_set_pulses_per_rev(uint32_t pulses);
 void encoder_get_steps(int32_t *steps);
 void encoder_get_steps_instantaneous(int32_t *steps);
 void encoder_get_position(uint32_t *position);
-void encoder_get_pos_instantaneous(uint32_t *position);
+void encoder_get_position_instantaneous(uint32_t *position);
 
 void encoder_find_z(void);
 
