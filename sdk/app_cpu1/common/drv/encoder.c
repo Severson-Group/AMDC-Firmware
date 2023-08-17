@@ -39,7 +39,7 @@ void encoder_get_position(uint32_t *position)
     *position = Xil_In32(ENCODER_BASE_ADDR + 3 * sizeof(uint32_t));
 }
 
-void encoder_get_pos_instantaneous(uint32_t *position)
+void encoder_get_position_instantaneous(uint32_t *position)
 {
     *position = Xil_In32(ENCODER_BASE_ADDR + 1 * sizeof(uint32_t));
 }
