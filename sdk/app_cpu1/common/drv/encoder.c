@@ -2,8 +2,7 @@
 #include "sys/defines.h"
 #include "sys/scheduler.h"
 #include "xil_io.h"
-#include <math.h>
-#include <stdio.h>
+
 #define ENCODER_BASE_ADDR (0x43C10000)
 
 void encoder_init(void)
@@ -15,13 +14,13 @@ void encoder_init(void)
 void encoder_set_pulses_per_rev_bits(uint32_t bits)
 {
     printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
-	encoder_set_pulses_per_rev(1 << bits);
+    encoder_set_pulses_per_rev(1 << bits);
 }
 
 void encoder_set_pulses_per_rev(uint32_t pulses)
 {
-	printf("ENC:\tSetting pulses per rev = %ld...\n", pulses);
-	
+    printf("ENC:\tSetting pulses per rev = %ld...\n", pulses);
+
     Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), pulses);
 }
 
@@ -37,10 +36,10 @@ void encoder_get_steps_instantaneous(int32_t *steps)
 
 void encoder_get_position(uint32_t *position)
 {
-	*position = Xil_In32(ENCODER_BASE_ADDR + 3 * sizeof(uint32_t));
+    *position = Xil_In32(ENCODER_BASE_ADDR + 3 * sizeof(uint32_t));
 }
 
-void encoder_get_pos_instantaneous(uint32_t *position)
+void encoder_get_position_instantaneous(uint32_t *position)
 {
     *position = Xil_In32(ENCODER_BASE_ADDR + 1 * sizeof(uint32_t));
 }
