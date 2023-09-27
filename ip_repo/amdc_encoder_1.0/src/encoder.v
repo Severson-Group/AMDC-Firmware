@@ -9,18 +9,21 @@
 // and sum them into a binary counter register.
 //
 // Z is used to provide single revolution position via `position` output
-// `position` ranges between 0 and (2 ^ pulses_per_rev_bits) - 1
+// `position` ranges between 0 and pulses_per_rev_bits - 1
 //
-module encoder(clk, rst_n, A, B, Z, counter, position, pulses_per_rev_bits);
+module encoder(clk, rst_n, A, B, Z, pwm_carrier_low, pwm_carrier_high, counter, position, pulses_per_rev, steps_synced, position_synced);
 
 input A, B, Z;
+input pwm_carrier_high, pwm_carrier_low;
 input clk;
 input rst_n;
 
-input [31:0] pulses_per_rev_bits;
+input [31:0] pulses_per_rev;
 
 output wire [31:0] counter;
 output wire [31:0] position;
+output reg [31:0] steps_synced;
+output reg [31:0] position_synced;
 
 // State machine signals that indicate
 // when steps increment or decrement
@@ -180,13 +183,13 @@ end
 //
 //       Typically ~12-bit (2^12 = 4096 pulses per rev).
 //       
-//       Stored in `pulses_per_rev_bits` input signal.
+//       Stored in `pulses_per_rev` input signal.
 //
 //       Max pulses per rev: 2^32
 // *****************************
 
 wire [31:0] MAX_POS;
-assign MAX_POS = (32'd1 << pulses_per_rev_bits) - 32'd1;
+assign MAX_POS = pulses_per_rev - 32'd1;
 
 // Find rising edge of Z
 wire z_rise;
@@ -231,5 +234,28 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 assign position = know_pos ? my_pos : 32'hFFFFFFFF;
+
+// **************************************************
+// Synchronizes the register updates to the control
+// code by making the register updates (steps and
+// position) relative to the ADMC-Firmware timing
+// **************************************************
+
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) begin
+        steps_synced <= 32'b0;
+        position_synced <= 32'hFFFFFFFF;
+    end
+    
+    else if (pwm_carrier_low || pwm_carrier_high) begin
+        steps_synced <= counter;
+        position_synced <= position;
+    end              
+    
+    else begin
+        steps_synced <= steps_synced;
+        position_synced <= position_synced;
+    end
+end
 
 endmodule
