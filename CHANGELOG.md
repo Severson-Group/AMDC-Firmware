@@ -2,6 +2,16 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.1.0
+
+- Add GPIO driver for direct pin-level access
+- Support encoders with non `2^n` pulses per revolution
+- Synchronize encoder feedback to PWM carrier
+- Synchronize Kaman eddy current sensor feedback to PWM carrier
+- Latch user PWM duty request at both high/low of triangle carrier
+- Fix AMDS data requesting on REV D target
+- Add requirements.txt for Python interface dependencies
+
 ## v1.0.5
 
 - Fix GitHub action for code format check
