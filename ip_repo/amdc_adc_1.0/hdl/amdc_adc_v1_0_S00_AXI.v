@@ -16,8 +16,10 @@
 	(
 		// Users to add ports here
         input  wire [7:0] adc_sdo,
+        input  wire trigger,
         output wire adc_sck,
         output wire adc_cnv,
+        output wire adc_done,
         input  wire adc_clkout,
         input  wire pwm_carrier_high,
         input  wire pwm_carrier_low,
@@ -481,6 +483,8 @@
 
 	// Add user logic here
     wire adc_data_valid;
+    assign adc_done = adc_data_valid;
+    
     wire [14:0] adc_data1;
     wire [14:0] adc_data2;
     wire [14:0] adc_data3;
@@ -498,18 +502,24 @@
 	assign pwm_sync_high = slv_reg8[2];
 	assign pwm_sync_low  = slv_reg8[3];
 	
-	// Load data from ADC shift regs only at certain times
-	wire load_latest_data = adc_data_valid &
-							(
-								(pwm_sync_low & pwm_carrier_low) |
-								(pwm_sync_high & pwm_carrier_high) |
-								(~pwm_sync_high & ~pwm_sync_low)
-							);
+	// Load data from ADC shift regs only at certain times (OLD LOGIC)
+	// wire load_latest_data = adc_data_valid &
+    //							(
+	//							(pwm_sync_low & pwm_carrier_low) |
+	//							(pwm_sync_high & pwm_carrier_high) |
+	//							(~pwm_sync_high & ~pwm_sync_low)
+	//						);
+	
+	// Load the latest data based on the pwm carrier high or low,
+	// from the trigger based in the timing manager, and only when
+	// the data is valid so as not to overlap a current conversion.
+	wire load_latest_data = adc_data_valid & trigger;
 	
     drv_ltc2320 iADC1(
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
         .CNV_n(adc_cnv),
+        .trigger(trigger),
         .SCK(adc_sck),
         .SDO(adc_sdo),
         .CLKOUT(adc_clkout),
