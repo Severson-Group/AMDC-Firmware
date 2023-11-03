@@ -6,11 +6,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INTC_INTERRUPT_ID_0 	 61  // IRQ_F2P[0:0]
-#define INTC_INTERRUPT_ID_1 	 62  // IRQ_F2P[1:1]
-#define ISR0_PRIORITY       	 0xA0
-#define ISR1_PRIORITY       	 0xA8
-#define ISR_RISING_EDGE     	 0x3
+#define INTC_INTERRUPT_ID_0      61  // IRQ_F2P[0:0]
+#define INTC_INTERRUPT_ID_1      62  // IRQ_F2P[1:1]
+#define ISR0_PRIORITY            0xA0
+#define ISR1_PRIORITY            0xA8
+#define ISR_RISING_EDGE          0x3
 #define TIMING_MANAGER_BASE_ADDR XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR
 
 uint32_t interrupt_system_init();

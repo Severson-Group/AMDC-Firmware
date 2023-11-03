@@ -156,5 +156,3 @@ bool timer_is_expired(void)
 {
     return XScuTimer_IsExpired(&TimerInstance);
 }
-
-

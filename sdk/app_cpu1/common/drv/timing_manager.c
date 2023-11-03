@@ -13,7 +13,7 @@
 static XScuGic intc;
 
 // Address of AXI PL interrupt generator (timing manger IP)
-uint32_t *baseaddr_p = (uint32_t*) XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR;
+uint32_t *baseaddr_p = (uint32_t *) XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR;
 
 /*
  * Sets up the interrupt system and enables interrupts for IRQ_F2P[1:0]
@@ -33,16 +33,16 @@ uint32_t interrupt_system_init()
     // Initialize interrupt controller driver
     result = XScuGic_CfgInitialize(intc_instance_ptr, intc_config, intc_config->CpuBaseAddress);
     if (result != XST_SUCCESS) {
-        return result;  // Exit setup with bad result
+        return result; // Exit setup with bad result
     }
 
     // Set priority of IRQ_F2P[0:0] to 0xA0 and a trigger for a rising edge 0x3
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, ISR_RISING_EDGE);
     
     // Connect ISR0 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr0, (void *)&intc);
+    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr0, (void *) &intc);
     if (result != XST_SUCCESS) {
-        return result;  // Exit setup with bad result
+        return result; // Exit setup with bad result
     }
 
     // Enable interrupts for IRQ_F2P[0:0]
@@ -52,9 +52,9 @@ uint32_t interrupt_system_init()
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_1, ISR1_PRIORITY, ISR_RISING_EDGE);
 
     // Connect ISR1 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr1, (void *)&intc);
+    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr1, (void *) &intc);
     if (result != XST_SUCCESS) {
-        return result;  // Exit setup with bad result
+        return result; // Exit setup with bad result
     }
 
     // Enable interrupts for IRQ_F2P[1:1]
@@ -63,7 +63,7 @@ uint32_t interrupt_system_init()
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
     Xil_ExceptionRegisterHandler(
-        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler)XScuGic_InterruptHandler, intc_instance_ptr);
+        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
 
     // Enable non-critical exceptions
     Xil_ExceptionEnable();
