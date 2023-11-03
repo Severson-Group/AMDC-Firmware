@@ -22,8 +22,8 @@
         input wire alarm_B,
         input wire alarm_Z,
         input wire alarm_D,
-        input wire pwm_carrier_low,
-        input wire pwm_carrier_high,
+        input wire trigger,
+        output wire done,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -80,8 +80,8 @@
 		.A(A),
 		.B(B),
 		.Z(Z),
-		.pwm_carrier_high(pwm_carrier_high),
-		.pwm_carrier_low(pwm_carrier_low)
+		.trigger(trigger),
+		.done(done)
 	);
 
 	// Add user logic here
