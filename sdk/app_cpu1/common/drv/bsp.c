@@ -22,6 +22,7 @@
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
 #include "drv/timer.h"
+#include "drv/timing_manager.h"
 #include "drv/uart.h"
 #include "drv/watchdog.h"
 #include "sys/cmd/cmd_hw.h"
@@ -70,7 +71,8 @@ void bsp_init(void)
     analog_init(ANALOG_BASE_ADDR);
     pwm_init();
 
-    fpga_timer_init();
+    //fpga_timer_init();
+    timing_manager_init();
     cpu_timer_init();
     led_init();
     sts_mux_init();

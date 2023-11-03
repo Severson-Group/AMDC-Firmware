@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-
+#include "xil_io.h"
 #include "sys/defines.h"
 #include "sys/task_stats.h"
 #include "usr/user_config.h"
