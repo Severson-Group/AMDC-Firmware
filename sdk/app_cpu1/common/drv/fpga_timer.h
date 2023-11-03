@@ -1,4 +1,4 @@
-#ifndef FPGA_TIMER_H
+/*#ifndef FPGA_TIMER_H
 #define FPGA_TIMER_H
 
 #include <stdint.h>
@@ -15,3 +15,4 @@ double fpga_timer_ticks_to_usec(uint32_t ticks);
 double fpga_timer_ticks_to_sec(uint32_t ticks);
 
 #endif // FPGA_TIMER_H
+*/

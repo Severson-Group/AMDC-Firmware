@@ -1,4 +1,4 @@
-#include "drv/fpga_timer.h"
+/*#include "drv/fpga_timer.h"
 #include "sys/defines.h"
 #include "usr/user_config.h"
 #include "xparameters.h"
@@ -49,3 +49,4 @@ double fpga_timer_ticks_to_sec(uint32_t ticks)
     double sec = (double) ticks / 200e6;
     return sec;
 }
+*/
