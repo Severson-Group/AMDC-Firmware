@@ -36,7 +36,7 @@ void task_stats_pre_task(task_stats_t *stats)
             stats->is_init = true;
         }
 
-        //stats->last_fpga_ticks = task_start_ticks;
+        // stats->last_fpga_ticks = task_start_ticks;
     }
 }
 
@@ -45,11 +45,11 @@ void task_stats_post_task(task_stats_t *stats)
     assert(stats);
 
     if (stats->enabled && stats->is_init) {
-        //uint32_t task_end_ticks = fpga_timer_now();
+        // uint32_t task_end_ticks = fpga_timer_now();
 
-        //double run_time_us = fpga_timer_ticks_to_usec(task_end_ticks - stats->last_fpga_ticks);
+        // double run_time_us = fpga_timer_ticks_to_usec(task_end_ticks - stats->last_fpga_ticks);
 
-        //statistics_push(&stats->run_time, run_time_us);
+        // statistics_push(&stats->run_time, run_time_us);
     }
 }
 

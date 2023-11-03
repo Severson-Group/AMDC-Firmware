@@ -96,6 +96,7 @@ SetupIntrSystem(timer_handler_t timer_isr, XScuGic *IntcInstancePtr, XScuTimer *
      * Initialize the interrupt controller driver so that it is ready to
      * use.
      */
+
     IntcConfig = XScuGic_LookupConfig(INTC_DEVICE_ID);
     if (NULL == IntcConfig) {
         return XST_FAILURE;
@@ -112,6 +113,7 @@ SetupIntrSystem(timer_handler_t timer_isr, XScuGic *IntcInstancePtr, XScuTimer *
      * Connect the interrupt controller interrupt handler to the hardware
      * interrupt handling logic in the processor.
      */
+
     Xil_ExceptionRegisterHandler(
         XIL_EXCEPTION_ID_IRQ_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, IntcInstancePtr);
 
@@ -120,6 +122,7 @@ SetupIntrSystem(timer_handler_t timer_isr, XScuGic *IntcInstancePtr, XScuTimer *
      * interrupt for the device occurs, the handler defined above performs
      * the specific interrupt processing for the device.
      */
+
     Status = XScuGic_Connect(IntcInstancePtr, TimerIntrId, (Xil_ExceptionHandler) timer_isr, (void *) TimerInstancePtr);
     if (Status != XST_SUCCESS) {
         return Status;
@@ -143,6 +146,7 @@ SetupIntrSystem(timer_handler_t timer_isr, XScuGic *IntcInstancePtr, XScuTimer *
     return XST_SUCCESS;
 }
 
+
 void timer_clear_interrupt(void)
 {
     XScuTimer_ClearInterruptStatus(&TimerInstance);
@@ -152,3 +156,5 @@ bool timer_is_expired(void)
 {
     return XScuTimer_IsExpired(&TimerInstance);
 }
+
+
