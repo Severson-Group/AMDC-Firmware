@@ -20,6 +20,7 @@
         input wire enable,
         input wire pwm_carrier_high,
         input wire pwm_carrier_low,
+        input wire trigger,
 
         output wire sclk,
         output wire cnv,
@@ -472,8 +473,7 @@
     end
 
     // Synchronize SPI master ADC driver to start with the PWM carrier
-    wire trigger;
-    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low);
+    //assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low);
 
     // These are used to capture the output of the SPI Master (shift registers) and put 
     // in the AXI memory-mapped registers (see below) to be read by C driver
