@@ -35,6 +35,7 @@
 /* Xilinx includes. */
 #include "xil_printf.h"
 #include "xparameters.h"
+#include "drv/led.h"
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -45,6 +46,7 @@
 /* The Tx and Rx tasks as described at the top of this file. */
 static void prvTxTask( void *pvParameters );
 static void prvRxTask( void *pvParameters );
+static void prvBlinkyTask( void *pvParameters );
 static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
@@ -52,6 +54,7 @@ static void vTimerCallback( TimerHandle_t pxTimer );
 file. */
 static TaskHandle_t xTxTask;
 static TaskHandle_t xRxTask;
+static TaskHandle_t xBlinkyTask;
 static QueueHandle_t xQueue = NULL;
 static TimerHandle_t xTimer = NULL;
 char HWstring[20] = "cpu0_Hello World";
@@ -59,6 +62,8 @@ long RxtaskCntr = 0;
 
 int main( void )
 {
+	led_init();
+
 	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
 
 	xil_printf( "cpu0_Hello from Freertos example main\r\n" );
@@ -79,6 +84,14 @@ int main( void )
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
 				 &xRxTask );
+
+	// Create additional blinky task
+	xTaskCreate( prvBlinkyTask,
+				( const char * ) "cpu0_Blinky",
+				configMINIMAL_STACK_SIZE,
+				NULL,
+				tskIDLE_PRIORITY,
+				&xBlinkyTask );
 
 	/* Create the queue used by the tasks.  The Rx task has a higher priority
 	than the Tx task, so will preempt the Tx task and remove values from the
@@ -154,6 +167,45 @@ char Recdstring[15] = "";
 		/* Print the received data. */
 		xil_printf( "cpu0_Rx task received string from Tx task: %s\r\n", Recdstring );
 		RxtaskCntr++;
+	}
+}
+
+/*-----------------------------------------------------------*/
+static void prvBlinkyTask( void *pvParameters )
+{
+	const TickType_t x250ms = pdMS_TO_TICKS( DELAY_1_SECOND / 4 );
+	uint8_t led_offset = 0;
+	uint8_t messages_complete = 1;
+
+	for( ;; )
+	{
+		if(messages_complete){
+			// If complete, flash all green every 250ms
+			vTaskDelay( x250ms );
+
+			led_set_color(LED0, LED_COLOR_BLACK);
+			led_set_color(LED1, LED_COLOR_BLACK);
+			led_set_color(LED2, LED_COLOR_BLACK);
+			led_set_color(LED3, LED_COLOR_BLACK);
+
+			vTaskDelay( x250ms );
+
+						led_set_color(LED0, LED_COLOR_GREEN);
+						led_set_color(LED1, LED_COLOR_GREEN);
+						led_set_color(LED2, LED_COLOR_GREEN);
+						led_set_color(LED3, LED_COLOR_GREEN);
+		}
+		else{
+			// If not complete, cycle red every 250ms
+					vTaskDelay( x250ms );
+
+					led_set_color(0 + led_offset, LED_COLOR_RED);
+					led_set_color(1 + led_offset, LED_COLOR_BLACK);
+					led_set_color(2 + led_offset, LED_COLOR_BLACK);
+					led_set_color(3 + led_offset, LED_COLOR_BLACK);
+
+					led_offset = (led_offset+1) % 4;
+		}
 	}
 }
 
