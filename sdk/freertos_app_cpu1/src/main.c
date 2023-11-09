@@ -35,6 +35,13 @@
 /* Xilinx includes. */
 #include "xil_printf.h"
 #include "xparameters.h"
+#include "xil_mmu.h"
+/* Firmware includes */
+#include "sys/icc.h"
+
+/* Begin User Includes */
+
+/* End User Includes */
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -48,6 +55,24 @@ static void prvRxTask( void *pvParameters );
 static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
+/* This project has configSUPPORT_STATIC_ALLOCATION set to 1 (for Inter-Core Communication) so
+ * the following application callback function must be provided to supply the RAM that will
+ * get used for the Idle task data structures and stack.
+ */
+void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
+                                    StackType_t ** ppxIdleTaskStackBuffer,
+                                    uint32_t * pulIdleTaskStackSize );
+
+/* This project has configSUPPORT_STATIC_ALLOCATION set to 1 (for Inter-Core Communication)
+ * and configUSE_TIMERS set to 1 so the following application callback function must be
+ * provided to supply the RAM that will get used for the Timer task data structures and stack.
+ */
+void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
+                                     StackType_t ** ppxTimerTaskStackBuffer,
+                                     uint32_t * pulTimerTaskStackSize );
+
+/*-----------------------------------------------------------*/
+
 /* The queue used by the Tx and Rx tasks, as described at the top of this
 file. */
 static TaskHandle_t xTxTask;
@@ -59,6 +84,10 @@ long RxtaskCntr = 0;
 
 int main( void )
 {
+	// Both CPUs: Disable cache on OCM
+	// S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
+	Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
+
 	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
 
 	xil_printf( "cpu1_Hello from Freertos example main\r\n" );
@@ -184,3 +213,55 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 	vTaskDelete( xTxTask );
 }
 
+/* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
+ * implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
+ * used by the Idle task. */
+void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
+                                    StackType_t ** ppxIdleTaskStackBuffer,
+                                    uint32_t * pulIdleTaskStackSize )
+{
+/* If the buffers to be provided to the Idle task are declared inside this
+ * function then they must be declared static - otherwise they will be allocated on
+ * the stack and so not exists after this function exits. */
+    static StaticTask_t xIdleTaskTCB;
+    static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
+
+    /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
+     * state will be stored. */
+    *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
+
+    /* Pass out the array that will be used as the Idle task's stack. */
+    *ppxIdleTaskStackBuffer = uxIdleTaskStack;
+
+    /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
+     * Note that, as the array is necessarily of type StackType_t,
+     * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+    *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+}
+/*-----------------------------------------------------------*/
+
+/* configUSE_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
+ * application must provide an implementation of vApplicationGetTimerTaskMemory()
+ * to provide the memory that is used by the Timer service task. */
+void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
+                                     StackType_t ** ppxTimerTaskStackBuffer,
+                                     uint32_t * pulTimerTaskStackSize )
+{
+/* If the buffers to be provided to the Timer task are declared inside this
+ * function then they must be declared static - otherwise they will be allocated on
+ * the stack and so not exists after this function exits. */
+    static StaticTask_t xTimerTaskTCB;
+    static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+
+    /* Pass out a pointer to the StaticTask_t structure in which the Timer
+     * task's state will be stored. */
+    *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
+
+    /* Pass out the array that will be used as the Timer task's stack. */
+    *ppxTimerTaskStackBuffer = uxTimerTaskStack;
+
+    /* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
+     * Note that, as the array is necessarily of type StackType_t,
+     * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+    *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+}
