@@ -26,6 +26,12 @@
         input  wire eddy_3_done,
         output wire sched_isr,
         output wire interrupt_1,
+		output wire en_eddy_0,
+		output wire en_eddy_1,
+		output wire en_eddy_2,
+		output wire en_eddy_3;
+    	output wire en_adc,
+		output wire en_encoder,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -89,7 +95,13 @@
 		.eddy_0_done(eddy_0_done),
 		.eddy_1_done(eddy_1_done),
 		.eddy_2_done(eddy_2_done),
-		.eddy_3_done(eddy_3_done)
+		.eddy_3_done(eddy_3_done),
+		.en_eddy_0(en_eddy_0),
+		.en_eddy_1(en_eddy_1),
+		.en_eddy_2(en_eddy_2),
+		.en_eddy_3(en_eddy_3),
+		.en_adc(en_adc),
+		.en_encoder(en_encoder)
 	);
 
 	// Add user logic here

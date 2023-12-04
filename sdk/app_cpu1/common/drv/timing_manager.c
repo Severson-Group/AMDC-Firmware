@@ -1,4 +1,5 @@
 #include "drv/timing_manager.h"
+#include "sys/statistics.h"
 #include "usr/user_config.h"
 #include "xil_assert.h"
 #include "xil_exception.h"
@@ -13,7 +14,10 @@
 static XScuGic intc;
 
 // Address of AXI PL interrupt generator (timing manger IP)
-uint32_t *baseaddr_p = (uint32_t *) XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR;
+volatile uint32_t *baseaddr_p = (uint32_t *) XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR;
+
+// Array of statistics for each sensor
+statistics_t *sensor_stats[NUM_SENSORS];
 
 /*
  * Sets up the interrupt system and enables interrupts for IRQ_F2P[1:0]
@@ -89,22 +93,27 @@ void timing_manager_init()
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both(TIMING_MANAGER_BASE_ADDR);
 
-    // Set the user ratio for the scheduler ISR
+    // Set the user ratio for the trigger
     timing_manager_set_ratio(SYS_PWM_CARRIER_CONTROL_RATIO, TIMING_MANAGER_BASE_ADDR);
 
-    // Success!
-    printf("Successfully initialized timing manager.\n\r");
+    // Enable selected sensors for timing acquisition
+    timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE, TIMING_MANAGER_BASE_ADDR);
+
+    // Disable interrupt 1 - currently not needed
+    XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
 }
 
 /*
  * ISR for IRQ_F2P[0:0]. Called when sched_isr in timing
- * manager is set to 1.
+ * manager is set to 1, e.g. when all of the sensors are
+ * done and the time has been collected.
  */
 void isr0(void *intc_inst_ptr)
 {
     // HANDLE INTERRUPT
     xil_printf("ISR0 called\n\r");
-    // *(baseaddr_p + 0) = 0x00000000;
+    // Push stats for each sensor
+    timing_manager_sensor_stats();
 }
 
 /*
@@ -114,12 +123,9 @@ void isr0(void *intc_inst_ptr)
 void isr1(void *intc_inst_ptr)
 {
     // HANDLE INTERRUPT
+    xil_printf("ISR1 called\n\r");
 }
 
-/*
- * Tell assembly to do nothing; force compiler to not
- * collapse the code paths
- */
 void nops(uint32_t num)
 {
     for (int i = 0; i < num; i++) {
@@ -128,7 +134,7 @@ void nops(uint32_t num)
 }
 
 /*
- * Set the user-defined ratio for the scheduler ISR.
+ * Set the user-defined ratio for the event qualifier
  * This ratio determines the frequency of an interrupt
  * being sent based on the specified event qualifier
  */
@@ -138,6 +144,17 @@ void timing_manager_set_ratio(uint32_t ratio, uint32_t base_addr)
     uint32_t config_reg_addr = base_addr + (2 * sizeof(uint32_t));
     // Assign the ratio to the config register
     Xil_Out32(config_reg_addr, ratio);
+}
+
+/*
+ * Select which sensors should be used for timing acquisition
+ */
+void timing_manager_select_sensors(uint8_t enable_bits, uint32_t base_addr)
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = base_addr + (2 * sizeof(uint32_t));
+    // Assign the enable bits to the config register
+    Xil_Out32(config_reg_addr, enable_bits);
 }
 
 /*
@@ -182,6 +199,62 @@ void timing_manager_trigger_on_pwm_clear(uint32_t base_addr)
     uint32_t config_reg_addr = base_addr + (3 * sizeof(uint32_t));
     // Clear both the carrier high and low trigger bits
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | ~0x3));
+}
+
+/*
+ * Get the acquisition time for the requested sensor, in nanoseconds
+ */
+uint16_t timing_manager_get_time_per_sensor(sensor_t sensor, uint32_t base_addr)
+{
+    uint16_t clock_cycles = 0;
+    uint16_t time = 0;
+
+    if (sensor == EDDY_0) {
+        // Lower 16 bits of slave reg 5
+        clock_cycles = (Xil_In32(base_addr + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
+    } else if (sensor == EDDY_1) {
+        // Upper 16 bits of slave reg 5
+        clock_cycles = (Xil_In32(base_addr + (5 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+    } else if (sensor == EDDY_2) {
+        // Lower 16 bits of slave reg 6
+        clock_cycles = (Xil_In32(base_addr + (6 * sizeof(uint32_t)))) & LOWER_16_MASK;
+    } else if (sensor == EDDY_3) {
+        // Upper 16 bits of slave reg 6
+        clock_cycles = (Xil_In32(base_addr + (6 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+    } else if (sensor == ENCODER) {
+        // Lower 16 bits of slave reg 7
+        clock_cycles = (Xil_In32(base_addr + (7 * sizeof(uint32_t)))) & LOWER_16_MASK;
+    } else if (sensor == ADC) {
+        // Upper 16 bits of slave reg 7
+        clock_cycles = (Xil_In32(base_addr + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+    }
+    // Convert clock cycles to time in ns using 200 MHz FPGA clock frequency
+    time = (1/FPGA_FREQ) * clock_cycles;
+    return time;
+}
+
+/*
+ * Initializes and pushes statistics for each sensor, if enabled.
+ */
+void timing_manager_sensor_stats()
+{
+    // call push, make array of stats structs for each sensor, iterate through for each sensor and call psuh
+    for (int i = 0; i < NUM_SENSORS; i++) {
+        // Initialize the stats
+        statistics_init(sensor_stats[i]);
+        uint16_t val = timing_manager_get_time_per_sensor(i, TIMING_MANAGER_BASE_ADDR);
+        statistics_push(sensor_stats[i], val);
+    }
+}
+
+/*
+ * Takes in a sensor value, and returns a pointer to the structure
+ * containing the stats for that sensor
+ */
+statistics_t* timing_manager_get_stats_per_sensor(sensor_t sensor)
+{
+    // Get pointer to the stats for the specified sensor
+    return sensor_stats[sensor];
 }
 
 /*

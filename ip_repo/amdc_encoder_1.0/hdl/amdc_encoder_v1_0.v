@@ -23,6 +23,7 @@
         input wire alarm_Z,
         input wire alarm_D,
         input wire trigger,
+		input wire enable,
         output wire done,
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -81,6 +82,7 @@
 		.B(B),
 		.Z(Z),
 		.trigger(trigger),
+		.enable(enable),
 		.done(done)
 	);
 

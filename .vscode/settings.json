@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "user_config.h": "c",
+        "hardware_targets.h": "c",
+        "task_stats.h": "c"
+    }
+}

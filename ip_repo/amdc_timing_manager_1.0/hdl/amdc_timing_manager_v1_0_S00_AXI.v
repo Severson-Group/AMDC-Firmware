@@ -23,9 +23,15 @@
         input  wire eddy_1_done,
         input  wire eddy_2_done,
         input  wire eddy_3_done,
-        output wire trigger,
         output wire sched_isr,
         output wire interrupt_1,
+		output wire en_eddy_0,
+		output wire en_eddy_1,
+		output wire en_eddy_2,
+		output wire en_eddy_3;
+    	output wire en_adc,
+		output wire en_encoder,
+		output wire trigger,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -408,48 +414,49 @@
 	end    
 
 	// Add user logic here
-	wire all_done;
+
 	wire [15:0] user_ratio;
+	wire [7:0] en_bits;
 	
 	// Get the user ratio from slave register 2, assigning
 	// the lower 16 bits
 	assign user_ratio = slv_reg2[15:0];
 	
-	// Connect the wires to the LSB of the slave register 0
+	// Connect the wires to the LSBs of the slave register 0
 	// which the PS can write directly
-	assign sched_isr = slv_reg0[0:0];
-	assign interrupt_1 = slv_reg1[1:1];
-	
+	// MIGHT NOT NEED? assign sched_isr = slv_reg0[0:0];
+	assign interrupt_1 = slv_reg0[1:1];
+
+	// Get the enable bits from the user to
+	// decode them in the timing manager
+	assign en_bits = slv_reg1[7:0];
+
 	// User defined method of synchronizing the pwm on high, low,
 	// or both
+	wire event_qualifier;
 	wire pwm_sync_high;
 	wire pwm_sync_low;
-	wire pwm_sync;
 	assign pwm_sync_high = slv_reg3[0];
 	assign pwm_sync_low  = slv_reg3[1];
 	
-	// Default is carrier high or low
-	assign pwm_sync = (~pwm_sync_high & ~pwm_sync_low) |
-	                   (pwm_sync_high & pwm_sync_low);
-	
 	//////////////////////////////////////////////////////////////////
-    // Generate trigger signal based on PWM carrier to start        //
+    // Generate event qualifier signal based on PWM to start		//
     // a conversion/sequence for a sensor. This allows firmware     //
     // synchronization between all the sensors (ADC, encoder, eddy  //
     // current sensor, AMDS) and user configuration. This also      //
     // acts as the event qualifier for the sched ISR generation.    //
     // It can only be triggered once that past cycle is complete.   //
     //////////////////////////////////////////////////////////////////
-	assign trigger =   (pwm_sync_high & pwm_carrier_high) |
-	                   (pwm_sync_low & pwm_carrier_low) |
-	                   (pwm_sync & (pwm_carrier_high | pwm_carrier_low));     
+	assign event_qualifier =   (pwm_sync_high & pwm_carrier_high) |
+	                   (pwm_sync_low & pwm_carrier_low);    
 	           
 	
     timing_manager iTime(
     .clk(S_AXI_ACLK),
     .rst_n(S_AXI_RESETN),
-    .trigger(trigger),
+    .event_qualifier(event_qualifier),
     .user_ratio(user_ratio),
+	.en_bits(en_bits),
     .adc_done(adc_done),
     .encoder_done(encoder_done),
     .eddy_0_done(eddy_0_done),
@@ -459,7 +466,13 @@
     .sched_isr(sched_isr),
     .pwm_carrier_low(pwm_carrier_low),
     .pwm_carrier_high(pwm_carrier_high),
-    .all_done(all_done)
+	.en_eddy_0(en_eddy_0),
+	.en_eddy_1(en_eddy_1),
+	.en_eddy_2(en_eddy_2),
+	.en_eddy_3(en_eddy_3),
+	.en_adc(en_adc),
+	.en_encoder(en_encoder),
+	.trigger(trigger)
     );
 	// User logic ends
 

@@ -17,6 +17,7 @@
 		// Users to add ports here
         input  wire [7:0] adc_sdo,
         input  wire trigger,
+		input  wire enable,
         output wire adc_sck,
         output wire adc_cnv,
         output wire adc_done,
@@ -519,7 +520,7 @@
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
         .CNV_n(adc_cnv),
-        .trigger(trigger),
+        .trigger(trigger & enable),
         .SCK(adc_sck),
         .SDO(adc_sdo),
         .CLKOUT(adc_clkout),
