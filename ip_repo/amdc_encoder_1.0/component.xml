@@ -310,7 +310,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7daada54</spirit:value>
+            <spirit:value>3ef10d89</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -326,7 +326,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7daada54</spirit:value>
+            <spirit:value>3ef10d89</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -467,6 +467,19 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>trigger</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>enable</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -846,7 +859,7 @@
       <spirit:file>
         <spirit:name>hdl/amdc_encoder_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_3edc5da6</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_5dbef0cd</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -979,8 +992,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_encoder_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>13</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-10-30T17:16:03Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>14</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-12-04T17:52:28Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="wisc.edu:user:amdc_encoder:1.0_ARCHIVE_LOCATION">c:/Users/npetersen2/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@102ba367_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
@@ -1074,14 +1087,25 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@51cf049c_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1d8293a2_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1f47be0f_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@610438d0_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@c9981e1_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b5515e2_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4158f49c_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2fb89f81_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35042e0a_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@58c7052b_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@25325ee9_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39fb95ca_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1c9eaf27_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@29ae3dd1_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="074dfd38"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="2c310bb2"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="bbc0cfe5"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="5bbd9953"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="61aae384"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="6992ea72"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="7a98626d"/>
     </xilinx:packagingInfo>

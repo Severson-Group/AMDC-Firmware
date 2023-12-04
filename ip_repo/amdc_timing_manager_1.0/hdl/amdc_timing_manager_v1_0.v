@@ -11,11 +11,11 @@
 
 		// Parameters of Axi Slave Bus Interface S00_AXI
 		parameter integer C_S00_AXI_DATA_WIDTH	= 32,
-		parameter integer C_S00_AXI_ADDR_WIDTH	= 4
+		parameter integer C_S00_AXI_ADDR_WIDTH	= 6
 	)
 	(
 		// Users to add ports here
-        output wire trigger,
+		output wire trigger,
         input  wire pwm_carrier_low,
         input  wire pwm_carrier_high,
         input  wire adc_done,
@@ -29,9 +29,10 @@
 		output wire en_eddy_0,
 		output wire en_eddy_1,
 		output wire en_eddy_2,
-		output wire en_eddy_3;
+		output wire en_eddy_3,
     	output wire en_adc,
 		output wire en_encoder,
+
 		// User ports ends
 		// Do not modify the ports beyond this line
 

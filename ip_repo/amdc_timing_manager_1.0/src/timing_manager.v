@@ -12,9 +12,14 @@ module timing_manager(
                         pwm_carrier_low, pwm_carrier_high,
                         // OUTPUTS
                         sched_isr,
+                        // Enable signals
                         en_eddy_0, en_eddy_1,
                         en_eddy_2, en_eddy_3,
                         en_adc, en_encoder,
+                        // Time
+                        adc_time, encoder_time,
+                        eddy0_time, eddy1_time,
+                        eddy2_time, eddy3_time,
                         trigger
                         );
     
@@ -36,7 +41,8 @@ module timing_manager(
     output reg sched_isr;
     output wire en_eddy_0, en_eddy_1, en_eddy_2, en_eddy_3;
     output wire en_adc, en_encoder;
-    output wire trigger;
+    output reg trigger;
+    output reg [15:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
     
     //////////////////////
     // Internal signals //
@@ -47,9 +53,7 @@ module timing_manager(
     // Signifies when all the sensors are done
     wire all_done;
     // Counts FPGA clock cycles for each sensor
-    reg [31:0] count_time;
-    // Holds the acquisition time per sensor
-    reg [31:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+    reg [15:0] count_time;
     // Determines when the count should be started based on when the sensors begin
     reg start_count; 
     
