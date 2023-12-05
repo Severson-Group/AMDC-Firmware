@@ -1,5 +1,12 @@
+/* README!!!
+ *
+ * This configuration is copied from the FreeRTOS v10.1.1 based example project for the Zynq 7000 platform (for compatibility). However, you can add to it.
+ *
+ * Another example configuration file is available at "sdk/FreeRTOS-Kernel/examples/sample_configuration/FreeRTOSConfig.h"
+ * Because that example is in the submodule, it may update from time-to-time when the submodule is updated.
+ */
+
 /*
- * FreeRTOS Kernel V10.1.1
  * Copyright (C) 2018 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -92,7 +99,10 @@
 #define configUSE_COUNTING_SEMAPHORES			1
 #define configUSE_QUEUE_SETS					1
 #define configSUPPORT_STATIC_ALLOCATION			1
-#define configUSE_SB_COMPLETED_CALLBACK			1
+
+/* WEMPEC ADDITION: Need to specify this callback config so we can create message buffers with callbacks
+ *                  This is done for Inter-Core Communication (src/sys/icc.c) */
+#define configUSE_SB_COMPLETED_CALLBACK                 1
 
 /* Include the query-heap CLI command to query the free heap space. */
 #define configINCLUDE_QUERY_HEAP_COMMAND		1
