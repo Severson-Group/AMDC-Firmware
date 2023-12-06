@@ -12,7 +12,9 @@
 #include "FreeRTOS.h"
 #include "message_buffer.h"
 
-// KEEP THIS FILE IN SYNC IN BOTH CPU0 AND CPU1!!!
+///////////////////////////////////////////////////////
+// KEEP THIS FILE IN SYNC IN BOTH CPU0 AND CPU1
+///////////////////////////////////////////////////////
 
 // ========================
 // Inter-Core Communication
@@ -37,15 +39,25 @@
 // We will pick to use the highest 64 KB chunk as our base address:
 #define OCM_BASE_ADDR (0xFFFF0000)
 
-// MUST be set such that: (UINT_MAX + 1) % BUFFER_SIZE is an integer.
-// On this platform, UINT_MAX = 2^32 - 1. Thus, BUFFER_SIZE needs
-// to evenly go into 2^32. This is possible if we keep the buffer
-// size as a power of 2: e.g. 2^10.
-#define ICC_BUFFER_SIZE (4 * 1024)
+/* Used to dimension the array used to hold the messages. The available
+ * space will actually be one less than this, so 1023. */
+#define STORAGE_SIZE_BYTES 1024
 
-StaticMessageBuffer_t CPU0_to_CPU1_MessageBuffer;
-StaticMessageBuffer_t CPU1_to_CPU0_MessageBuffer;
+
+// These hold the structs for our two MessageBuffers
+StaticMessageBuffer_t xCPU0toCPU1MessageBuffer;
+StaticMessageBuffer_t xCPU1toCPU0MessageBuffer;
+
+/* Defines the memory that will actually hold the messages within the message
+ * buffer. Should be one more than the value passed in the xBufferSizeBytes
+ * parameter. */
+static uint8_t ucCPU0toCPU1MessageBufferStorage[ STORAGE_SIZE_BYTES ];
+static uint8_t ucCPU1toCPU0MessageBufferStorage[ STORAGE_SIZE_BYTES ];
 
 void icc_init(void);
+void vCPU0toCPU1SendCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
+void vCPU0toCPU1ReceiveCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
+void vCPU1toCPU0SendCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
+void vCPU1toCPU0ReceiveCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
 
 #endif /* ICC_H */

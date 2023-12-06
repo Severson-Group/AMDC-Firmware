@@ -102,7 +102,7 @@
 
 /* WEMPEC ADDITION: Need to specify this callback config so we can create message buffers with callbacks
  *                  This is done for Inter-Core Communication (src/sys/icc.c) */
-#define configUSE_SB_COMPLETED_CALLBACK                 1
+#define configUSE_SB_COMPLETED_CALLBACK         1
 
 /* Include the query-heap CLI command to query the free heap space. */
 #define configINCLUDE_QUERY_HEAP_COMMAND		1
