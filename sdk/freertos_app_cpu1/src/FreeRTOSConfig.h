@@ -81,8 +81,8 @@
 #define configTICK_RATE_HZ						( ( TickType_t ) 1000 )
 #define configPERIPHERAL_CLOCK_HZ  				( 33333000UL )
 #define configUSE_PREEMPTION					1
-#define configUSE_IDLE_HOOK						0                           // TODO: Use to put processor into low power mode. Set this define to 1 and then implement vApplicationIdleHook function
-#define configUSE_TICK_HOOK						0							// Can set this to 1 if there's a behavior we want to run every FreeRTOS tick
+#define configUSE_IDLE_HOOK						1
+#define configUSE_TICK_HOOK						1
 #define configMAX_PRIORITIES					( 7 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 250 ) /* Large in case configUSE_TASK_FPU_SUPPORT is 2 in which case all tasks have an FPU context. */
 #define configTOTAL_HEAP_SIZE					( 125 * 1024 )
@@ -92,15 +92,13 @@
 #define configIDLE_SHOULD_YIELD					1
 #define configUSE_MUTEXES						1
 #define configQUEUE_REGISTRY_SIZE				8
-#define configCHECK_FOR_STACK_OVERFLOW			0
+#define configCHECK_FOR_STACK_OVERFLOW			2
 #define configUSE_RECURSIVE_MUTEXES				1
 #define configUSE_MALLOC_FAILED_HOOK			1
 #define configUSE_APPLICATION_TASK_TAG			0
 #define configUSE_COUNTING_SEMAPHORES			1
 #define configUSE_QUEUE_SETS					1
-#define configSUPPORT_DYNAMIC_ALLOCATION        0
 #define configSUPPORT_STATIC_ALLOCATION			1
-
 
 /* WEMPEC ADDITION: Need to specify this callback config so we can create message buffers with callbacks
  *                  This is done for Inter-Core Communication (src/sys/icc.c) */
@@ -146,17 +144,15 @@ to exclude the API function. */
 format the raw data provided by the uxTaskGetSystemState() function in to human
 readable ASCII form.  See the notes in the implementation of vTaskList() within
 FreeRTOS/Source/tasks.c for limitations. */
-#define configUSE_STATS_FORMATTING_FUNCTIONS	0
+#define configUSE_STATS_FORMATTING_FUNCTIONS	1
 
 /* The private watchdog is used to generate run time stats. */
-/*
 #include "xscuwdt.h"
 extern XScuWdt xWatchDogInstance;
 extern void vInitialiseTimerForRunTimeStats( void );
 #define configGENERATE_RUN_TIME_STATS 1
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vInitialiseTimerForRunTimeStats()
 #define portGET_RUN_TIME_COUNTER_VALUE() ( ( 0xffffffffUL - XScuWdt_ReadReg( xWatchDogInstance.Config.BaseAddr, XSCUWDT_COUNTER_OFFSET ) ) >> 1 )
-*/
 
 /* The size of the global output buffer that is available for use when there
 are multiple command interpreters running at once (for example, one on a UART
@@ -168,12 +164,7 @@ command interpreter running. */
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 void vAssertCalled( const char * pcFile, unsigned long ulLine );
-
-// Original Implementation
-//#define configASSERT( x ) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ );
-
-#define configASSERT( x ) if( ( x ) == 0 ) while(1);
-
+#define configASSERT( x ) if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ );
 
 /* If configTASK_RETURN_ADDRESS is not defined then a task that attempts to
 return from its implementing function will end up in a "task exit error"

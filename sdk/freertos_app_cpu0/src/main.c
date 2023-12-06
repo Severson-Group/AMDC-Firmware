@@ -78,11 +78,28 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 
 /* The queue used by the Tx and Rx tasks, as described at the top of this
 file. */
-static TaskHandle_t xTxTask;
-static TaskHandle_t xRxTask;
-static TaskHandle_t xBlinkyTask;
+
+static TaskHandle_t xTxTaskHandle;
+static StaticTask_t xTxTaskBuffer;
+static StackType_t xTxTaskStack[configMINIMAL_STACK_SIZE];
+
+static TaskHandle_t xRxTaskHandle;
+static StaticTask_t xRxTaskBuffer;
+static StackType_t xRxTaskStack[configMINIMAL_STACK_SIZE];
+
+static TaskHandle_t xBlinkyTaskHandle;
+static StaticTask_t xBlinkyTaskBuffer;
+static StackType_t xBlinkyTaskStack[configMINIMAL_STACK_SIZE];
+
+#define QUEUE_LENGTH    10
+#define ITEM_SIZE       sizeof( uint32_t )
 static QueueHandle_t xQueue = NULL;
+static StaticQueue_t xStaticQueue;
+uint8_t ucQueueStorageArea[ QUEUE_LENGTH * ITEM_SIZE ];
+
 static TimerHandle_t xTimer = NULL;
+static StaticTimer_t xTimerBuffer;
+
 char HWstring[20] = "cpu0_Hello World";
 long RxtaskCntr = 0;
 
@@ -126,34 +143,39 @@ int main( void )
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
 	task as soon as the Tx task places an item in the queue. */
-	xTaskCreate( 	prvTxTask, 					/* The function that implements the task. */
+	xTxTaskHandle = xTaskCreateStatic( 	prvTxTask, 					/* The function that implements the task. */
 					( const char * ) "cpu0_Tx", 		/* Text name for the task, provided to assist debugging only. */
 					configMINIMAL_STACK_SIZE, 	/* The stack allocated to the task. */
 					NULL, 						/* The task parameter is not used, so set to NULL. */
 					tskIDLE_PRIORITY,			/* The task runs at the idle priority. */
-					&xTxTask );
+					xTxTaskStack,
+					&xTxTaskBuffer );
 
-	xTaskCreate( prvRxTask,
+	xRxTaskHandle = xTaskCreateStatic( prvRxTask,
 				 ( const char * ) "cpu0_GB",
 				 configMINIMAL_STACK_SIZE,
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
-				 &xRxTask );
+				 xRxTaskStack,
+				 &xRxTaskBuffer );
 
 	// Create additional blinky task
-	xTaskCreate( prvBlinkyTask,
+	xBlinkyTaskHandle = xTaskCreateStatic( prvBlinkyTask,
 				( const char * ) "cpu0_Blinky",
 				configMINIMAL_STACK_SIZE,
 				NULL,
 				tskIDLE_PRIORITY,
-				&xBlinkyTask );
+				xBlinkyTaskStack,
+				&xBlinkyTaskBuffer );
 
 	/* Create the queue used by the tasks.  The Rx task has a higher priority
 	than the Tx task, so will preempt the Tx task and remove values from the
 	queue as soon as the Tx task writes to the queue - therefore the queue can
 	never have more than one item in it. */
-	xQueue = xQueueCreate( 	1,						/* There is only one space in the queue. */
-							sizeof( HWstring ) );	/* Each space in the queue is large enough to hold a uint32_t. */
+    xQueue = xQueueCreateStatic( QUEUE_LENGTH,
+                                 ITEM_SIZE,
+                                 ucQueueStorageArea,
+                                 &xStaticQueue );
 
 	/* Check the queue was created. */
 	configASSERT( xQueue );
@@ -164,11 +186,12 @@ int main( void )
 	 The tasks are deleted in the timer call back and a message is printed to convey that
 	 the example has run successfully.
 	 The timer expiry is set to 10 seconds and the timer set to not auto reload. */
-	xTimer = xTimerCreate( (const char *) "cpu0_Timer",
+	xTimer = xTimerCreateStatic( (const char *) "cpu0_Timer",
 							x10seconds,
 							pdFALSE,
 							(void *) TIMER_ID,
-							vTimerCallback);
+							vTimerCallback,
+							&xTimerBuffer);
 	/* Check the timer was created. */
 	configASSERT( xTimer );
 
@@ -287,8 +310,8 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 		xil_printf("cpu0_FreeRTOS Hello World Example FAILED\r\n");
 	}
 
-	vTaskDelete( xRxTask );
-	vTaskDelete( xTxTask );
+	vTaskDelete( xRxTaskHandle );
+	vTaskDelete( xTxTaskHandle );
 }
 
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
