@@ -23,4 +23,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>FreeRTOS-Kernel</name>
+			<type>2</type>
+			<location>S:/School/WEMPEC/firmware-rtos-e/sdk/FreeRTOS-Kernel</location>
+		</link>
+	</linkedResources>
 </projectDescription>

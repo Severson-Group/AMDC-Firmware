@@ -51,8 +51,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_cpu0/ps7_cortexa9_0/lib}&quot;"/>
 								</option>
 								<option id="xilinx.gnu.linker.inferred.swplatform.flags.167023752" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxilffs,-lxil,-lgcc,-lc,--end-group"/>
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-llwip4,-lgcc,-lc,--end-group"/>
+									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lxilffs,-lgcc,-lc,--end-group"/>
 								</option>
 								<option id="xilinx.gnu.c.linker.option.lscript.418790366" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.1703502591" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>
@@ -80,8 +79,11 @@
 							<tool id="xilinx.gnu.armv7.size.debug.754924794" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="xilinx.gnu.armv7.exe.debug.1910724291.1796901420" name="FreeRTOS_asm_vectors.S" rcbsApplicability="disable" resourcePath="src/FreeRTOS_asm_vectors.S" toolsToInvoke="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044.429808090">
+						<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044.429808090" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="src/lwipopts.h|src/platform.h|src/platform.c|src/platform_config.h|FreeRTOS-Kernel|include|src/Blinky_Demo|src/lwIP_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/FreeRTOS_asm_vectors.S|src/lwipopts.h|src/platform.h|src/platform.c|src/platform_config.h|FreeRTOS-Kernel|include|src/Blinky_Demo|src/lwIP_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel/portable/GCC/ARM_CA9"/>
 					</sourceEntries>
