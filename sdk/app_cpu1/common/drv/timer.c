@@ -146,7 +146,6 @@ SetupIntrSystem(timer_handler_t timer_isr, XScuGic *IntcInstancePtr, XScuTimer *
     return XST_SUCCESS;
 }
 
-
 void timer_clear_interrupt(void)
 {
     XScuTimer_ClearInterruptStatus(&TimerInstance);

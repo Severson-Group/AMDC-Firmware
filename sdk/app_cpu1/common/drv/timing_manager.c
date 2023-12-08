@@ -91,13 +91,20 @@ void timing_manager_init()
     }
 
     // Default event qualifier is PWM carrier high AND low
-    timing_manager_trigger_on_pwm_both(TIMING_MANAGER_BASE_ADDR);
+    timing_manager_trigger_on_pwm_both();
 
     // Set the user ratio for the trigger
-    timing_manager_set_ratio(SYS_PWM_CARRIER_CONTROL_RATIO, TIMING_MANAGER_BASE_ADDR);
+    timing_manager_set_ratio(2);
 
     // Enable selected sensors for timing acquisition
-    timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE, TIMING_MANAGER_BASE_ADDR);
+    timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
+
+    timing_manager_enable_eddy_1();
+
+    // Initialize the stats
+    for (int i = 0; i < NUM_SENSORS; i++) {
+    	statistics_init(sensor_stats[i]);
+    }
 
     // Disable interrupt 1 - currently not needed
     XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
@@ -138,10 +145,10 @@ void nops(uint32_t num)
  * This ratio determines the frequency of an interrupt
  * being sent based on the specified event qualifier
  */
-void timing_manager_set_ratio(uint32_t ratio, uint32_t base_addr)
+void timing_manager_set_ratio(uint32_t ratio)
 {
     // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = base_addr + (2 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (2 * sizeof(uint32_t));
     // Assign the ratio to the config register
     Xil_Out32(config_reg_addr, ratio);
 }
@@ -149,21 +156,87 @@ void timing_manager_set_ratio(uint32_t ratio, uint32_t base_addr)
 /*
  * Select which sensors should be used for timing acquisition
  */
-void timing_manager_select_sensors(uint8_t enable_bits, uint32_t base_addr)
+void timing_manager_select_sensors(uint8_t enable_bits)
 {
     // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = base_addr + (2 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
     // Assign the enable bits to the config register
     Xil_Out32(config_reg_addr, enable_bits);
 }
 
 /*
+ * Enable eddy current sensor 1
+ */
+void timing_manager_enable_eddy_1()
+{
+	// Get the current address for the target config register (slv_reg2)
+	uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+	// Assign the  to the config register
+	Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x01));
+}
+
+/*
+ * Enable eddy current sensor 2
+ */
+void timing_manager_enable_eddy_2()
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x02));
+}
+
+/*
+ * Enable eddy current sensor 3
+ */
+void timing_manager_enable_eddy_3()
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x04));
+}
+
+/*
+ * Enable eddy current sensor 4
+ */
+void timing_manager_enable_eddy_4()
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x08));
+}
+
+/*
+ * Enable encoder
+ */
+void timing_manager_enable_encoder()
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x10));
+}
+
+/*
+ * Enable ADC
+ */
+void timing_manager_enable_adc()
+{
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x20));
+}
+
+/*
  * Set the trigger on either PWM carrier high or low
  */
-void timing_manager_trigger_on_pwm_both(uint32_t base_addr)
+void timing_manager_trigger_on_pwm_both()
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = base_addr + (3 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
     // Set both the carrier high and low trigger bits
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x3));
 }
@@ -171,10 +244,10 @@ void timing_manager_trigger_on_pwm_both(uint32_t base_addr)
 /*
  * Set the trigger on PWM carrier high only
  */
-void timing_manager_trigger_on_pwm_high(uint32_t base_addr)
+void timing_manager_trigger_on_pwm_high()
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = base_addr + (3 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
     // Set only the carrier high bit
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x1));
 }
@@ -182,10 +255,10 @@ void timing_manager_trigger_on_pwm_high(uint32_t base_addr)
 /*
  * Set the trigger on PWM carrier low only
  */
-void timing_manager_trigger_on_pwm_low(uint32_t base_addr)
+void timing_manager_trigger_on_pwm_low()
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = base_addr + (3 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
     // Set only the carrier high bit
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x2));
 }
@@ -193,10 +266,10 @@ void timing_manager_trigger_on_pwm_low(uint32_t base_addr)
 /*
  * Clear the PWM event qualifier
  */
-void timing_manager_trigger_on_pwm_clear(uint32_t base_addr)
+void timing_manager_trigger_on_pwm_clear()
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = base_addr + (3 * sizeof(uint32_t));
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
     // Clear both the carrier high and low trigger bits
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | ~0x3));
 }
@@ -204,32 +277,32 @@ void timing_manager_trigger_on_pwm_clear(uint32_t base_addr)
 /*
  * Get the acquisition time for the requested sensor, in nanoseconds
  */
-uint16_t timing_manager_get_time_per_sensor(sensor_t sensor, uint32_t base_addr)
+uint16_t timing_manager_get_time_per_sensor(sensor_t sensor)
 {
     uint16_t clock_cycles = 0;
     uint16_t time = 0;
 
     if (sensor == EDDY_0) {
         // Lower 16 bits of slave reg 5
-        clock_cycles = (Xil_In32(base_addr + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
     } else if (sensor == EDDY_1) {
         // Upper 16 bits of slave reg 5
-        clock_cycles = (Xil_In32(base_addr + (5 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     } else if (sensor == EDDY_2) {
         // Lower 16 bits of slave reg 6
-        clock_cycles = (Xil_In32(base_addr + (6 * sizeof(uint32_t)))) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) & LOWER_16_MASK;
     } else if (sensor == EDDY_3) {
         // Upper 16 bits of slave reg 6
-        clock_cycles = (Xil_In32(base_addr + (6 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     } else if (sensor == ENCODER) {
         // Lower 16 bits of slave reg 7
-        clock_cycles = (Xil_In32(base_addr + (7 * sizeof(uint32_t)))) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) & LOWER_16_MASK;
     } else if (sensor == ADC) {
         // Upper 16 bits of slave reg 7
-        clock_cycles = (Xil_In32(base_addr + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     }
     // Convert clock cycles to time in ns using 200 MHz FPGA clock frequency
-    time = (1/FPGA_FREQ) * clock_cycles;
+    time = (1 / FPGA_FREQ) * clock_cycles;
     return time;
 }
 
@@ -238,11 +311,9 @@ uint16_t timing_manager_get_time_per_sensor(sensor_t sensor, uint32_t base_addr)
  */
 void timing_manager_sensor_stats()
 {
-    // call push, make array of stats structs for each sensor, iterate through for each sensor and call psuh
+    // Iterate through for each sensor push the status
     for (int i = 0; i < NUM_SENSORS; i++) {
-        // Initialize the stats
-        statistics_init(sensor_stats[i]);
-        uint16_t val = timing_manager_get_time_per_sensor(i, TIMING_MANAGER_BASE_ADDR);
+        uint16_t val = timing_manager_get_time_per_sensor(i);
         statistics_push(sensor_stats[i], val);
     }
 }
@@ -251,7 +322,7 @@ void timing_manager_sensor_stats()
  * Takes in a sensor value, and returns a pointer to the structure
  * containing the stats for that sensor
  */
-statistics_t* timing_manager_get_stats_per_sensor(sensor_t sensor)
+statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
 {
     // Get pointer to the stats for the specified sensor
     return sensor_stats[sensor];

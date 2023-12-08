@@ -3,7 +3,6 @@
 #include "drv/cpu_timer.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
-#include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_direct.h"
 #include "drv/gpio_mux.h"
@@ -11,6 +10,7 @@
 #include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
+#include "drv/timing_manager.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
@@ -203,31 +203,39 @@ int cmd_hw(int argc, char **argv)
         if (port < 1 || port > 2)
             return CMD_INVALID_ARGUMENTS;
         else
-            base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
+            base_addr = TIMING_MANAGER_BASE_ADDR;
 
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-        if (port == 1)
+        if (port == 1) {
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-        else if (port == 2)
-            base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
-        else if (port == 3)
-            base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
-        else if (port == 4)
-            base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
+        	timing_manager_enable_eddy_1();
+        }
+        else if (port == 2) {
+        	base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
+        	timing_manager_enable_eddy_2();
+        }
+        else if (port == 3) {
+        	base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
+        	timing_manager_enable_eddy_3();
+        }
+        else if (port == 4) {
+        	base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
+        	timing_manager_enable_eddy_4();
+        }
         else
             return CMD_INVALID_ARGUMENTS;
 #endif
 
         // hw eddy trigger <port> <HIGH | LOW | BOTH>
         if (argc == 5 && STREQ("trigger", argv[2])) {
-            eddy_current_sensor_trigger_on_pwm_clear(base_addr);
+            timing_manager_trigger_on_pwm_clear();
 
             if (STREQ("HIGH", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_high(base_addr);
+            	timing_manager_trigger_on_pwm_high();
             else if (STREQ("LOW", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_low(base_addr);
+            	timing_manager_trigger_on_pwm_low();
             else if (STREQ("BOTH", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_both(base_addr);
+            	timing_manager_trigger_on_pwm_both();
             else
                 return CMD_INVALID_ARGUMENTS;
 

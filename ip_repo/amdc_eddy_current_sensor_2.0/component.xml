@@ -266,7 +266,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>21ffe9f8</spirit:value>
+            <spirit:value>2e3f0523</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -282,7 +282,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>21ffe9f8</spirit:value>
+            <spirit:value>2e3f0523</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -934,8 +934,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_eddy_current_sensor_v2.0</xilinx:displayName>
-      <xilinx:coreRevision>6</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-12-04T17:48:24Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>7</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-12-08T20:14:33Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1bc30478_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@f5e8c99_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
@@ -987,13 +987,18 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@34dfa3d5_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@88d408c_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3accc0f7_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@168f1958_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12ccb8fd_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@34af1627_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69c4e992_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53fd07b5_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="206b0a70"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="72df543d"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="da6dd634"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="507f74f7"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="2e811c89"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="6850aeac"/>

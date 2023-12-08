@@ -15,7 +15,6 @@
 #include "drv/dac.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
-#include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
