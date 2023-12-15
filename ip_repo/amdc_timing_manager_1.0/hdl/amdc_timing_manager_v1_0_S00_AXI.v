@@ -32,6 +32,7 @@
     	output wire en_adc,
 		output wire en_encoder,
 		output wire trigger,
+		output reg [2:0] debug,
 
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -583,12 +584,18 @@
     // acts as the event qualifier for the sched ISR generation.    //
     // It can only be triggered once that past cycle is complete.   //
     //////////////////////////////////////////////////////////////////
-	assign event_qualifier =   (pwm_sync_high & pwm_carrier_high) |
-	                   (pwm_sync_low & pwm_carrier_low); 
+	assign event_qualifier =   (pwm_sync_high & pwm_carrier_high) | (pwm_sync_low & pwm_carrier_low); 
+	
+	always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+	   if (!S_AXI_ARESETN)
+	       debug <= 0;
+	   else if (eddy_3_done)
+	       debug <= ~debug;
+	end
 	
 	timing_manager iTime(
     .clk(S_AXI_ACLK),
-    .rst_n(S_AXI_RESETN),
+    .rst_n(S_AXI_ARESETN),
     .event_qualifier(event_qualifier),
     .user_ratio(user_ratio),
 	.en_bits(en_bits),
@@ -599,8 +606,6 @@
     .eddy_2_done(eddy_2_done),
     .eddy_3_done(eddy_3_done),
     .sched_isr(sched_isr),
-    .pwm_carrier_low(pwm_carrier_low),
-    .pwm_carrier_high(pwm_carrier_high),
 	.en_eddy_0(en_eddy_0),
 	.en_eddy_1(en_eddy_1),
 	.en_eddy_2(en_eddy_2),

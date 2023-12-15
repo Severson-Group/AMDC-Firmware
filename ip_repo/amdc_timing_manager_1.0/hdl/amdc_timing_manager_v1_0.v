@@ -32,6 +32,7 @@
 		output wire en_eddy_3,
     	output wire en_adc,
 		output wire en_encoder,
+		output wire [2:0] debug,
 
 		// User ports ends
 		// Do not modify the ports beyond this line
@@ -102,7 +103,8 @@
 		.en_eddy_2(en_eddy_2),
 		.en_eddy_3(en_eddy_3),
 		.en_adc(en_adc),
-		.en_encoder(en_encoder)
+		.en_encoder(en_encoder),
+		.debug(debug)
 	);
 
 	// Add user logic here

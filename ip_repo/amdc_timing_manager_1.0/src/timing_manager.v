@@ -8,8 +8,6 @@ module timing_manager(
                         adc_done, encoder_done,
                         eddy_0_done, eddy_1_done,
                         eddy_2_done, eddy_3_done,
-                        // PWM signals
-                        pwm_carrier_low, pwm_carrier_high,
                         // OUTPUTS
                         sched_isr,
                         // Enable signals
@@ -27,7 +25,6 @@ module timing_manager(
     // INPUTS //
     ////////////
     input clk, rst_n;
-    input wire pwm_carrier_low, pwm_carrier_high;
     input wire [15:0] user_ratio;
     input wire [7:0] en_bits;
     input wire adc_done;

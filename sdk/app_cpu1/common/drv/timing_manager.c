@@ -92,14 +92,14 @@ void timing_manager_init()
 
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both();
+    printf("PWM: %li\n", Xil_In32(TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t))));
 
     // Set the user ratio for the trigger
     timing_manager_set_ratio(2);
+    printf("Ratio: %li\n", Xil_In32(TIMING_MANAGER_BASE_ADDR + (2 * sizeof(uint32_t))));
 
     // Enable selected sensors for timing acquisition
     timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
-
-    timing_manager_enable_eddy_1();
 
     // Initialize the stats
     for (int i = 0; i < NUM_SENSORS; i++) {

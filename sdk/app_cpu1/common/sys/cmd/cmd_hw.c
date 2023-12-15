@@ -263,7 +263,7 @@ int cmd_hw(int argc, char **argv)
             // cmd_resp_printf("counts1: %lu\r\n", counts1);
             // cmd_resp_printf("counts2: %lu\r\n", counts2);
             // cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
-
+        	printf("time: %li\n", Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t))));
             return CMD_SUCCESS;
         }
 
