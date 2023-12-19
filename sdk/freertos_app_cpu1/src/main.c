@@ -33,6 +33,7 @@
 #include "queue.h"
 #include "timers.h"
 /* Xilinx includes. */
+#include "platform.h"
 #include "xil_printf.h"
 #include "xparameters.h"
 #include "xil_cache.h"
@@ -42,7 +43,7 @@
 #include "sys/icc.h"
 
 /* Begin User Includes */
-#include "drv/led.h"
+
 /* End User Includes */
 
 #define TIMER_ID	1
@@ -54,7 +55,7 @@
 /* The Tx and Rx tasks as described at the top of this file. */
 static void prvTxTask( void *pvParameters );
 static void prvRxTask( void *pvParameters );
-//static void prvBlinkyTask( void *pvParameters );
+static void prvBlinkyTask( void *pvParameters );
 static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
@@ -76,28 +77,38 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 
 /*-----------------------------------------------------------*/
 
+/*
+ * The Xilinx projects use a BSP that do not allow the start up code to be
+ * altered easily.  Therefore the vector table used by FreeRTOS is defined in
+ * FreeRTOS_asm_vectors.S, which is part of this project.  Switch to use the
+ * FreeRTOS vector table.
+ */
+extern void vPortInstallFreeRTOSVectorTable( void );
+
+/* The interrupt controller is initialised in this file, and made available to
+other modules. */
+//XScuGic xInterruptController;
+
+/*-----------------------------------------------------------*/
+
 /* The queue used by the Tx and Rx tasks, as described at the top of this
 file. */
 
-static TaskHandle_t xTxTaskHandle;
-static StaticTask_t xTxTaskBuffer;
-static StackType_t xTxTaskStack[configMINIMAL_STACK_SIZE];
-
-static TaskHandle_t xRxTaskHandle;
-static StaticTask_t xRxTaskBuffer;
-static StackType_t xRxTaskStack[configMINIMAL_STACK_SIZE];
-
 #define QUEUE_LENGTH    10
 #define ITEM_SIZE       sizeof( uint32_t )
+
+static TaskHandle_t xTxTaskHandle;
+static TaskHandle_t xRxTaskHandle;
 static QueueHandle_t xQueue = NULL;
-static StaticQueue_t xStaticQueue;
-uint8_t ucQueueStorageArea[ QUEUE_LENGTH * ITEM_SIZE ];
-
 static TimerHandle_t xTimer = NULL;
-static StaticTimer_t xTimerBuffer;
 
-char HWstring[20] = "cpu1_Hello World";
+char HWstring[20] = "CPU1 - Hello World";
 long RxtaskCntr = 0;
+
+uint8_t message_status = 0;
+// 0 - sending messages
+// 1 - complete, success
+// 2 - complete, failure
 
 int main( void )
 {
@@ -105,37 +116,42 @@ int main( void )
 	// S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
 	Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
 
+
+    vPortInstallFreeRTOSVectorTable();
+
+
+
+
 	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
 
-	xil_printf( "cpu1_Hello from Freertos example main\r\n" );
+	xil_printf( "CPU1 - Hello from FreeRTOS example main()!\r\n" );
+
+
+
 
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
 	task as soon as the Tx task places an item in the queue. */
-	xTxTaskHandle = xTaskCreateStatic( 	prvTxTask, 					/* The function that implements the task. */
-					( const char * ) "cpu1_Tx", 		/* Text name for the task, provided to assist debugging only. */
+	xTaskCreate( 	prvTxTask, 					/* The function that implements the task. */
+					( const char * ) "CPU1_Tx", 		/* Text name for the task, provided to assist debugging only. */
 					configMINIMAL_STACK_SIZE, 	/* The stack allocated to the task. */
 					NULL, 						/* The task parameter is not used, so set to NULL. */
 					tskIDLE_PRIORITY,			/* The task runs at the idle priority. */
-					xTxTaskStack,
-					&xTxTaskBuffer );
+					&xTxTaskHandle );
 
-	xRxTaskHandle = xTaskCreateStatic( prvRxTask,
-				 ( const char * ) "cpu1_GB",
+xTaskCreate( prvRxTask,
+				 ( const char * ) "CPU1_Rx",
 				 configMINIMAL_STACK_SIZE,
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
-				 xRxTaskStack,
-				 &xRxTaskBuffer );
+				 &xRxTaskHandle );
+
 
 	/* Create the queue used by the tasks.  The Rx task has a higher priority
 	than the Tx task, so will preempt the Tx task and remove values from the
 	queue as soon as the Tx task writes to the queue - therefore the queue can
 	never have more than one item in it. */
-    xQueue = xQueueCreateStatic( QUEUE_LENGTH,
-                                 ITEM_SIZE,
-                                 ucQueueStorageArea,
-                                 &xStaticQueue );
+	  xQueue = xQueueCreate( 1, sizeof(HWstring) );
 
 	/* Check the queue was created. */
 	configASSERT( xQueue );
@@ -146,14 +162,15 @@ int main( void )
 	 The tasks are deleted in the timer call back and a message is printed to convey that
 	 the example has run successfully.
 	 The timer expiry is set to 10 seconds and the timer set to not auto reload. */
-	xTimer = xTimerCreateStatic( (const char *) "cpu1_Timer",
+	 xTimer =  xTimerCreate( (const char *) "CPU1_Timer",
 							x10seconds,
 							pdFALSE,
 							(void *) TIMER_ID,
-							vTimerCallback,
-							&xTimerBuffer);
+							vTimerCallback);
+
 	/* Check the timer was created. */
 	configASSERT( xTimer );
+
 
 	/* start the timer with a block time of 0 ticks. This means as soon
 	   as the schedule starts the timer will start running and will expire after
@@ -175,18 +192,27 @@ int main( void )
 /*-----------------------------------------------------------*/
 static void prvTxTask( void *pvParameters )
 {
+
 const TickType_t x1second = pdMS_TO_TICKS( DELAY_1_SECOND );
 
 	for( ;; )
 	{
-		/* Delay for 1 second. */
-		vTaskDelay( x1second );
+		if(message_status > 0){
+			// Cannot delete tasks created using heap_1 implementation, so instead we suspend immediately if done
+			vTaskSuspend(NULL);
+		}
+		else{
+			/* Delay for 1 second. */
+			vTaskDelay( x1second );
 
-		/* Send the next value on the queue.  The queue should always be
-		empty at this point so a block time of 0 is used. */
-		xQueueSend( xQueue,			/* The queue being written to. */
-					HWstring, /* The address of the data being sent. */
-					0UL );			/* The block time. */
+			/* Send the next value on the queue.  The queue should always be
+			empty at this point so a block time of 0 is used. */
+			xQueueSend( xQueue,			/* The queue being written to. */
+						HWstring, /* The address of the data being sent. */
+						0UL );			/* The block time. */
+		}
+
+
 	}
 }
 
@@ -197,14 +223,21 @@ char Recdstring[15] = "";
 
 	for( ;; )
 	{
-		/* Block to wait for data arriving on the queue. */
-		xQueueReceive( 	xQueue,				/* The queue being read. */
-						Recdstring,	/* Data is read into this address. */
-						portMAX_DELAY );	/* Wait without a timeout for data. */
+		if(message_status > 0){
+			// Cannot delete tasks created using heap_1 implementation, so instead we suspend immediately if done
+			vTaskSuspend(NULL);
+		}
+		else{
 
-		/* Print the received data. */
-		xil_printf( "cpu1_Rx task received string from Tx task: %s\r\n", Recdstring );
-		RxtaskCntr++;
+			/* Block to wait for data arriving on the queue. */
+			xQueueReceive( 	xQueue,				/* The queue being read. */
+							Recdstring,	/* Data is read into this address. */
+							portMAX_DELAY );	/* Wait without a timeout for data. */
+
+			/* Print the received data. */
+			xil_printf( "CPU1 - Rx task received string from Tx task: %s\r\n", Recdstring );
+			RxtaskCntr++;
+		}
 	}
 }
 
@@ -217,7 +250,7 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 	lTimerId = ( long ) pvTimerGetTimerID( pxTimer );
 
 	if (lTimerId != TIMER_ID) {
-		xil_printf("cpu1_FreeRTOS Hello World Example FAILED");
+		xil_printf("CPU1 - FreeRTOS Hello World Example FAILED");
 	}
 
 	/* If the RxtaskCntr is updated every time the Rx task is called. The
@@ -226,13 +259,12 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 	 The timer expires after 10 seconds. We expect the RxtaskCntr to at least
 	 have a value of 9 (TIMER_CHECK_THRESHOLD) when the timer expires. */
 	if (RxtaskCntr >= TIMER_CHECK_THRESHOLD) {
-		xil_printf("cpu1_FreeRTOS Hello World Example PASSED\r\n");
+		message_status = 1;
+		xil_printf("CPU1 - FreeRTOS Hello World Example PASSED\r\n");
 	} else {
-		xil_printf("cpu1_FreeRTOS Hello World Example FAILED\r\n");
+		message_status = 2;
+		xil_printf("CPU1 - FreeRTOS Hello World Example FAILED\r\n");
 	}
-
-	vTaskDelete( xRxTaskHandle );
-	vTaskDelete( xTxTaskHandle );
 }
 
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
