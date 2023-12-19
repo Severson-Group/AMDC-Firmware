@@ -8,9 +8,9 @@
 #ifndef ICC_H
 #define ICC_H
 
-#include <stdint.h>
 #include "FreeRTOS.h"
 #include "message_buffer.h"
+#include <stdint.h>
 
 ///////////////////////////////////////////////////////
 // KEEP THIS FILE IN SYNC IN BOTH CPU0 AND CPU1
@@ -43,7 +43,6 @@
  * space will actually be one less than this, so 1023. */
 #define STORAGE_SIZE_BYTES 1024
 
-
 // These hold the structs for our two MessageBuffers
 StaticMessageBuffer_t xCPU0toCPU1MessageBuffer;
 StaticMessageBuffer_t xCPU1toCPU0MessageBuffer;
@@ -51,13 +50,21 @@ StaticMessageBuffer_t xCPU1toCPU0MessageBuffer;
 /* Defines the memory that will actually hold the messages within the message
  * buffer. Should be one more than the value passed in the xBufferSizeBytes
  * parameter. */
-static uint8_t ucCPU0toCPU1MessageBufferStorage[ STORAGE_SIZE_BYTES ];
-static uint8_t ucCPU1toCPU0MessageBufferStorage[ STORAGE_SIZE_BYTES ];
+static uint8_t ucCPU0toCPU1MessageBufferStorage[STORAGE_SIZE_BYTES];
+static uint8_t ucCPU1toCPU0MessageBufferStorage[STORAGE_SIZE_BYTES];
 
 void icc_init(void);
-void vCPU0toCPU1SendCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
-void vCPU0toCPU1ReceiveCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
-void vCPU1toCPU0SendCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
-void vCPU1toCPU0ReceiveCallback(MessageBufferHandle_t xMessageBuffer, BaseType_t xIsInsideISR, BaseType_t * const pxHigherPriorityTaskWoken );
+void vCPU0toCPU1SendCallback(MessageBufferHandle_t xMessageBuffer,
+                             BaseType_t xIsInsideISR,
+                             BaseType_t *const pxHigherPriorityTaskWoken);
+void vCPU0toCPU1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
+                                BaseType_t xIsInsideISR,
+                                BaseType_t *const pxHigherPriorityTaskWoken);
+void vCPU1toCPU0SendCallback(MessageBufferHandle_t xMessageBuffer,
+                             BaseType_t xIsInsideISR,
+                             BaseType_t *const pxHigherPriorityTaskWoken);
+void vCPU1toCPU0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
+                                BaseType_t xIsInsideISR,
+                                BaseType_t *const pxHigherPriorityTaskWoken);
 
 #endif /* ICC_H */
