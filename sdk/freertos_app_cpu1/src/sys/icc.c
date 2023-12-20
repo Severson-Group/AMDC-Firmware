@@ -13,21 +13,20 @@
 
 void icc_init(uint32_t cpu_num)
 {
-	if (cpu_num == 0){
-		/* CPU 0 is responsible for:
-		 * 1. Creating its own send and receive tasks which interact with the message buffers */
-		xil_printf("ICC INIT CPU0\r\n");
-	}
-	else if (cpu_num == 1){
-		/* CPU 1 is responsible for:
-		 * 1. Creating its own send and receive tasks which interact with the message buffers */
-		xil_printf("ICC INIT CPU1\r\n");
-	}
-	else{
-		// TODO: This should probably throw a proper exception
-		xil_printf("Invalid CPU number passed to ICC initialization.\r\n");
-		while(1){}
-	}
+    if (cpu_num == 0) {
+        /* CPU 0 is responsible for:
+         * 1. Creating its own send and receive tasks which interact with the message buffers */
+        xil_printf("ICC INIT CPU0\r\n");
+    } else if (cpu_num == 1) {
+        /* CPU 1 is responsible for:
+         * 1. Creating its own send and receive tasks which interact with the message buffers */
+        xil_printf("ICC INIT CPU1\r\n");
+    } else {
+        // TODO: This should probably throw a proper exception
+        xil_printf("Invalid CPU number passed to ICC initialization.\r\n");
+        while (1) {
+        }
+    }
 
     // MessageBufferHandle_t xMessageBufferCreateStaticWithCallback(
     //                           size_t xBufferSizeBytes,
@@ -39,21 +38,21 @@ void icc_init(uint32_t cpu_num)
     /* Create two message buffers for inter-core communication that use the callback
      * functions below as send and receive completed callback functions. */
     xCPU0to1MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                 ICC_CPU0to1_BufferBaseAddr,
-                                                 &xCPU0to1MessageBufferStruct,
-                                                 vCPU0to1SendCallback,
-                                                 vCPU0to1ReceiveCallback);
+                                                                   ICC_CPU0to1_BufferBaseAddr,
+                                                                   &xCPU0to1MessageBufferStruct,
+                                                                   vCPU0to1SendCallback,
+                                                                   vCPU0to1ReceiveCallback);
 
     xCPU1to0MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                 ICC_CPU1to0_BufferBaseAddr,
-                                                 &xCPU1to0MessageBufferStruct,
-                                                 vCPU1to0SendCallback,
-                                                 vCPU1to0ReceiveCallback);
+                                                                   ICC_CPU1to0_BufferBaseAddr,
+                                                                   &xCPU1to0MessageBufferStruct,
+                                                                   vCPU1to0SendCallback,
+                                                                   vCPU1to0ReceiveCallback);
 }
 
 void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
-                             BaseType_t xIsInsideISR,
-                             BaseType_t *const pxHigherPriorityTaskWoken)
+                          BaseType_t xIsInsideISR,
+                          BaseType_t *const pxHigherPriorityTaskWoken)
 {
     /* Insert code here which is invoked when a message is written to the message buffer.
      * This is useful when a message buffer is used to pass messages between
@@ -65,8 +64,8 @@ void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
 }
 
 void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
-                                BaseType_t xIsInsideISR,
-                                BaseType_t *const pxHigherPriorityTaskWoken)
+                             BaseType_t xIsInsideISR,
+                             BaseType_t *const pxHigherPriorityTaskWoken)
 {
     /* Insert code here which is invoked when a message is read from a message buffer.
      * This is useful when a message buffer is used to pass messages between
@@ -78,8 +77,8 @@ void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
 }
 
 void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
-                             BaseType_t xIsInsideISR,
-                             BaseType_t *const pxHigherPriorityTaskWoken)
+                          BaseType_t xIsInsideISR,
+                          BaseType_t *const pxHigherPriorityTaskWoken)
 {
     /* Insert code here which is invoked when a message is written to the message buffer.
      * This is useful when a message buffer is used to pass messages between
@@ -91,8 +90,8 @@ void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
 }
 
 void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
-                                BaseType_t xIsInsideISR,
-                                BaseType_t *const pxHigherPriorityTaskWoken)
+                             BaseType_t xIsInsideISR,
+                             BaseType_t *const pxHigherPriorityTaskWoken)
 {
     /* Insert code here which is invoked when a message is read from a message buffer.
      * This is useful when a message buffer is used to pass messages between
@@ -107,18 +106,16 @@ void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
  *   Only available in the correct CPU
  *   CPU_NUM is defined in each core's FreeRTOSConfig.h */
 
-
-
 /*
 #if CPU_NUM == 0
 void icc_send_cpu0_to_cpu1 (void * data){
-	size_t size_of_thing = xMessageBufferSend();
+    size_t size_of_thing = xMessageBufferSend();
 }
 #endif
 
 #if CPU_NUM == 1
 void icc_send_cpu1_to_cpu0 (void * data){
-	size_t size_of_thing = xMessageBufferSend();
+    size_t size_of_thing = xMessageBufferSend();
 }
 #endif
 */

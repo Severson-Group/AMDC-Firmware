@@ -136,14 +136,11 @@ int main(void)
     icc_init(0);
     vPortInstallFreeRTOSVectorTable();
 
-
-
-
-    //////* BEGIN USER CODE HERE *//////
+    ///////////////////////////////////
+    ////// BEGIN USER CODE HERE //////
+    /////////////////////////////////
 
     led_init();
-
-
 
     const TickType_t x10seconds = pdMS_TO_TICKS(DELAY_10_SECONDS);
 
@@ -199,13 +196,9 @@ int main(void)
        10 seconds */
     xTimerStart(xTimer, 0);
 
-
-    //////* END USER CODE HERE *//////
-
-
-
-
-
+    /////////////////////////////////
+    ////// END USER CODE HERE //////
+    ///////////////////////////////
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
@@ -234,19 +227,19 @@ static void prvTxTask(void *pvParameters)
 
             /* Send the next value on the queue.  The queue should always be
             empty at this point so a block time of 0 is used. */
-//            xQueueSend(xQueue,   /* The queue being written to. */
-//                       HWstring, /* The address of the data being sent. */
-//                       0UL);     /* The block time. */
+            //  xQueueSend(xQueue,   /* The queue being written to. */
+            //             HWstring, /* The address of the data being sent. */
+            //             0UL);     /* The block time. */
 
             xil_printf("DEBUG: CPU 0 about to attempt send\r\n");
 
             // Send a message to the other core
             size_t bytes_sent = xMessageBufferSend(xCPU0to1MessageBuffer, HWstring, sizeof(HWstring), 0UL);
 
-            xil_printf("DEBUG: CPU0 sent %d bytes to ICC buffer\r\n",bytes_sent);
+            xil_printf("DEBUG: CPU0 sent %d bytes to ICC buffer\r\n", bytes_sent);
 
-            if(bytes_sent == 0){
-            	xil_printf("ERROR: CPU 0 failed to write to ICC buffer\r\n");
+            if (bytes_sent == 0) {
+                xil_printf("ERROR: CPU 0 failed to write to ICC buffer\r\n");
             }
         }
     }
@@ -263,21 +256,20 @@ static void prvRxTask(void *pvParameters)
             vTaskSuspend(NULL);
         } else {
 
-//            /* Block to wait for data arriving on the queue. */
-//            xQueueReceive(xQueue,         /* The queue being read. */
-//                          Rcvdstring,     /* Data is read into this address. */
-//                          portMAX_DELAY); /* Wait without a timeout for data. */
+            //  /* Block to wait for data arriving on the queue. */
+            //  xQueueReceive(xQueue,         /* The queue being read. */
+            //                Rcvdstring,     /* Data is read into this address. */
+            //                portMAX_DELAY); /* Wait without a timeout for data. */
 
             xil_printf("DEBUG: CPU 0 about to attempt rcv\r\n");
 
-        	size_t bytes_rcvd = xMessageBufferReceive(xCPU1to0MessageBuffer, Rcvdstring, 32, portMAX_DELAY);
+            size_t bytes_rcvd = xMessageBufferReceive(xCPU1to0MessageBuffer, Rcvdstring, 32, portMAX_DELAY);
 
-            xil_printf("DEBUG: CPU0 rcvd %d bytes from ICC buffer\r\n",bytes_rcvd);
+            xil_printf("DEBUG: CPU0 rcvd %d bytes from ICC buffer\r\n", bytes_rcvd);
 
-            if(bytes_rcvd == 0){
-            	xil_printf("CPU 0 failed to receive from ICC buffer\r\n");
-            }
-            else{
+            if (bytes_rcvd == 0) {
+                xil_printf("CPU 0 failed to receive from ICC buffer\r\n");
+            } else {
                 /* Print the received data. */
                 xil_printf("CPU0 - Rx task received string from CPU1 Tx: %s\r\n", Rcvdstring);
                 RxtaskCntr++;
