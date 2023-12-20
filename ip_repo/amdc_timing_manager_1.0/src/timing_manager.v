@@ -9,7 +9,7 @@ module timing_manager(
                         eddy_0_done, eddy_1_done,
                         eddy_2_done, eddy_3_done,
                         // OUTPUTS
-                        sched_isr,
+                        sched_isr, all_done,
                         // Enable signals
                         en_eddy_0, en_eddy_1,
                         en_eddy_2, en_eddy_3,
@@ -48,11 +48,11 @@ module timing_manager(
     // Holds the count to generate the interrupt based on the user ratio
     reg [15:0] count;
     // Signifies when all the sensors are done
-    wire all_done;
+    output wire all_done;
     // Counts FPGA clock cycles for each sensor
     reg [15:0] count_time;
     // Determines when the count should be started based on when the sensors begin
-    reg start_count; 
+    reg counting; 
     
     //////////////////////////////////////////////////////////////////
     // Logic to generate interrupt based on PWM carrier. This       //
@@ -73,6 +73,10 @@ module timing_manager(
             count <= count + 1;
             trigger <= 0;
         end
+	else begin
+		count <= count;
+		trigger <= 0;
+	end
     end
 
     //////////////////////////////////////////////////////////////////
@@ -134,56 +138,89 @@ module timing_manager(
     // signal is recieved from a sensor, and done once all are done //
     //////////////////////////////////////////////////////////////////
 
-    // Start counting upon trigger being asserted, stop once all
-    // sensors are done.
-    always @(posedge clk, negedge rst_n) begin
-        if (!rst_n) start_count <= 0;
-        else if (trigger) start_count <= 1;
-        else if (all_done) start_count <= 0;
-    end
+	reg adc_ff, encoder_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
+	wire adc_pe, encoder_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
+	// Detect a rising edge for each done signal to copy over at that point
+	
+	// ADC
+	always @(posedge clk) begin
+		adc_ff <= adc_done;
+	end
+	assign adc_pe = adc_done & ~adc_ff;		
+
+	// Encoder
+	always @(posedge clk) begin
+		encoder_ff <= encoder_done;
+	end
+	assign encoder_pe = encoder_done & ~encoder_ff;
+	
+	// Eddy 0
+	always @(posedge clk) begin
+		eddy_0_ff <= eddy_0_done;
+	end
+	assign eddy_0_pe = eddy_0_done & ~eddy_0_ff;
+
+	// Eddy 1
+	always @(posedge clk) begin
+		eddy_1_ff <= eddy_1_done;
+	end
+	assign eddy_1_pe = eddy_1_done & ~eddy_1_ff;
+
+	// Eddy 2
+	always @(posedge clk) begin
+		eddy_2_ff <= eddy_2_done;
+	end
+	assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
+
+	// Eddy 3
+	always @(posedge clk) begin
+		eddy_3_ff <= eddy_3_done;
+	end
+	assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
+	
 
     // Count the time when start_count is asserted, otherwise
     // the time should be reset to 0.
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) count_time <= 0;
-        else if (start_count) count_time <= count_time + 1;
-        else count_time <= 0;
+        else if (trigger) count_time <= 0;	// Restart upon trigger
+        else count_time <= count_time + 1;
     end
 
     // Get ADC time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) adc_time <= 0;
-        else if (adc_done) adc_time <= count_time;
+        else if (adc_pe) adc_time <= count_time;
     end
 
     // Get encoder time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) encoder_time <= 0;
-        else if (encoder_done) encoder_time <= count_time;
+        else if (encoder_pe) encoder_time <= count_time;
     end
 
     // Get eddy current sensor 0 time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) eddy0_time <= 0;
-        else if (eddy_0_done) eddy0_time <= count_time;
+        else if (eddy_0_pe) eddy0_time <= count_time;
     end
 
     // Get eddy current sensor 1 time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) eddy1_time <= 0;
-        else if (eddy_1_done) eddy1_time <= count_time;
+        else if (eddy_1_pe) eddy1_time <= count_time;
     end
 
     // Get eddy current sensor 2 time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) eddy2_time <= 0;
-        else if (eddy_2_done) eddy2_time <= count_time;
+        else if (eddy_2_pe) eddy2_time <= count_time;
     end
 
     // Get eddy current sensor 3 time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) eddy3_time <= 0;
-        else if (eddy_3_done) eddy3_time <= count_time;
+        else if (eddy_3_pe) eddy3_time <= count_time;
     end
 
 endmodule

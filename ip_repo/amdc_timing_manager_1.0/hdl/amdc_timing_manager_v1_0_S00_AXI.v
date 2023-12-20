@@ -572,6 +572,7 @@
 	// User defined method of synchronizing the pwm on high, low, or both
 	wire event_qualifier;
 	wire pwm_sync_high;
+	wire all_done;
 	wire pwm_sync_low;
 	assign pwm_sync_high = slv_reg3[0];
 	assign pwm_sync_low  = slv_reg3[1];
@@ -589,8 +590,12 @@
 	always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
 	   if (!S_AXI_ARESETN)
 	       debug <= 0;
-	   else if (eddy_3_done)
-	       debug <= ~debug;
+	   else if (eddy_0_done)
+	       debug[0] <= ~debug[0];
+	   else if (all_done)
+	       debug[1] <= ~debug[1];
+	   else if (sched_isr)
+	       debug[2] <= ~debug[2];
 	end
 	
 	timing_manager iTime(
@@ -618,7 +623,8 @@
 	.eddy1_time(eddy1_time),
 	.eddy2_time(eddy2_time),
 	.eddy3_time(eddy3_time),
-	.trigger(trigger)
+	.trigger(trigger),
+	.all_done(all_done)
     );
 
 	// User logic ends
