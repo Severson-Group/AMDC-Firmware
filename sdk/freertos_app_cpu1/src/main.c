@@ -55,7 +55,6 @@
 /* The Tx and Rx tasks as described at the top of this file. */
 static void prvTxTask(void *pvParameters);
 static void prvRxTask(void *pvParameters);
-static void prvBlinkyTask(void *pvParameters);
 static void vTimerCallback(TimerHandle_t pxTimer);
 /*-----------------------------------------------------------*/
 
