@@ -41,6 +41,7 @@
 #include "xparameters.h"
 /* Firmware includes */
 #include "sys/icc.h"
+#include "sys/intr.h"
 
 /* Begin User Includes */
 #include "drv/led.h"
@@ -133,7 +134,9 @@ int main(void)
     __asm__("sev");
 #endif
 
-    icc_init(0);
+    Xil_ExceptionInit();
+    intr_init();
+    icc_init();
     vPortInstallFreeRTOSVectorTable();
 
     ///////////////////////////////////
@@ -146,14 +149,12 @@ int main(void)
 
     xil_printf("CPU0 - Hello from FreeRTOS example main()!\r\n");
 
-    /* Create the two tasks.  The Tx task is given a lower priority than the
-    Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
-    task as soon as the Tx task places an item in the queue. */
+    /* Create the three tasks. */
     xTaskCreate(prvTxTask,                /* The function that implements the task. */
                 (const char *) "CPU0_Tx", /* Text name for the task, provided to assist debugging only. */
                 configMINIMAL_STACK_SIZE, /* The stack allocated to the task. */
                 NULL,                     /* The task parameter is not used, so set to NULL. */
-                tskIDLE_PRIORITY,         /* The task runs at the idle priority. */
+                tskIDLE_PRIORITY + 1,     /* The task runs at the idle priority. */
                 &xTxTaskHandle);
 
     xTaskCreate(prvRxTask,                /* The function that implements the task. */
@@ -168,7 +169,7 @@ int main(void)
                 (const char *) "CPU0_Blinky",
                 configMINIMAL_STACK_SIZE,
                 NULL,
-                tskIDLE_PRIORITY + 1,
+                tskIDLE_PRIORITY,
                 &xBlinkyTaskHandle);
 
     /* Create the queue used by the tasks.  The Rx task has a higher priority

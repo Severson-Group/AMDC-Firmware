@@ -9,7 +9,9 @@
 #define ICC_H
 
 #include "FreeRTOS.h"
+#include "intr.h"
 #include "message_buffer.h"
+#include "xil_printf.h"
 #include <stdint.h>
 
 ///////////////////////////////////////////////////////
@@ -53,7 +55,7 @@ MessageBufferHandle_t xCPU1to0MessageBuffer;
 StaticMessageBuffer_t xCPU0to1MessageBufferStruct;
 StaticMessageBuffer_t xCPU1to0MessageBufferStruct;
 
-void icc_init(uint32_t cpu_num);
+void icc_init();
 void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t xIsInsideISR,
                           BaseType_t *const pxHigherPriorityTaskWoken);

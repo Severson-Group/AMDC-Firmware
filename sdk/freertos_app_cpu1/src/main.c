@@ -41,6 +41,7 @@
 #include "xparameters.h"
 /* Firmware includes */
 #include "sys/icc.h"
+#include "sys/intr.h"
 
 /* Begin User Includes */
 
@@ -109,7 +110,8 @@ int main(void)
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
 
-    icc_init(1);
+    intr_init();
+    icc_init();
     vPortInstallFreeRTOSVectorTable();
 
     ///////////////////////////////////
@@ -127,7 +129,7 @@ int main(void)
                 (const char *) "CPU1_Tx", /* Text name for the task, provided to assist debugging only. */
                 configMINIMAL_STACK_SIZE, /* The stack allocated to the task. */
                 NULL,                     /* The task parameter is not used, so set to NULL. */
-                tskIDLE_PRIORITY,         /* The task runs at the idle priority. */
+                tskIDLE_PRIORITY + 1,     /* The task runs at the idle priority. */
                 &xTxTaskHandle);
 
     xTaskCreate(prvRxTask,                /* The function that implements the task. */
