@@ -40,7 +40,7 @@ The following folders contain source code reference by the applications:
 
 ### 1. `FreeRTOS-Kernel`
 
-- Is a [Git submodule]() of the [FreeRTOS-Kernel]() source code, referenced by the FreeRTOS application projects
+- Is a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) of the [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel) source code, referenced by the FreeRTOS application projects
 
 ### 2. `shared`
 
