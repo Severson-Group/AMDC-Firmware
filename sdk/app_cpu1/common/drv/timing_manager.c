@@ -301,7 +301,7 @@ uint16_t timing_manager_get_time_per_sensor(sensor_t sensor)
         // Upper 16 bits of slave reg 7
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     }
-    // Convert clock cycles to time in ns using 200 MHz FPGA clock frequency
+    // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
     time = (1 / FPGA_FREQ) * clock_cycles;
     return time;
 }
