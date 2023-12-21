@@ -208,21 +208,17 @@ int cmd_hw(int argc, char **argv)
 #elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
         if (port == 1) {
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-        	timing_manager_enable_eddy_1();
-        }
-        else if (port == 2) {
-        	base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
-        	timing_manager_enable_eddy_2();
-        }
-        else if (port == 3) {
-        	base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
-        	timing_manager_enable_eddy_3();
-        }
-        else if (port == 4) {
-        	base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
-        	timing_manager_enable_eddy_4();
-        }
-        else
+            timing_manager_enable_eddy_1();
+        } else if (port == 2) {
+            base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
+            timing_manager_enable_eddy_2();
+        } else if (port == 3) {
+            base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
+            timing_manager_enable_eddy_3();
+        } else if (port == 4) {
+            base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
+            timing_manager_enable_eddy_4();
+        } else
             return CMD_INVALID_ARGUMENTS;
 #endif
 
@@ -231,11 +227,11 @@ int cmd_hw(int argc, char **argv)
             timing_manager_trigger_on_pwm_clear();
 
             if (STREQ("HIGH", argv[4]))
-            	timing_manager_trigger_on_pwm_high();
+                timing_manager_trigger_on_pwm_high();
             else if (STREQ("LOW", argv[4]))
-            	timing_manager_trigger_on_pwm_low();
+                timing_manager_trigger_on_pwm_low();
             else if (STREQ("BOTH", argv[4]))
-            	timing_manager_trigger_on_pwm_both();
+                timing_manager_trigger_on_pwm_both();
             else
                 return CMD_INVALID_ARGUMENTS;
 

@@ -42,7 +42,7 @@ uint32_t interrupt_system_init()
 
     // Set priority of IRQ_F2P[0:0] to 0xA0 and a trigger for a rising edge 0x3
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, ISR_RISING_EDGE);
-    
+
     // Connect ISR0 to the interrupt controller
     result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr0, (void *) &intc);
     if (result != XST_SUCCESS) {
@@ -103,7 +103,7 @@ void timing_manager_init()
 
     // Initialize the stats
     for (int i = 0; i < NUM_SENSORS; i++) {
-    	statistics_init(sensor_stats[i]);
+        statistics_init(sensor_stats[i]);
     }
 
     // Disable interrupt 1 - currently not needed
@@ -169,10 +169,10 @@ void timing_manager_select_sensors(uint8_t enable_bits)
  */
 void timing_manager_enable_eddy_1()
 {
-	// Get the current address for the target config register (slv_reg2)
-	uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-	// Assign the  to the config register
-	Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x01));
+    // Get the current address for the target config register (slv_reg2)
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Assign the  to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x01));
 }
 
 /*
