@@ -34,6 +34,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\FreeRTOS-Kernel\portable\GCC\ARM_CA9&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_cpu1/ps7_cortexa9_1/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\shared&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.225626228" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -79,14 +80,12 @@
 							<tool id="xilinx.gnu.armv7.size.debug.340344819" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="xilinx.gnu.armv7.exe.debug.710357380.1455820927" name="FreeRTOS_asm_vectors.S" rcbsApplicability="disable" resourcePath="src/FreeRTOS_asm_vectors.S" toolsToInvoke="xilinx.gnu.armv7.c.toolchain.compiler.debug.1183202256.621935815">
-						<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.1183202256.621935815" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug.1183202256"/>
-					</fileInfo>
 					<sourceEntries>
-						<entry excluding="FreeRTOS-Kernel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="shared|FreeRTOS-Kernel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="portable|examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel/portable/GCC/ARM_CA9"/>
 						<entry excluding="heap_5.c|heap_4.c|heap_3.c|heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel/portable/MemMang"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

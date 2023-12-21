@@ -34,6 +34,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\FreeRTOS-Kernel\portable\GCC\ARM_CA9&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/amdc_bsp_cpu0/ps7_cortexa9_0/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}\shared&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.470872627" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
@@ -79,17 +80,12 @@
 							<tool id="xilinx.gnu.armv7.size.debug.754924794" name="ARM v7 Print Size" superClass="xilinx.gnu.armv7.size.debug"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="xilinx.gnu.armv7.exe.debug.1910724291.1892529702" name="platform.h" rcbsApplicability="disable" resourcePath="src/platform.h" toolsToInvoke=""/>
-					<fileInfo id="xilinx.gnu.armv7.exe.debug.1910724291.938221391" name="icc.h" rcbsApplicability="disable" resourcePath="src/sys/icc.h" toolsToInvoke=""/>
-					<fileInfo id="xilinx.gnu.armv7.exe.debug.1910724291.786514347" name="icc.c" rcbsApplicability="disable" resourcePath="src/sys/icc.c" toolsToInvoke="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044.317346699">
-						<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044.317346699" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug.1156428044"/>
-					</fileInfo>
-					<fileInfo id="xilinx.gnu.armv7.exe.debug.1910724291.78238395" name="platform_config.h" rcbsApplicability="disable" resourcePath="src/platform_config.h" toolsToInvoke=""/>
 					<sourceEntries>
-						<entry excluding="src/main2.c|src/lwipopts.h|FreeRTOS-Kernel|include|src/Blinky_Demo|src/lwIP_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="shared|src/main2.c|src/lwipopts.h|FreeRTOS-Kernel|include|src/Blinky_Demo|src/lwIP_Demo" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel/portable/GCC/ARM_CA9"/>
 						<entry excluding="heap_5.c|heap_4.c|heap_3.c|heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel/portable/MemMang"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
