@@ -327,23 +327,3 @@ statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
     // Get pointer to the stats for the specified sensor
     return sensor_stats[sensor];
 }
-
-/*
- * Function to test the interrupts, slave register values, etc.
- */
-int timing_test()
-{
-    *(baseaddr_p + 0) = 0x00000000;
-    xil_printf("Checkpoint 1\n\r");
-    xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p + 0));
-    Xil_Out32(TIMING_MANAGER_BASE_ADDR, 0x1);
-    xil_printf("Checkpoint 2\n\r");
-    nops(1000);
-    xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p + 0));
-    xil_printf("slv_reg0: 0x%08x\n\r", Xil_In32(TIMING_MANAGER_BASE_ADDR));
-    xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p + 3));
-    xil_printf("slv_reg3: 0x%08x\n\r", Xil_In32(TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t))));
-    nops(1000);
-
-    return 0;
-}

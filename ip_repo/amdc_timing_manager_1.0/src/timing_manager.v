@@ -114,6 +114,17 @@ module timing_manager(
                         (!en_adc || en_adc && adc_done)
                         );
 
+	//////////////////////////////////////////////////////////////////
+	// Rising edge detection for all_done, which signifies when to	//
+	// send an interrupt											//
+	//////////////////////////////////////////////////////////////////
+	reg all_done_ff;
+	wire all_done_pe;
+	always @(posedge clk) begin
+		all_done_ff <= all_done;
+	end
+	assign all_done_pe = all_done & ~all_done_ff;
+
     //////////////////////////////////////////////////////////////////
     // Send an interrupt to the PS once all of the sensors are done //
     // with their conversion/acquisition. This will trigger a       //
@@ -123,7 +134,7 @@ module timing_manager(
         if (!rst_n) begin
             sched_isr <= 0;
         end
-        else if (all_done) begin
+        else if (all_done_pe) begin
             sched_isr <= 1;
         end
         else begin

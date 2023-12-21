@@ -52,6 +52,5 @@ void isr1(void *intc_inst_ptr);
 uint16_t timing_manager_get_time_per_sensor(sensor_t sensor);
 void timing_manager_sensor_stats();
 statistics_t* timing_manager_get_stats_per_sensor(sensor_t sensor);
-int timing_test();
 
 #endif // TIMING_MANAGER_H

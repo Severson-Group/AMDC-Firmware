@@ -562,7 +562,6 @@
 	
 	// Connect the wires to the LSBs of the slave register 0
 	// which the PS can write directly
-	// MIGHT NOT NEED? assign sched_isr = slv_reg0[0:0];
 	assign interrupt_1 = slv_reg0[1:1];
 
 	// Get the enable bits from the user to

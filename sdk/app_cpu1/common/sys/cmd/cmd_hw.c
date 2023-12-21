@@ -257,13 +257,6 @@ int cmd_hw(int argc, char **argv)
     // Handle 'timer' sub-command
     if (argc >= 2 && STREQ("timer", argv[1])) {
         if (argc == 4 && STREQ("fpga", argv[2]) && STREQ("now", argv[3])) {
-            // uint32_t counts1 = fpga_timer_now();
-            // uint32_t counts2 = fpga_timer_now();
-
-            // cmd_resp_printf("counts1: %lu\r\n", counts1);
-            // cmd_resp_printf("counts2: %lu\r\n", counts2);
-            // cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
-        	printf("time: %li\n", timing_manager_get_time_per_sensor(EDDY_0));
             return CMD_SUCCESS;
         }
 
