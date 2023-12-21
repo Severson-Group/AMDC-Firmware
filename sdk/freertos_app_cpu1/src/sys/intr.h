@@ -33,7 +33,7 @@
 //   Defined here to be accessable in sys/icc.c
 static XScuGic InterruptController;
 
-void intr_init();
+int intr_init();
 
 /* We only need to define the handlers in the appropriate core
  */

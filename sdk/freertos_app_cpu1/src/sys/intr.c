@@ -19,11 +19,9 @@
 
 #include "intr.h"
 
-void intr_init()
+int intr_init()
 {
     int Status = XST_FAILURE;
-
-#if XPAR_CPU_ID == 0
 
     XScuGic_Config *IntcConfig;
 
@@ -44,17 +42,12 @@ void intr_init()
         XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, &InterruptController);
     Xil_ExceptionEnable();
 
+#if XPAR_CPU_ID == 0
     // Connect the given interrupt with its handler
     XScuGic_Connect(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeRxHandler, NULL);
     XScuGic_Connect(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeTxHandler, NULL);
 
 #elif XPAR_CPU_ID == 1
-    // WAIT FOR CPU 0 TO FINISH INITIALIZING GIC
-    Status = XST_FAILURE;
-    while (Status != XST_SUCCESS) {
-        Status = XScuGic_SelfTest(&InterruptController);
-    }
-
     // Connect the given interrupt with its handler
     XScuGic_Connect(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeRxHandler, NULL);
     XScuGic_Connect(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeTxHandler, NULL);
@@ -74,6 +67,8 @@ void intr_init()
 
     print("Interrupt system setup complete.\r\n");
     */
+
+    return XST_SUCCESS;
 }
 
 /* We only need to define the handlers in the appropriate core
