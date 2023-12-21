@@ -50,8 +50,8 @@ void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 0
-	// In CPU 0, this callback should send an interrupt to CPU 1's Rx task
-	XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
+    // In CPU 0, this callback should send an interrupt to CPU 1's Rx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
 #endif
 }
 
@@ -60,8 +60,8 @@ void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 0
-	// In CPU 0, this callback should send an interrupt to CPU 1's Tx task
-	XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
+    // In CPU 0, this callback should send an interrupt to CPU 1's Tx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
 #endif
 }
 
@@ -70,8 +70,8 @@ void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 1
-	// In CPU 1, this callback should send an interrupt to CPU 0's Rx task
-	XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
+    // In CPU 1, this callback should send an interrupt to CPU 0's Rx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
 #endif
 }
 
@@ -80,12 +80,7 @@ void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 1
-	// In CPU 1, this callback should send an interrupt to CPU 0's Tx task
-	XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
+    // In CPU 1, this callback should send an interrupt to CPU 0's Tx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
 #endif
 }
-
-
-
-
-

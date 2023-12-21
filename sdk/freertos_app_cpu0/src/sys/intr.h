@@ -1,7 +1,7 @@
 /*
  * intr.h
  *
- *  Created on: 20 déc. 2023
+ *  Created on: 20 dec. 2023
  *      Author: pnowa
  */
 
@@ -22,7 +22,7 @@
 #define CPU0_ID (XSCUGIC_SPI_CPU0_MASK << 0)
 #define CPU1_ID (XSCUGIC_SPI_CPU0_MASK << 1)
 
-#define INTC_DEVICE_ID  XPAR_SCUGIC_SINGLE_DEVICE_ID
+#define INTC_DEVICE_ID XPAR_SCUGIC_SINGLE_DEVICE_ID
 
 #define INTC_0TO1_SEND_INTERRUPT_ID 0U
 #define INTC_1TO0_RCVE_INTERRUPT_ID 1U

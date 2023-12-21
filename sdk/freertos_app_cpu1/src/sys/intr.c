@@ -1,7 +1,7 @@
 /*
  * intr.c
  *
- *  Created on: 20 déc. 2023
+ *  Created on: 20 dec. 2023
  *      Author: pnowa
  *
  *  This functions in this file are responsible for setting up the
@@ -21,7 +21,7 @@
 
 void intr_init()
 {
-	int Status = XST_FAILURE;
+    int Status = XST_FAILURE;
 
 #if XPAR_CPU_ID == 0
 
@@ -30,33 +30,34 @@ void intr_init()
     IntcConfig = XScuGic_LookupConfig(INTC_DEVICE_ID);
     XScuGic_CfgInitialize(&InterruptController, IntcConfig, IntcConfig->CpuBaseAddress);
 
-	/*
-	 * Perform a self-test to ensure that the hardware was built
-	 * correctly
-	 */
-	Status = XScuGic_SelfTest(&InterruptController);
-	if (Status != XST_SUCCESS) {
-		return XST_FAILURE;
-	}
+    /*
+     * Perform a self-test to ensure that the hardware was built
+     * correctly
+     */
+    Status = XScuGic_SelfTest(&InterruptController);
+    if (Status != XST_SUCCESS) {
+        return XST_FAILURE;
+    }
 
     // Initialize the interrupt controller
-    Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler)XScuGic_InterruptHandler, &InterruptController);
+    Xil_ExceptionRegisterHandler(
+        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, &InterruptController);
     Xil_ExceptionEnable();
 
     // Connect the given interrupt with its handler
-    XScuGic_Connect(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, (Xil_ExceptionHandler)CPU0WakeRxHandler, NULL);
-    XScuGic_Connect(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler)CPU0WakeTxHandler, NULL);
+    XScuGic_Connect(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeRxHandler, NULL);
+    XScuGic_Connect(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeTxHandler, NULL);
 
 #elif XPAR_CPU_ID == 1
     // WAIT FOR CPU 0 TO FINISH INITIALIZING GIC
-	Status = XST_FAILURE;
-	while (Status != XST_SUCCESS) {
-		Status = XScuGic_SelfTest(&InterruptController);
-	}
+    Status = XST_FAILURE;
+    while (Status != XST_SUCCESS) {
+        Status = XScuGic_SelfTest(&InterruptController);
+    }
 
     // Connect the given interrupt with its handler
-    XScuGic_Connect(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, (Xil_ExceptionHandler)CPU1WakeRxHandler, NULL);
-    XScuGic_Connect(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler)CPU1WakeTxHandler, NULL);
+    XScuGic_Connect(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeRxHandler, NULL);
+    XScuGic_Connect(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeTxHandler, NULL);
 #endif
 
     /*
@@ -78,36 +79,39 @@ void intr_init()
 /* We only need to define the handlers in the appropriate core
  */
 #if XPAR_CPU_ID == 0
-void CPU0WakeTxHandler() {
-	xil_printf("CPU 0 - WakeTxHandler reached\r\n");
+void CPU0WakeTxHandler()
+{
+    xil_printf("CPU 0 - WakeTxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xMessageBufferReceiveCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    xMessageBufferReceiveCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void CPU0WakeRxHandler() {
-	xil_printf("CPU 0 - WakeRxHandler reached\r\n");
+void CPU0WakeRxHandler()
+{
+    xil_printf("CPU 0 - WakeRxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xMessageBufferSendCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    xMessageBufferSendCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 #elif XPAR_CPU_ID == 1
-void CPU1WakeTxHandler() {
-	xil_printf("CPU 1 - WakeTxHandler reached\r\n");
+void CPU1WakeTxHandler()
+{
+    xil_printf("CPU 1 - WakeTxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-void CPU1WakeRxHandler() {
-	xil_printf("CPU 1 - WakeRxHandler reached\r\n");
+void CPU1WakeRxHandler()
+{
+    xil_printf("CPU 1 - WakeRxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xMessageBufferSendCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    xMessageBufferSendCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 #endif
-
