@@ -8,95 +8,83 @@
 #include "icc.h"
 
 ///////////////////////////////////////////////////////
-// KEEP THIS FILE IN SYNC IN BOTH CPU0 AND CPU1
+// THIS IS A SHARED FILE, SO IT IS ALWAYS
+// IN SYNC IN BOTH CPU0 AND CPU1
+//
+// If you need to differentiate something between
+// CPUs, use "#if XPAR_CPU_ID == ?"
 ///////////////////////////////////////////////////////
 
-void icc_init(void)
+void icc_init(uint32_t cpu_num)
 {
-
-    // MessageBufferHandle_t xMessageBufferCreateStaticWithCallback(
-    //                           size_t xBufferSizeBytes,
-    //                           uint8_t *pucMessageBufferStorageArea,
-    //                           StaticMessageBuffer_t *pxStaticMessageBuffer,
-    //                           StreamBufferCallbackFunction_t pxSendCompletedCallback,
-    //                           StreamBufferCallbackFunction_t pxReceiveCompletedCallback );
-
     /* Create two message buffers for inter-core communication that use the callback
      * functions below as send and receive completed callback functions. */
-    MessageBufferHandle_t xCPU0toCPU1MessageBufferWithCallback
-        = xMessageBufferCreateStaticWithCallback(STORAGE_SIZE_BYTES - 1,
-                                                 ucCPU0toCPU1MessageBufferStorage,
-                                                 &xCPU0toCPU1MessageBuffer,
-                                                 vCPU0toCPU1SendCallback,
-                                                 vCPU0toCPU1ReceiveCallback);
+    xCPU0to1MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
+                                                                   ICC_CPU0to1_BufferBaseAddr,
+                                                                   &xCPU0to1MessageBufferStruct,
+                                                                   vCPU0to1SendCallback,
+                                                                   vCPU0to1ReceiveCallback);
 
-    MessageBufferHandle_t xCPU1toCPU0MessageBufferWithCallback
-        = xMessageBufferCreateStaticWithCallback(STORAGE_SIZE_BYTES - 1,
-                                                 ucCPU1toCPU0MessageBufferStorage,
-                                                 &xCPU1toCPU0MessageBuffer,
-                                                 vCPU1toCPU0SendCallback,
-                                                 vCPU1toCPU0ReceiveCallback);
-
-    /* As neither the pucMessageBufferStorageArea or pxStaticMessageBuffer
-     * parameters were NULL, xMessageBufferWithCallback
-     * will not be NULL, and can be used to reference the created message
-     * buffers in other message buffer API calls. */
-
-    /* Other code that uses the message buffers can go here. */
+    xCPU1to0MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
+                                                                   ICC_CPU1to0_BufferBaseAddr,
+                                                                   &xCPU1to0MessageBufferStruct,
+                                                                   vCPU1to0SendCallback,
+                                                                   vCPU1to0ReceiveCallback);
 }
 
-void vCPU0toCPU1SendCallback(MessageBufferHandle_t xMessageBuffer,
+/* From FreeRTOS:
+ * Insert code into callback which is invoked when a message is written to the message buffer.
+ * This is useful when a message buffer is used to pass messages between
+ * cores on a multicore processor. In that scenario, this callback
+ * can be implemented to generate an interrupt in the other CPU core,
+ * and the interrupt's service routine can then use the
+ * xMessageBufferSendCompletedFromISR() API function to check, and if
+ * necessary unblock, a task that was waiting for message. */
+
+/* !! IMPORTANT !!
+ * These callback functions must ALL exist in BOTH CPUs for the above Message Buffer creations
+ * to work. HOWEVER, the callbacks only have to DO SOMETHING in the relevant CPU
+ * For example, the behavior of the 0 to 1 Send Callback must be implemented in CPU 0, since
+ * CPU 0 needs to send an interrupt to CPU 1 when it sends to the buffer. But CPU 1 will never
+ * send to the 0 to 1 buffer, so in CPU 1 this callback doesn't need to DO ANYTHING except exist.
+ * - Patrick */
+
+void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
+                          BaseType_t xIsInsideISR,
+                          BaseType_t *const pxHigherPriorityTaskWoken)
+{
+#if XPAR_CPU_ID == 0
+    // In CPU 0, this callback should send an interrupt to CPU 1's Rx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
+#endif
+}
+
+void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t xIsInsideISR,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
-    /* Insert code here which is invoked when a message is written to
-     * the message buffer.
-     * This is useful when a message buffer is used to pass messages between
-     * cores on a multicore processor. In that scenario, this callback
-     * can be implemented to generate an interrupt in the other CPU core,
-     * and the interrupt's service routine can then use the
-     * xMessageBufferSendCompletedFromISR() API function to check, and if
-     * necessary unblock, a task that was waiting for message. */
+#if XPAR_CPU_ID == 0
+    // In CPU 0, this callback should send an interrupt to CPU 1's Tx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
+#endif
 }
 
-void vCPU0toCPU1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
-                                BaseType_t xIsInsideISR,
-                                BaseType_t *const pxHigherPriorityTaskWoken)
+void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
+                          BaseType_t xIsInsideISR,
+                          BaseType_t *const pxHigherPriorityTaskWoken)
 {
-    /* Insert code here which is invoked when a message is read from a message
-     * buffer.
-     * This is useful when a message buffer is used to pass messages between
-     * cores on a multicore processor. In that scenario, this callback
-     * can be implemented to generate an interrupt in the other CPU core,
-     * and the interrupt's service routine can then use the
-     * xMessageBufferReceiveCompletedFromISR() API function to check, and if
-     * necessary unblock, a task that was waiting to send message. */
+#if XPAR_CPU_ID == 1
+    // In CPU 1, this callback should send an interrupt to CPU 0's Rx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
+#endif
 }
 
-void vCPU1toCPU0SendCallback(MessageBufferHandle_t xMessageBuffer,
+void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t xIsInsideISR,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
-    /* Insert code here which is invoked when a message is written to
-     * the message buffer.
-     * This is useful when a message buffer is used to pass messages between
-     * cores on a multicore processor. In that scenario, this callback
-     * can be implemented to generate an interrupt in the other CPU core,
-     * and the interrupt's service routine can then use the
-     * xMessageBufferSendCompletedFromISR() API function to check, and if
-     * necessary unblock, a task that was waiting for message. */
-}
-
-void vCPU1toCPU0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
-                                BaseType_t xIsInsideISR,
-                                BaseType_t *const pxHigherPriorityTaskWoken)
-{
-    /* Insert code here which is invoked when a message is read from a message
-     * buffer.
-     * This is useful when a message buffer is used to pass messages between
-     * cores on a multicore processor. In that scenario, this callback
-     * can be implemented to generate an interrupt in the other CPU core,
-     * and the interrupt's service routine can then use the
-     * xMessageBufferReceiveCompletedFromISR() API function to check, and if
-     * necessary unblock, a task that was waiting to send message. */
+#if XPAR_CPU_ID == 1
+    // In CPU 1, this callback should send an interrupt to CPU 0's Tx task
+    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
+#endif
 }
