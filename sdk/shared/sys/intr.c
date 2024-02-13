@@ -1,10 +1,14 @@
-/*
- * intr.c
- *
- *  Created on: 20 dec. 2023
- *      Author: pnowa
- *
- *  This functions in this file are responsible for setting up the
+#include "intr.h"
+
+///////////////////////////////////////////////////////
+// THIS IS A SHARED FILE, SO IT IS ALWAYS
+// IN SYNC IN BOTH CPU0 AND CPU1
+//
+// If you need to differentiate something between
+// CPUs, use "#if XPAR_CPU_ID == ?"
+///////////////////////////////////////////////////////
+
+/*  The functions in this file are responsible for setting up the
  *  Xilinx Generic Interrupt Controller (GIC).
  *
  *  Interrupts are needed for Inter-Core Communication, specifically
@@ -16,16 +20,6 @@
  *
  *  See sys/icc.c for more info.
  */
-
-#include "intr.h"
-
-///////////////////////////////////////////////////////
-// THIS IS A SHARED FILE, SO IT IS ALWAYS
-// IN SYNC IN BOTH CPU0 AND CPU1
-//
-// If you need to differentiate something between
-// CPUs, use "#if XPAR_CPU_ID == ?"
-///////////////////////////////////////////////////////
 
 int intr_init()
 {

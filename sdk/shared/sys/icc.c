@@ -1,10 +1,3 @@
-/*
- * icc.c
- *
- *  Created on: 7 nov. 2023
- *      Author: pnowa
- */
-
 #include "icc.h"
 
 ///////////////////////////////////////////////////////
@@ -17,19 +10,23 @@
 
 void icc_init(uint32_t cpu_num)
 {
+#if XPAR_CPU_ID == 0
+	// ONLY CPU 0 INITIALIZES THE MESSAGE BUFFERS
+
     /* Create two message buffers for inter-core communication that use the callback
      * functions below as send and receive completed callback functions. */
     xCPU0to1MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                                   ICC_CPU0to1_BufferBaseAddr,
-                                                                   &xCPU0to1MessageBufferStruct,
+                                                                   ICC_CPU0to1_BufferSpaceAddr,
+																   ICC_CPU0to1_BufferStructAddr,
                                                                    vCPU0to1SendCallback,
                                                                    vCPU0to1ReceiveCallback);
 
     xCPU1to0MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                                   ICC_CPU1to0_BufferBaseAddr,
-                                                                   &xCPU1to0MessageBufferStruct,
+                                                                   ICC_CPU1to0_BufferSpaceAddr,
+																   ICC_CPU1to0_BufferStructAddr,
                                                                    vCPU1to0SendCallback,
                                                                    vCPU1to0ReceiveCallback);
+#endif
 }
 
 /* From FreeRTOS:
@@ -54,6 +51,7 @@ void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 0
+	xil_printf("DEBUG: CPU 0 to 1 Send Callback reached\r\n");
     // In CPU 0, this callback should send an interrupt to CPU 1's Rx task
     XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
 #endif
@@ -64,6 +62,7 @@ void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 0
+	xil_printf("DEBUG: CPU 1 to 0 Receive Callback reached\r\n");
     // In CPU 0, this callback should send an interrupt to CPU 1's Tx task
     XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
 #endif
@@ -74,6 +73,7 @@ void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 1
+	xil_printf("DEBUG: CPU 1 to 0 Send Callback reached\r\n");
     // In CPU 1, this callback should send an interrupt to CPU 0's Rx task
     XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
 #endif
@@ -84,6 +84,7 @@ void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
 #if XPAR_CPU_ID == 1
+	xil_printf("DEBUG: CPU 0 to 1 Receive Callback reached\r\n");
     // In CPU 1, this callback should send an interrupt to CPU 0's Tx task
     XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
 #endif

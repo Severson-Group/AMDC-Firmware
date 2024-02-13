@@ -1,6 +1,6 @@
 # Shared Code Folder
 
-This folder (`AMDC-Firmware/sdk/shared`) was created to contain source code shared by both CPU applications in the v2, FreeRTOS-based firmware.
+This folder (`AMDC-Firmware/sdk/shared`) contains source code shared by both CPU applications in the v2, FreeRTOS-based firmware.
 
 Shared code includes system-level source code for inter-core communication, interrupts, etc, as well as the [FreeRTOS-Kernel](https://github.com/FreeRTOS/FreeRTOS-Kernel) source code, which is available in `AMDC-Firmware/sdk/FreeRTOS-Kernel` as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 

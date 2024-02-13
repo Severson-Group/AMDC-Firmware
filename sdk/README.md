@@ -25,7 +25,7 @@ Combination of both `freertos_app_cpu0` and `freertos_app_cpu1`:
 
 - Designed for AMDC hardware platform (using PicoZed processor module)
 - Dual-core AMP design
-- Based on [FreeRTOS]()
+- Based on [FreeRTOS](https://freertos.org/)
 - User applications built neatly on top of core library code
 
 ### 3. `basic` &mdash; Preliminary C code developed for ZedBoard (*archived and not maintained*)
