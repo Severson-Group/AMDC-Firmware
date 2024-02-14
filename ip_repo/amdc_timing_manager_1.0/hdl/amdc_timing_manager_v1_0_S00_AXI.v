@@ -500,6 +500,12 @@
 	    end
 	end    
 
+    // Internal signals
+    wire [31:0] output_reg_5;
+	wire [31:0] output_reg_6;
+	wire [31:0] output_reg_7;
+    wire reset_sched_isr;
+
 	// Implement memory mapped register select and read logic generation
 	// Slave register read enable is asserted when valid address is available
 	// and the slave is ready to accept the read address.
@@ -550,9 +556,9 @@
 	// Add user logic here
 	
 	wire [15:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
-	wire output_reg_5 = {eddy1_time, eddy0_time};
-	wire output_reg_6 = {eddy3_time, eddy2_time};
-	wire output_reg_7 = {adc_time, encoder_time};
+	assign output_reg_5 = {eddy1_time, eddy0_time};
+	assign output_reg_6 = {eddy3_time, eddy2_time};
+	assign output_reg_7 = {adc_time, encoder_time};
 	wire [15:0] user_ratio;
 	wire [7:0] en_bits;
 	
@@ -560,9 +566,12 @@
 	// the lower 16 bits
 	assign user_ratio = slv_reg2[15:0];
 	
+	// reset interrupt 0
+	assign reset_sched_isr = slv_reg8[0];
+	
 	// Connect the wires to the LSBs of the slave register 0
 	// which the PS can write directly
-	assign interrupt_1 = slv_reg0[1:1];
+	assign interrupt_1 = slv_reg0[0];
 
 	// Get the enable bits from the user to
 	// decode them in the timing manager
@@ -571,7 +580,6 @@
 	// User defined method of synchronizing the pwm on high, low, or both
 	wire event_qualifier;
 	wire pwm_sync_high;
-	wire all_done;
 	wire pwm_sync_low;
 	assign pwm_sync_high = slv_reg3[0];
 	assign pwm_sync_low  = slv_reg3[1];
@@ -586,15 +594,12 @@
     //////////////////////////////////////////////////////////////////
 	assign event_qualifier =   (pwm_sync_high & pwm_carrier_high) | (pwm_sync_low & pwm_carrier_low); 
 	
+	// DEBUGGING
 	always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
 	   if (!S_AXI_ARESETN)
 	       debug <= 0;
-	   else if (eddy_0_done)
-	       debug[0] <= ~debug[0];
-	   else if (all_done)
-	       debug[1] <= ~debug[1];
 	   else if (sched_isr)
-	       debug[2] <= ~debug[2];
+	       debug <= ~debug;
 	end
 	
 	timing_manager iTime(
@@ -623,7 +628,11 @@
 	.eddy2_time(eddy2_time),
 	.eddy3_time(eddy3_time),
 	.trigger(trigger),
-	.all_done(all_done)
+	.all_done(all_done),
+	.count_time(count_time),
+	.eddy_0_pe(eddy_0_pe),
+	.all_done_pe(all_done_pe),
+	.reset_sched_isr(reset_sched_isr)
     );
 
 	// User logic ends

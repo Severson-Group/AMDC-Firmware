@@ -22,9 +22,9 @@ statistics_t *sensor_stats[NUM_SENSORS];
 /*
  * Sets up the interrupt system and enables interrupts for IRQ_F2P[1:0]
  */
-uint32_t interrupt_system_init()
+int interrupt_system_init()
 {
-    uint32_t result;
+    int result;
     XScuGic *intc_instance_ptr = &intc;
     XScuGic_Config *intc_config;
 
@@ -44,7 +44,7 @@ uint32_t interrupt_system_init()
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, ISR_RISING_EDGE);
 
     // Connect ISR0 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr0, (void *) &intc);
+    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr_0, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -56,7 +56,7 @@ uint32_t interrupt_system_init()
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_1, ISR1_PRIORITY, ISR_RISING_EDGE);
 
     // Connect ISR1 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr1, (void *) &intc);
+    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr_1, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -67,11 +67,10 @@ uint32_t interrupt_system_init()
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
     Xil_ExceptionRegisterHandler(
-        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
+            XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
 
     // Enable non-critical exceptions
     Xil_ExceptionEnable();
-
     // Successfully initialized ISR
     return XST_SUCCESS;
 }
@@ -84,19 +83,19 @@ void timing_manager_init()
 {
     printf("TIMING MANAGER:\tInitializing...\n");
     // Initialize interrupts
-    uint32_t result = 0;
+    int result = 0;
     result = interrupt_system_init();
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR + (8 * sizeof(uint32_t)), 0);
+
     if (result != XST_SUCCESS) {
         printf("Error initializing interrupt system.");
     }
 
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both();
-    printf("PWM: %li\n", Xil_In32(TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t))));
 
     // Set the user ratio for the trigger
-    timing_manager_set_ratio(2);
-    printf("Ratio: %li\n", Xil_In32(TIMING_MANAGER_BASE_ADDR + (2 * sizeof(uint32_t))));
+    timing_manager_set_ratio(20);
 
     // Enable selected sensors for timing acquisition
     timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
@@ -107,7 +106,7 @@ void timing_manager_init()
     }
 
     // Disable interrupt 1 - currently not needed
-    XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
+    //XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
 }
 
 /*
@@ -115,10 +114,13 @@ void timing_manager_init()
  * manager is set to 1, e.g. when all of the sensors are
  * done and the time has been collected.
  */
-void isr0(void *intc_inst_ptr)
+void isr_0(void *intc_inst_ptr)
 {
     // HANDLE INTERRUPT
-    xil_printf("ISR0 called\n\r");
+    printf("ISR0 called\n\r");
+    // Clear interrupt
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR + (8 * sizeof(uint32_t)), 1);
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR + (8 * sizeof(uint32_t)), 0);
     // Push stats for each sensor
     timing_manager_sensor_stats();
 }
@@ -127,10 +129,11 @@ void isr0(void *intc_inst_ptr)
  * ISR for IRQ_F2P[1:1]. Called when interrupt_1 in timing
  * manager is set to 1.
  */
-void isr1(void *intc_inst_ptr)
+void isr_1(void *intc_inst_ptr)
 {
     // HANDLE INTERRUPT
     xil_printf("ISR1 called\n\r");
+    *(baseaddr_p + 0) = 0x00000000;
 }
 
 void nops(uint32_t num)
@@ -326,4 +329,11 @@ statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
 {
     // Get pointer to the stats for the specified sensor
     return sensor_stats[sensor];
+}
+
+void test_int()
+{
+	printf("\nfunction called\n\r");
+	*(baseaddr_p + 0) = 0x00000001;
+	xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p+0));
 }
