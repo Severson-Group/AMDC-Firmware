@@ -17,7 +17,7 @@
 		// Users to add ports here
         input  wire [7:0] adc_sdo,
         input  wire trigger,
-		input  wire enable,
+	    input  wire enable,
         output wire adc_sck,
         output wire adc_cnv,
         output wire adc_done,
@@ -502,14 +502,6 @@
 	wire pwm_sync_low;
 	assign pwm_sync_high = slv_reg8[2];
 	assign pwm_sync_low  = slv_reg8[3];
-	
-	// Load data from ADC shift regs only at certain times (OLD LOGIC)
-	// wire load_latest_data = adc_data_valid &
-    //							(
-	//							(pwm_sync_low & pwm_carrier_low) |
-	//							(pwm_sync_high & pwm_carrier_high) |
-	//							(~pwm_sync_high & ~pwm_sync_low)
-	//						);
 	
 	// Load the latest data based on the pwm carrier high or low,
 	// from the trigger based in the timing manager, and only when

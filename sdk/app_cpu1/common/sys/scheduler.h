@@ -1,12 +1,13 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "sys/defines.h"
 #include "sys/task_stats.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
-#include <stdbool.h>
-#include <stdint.h>
 
 // Utility defines for time conversions
 #define USEC_IN_SEC       (1000000)

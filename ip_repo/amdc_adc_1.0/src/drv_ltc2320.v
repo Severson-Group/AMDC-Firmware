@@ -239,9 +239,9 @@ end
 // *****************************
 
 `define SM_IDLE             (3'b000)
-`define SM_CNV				(3'b001)
-`define SM_WAIT_CNV			(3'b010)
-`define SM_WAIT_SAMPLE		(3'b011)
+`define SM_CNV              (3'b001)
+`define SM_WAIT_CNV         (3'b010)
+`define SM_WAIT_SAMPLE      (3'b011)
 `define SM_RECV				(3'b100)
 `define SM_HANG				(3'b101)
 
@@ -271,17 +271,17 @@ always @(*) begin
 	assert_data_valid = 0;
 	
 	case (state)
-	    `SM_IDLE: begin
-	       // Wait for trigger signal to actually start the conversion
-	        if (trigger) begin
-	            next_state = `SM_CNV;
-	            deassert_data_valid = 1;
-	        end
-	    end
+        `SM_IDLE: begin
+            // Wait for trigger signal to actually start the conversion
+            if (trigger) begin
+                next_state = `SM_CNV;
+                deassert_data_valid = 1;
+            end
+        end
 	    
-		`SM_CNV: begin
+        `SM_CNV: begin
 			// Start conversion!
-			assert_cnv_n = 1;
+            assert_cnv_n = 1;
 			reset_delay_counter = 1;
 			
 			next_state = `SM_WAIT_CNV;

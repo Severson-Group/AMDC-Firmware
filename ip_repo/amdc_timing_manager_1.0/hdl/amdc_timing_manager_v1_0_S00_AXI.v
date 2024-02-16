@@ -24,7 +24,6 @@
         input  wire eddy_2_done,
         input  wire eddy_3_done,
         output wire sched_isr,
-        output wire interrupt_1,
 		output wire en_eddy_0,
 		output wire en_eddy_1,
 		output wire en_eddy_2,
@@ -568,10 +567,6 @@
 	
 	// reset interrupt 0
 	assign reset_sched_isr = slv_reg8[0];
-	
-	// Connect the wires to the LSBs of the slave register 0
-	// which the PS can write directly
-	assign interrupt_1 = slv_reg0[0];
 
 	// Get the enable bits from the user to
 	// decode them in the timing manager
@@ -628,10 +623,6 @@
 	.eddy2_time(eddy2_time),
 	.eddy3_time(eddy3_time),
 	.trigger(trigger),
-	.all_done(all_done),
-	.count_time(count_time),
-	.eddy_0_pe(eddy_0_pe),
-	.all_done_pe(all_done_pe),
 	.reset_sched_isr(reset_sched_isr)
     );
 

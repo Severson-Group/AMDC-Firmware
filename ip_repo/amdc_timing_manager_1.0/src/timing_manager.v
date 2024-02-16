@@ -9,7 +9,7 @@ module timing_manager(
                         eddy_0_done, eddy_1_done,
                         eddy_2_done, eddy_3_done,
                         // OUTPUTS
-                        sched_isr, all_done,
+                        sched_isr,
                         // Enable signals
                         en_eddy_0, en_eddy_1,
                         en_eddy_2, en_eddy_3,
@@ -18,8 +18,7 @@ module timing_manager(
                         adc_time, encoder_time,
                         eddy0_time, eddy1_time,
                         eddy2_time, eddy3_time,
-                        trigger, count_time,
-                        eddy_0_pe, all_done_pe,
+                        trigger
                         );
     
     ////////////
@@ -50,11 +49,11 @@ module timing_manager(
     // Holds the count to generate the interrupt based on the user ratio
     reg [15:0] count;
     // Signifies when all the sensors are done
-    output wire all_done;
+    wire all_done;
     // Counts FPGA clock cycles for each sensor
-    output reg [15:0] count_time;
+    reg [15:0] count_time;
     // See if any are enabled for all_done to be triggered
-    wire some_enabled;
+    wire sensors_enabled;
     reg set_sched_isr;
     
     //////////////////////////////////////////////////////////////////
@@ -109,23 +108,23 @@ module timing_manager(
     // is enabled and the done signal has been recieved. all_done   //
     // can also only be high if at least one sensor is enabled.     //
     //////////////////////////////////////////////////////////////////
-    assign some_enabled = en_eddy_0 | en_eddy_1 | en_eddy_2 | en_eddy_3 |
+    assign sensors_enabled = en_eddy_0 | en_eddy_1 | en_eddy_2 | en_eddy_3 |
                             en_encoder | en_adc;
     
-    assign all_done = ((!en_eddy_0 | (en_eddy_0 & eddy_0_done)) &
-                        (!en_eddy_1 | (en_eddy_1 & eddy_1_done)) &
-                        (!en_eddy_2 | (en_eddy_2 & eddy_2_done)) &
-                        (!en_eddy_3 | (en_eddy_3 & eddy_3_done)) &
-                        (!en_encoder | (en_encoder & encoder_done)) &
-                        (!en_adc || (en_adc && adc_done))) &
-                        some_enabled;
+    assign all_done = ((!en_eddy_0 || eddy_0_done) &
+                        (!en_eddy_1 || eddy_1_done) &
+                        (!en_eddy_2 || eddy_2_done) &
+                        (!en_eddy_3 || eddy_3_done) &
+                        (!en_encoder || encoder_done) &
+                        (!en_adc || adc_done)) &
+                        sensors_enabled;
 
 	//////////////////////////////////////////////////////////////////
 	// Rising edge detection for all_done, which signifies when to	//
 	// send an interrupt											//
 	//////////////////////////////////////////////////////////////////
 	reg all_done_ff;
-	output wire all_done_pe;
+	wire all_done_pe;
 	always @(posedge clk) begin
 		all_done_ff <= all_done;
 	end
@@ -166,8 +165,8 @@ module timing_manager(
     //////////////////////////////////////////////////////////////////
 
 	reg adc_ff, encoder_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
-	wire adc_pe, encoder_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
-	output wire eddy_0_pe;
+	wire adc_pe, encoder_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
+	
 	// Detect a rising edge for each done signal to copy over at that point
 	
 	// ADC

@@ -16,6 +16,7 @@
 // NOTE: UART uses 115200 baud
 
 #include "drv/bsp.h"
+#include "drv/timing_manager.h"
 #include "sys/cmd/cmd_counter.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
@@ -61,6 +62,8 @@ int main()
 
     // User BSP library initialization
     bsp_init();
+
+    test_int();
 
     // Initialize system tasks
     serial_init();
