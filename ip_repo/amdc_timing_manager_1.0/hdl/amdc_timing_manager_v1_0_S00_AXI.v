@@ -1,7 +1,7 @@
 
 `timescale 1 ns / 1 ps
 
-	module amdc_adc_v1_0_S00_AXI #
+	module amdc_timing_manager_v1_0_S00_AXI #
 	(
 		// Users to add parameters here
 
@@ -15,15 +15,24 @@
 	)
 	(
 		// Users to add ports here
-        input  wire [7:0] adc_sdo,
-        input  wire trigger,
-		input  wire enable,
-        output wire adc_sck,
-        output wire adc_cnv,
-        output wire adc_done,
-        input  wire adc_clkout,
         input  wire pwm_carrier_high,
         input  wire pwm_carrier_low,
+        input  wire adc_done,
+        input  wire encoder_done,
+        input  wire eddy_0_done,
+        input  wire eddy_1_done,
+        input  wire eddy_2_done,
+        input  wire eddy_3_done,
+        output wire sched_isr,
+		output wire en_eddy_0,
+		output wire en_eddy_1,
+		output wire en_eddy_2,
+		output wire en_eddy_3,
+    	output wire en_adc,
+		output wire en_encoder,
+		output wire trigger,
+		output reg [2:0] debug,
+
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -88,17 +97,6 @@
     		// accept the read data and response information.
 		input wire  S_AXI_RREADY
 	);
-    
-	// Replacement slave regs (0..7) which we populate
-	// with valid ADC data at the correct times.
-    reg [31:0] anlg1_out;
-    reg [31:0] anlg2_out;
-    reg [31:0] anlg3_out;
-    reg [31:0] anlg4_out;
-    reg [31:0] anlg5_out;
-    reg [31:0] anlg6_out;
-    reg [31:0] anlg7_out;
-    reg [31:0] anlg8_out;
 
 	// AXI4LITE signals
 	reg [C_S_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
@@ -122,7 +120,7 @@
 	//----------------------------------------------
 	//-- Signals for user logic register space example
 	//------------------------------------------------
-	//-- Number of Slave Registers 10
+	//-- Number of Slave Registers 16
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg0;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg1;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg2;
@@ -133,6 +131,12 @@
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg7;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg8;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg9;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg10;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg11;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg12;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg13;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg14;
+	reg [C_S_AXI_DATA_WIDTH-1:0]	slv_reg15;
 	wire	 slv_reg_rden;
 	wire	 slv_reg_wren;
 	reg [C_S_AXI_DATA_WIDTH-1:0]	 reg_data_out;
@@ -255,6 +259,12 @@
 	      slv_reg7 <= 0;
 	      slv_reg8 <= 0;
 	      slv_reg9 <= 0;
+	      slv_reg10 <= 0;
+	      slv_reg11 <= 0;
+	      slv_reg12 <= 0;
+	      slv_reg13 <= 0;
+	      slv_reg14 <= 0;
+	      slv_reg15 <= 0;
 	    end 
 	  else begin
 	    if (slv_reg_wren)
@@ -330,6 +340,48 @@
 	                // Slave register 9
 	                slv_reg9[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
 	              end  
+	          4'hA:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 10
+	                slv_reg10[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
+	          4'hB:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 11
+	                slv_reg11[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
+	          4'hC:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 12
+	                slv_reg12[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
+	          4'hD:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 13
+	                slv_reg13[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
+	          4'hE:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 14
+	                slv_reg14[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
+	          4'hF:
+	            for ( byte_index = 0; byte_index <= (C_S_AXI_DATA_WIDTH/8)-1; byte_index = byte_index+1 )
+	              if ( S_AXI_WSTRB[byte_index] == 1 ) begin
+	                // Respective byte enables are asserted as per write strobes 
+	                // Slave register 15
+	                slv_reg15[(byte_index*8) +: 8] <= S_AXI_WDATA[(byte_index*8) +: 8];
+	              end  
 	          default : begin
 	                      slv_reg0 <= slv_reg0;
 	                      slv_reg1 <= slv_reg1;
@@ -341,6 +393,12 @@
 	                      slv_reg7 <= slv_reg7;
 	                      slv_reg8 <= slv_reg8;
 	                      slv_reg9 <= slv_reg9;
+	                      slv_reg10 <= slv_reg10;
+	                      slv_reg11 <= slv_reg11;
+	                      slv_reg12 <= slv_reg12;
+	                      slv_reg13 <= slv_reg13;
+	                      slv_reg14 <= slv_reg14;
+	                      slv_reg15 <= slv_reg15;
 	                    end
 	        endcase
 	      end
@@ -441,6 +499,12 @@
 	    end
 	end    
 
+    // Internal signals
+    wire [31:0] output_reg_5;
+	wire [31:0] output_reg_6;
+	wire [31:0] output_reg_7;
+    wire reset_sched_isr;
+
 	// Implement memory mapped register select and read logic generation
 	// Slave register read enable is asserted when valid address is available
 	// and the slave is ready to accept the read address.
@@ -449,16 +513,22 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        4'h0   : reg_data_out <= anlg1_out; // slv_reg0
-	        4'h1   : reg_data_out <= anlg2_out; // slv_reg1
-	        4'h2   : reg_data_out <= anlg3_out; // slv_reg2
-	        4'h3   : reg_data_out <= anlg4_out; // slv_reg3
-	        4'h4   : reg_data_out <= anlg5_out; // slv_reg4
-	        4'h5   : reg_data_out <= anlg6_out; // slv_reg5
-	        4'h6   : reg_data_out <= anlg7_out; // slv_reg6
-	        4'h7   : reg_data_out <= anlg8_out; // slv_reg7
+	        4'h0   : reg_data_out <= slv_reg0;
+	        4'h1   : reg_data_out <= slv_reg1;
+	        4'h2   : reg_data_out <= slv_reg2;
+	        4'h3   : reg_data_out <= slv_reg3;
+	        4'h4   : reg_data_out <= slv_reg4;
+	        4'h5   : reg_data_out <= output_reg_5;
+	        4'h6   : reg_data_out <= output_reg_6;
+	        4'h7   : reg_data_out <= output_reg_7;
 	        4'h8   : reg_data_out <= slv_reg8;
 	        4'h9   : reg_data_out <= slv_reg9;
+	        4'hA   : reg_data_out <= slv_reg10;
+	        4'hB   : reg_data_out <= slv_reg11;
+	        4'hC   : reg_data_out <= slv_reg12;
+	        4'hD   : reg_data_out <= slv_reg13;
+	        4'hE   : reg_data_out <= slv_reg14;
+	        4'hF   : reg_data_out <= slv_reg15;
 	        default : reg_data_out <= 0;
 	      endcase
 	end
@@ -483,75 +553,79 @@
 	end    
 
 	// Add user logic here
-    wire adc_data_valid;
-    assign adc_done = adc_data_valid;
-    
-    wire [14:0] adc_data1;
-    wire [14:0] adc_data2;
-    wire [14:0] adc_data3;
-    wire [14:0] adc_data4;
-    wire [14:0] adc_data5;
-    wire [14:0] adc_data6;
-    wire [14:0] adc_data7;
-    wire [14:0] adc_data8;
 	
-	wire [1:0] clkdiv;
-	assign clkdiv = slv_reg8[1:0];
+	wire [15:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+	assign output_reg_5 = {eddy1_time, eddy0_time};
+	assign output_reg_6 = {eddy3_time, eddy2_time};
+	assign output_reg_7 = {adc_time, encoder_time};
+	wire [15:0] user_ratio;
+	wire [7:0] en_bits;
 	
+	// Get the user ratio from slave register 2, assigning
+	// the lower 16 bits
+	assign user_ratio = slv_reg2[15:0];
+	
+	// reset interrupt 0
+	assign reset_sched_isr = slv_reg8[0];
+
+	// Get the enable bits from the user to
+	// decode them in the timing manager
+	assign en_bits = slv_reg1[7:0];
+
+	// User defined method of synchronizing the pwm on high, low, or both
+	wire event_qualifier;
 	wire pwm_sync_high;
 	wire pwm_sync_low;
-	assign pwm_sync_high = slv_reg8[2];
-	assign pwm_sync_low  = slv_reg8[3];
+	assign pwm_sync_high = slv_reg3[0];
+	assign pwm_sync_low  = slv_reg3[1];
 	
-	// Load the latest data based on the pwm carrier high or low,
-	// from the trigger based in the timing manager, and only when
-	// the data is valid so as not to overlap a current conversion.
-	wire load_latest_data = adc_data_valid & trigger;
+	//////////////////////////////////////////////////////////////////
+    // Generate event qualifier signal based on PWM to start		//
+    // a conversion/sequence for a sensor. This allows firmware     //
+    // synchronization between all the sensors (ADC, encoder, eddy  //
+    // current sensor, AMDS) and user configuration. This also      //
+    // acts as the event qualifier for the sched ISR generation.    //
+    // It can only be triggered once that past cycle is complete.   //
+    //////////////////////////////////////////////////////////////////
+	assign event_qualifier =   (pwm_sync_high & pwm_carrier_high) | (pwm_sync_low & pwm_carrier_low); 
 	
-    drv_ltc2320 iADC1(
-        .clk(S_AXI_ACLK),
-        .rst_n(S_AXI_ARESETN),
-        .CNV_n(adc_cnv),
-        .trigger(trigger & enable),
-        .SCK(adc_sck),
-        .SDO(adc_sdo),
-        .CLKOUT(adc_clkout),
-        .data_valid(adc_data_valid),
-        .clkdiv(clkdiv),
-        .data1(adc_data1),
-        .data2(adc_data2),
-        .data3(adc_data3),
-        .data4(adc_data4),
-        .data5(adc_data5),
-        .data6(adc_data6),
-        .data7(adc_data7),
-        .data8(adc_data8)
+	// DEBUGGING
+	always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+	   if (!S_AXI_ARESETN)
+	       debug <= 0;
+	   else if (sched_isr)
+	       debug <= ~debug;
+	end
+	
+	timing_manager iTime(
+    .clk(S_AXI_ACLK),
+    .rst_n(S_AXI_ARESETN),
+    .event_qualifier(event_qualifier),
+    .user_ratio(user_ratio),
+	.en_bits(en_bits),
+    .adc_done(adc_done),
+    .encoder_done(encoder_done),
+    .eddy_0_done(eddy_0_done),
+    .eddy_1_done(eddy_1_done),
+    .eddy_2_done(eddy_2_done),
+    .eddy_3_done(eddy_3_done),
+    .sched_isr(sched_isr),
+	.en_eddy_0(en_eddy_0),
+	.en_eddy_1(en_eddy_1),
+	.en_eddy_2(en_eddy_2),
+	.en_eddy_3(en_eddy_3),
+	.en_adc(en_adc),
+	.en_encoder(en_encoder),
+	.adc_time(adc_time),
+	.encoder_time(encoder_time),
+	.eddy0_time(eddy0_time),
+	.eddy1_time(eddy1_time),
+	.eddy2_time(eddy2_time),
+	.eddy3_time(eddy3_time),
+	.trigger(trigger),
+	.reset_sched_isr(reset_sched_isr)
     );
-    
-    always @(posedge S_AXI_ACLK) begin
-        if (S_AXI_ARESETN == 1'b0) begin
-            anlg1_out <= 32'b0;
-            anlg2_out <= 32'b0;
-            anlg3_out <= 32'b0;
-            anlg4_out <= 32'b0;
-            anlg5_out <= 32'b0;
-            anlg6_out <= 32'b0;
-            anlg7_out <= 32'b0;
-            anlg8_out <= 32'b0;
-        end
 
-		else if (load_latest_data) begin
-			// Sign extend the 14-bit ADC data into the 32-bit reg
-			anlg1_out <= {{17{adc_data1[14]}}, adc_data1};
-			anlg2_out <= {{17{adc_data2[14]}}, adc_data2};
-			anlg3_out <= {{17{adc_data3[14]}}, adc_data3};
-			anlg4_out <= {{17{adc_data4[14]}}, adc_data4};
-			anlg5_out <= {{17{adc_data5[14]}}, adc_data5};
-			anlg6_out <= {{17{adc_data6[14]}}, adc_data6};
-			anlg7_out <= {{17{adc_data7[14]}}, adc_data7};
-			anlg8_out <= {{17{adc_data8[14]}}, adc_data8};
-		end
-    end
 	// User logic ends
 
 	endmodule

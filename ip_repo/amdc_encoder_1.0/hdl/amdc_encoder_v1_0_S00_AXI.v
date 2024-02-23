@@ -18,8 +18,9 @@
         input wire A,
         input wire B,
         input wire Z,
-		input wire pwm_carrier_high,
-		input wire pwm_carrier_low,
+		input wire trigger,
+		input wire enable,
+		output wire done,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -416,10 +417,10 @@
         .counter(counter),
 		.position(position),
 		.pulses_per_rev(slv_reg2),
-		.pwm_carrier_high(pwm_carrier_high),
-		.pwm_carrier_low(pwm_carrier_low),
+		.trigger(trigger & enable),
 		.position_synced(position_synced),
-		.steps_synced(steps_synced)
+		.steps_synced(steps_synced),
+		.done(done)
     );
 
 

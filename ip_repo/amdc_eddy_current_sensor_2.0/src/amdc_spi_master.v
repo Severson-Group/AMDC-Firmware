@@ -383,7 +383,7 @@ module amdc_spi_master(
             shift_debug <= ~shift_debug;
     end
 
-    assign debug[0] = shift_debug;
+    assign debug[0] = trigger;
     assign debug[1] = 1'b1;
     assign debug[2] = 1'b1;
 

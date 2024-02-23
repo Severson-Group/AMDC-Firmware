@@ -19,6 +19,7 @@
 		input wire enable,
 		input wire pwm_carrier_high,
 		input wire pwm_carrier_low,
+		input wire trigger,
 
 		output wire [1:0] sensor_control_out,
 		output wire done,
@@ -84,7 +85,8 @@
 		.sclk(sensor_control_out[0]),
 		.cnv(sensor_control_out[1]),
 		.done(done),
-		.debug(debug)
+		.debug(debug),
+		.trigger(trigger)
 	);
 
 	// Add user logic here

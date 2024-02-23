@@ -192,7 +192,6 @@ void scheduler_run(void)
     while (1) {
         uint32_t my_elapsed_usec = elapsed_usec;
         tasks_running = true;
-
         task_control_block_t *t = tasks;
         while (t != NULL) {
             uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
@@ -211,7 +210,6 @@ void scheduler_run(void)
             // Go to next task in linked list
             t = t->next;
         }
-
         tasks_running = false;
 
 #if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1

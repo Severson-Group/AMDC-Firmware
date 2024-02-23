@@ -12,11 +12,6 @@ void analog_init(uint32_t base_addr)
 
     // Set SCK to 50MHz (200MHz / 4)
     analog_set_clkdiv(ANALOG_CLKDIV4);
-
-    // Set PWM sync to both high and low of triangle carrier
-    bool sync_to_carrier_high = true;
-    bool sync_to_carrier_low = true;
-    analog_set_pwm_sync(sync_to_carrier_high, sync_to_carrier_low);
 }
 
 int analog_set_clkdiv(analog_clkdiv_e div)
@@ -79,25 +74,4 @@ int analog_geti(analog_channel_e channel, int16_t *out_value)
     *out_value = (int16_t) reg;
 
     return SUCCESS;
-}
-
-void analog_set_pwm_sync(bool sync_to_carrier_high, bool sync_to_carrier_low)
-{
-    // Read in CONTROL register
-    uint32_t reg = m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4];
-
-    if (sync_to_carrier_high) {
-        reg |= (1 << ANALOG_DEFS_CONTROL_PWM_SYNC_HIGH_SHIFT);
-    } else {
-        reg &= ~(1 << ANALOG_DEFS_CONTROL_PWM_SYNC_HIGH_SHIFT);
-    }
-
-    if (sync_to_carrier_low) {
-        reg |= (1 << ANALOG_DEFS_CONTROL_PWM_SYNC_LOW_SHIFT);
-    } else {
-        reg &= ~(1 << ANALOG_DEFS_CONTROL_PWM_SYNC_LOW_SHIFT);
-    }
-
-    // Write out CONTROL register
-    m_adc[ANALOG_DEFS_OFFSET_CONTROL / 4] = reg;
 }

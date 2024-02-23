@@ -32,6 +32,7 @@ module drv_ltc2320(
 	CNV_n, SCK, SDO, CLKOUT,
 	data_valid,
 	clkdiv,
+	trigger,
 	data1, data2, data3, data4,
 	data5, data6, data7, data8
 );
@@ -40,7 +41,7 @@ module drv_ltc2320(
 input clk, rst_n;
 
 input CLKOUT;
-
+input trigger;
 input wire [1:0] clkdiv;
 
 // ADC signals
@@ -237,11 +238,12 @@ end
 // *****************************
 // *****************************
 
-`define SM_CNV				(3'b000)
-`define SM_WAIT_CNV			(3'b001)
-`define SM_WAIT_SAMPLE		(3'b010)
-`define SM_RECV				(3'b011)
-`define SM_HANG				(3'b100)
+`define SM_IDLE             (3'b000)
+`define SM_CNV              (3'b001)
+`define SM_WAIT_CNV         (3'b010)
+`define SM_WAIT_SAMPLE      (3'b011)
+`define SM_RECV				(3'b100)
+`define SM_HANG				(3'b101)
 
 // Infer state registers
 reg [2:0] state;
@@ -249,7 +251,7 @@ reg [2:0] next_state;
 
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		state <= `SM_CNV;
+		state <= `SM_IDLE;    // Default state is IDLE
 	else
 		state <= next_state;
 end
@@ -269,9 +271,17 @@ always @(*) begin
 	assert_data_valid = 0;
 	
 	case (state)
-		`SM_CNV: begin
+        `SM_IDLE: begin
+            // Wait for trigger signal to actually start the conversion
+            if (trigger) begin
+                next_state = `SM_CNV;
+                deassert_data_valid = 1;
+            end
+        end
+	    
+        `SM_CNV: begin
 			// Start conversion!
-			assert_cnv_n = 1;
+            assert_cnv_n = 1;
 			reset_delay_counter = 1;
 			
 			next_state = `SM_WAIT_CNV;
