@@ -44,7 +44,8 @@ int interrupt_system_init()
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, ISR_RISING_EDGE);
 
     // Connect ISR0 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr_0, (void *) intc_instance_ptr);
+    result = XScuGic_Connect(
+        intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr_0, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -56,7 +57,8 @@ int interrupt_system_init()
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_1, ISR1_PRIORITY, ISR_RISING_EDGE);
 
     // Connect ISR1 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr_1, (void *) intc_instance_ptr);
+    result = XScuGic_Connect(
+        intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr_1, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -67,7 +69,7 @@ int interrupt_system_init()
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
     Xil_ExceptionRegisterHandler(
-            XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
+        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
 
     // Enable non-critical exceptions
     Xil_ExceptionEnable();
@@ -106,7 +108,7 @@ void timing_manager_init()
     }
 
     // Disable interrupt 1 - currently not needed
-    //XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
+    // XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
 }
 
 /*
@@ -333,7 +335,7 @@ statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
 
 void test_int()
 {
-	printf("\nfunction called\n\r");
-	*(baseaddr_p + 0) = 0x00000001;
-	xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p+0));
+    printf("\nfunction called\n\r");
+    *(baseaddr_p + 0) = 0x00000001;
+    xil_printf("slv_reg0: 0x%08x\n\r", *(baseaddr_p + 0));
 }
