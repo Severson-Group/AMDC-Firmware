@@ -8,31 +8,74 @@
 // CPUs, use "#if XPAR_CPU_ID == ?"
 ///////////////////////////////////////////////////////
 
-void icc_init(uint32_t cpu_num)
+void icc_init()
 {
 #if XPAR_CPU_ID == 0
-	// ONLY CPU 0 INITIALIZES THE MESSAGE BUFFERS
+    // ONLY CPU 0 INITIALIZES THE MESSAGE BUFFERS
+
+    // Wait for CPU1 to provide the function pointers to its callbacks ()
+    while (!ICC_getFunctionPointersReady)
+        ;
+
+    // Use the getters once ready
+    void (*vCPU0to1ReceiveCallback)() = ICC_getCPU0to1ReceiveCallback;
+    xil_printf("DEBUG: CPU 0 got 0to1 Receive Callback %p\r\n", (void *) vCPU0to1ReceiveCallback);
+    void (*vCPU1to0SendCallback)() = ICC_getCPU1to0SendCallback;
+    xil_printf("DEBUG: CPU 0 got 1to0 Send Callback %p\r\n", (void *) vCPU1to0SendCallback);
 
     /* Create two message buffers for inter-core communication that use the callback
      * functions below as send and receive completed callback functions. */
-    xCPU0to1MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                                   ICC_CPU0to1_BufferSpaceAddr,
-																   ICC_CPU0to1_BufferStructAddr,
-                                                                   vCPU0to1SendCallback,
-                                                                   vCPU0to1ReceiveCallback);
+    xCPU0to1MessageBufferHandle = xMessageBufferCreateStaticWithCallback(
+        ICC_BUFFER_SIZE - 1,
+        ICC_CPU0to1BufferSpaceAddr,
+        ICC_CPU0to1BufferStructAddr,
+        vCPU0to1SendCallback,     // Called by CPU0 after placing message in 0to1 buffer
+        vCPU0to1ReceiveCallback); // Called by CPU1 after removing message from 0to1 buffer
 
-    xCPU1to0MessageBuffer = xMessageBufferCreateStaticWithCallback(ICC_BUFFER_SIZE - 1,
-                                                                   ICC_CPU1to0_BufferSpaceAddr,
-																   ICC_CPU1to0_BufferStructAddr,
-                                                                   vCPU1to0SendCallback,
-                                                                   vCPU1to0ReceiveCallback);
+    xCPU1to0MessageBufferHandle = xMessageBufferCreateStaticWithCallback(
+        ICC_BUFFER_SIZE - 1,
+        ICC_CPU1to0BufferSpaceAddr,
+        ICC_CPU1to0BufferStructAddr,
+        vCPU1to0SendCallback,     // Called by CPU1 after placing message in 1to0 buffer
+        vCPU1to0ReceiveCallback); // Called by CPU0 after removing message from 1to0 buffer
+
+    ICC_setCPU0to1Handle(xCPU0to1MessageBufferHandle);
+    xil_printf("DEBUG: CPU 0 set 0to1 Handle %p\r\n", (void *) xCPU0to1MessageBufferHandle);
+    //    void * test = ICC_getCPU0to1Handle;
+    //    xil_printf("DEBUG: CPU 0 got 0to1 Handle %p\r\n",(void *)test);
+    ICC_setCPU1to0Handle(xCPU1to0MessageBufferHandle);
+    xil_printf("DEBUG: CPU 0 set 1to0 Handle %p\r\n", (void *) xCPU1to0MessageBufferHandle);
+
+    ICC_setHandleComplete;
+#elif XPAR_CPU_ID == 1
+    /* need to stall 10ms to "guarantee" that CPU1 does not get before CPU0 sets
+     * The APU freq is 666,666,687 Hz (per ps7_init.h), so a single NOP is 1/(666,666,687) or 1.5ns
+     * Therefore we need 6.66E6 NOPs to stall 10ms
+     */
+
+    // Make CPU1's callback function pointers available to CPU0
+    ICC_setCPU1to0SendCallback(&vCPU1to0SendCallback);
+    xil_printf("DEBUG: CPU 1 set 1to0 Send Callback %p\r\n", &vCPU1to0SendCallback);
+    ICC_setCPU0to1ReceiveCallback(&vCPU0to1ReceiveCallback);
+    xil_printf("DEBUG: CPU 1 set 0to1 Receive Callback %p\r\n", &vCPU0to1ReceiveCallback);
+
+    ICC_setFunctionPointersReady;
+
+    // Wait for CPU0 to finish creating buffers and providing the handles
+    while (!ICC_getHandleComplete)
+        ;
+
+    xCPU0to1MessageBufferHandle = ICC_getCPU0to1Handle;
+    xil_printf("DEBUG: CPU 1 got 0to1 Handle %p\r\n", (void *) xCPU0to1MessageBufferHandle);
+    xCPU1to0MessageBufferHandle = ICC_getCPU1to0Handle;
+    xil_printf("DEBUG: CPU 1 got 1to0 Handle %p\r\n", (void *) xCPU1to0MessageBufferHandle);
 #endif
 }
 
 /* From FreeRTOS:
  * Insert code into callback which is invoked when a message is written to the message buffer.
  * This is useful when a message buffer is used to pass messages between
- * cores on a multicore processor. In that scenario, this callback
+ * cores on a multi-core processor. In that scenario, this callback
  * can be implemented to generate an interrupt in the other CPU core,
  * and the interrupt's service routine can then use the
  * xMessageBufferSendCompletedFromISR() API function to check, and if
@@ -46,46 +89,50 @@ void icc_init(uint32_t cpu_num)
  * send to the 0 to 1 buffer, so in CPU 1 this callback doesn't need to DO ANYTHING except exist.
  * - Patrick */
 
+#if XPAR_CPU_ID == 0
+
 void vCPU0to1SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t xIsInsideISR,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
-#if XPAR_CPU_ID == 0
-	xil_printf("DEBUG: CPU 0 to 1 Send Callback reached\r\n");
-    // In CPU 0, this callback should send an interrupt to CPU 1's Rx task
-    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
-#endif
+    xil_printf("DEBUG: CPU 0 to 1 Send Callback reached (in CPU0)\r\n");
+    // In CPU 0, this callback should send an interrupt to CPU 1 to unblock its Rx task
+
+    // XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, CPU1_ID);
 }
 
 void vCPU1to0ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t xIsInsideISR,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
-#if XPAR_CPU_ID == 0
-	xil_printf("DEBUG: CPU 1 to 0 Receive Callback reached\r\n");
-    // In CPU 0, this callback should send an interrupt to CPU 1's Tx task
-    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
-#endif
+    xil_printf("DEBUG: CPU 1 to 0 Receive Callback reached (in CPU0)\r\n");
+    // In CPU 0, this callback should send an interrupt to CPU 1 to unblock its Tx task
+    // (since the buffer might have an open space now)
+
+    // XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, CPU1_ID);
 }
+
+#elif XPAR_CPU_ID == 1
 
 void vCPU1to0SendCallback(MessageBufferHandle_t xMessageBuffer,
                           BaseType_t xIsInsideISR,
                           BaseType_t *const pxHigherPriorityTaskWoken)
 {
-#if XPAR_CPU_ID == 1
-	xil_printf("DEBUG: CPU 1 to 0 Send Callback reached\r\n");
-    // In CPU 1, this callback should send an interrupt to CPU 0's Rx task
-    XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
-#endif
+    xil_printf("DEBUG: CPU 1 to 0 Send Callback reached (in CPU1)\r\n");
+    // In CPU 1, this callback should send an interrupt to CPU 0 to unblock its Rx task
+
+    // XScuGic_SoftwareIntr(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, CPU0_ID);
 }
 
 void vCPU0to1ReceiveCallback(MessageBufferHandle_t xMessageBuffer,
                              BaseType_t xIsInsideISR,
                              BaseType_t *const pxHigherPriorityTaskWoken)
 {
-#if XPAR_CPU_ID == 1
-	xil_printf("DEBUG: CPU 0 to 1 Receive Callback reached\r\n");
-    // In CPU 1, this callback should send an interrupt to CPU 0's Tx task
-    XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
-#endif
+    xil_printf("DEBUG: CPU 0 to 1 Receive Callback reached (in CPU1)\r\n");
+    // In CPU 1, this callback should send an interrupt to CPU 0 to unblock its Tx task
+    // (since the buffer might have an open space)
+
+    // XScuGic_SoftwareIntr(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, CPU0_ID);
 }
+
+#endif

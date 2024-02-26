@@ -81,7 +81,7 @@ void CPU0WakeTxHandler()
     xil_printf("CPU 0 - WakeTxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xMessageBufferReceiveCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
+    xMessageBufferReceiveCompletedFromISR(xCPU0to1MessageBufferHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
@@ -90,7 +90,7 @@ void CPU0WakeRxHandler()
     xil_printf("CPU 0 - WakeRxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xMessageBufferSendCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
+    xMessageBufferSendCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 #elif XPAR_CPU_ID == 1
@@ -99,7 +99,7 @@ void CPU1WakeTxHandler()
     xil_printf("CPU 1 - WakeTxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBuffer, &xHigherPriorityTaskWoken);
+    xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
@@ -108,7 +108,7 @@ void CPU1WakeRxHandler()
     xil_printf("CPU 1 - WakeRxHandler reached\r\n");
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xMessageBufferSendCompletedFromISR(xCPU0to1MessageBuffer, &xHigherPriorityTaskWoken);
+    xMessageBufferSendCompletedFromISR(xCPU0to1MessageBufferHandle, &xHigherPriorityTaskWoken);
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 #endif
