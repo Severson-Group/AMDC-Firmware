@@ -155,7 +155,7 @@ int main(void)
                 (const char *) "CPU0_Tx", /* Text name for the task, provided to assist debugging only. */
                 configMINIMAL_STACK_SIZE, /* The stack allocated to the task. */
                 NULL,                     /* The task parameter is not used, so set to NULL. */
-                tskIDLE_PRIORITY,         /* The task runs at the idle priority. */
+                tskIDLE_PRIORITY,
                 &xTxTaskHandle);
 
     xTaskCreate(prvRxTask,                /* The function that implements the task. */
@@ -233,15 +233,15 @@ static void prvTxTask(void *pvParameters)
             //             HWstring, /* The address of the data being sent. */
             //             0UL);     /* The block time. */
 
-            xil_printf("DEBUG: CPU 0 about to attempt send\r\n");
+            xil_printf("DEBUG: CPU0 about to attempt send\r\n");
 
             // Send a message to the other core
-            size_t bytes_sent = xMessageBufferSend(xCPU0to1MessageBuffer, HWstring, sizeof(HWstring), 0UL);
+            size_t bytes_sent = xMessageBufferSend(xCPU0to1MessageBufferHandle, HWstring, sizeof(HWstring), 0UL);
 
             xil_printf("DEBUG: CPU0 sent %d bytes to ICC buffer\r\n", bytes_sent);
 
             if (bytes_sent == 0) {
-                xil_printf("ERROR: CPU 0 failed to write to ICC buffer\r\n");
+                xil_printf("ERROR: CPU0 failed to write to ICC buffer\r\n");
             }
         }
     }
@@ -263,14 +263,14 @@ static void prvRxTask(void *pvParameters)
             //                Rcvdstring,     /* Data is read into this address. */
             //                portMAX_DELAY); /* Wait without a timeout for data. */
 
-            xil_printf("DEBUG: CPU 0 about to attempt rcv\r\n");
+            xil_printf("DEBUG: CPU0 about to attempt rcv\r\n");
 
-            size_t bytes_rcvd = xMessageBufferReceive(xCPU1to0MessageBuffer, Rcvdstring, 32, portMAX_DELAY);
+            size_t bytes_rcvd = xMessageBufferReceive(xCPU1to0MessageBufferHandle, Rcvdstring, 32, portMAX_DELAY);
 
             xil_printf("DEBUG: CPU0 rcvd %d bytes from ICC buffer\r\n", bytes_rcvd);
 
             if (bytes_rcvd == 0) {
-                xil_printf("CPU 0 failed to receive from ICC buffer\r\n");
+                xil_printf("CPU0 failed to receive from ICC buffer\r\n");
             } else {
                 /* Print the received data. */
                 xil_printf("CPU0 - Rx task received string from CPU1 Tx: %s\r\n", Rcvdstring);
