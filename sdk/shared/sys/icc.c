@@ -11,7 +11,7 @@
 void icc_init()
 {
 #if XPAR_CPU_ID == 0
-    // ONLY CPU 0 INITIALIZES THE MESSAGE BUFFERS
+    // CPU0 HANDLES INITIALIZING THE MESSAGE BUFFERS
 
     // Wait for CPU1 to provide the function pointers to its callbacks ()
     while (!ICC_getFunctionPointersReady)

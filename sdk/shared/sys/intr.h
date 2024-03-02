@@ -2,7 +2,7 @@
 #define INTR_H
 
 #include "FreeRTOS.h"
-#include "icc.h"
+#include "shared_memory.h"
 #include "xil_exception.h"
 #include "xil_printf.h"
 #include "xparameters.h"
@@ -11,8 +11,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
-// test
 
 ///////////////////////////////////////////////////////
 // THIS IS A SHARED FILE, SO IT IS ALWAYS
@@ -25,16 +23,13 @@
 #define CPU0_ID (XSCUGIC_SPI_CPU0_MASK << 0)
 #define CPU1_ID (XSCUGIC_SPI_CPU0_MASK << 1)
 
-#define INTC_DEVICE_ID XPAR_SCUGIC_SINGLE_DEVICE_ID
+#define INTR_GIC_DEVICE_ID          XPAR_PS7_SCUGIC_0_DEVICE_ID     // good
 
 #define INTC_0TO1_SEND_INTERRUPT_ID 0U
 #define INTC_1TO0_RCVE_INTERRUPT_ID 1U
 #define INTC_1TO0_SEND_INTERRUPT_ID 2U
 #define INTC_0TO1_RCVE_INTERRUPT_ID 3U
 
-// Interrupt Controller Instance
-//   Defined here to be accessable in sys/icc.c
-static XScuGic InterruptController;
 
 int intr_init();
 
