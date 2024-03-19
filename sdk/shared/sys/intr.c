@@ -62,36 +62,56 @@
 int intr_init()
 {
 #if XPAR_CPU_ID == 0
-    // CPU0 HANDLES INITIALIZING EVERYTHING INTERRUPT-RELATED
-
-    // Initialize the GIC Here
-    xil_printf("GIC: Initializing...\n");
+    // CPU0 handles initialization of the Generic Interrrupt Controller
+    xil_printf("INTR: Initializing GIC...\n");
     XScuGic_Config * gic_config_ptr = XScuGic_LookupConfig(INTR_GIC_DEVICE_ID);
-    s32 gic_init_status = XScuGic_CfgInitialize(&INTR_GIC_INSTANCE, gic_config_ptr, gic_config_ptr->CpuBaseAddress);
 
+    // gic_config_ptr provides the Xilinx base addresses of:
+    //   - the GIC's distributor registers (the distributor is a shared resource that distributes interrupts to the CPUs)
+    //   - the "CPU Interface" registers, each CPU has an interface that needs to be configured to interact with the GIC 
+    s32 gic_init_status = XScuGic_CfgInitialize(INTR_GIC_INSTANCE_ADDR, gic_config_ptr, gic_config_ptr->CpuBaseAddress);
     if (gic_init_status != XST_SUCCESS) {
-		xil_printf("GIC: Initialization Failed\n");
-		while(1);
+		xil_printf("INTR: GIC Initialization Failed\n");
+		return XST_FAILURE;
 	}
-	xil_printf("GIC: Initialization Success\n");
-
-
-
-
-    // // Initialize the interrupt controller
-    // Xil_ExceptionRegisterHandler(
-    //     XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, &InterruptController);
-    // Xil_ExceptionEnable();
-
-
-    // Connect the given interrupt with its handler
-    // XScuGic_Connect(&InterruptController, INTC_1TO0_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeRxHandler, NULL);
-    // XScuGic_Connect(&InterruptController, INTC_0TO1_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU0WakeTxHandler, NULL);
-
+	xil_printf("INTR: GIC Initialization Success\n");
+    INTR_setGicInitReady;
 #elif XPAR_CPU_ID == 1
-    // Connect the given interrupt with its handler
-    // XScuGic_Connect(&InterruptController, INTC_0TO1_SEND_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeRxHandler, NULL);
-    // XScuGic_Connect(&InterruptController, INTC_1TO0_RCVE_INTERRUPT_ID, (Xil_ExceptionHandler) CPU1WakeTxHandler, NULL);
+    // Wait for CPU0 to finish GIC initialization
+    while (!INTR_getGicInitReady)
+        ;
+
+    // CPU1 still needs to configure its own CPU Interface, using these lines pulled from CPUInitialize() in xscugic.c
+    //   CPU0 does this by calling CPUInitialize() within XScuGic_CfgInitialize() (xscugic.c, Line 481), but because of the GIC 
+    //   ready check on Line 439 of xscugic.c, if CPU1 calls  XScuGic_CfgInitialize(), it will skip the call to CPUInitialize()
+    //   if CPU0 has already marked the GIC as ready.
+	XScuGic_CPUWriteReg(INTR_GIC_INSTANCE_ADDR, XSCUGIC_CPU_PRIOR_OFFSET, 0xF0U);
+	XScuGic_CPUWriteReg(INTR_GIC_INSTANCE_ADDR, XSCUGIC_CONTROL_OFFSET, 0x07U);
+#endif
+
+    // BOTH CORES: Connect the ARM processor's InterruptHandler logic to the initialized GIC
+    Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, INTR_GIC_INSTANCE_ADDR);
+    Xil_ExceptionEnable();
+
+#if XPAR_CPU_ID == 0
+    // Each CPU needs to connect its software interrupts to the appropriate handlers defined below, then enable
+    XScuGic_Connect(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU0_RX_INT_ID, 
+        (Xil_ExceptionHandler)CPU0UnblockRxHandler, (void *)INTR_GIC_INSTANCE_ADDR);
+    XScuGic_Enable(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU0_RX_INT_ID);
+
+    XScuGic_Connect(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU0_TX_INT_ID, 
+        (Xil_ExceptionHandler)CPU0UnblockTxHandler, (void *)INTR_GIC_INSTANCE_ADDR);
+    XScuGic_Enable(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU0_TX_INT_ID);
+	
+#elif XPAR_CPU_ID == 1
+    XScuGic_Connect(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU1_RX_INT_ID,
+        (Xil_ExceptionHandler)CPU1UnblockRxHandler, (void *)INTR_GIC_INSTANCE_ADDR);
+    XScuGic_Enable(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU1_RX_INT_ID);
+
+    XScuGic_Connect(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU1_TX_INT_ID, 
+        (Xil_ExceptionHandler)CPU1UnblockTxHandler, (void *)INTR_GIC_INSTANCE_ADDR);
+    XScuGic_Enable(INTR_GIC_INSTANCE_ADDR, INTR_UNBLOCK_CPU1_TX_INT_ID);
+	
 #endif
 
     return XST_SUCCESS;
@@ -100,39 +120,39 @@ int intr_init()
 /* We only need to define the handlers in the appropriate core
  */
 #if XPAR_CPU_ID == 0
-void CPU0WakeTxHandler()
+void CPU0UnblockRxHandler()
 {
-    // xil_printf("CPU 0 - WakeTxHandler reached\r\n");
+    xil_printf("M\r\n");
+
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    xMessageBufferSendCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void CPU0UnblockTxHandler()
+{
+    xil_printf("N\r\n");
 
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     // xMessageBufferReceiveCompletedFromISR(xCPU0to1MessageBufferHandle, &xHigherPriorityTaskWoken);
     // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
-
-void CPU0WakeRxHandler()
-{
-    // xil_printf("CPU 0 - WakeRxHandler reached\r\n");
-
-    // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    // xMessageBufferSendCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
-    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
 #elif XPAR_CPU_ID == 1
-void CPU1WakeTxHandler()
+void CPU1UnblockRxHandler()
 {
-    // xil_printf("CPU 1 - WakeTxHandler reached\r\n");
-
-    // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    // xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
-    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
-void CPU1WakeRxHandler()
-{
-    // xil_printf("CPU 1 - WakeRxHandler reached\r\n");
+    xil_printf("m\r\n");
 
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     // xMessageBufferSendCompletedFromISR(xCPU0to1MessageBufferHandle, &xHigherPriorityTaskWoken);
+    // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void CPU1UnblockTxHandler()
+{
+    xil_printf("n\r\n");
+
+    // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    // xMessageBufferReceiveCompletedFromISR(xCPU1to0MessageBufferHandle, &xHigherPriorityTaskWoken);
     // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 #endif

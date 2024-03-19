@@ -4,6 +4,7 @@
 #include "xparameters.h"
 #include "xscugic.h"
 #include "xil_printf.h"
+#include "message_buffer.h"
 
 ///////////////////////////////////////////////////////
 // THIS IS A SHARED FILE, SO IT IS ALWAYS
@@ -31,6 +32,12 @@
 #define ICC_LOCK_SIZE          (sizeof(uint8_t))
 #define ICC_FUNC_PTR_SIZE      (sizeof(void *))
 
+/* These are the handles for the Message Buffers that need to be used by other tasks
+ *   In reality, the handle is just the pointer to the message buffer struct (its memory address)
+ *   These should end up being the addresses computed above */
+MessageBufferHandle_t xCPU0to1MessageBufferHandle;
+MessageBufferHandle_t xCPU1to0MessageBufferHandle;
+
 /* Define the pointers to the two structs (that store the metadata) and two message spaces (that hold the messages) in
  * shared memory. The ICC_BUFFER_SIZE Should be one more than the value passed in the xBufferSizeBytes parameter. The
  * two structs will be located back-to-back right at the base addr of the shared OCM, followed thereafter by the actual
@@ -40,12 +47,6 @@
 
 #define ICC_CPU0to1BufferSpaceAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (0 * ICC_BUFFER_SIZE)))
 #define ICC_CPU1to0BufferSpaceAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (1 * ICC_BUFFER_SIZE)))
-
-/* These are the handles for the Message Buffers that need to be used by other tasks
- *   In reality, the handle is just the pointer to the message buffer struct (its memory address)
- *   These should end up being the addresses computed above */
-MessageBufferHandle_t xCPU0to1MessageBufferHandle;
-MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 
 /* These memory spaces are used to transfer the Message Buffer Handles from CPU0 (who does the initialization work, and
  * gets the handles from the xMessageBufferCreateStaticWithCallback function) to CPU1 (who doesn't initialize anything
@@ -87,13 +88,23 @@ MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 ///////////////////////////////////
 //  INTERRUPTS / GIC
 /////////////////////////////////
-#define INTR_SHARED_MEMORY_BASE_ADDR    (ICC_functionPointersLockAddr + sizeof(uint8_t))
+#define INTR_UNBLOCK_CPU0_RX_INT_ID 0
+#define INTR_UNBLOCK_CPU0_TX_INT_ID 1
+#define INTR_UNBLOCK_CPU1_RX_INT_ID 2
+#define INTR_UNBLOCK_CPU1_TX_INT_ID 3
+
+#define INTR_SHARED_MEMORY_BASE_ADDR    (0xFFFFF000)//(ICC_functionPointersLockAddr + sizeof(uint8_t))
 #define INTR_GIC_INSTANCE_SIZE          (sizeof(XScuGic))
 
 // Interrupt Controller Instance
-//   Defined here to be accessable in both sys/icc.c and sys/intr.h
-#define INTR_GenericInterruptControllerInstanceAddr    (INTR_SHARED_MEMORY_BASE_ADDR)
-#define INTR_GIC_INSTANCE                              (*((XScuGic *)INTR_GenericInterruptControllerInstanceAddr))
+//   Defined here to be accessible in both sys/icc.c and sys/intr.h
+#define INTR_GIC_INSTANCE_ADDR      ((XScuGic *)INTR_SHARED_MEMORY_BASE_ADDR)
+#define INTR_gicInstance            (*((XScuGic *)INTR_GIC_INSTANCE_ADDR))
 
+// Interrupt Controller Initializaton Lock w/ getter & setter
+#define INTR_gicInitLockAddr (INTR_GIC_INSTANCE_ADDR + INTR_GIC_INSTANCE_SIZE)
+
+#define INTR_getGicInitReady  (*((uint8_t *) INTR_gicInitLockAddr))
+#define INTR_setGicInitReady  (*((uint8_t *) INTR_gicInitLockAddr) = 1)
 
 #endif /* SHARED_MEMORY_H */
