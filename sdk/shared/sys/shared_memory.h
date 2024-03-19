@@ -94,13 +94,13 @@ MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 #define INTR_UNBLOCK_CPU1_RX_INT_ID 2
 #define INTR_UNBLOCK_CPU1_TX_INT_ID 3
 
-#define INTR_SHARED_MEMORY_BASE_ADDR (0xFFFFF000) //(ICC_functionPointersLockAddr + sizeof(uint8_t))
+#define INTR_SHARED_MEMORY_BASE_ADDR (ICC_functionPointersLockAddr + sizeof(uint8_t))
 #define INTR_GIC_INSTANCE_SIZE       (sizeof(XScuGic))
 
 // Interrupt Controller Instance
 //   Defined here to be accessible in both sys/icc.c and sys/intr.h
-#define INTR_GIC_INSTANCE_ADDR ((XScuGic *) INTR_SHARED_MEMORY_BASE_ADDR)
-#define INTR_gicInstance       (*((XScuGic *) INTR_GIC_INSTANCE_ADDR))
+#define INTR_GIC_INSTANCE_ADDR ((XScuGic *) (INTR_SHARED_MEMORY_BASE_ADDR)
+#define INTR_gicInstance (*((XScuGic *) INTR_GIC_INSTANCE_ADDR))
 
 // Interrupt Controller Initializaton Lock w/ getter & setter
 #define INTR_gicInitLockAddr (INTR_GIC_INSTANCE_ADDR + INTR_GIC_INSTANCE_SIZE)
