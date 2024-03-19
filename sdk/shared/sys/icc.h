@@ -2,8 +2,8 @@
 #define ICC_H
 
 #include "FreeRTOS.h"
-#include "shared_memory.h"
 #include "message_buffer.h"
+#include "shared_memory.h"
 #include "xil_printf.h"
 #include <stdint.h>
 

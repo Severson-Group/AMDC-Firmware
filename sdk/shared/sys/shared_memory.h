@@ -1,10 +1,10 @@
 #ifndef SHARED_MEMORY_H
 #define SHARED_MEMORY_H
 
+#include "message_buffer.h"
+#include "xil_printf.h"
 #include "xparameters.h"
 #include "xscugic.h"
-#include "xil_printf.h"
-#include "message_buffer.h"
 
 ///////////////////////////////////////////////////////
 // THIS IS A SHARED FILE, SO IT IS ALWAYS
@@ -15,13 +15,13 @@
 ///////////////////////////////////////////////////////
 
 /* This file contains all the macro definitions that need to be shared between CPU0 and CPU1
- * This includes definitions for Inter-Core Communication, Inter-Core Interrupts, 
+ * This includes definitions for Inter-Core Communication, Inter-Core Interrupts,
  *   the Generic Interrupt Controller (GIC) definitions and metadata, etc
  *
  * Per Zynq-7000 TRM Ch. 4: System Addresses (page 106), the initial mapping
  *   of OCM is split between low addresses and high addresses in 64 KB chunks.
- * We will pick to use the highest 64 KB chunk as our base address: */ 
-#define SHARED_OCM_BASE_ADDR          (0xFFFF0000)
+ * We will pick to use the highest 64 KB chunk as our base address: */
+#define SHARED_OCM_BASE_ADDR (0xFFFF0000)
 
 ///////////////////////////////////
 //  INTER-CORE COMMUNICATION
@@ -45,8 +45,10 @@ MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 #define ICC_CPU0to1BufferStructAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (0 * ICC_BUFFER_STRUCT_SIZE)))
 #define ICC_CPU1to0BufferStructAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (1 * ICC_BUFFER_STRUCT_SIZE)))
 
-#define ICC_CPU0to1BufferSpaceAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (0 * ICC_BUFFER_SIZE)))
-#define ICC_CPU1to0BufferSpaceAddr ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (1 * ICC_BUFFER_SIZE)))
+#define ICC_CPU0to1BufferSpaceAddr                                                                                     \
+    ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (0 * ICC_BUFFER_SIZE)))
+#define ICC_CPU1to0BufferSpaceAddr                                                                                     \
+    ((uint8_t *) (SHARED_OCM_BASE_ADDR + (2 * ICC_BUFFER_STRUCT_SIZE) + (1 * ICC_BUFFER_SIZE)))
 
 /* These memory spaces are used to transfer the Message Buffer Handles from CPU0 (who does the initialization work, and
  * gets the handles from the xMessageBufferCreateStaticWithCallback function) to CPU1 (who doesn't initialize anything
@@ -84,7 +86,6 @@ MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 #define ICC_getFunctionPointersReady  ((*((uint8_t *) ICC_functionPointersLockAddr))
 #define ICC_setFunctionPointersReady  ((*((uint8_t *) ICC_functionPointersLockAddr) = 1)
 
-
 ///////////////////////////////////
 //  INTERRUPTS / GIC
 /////////////////////////////////
@@ -93,18 +94,18 @@ MessageBufferHandle_t xCPU1to0MessageBufferHandle;
 #define INTR_UNBLOCK_CPU1_RX_INT_ID 2
 #define INTR_UNBLOCK_CPU1_TX_INT_ID 3
 
-#define INTR_SHARED_MEMORY_BASE_ADDR    (0xFFFFF000)//(ICC_functionPointersLockAddr + sizeof(uint8_t))
-#define INTR_GIC_INSTANCE_SIZE          (sizeof(XScuGic))
+#define INTR_SHARED_MEMORY_BASE_ADDR (0xFFFFF000) //(ICC_functionPointersLockAddr + sizeof(uint8_t))
+#define INTR_GIC_INSTANCE_SIZE       (sizeof(XScuGic))
 
 // Interrupt Controller Instance
 //   Defined here to be accessible in both sys/icc.c and sys/intr.h
-#define INTR_GIC_INSTANCE_ADDR      ((XScuGic *)INTR_SHARED_MEMORY_BASE_ADDR)
-#define INTR_gicInstance            (*((XScuGic *)INTR_GIC_INSTANCE_ADDR))
+#define INTR_GIC_INSTANCE_ADDR ((XScuGic *) INTR_SHARED_MEMORY_BASE_ADDR)
+#define INTR_gicInstance       (*((XScuGic *) INTR_GIC_INSTANCE_ADDR))
 
 // Interrupt Controller Initializaton Lock w/ getter & setter
 #define INTR_gicInitLockAddr (INTR_GIC_INSTANCE_ADDR + INTR_GIC_INSTANCE_SIZE)
 
-#define INTR_getGicInitReady  (*((uint8_t *) INTR_gicInitLockAddr))
-#define INTR_setGicInitReady  (*((uint8_t *) INTR_gicInitLockAddr) = 1)
+#define INTR_getGicInitReady (*((uint8_t *) INTR_gicInitLockAddr))
+#define INTR_setGicInitReady (*((uint8_t *) INTR_gicInitLockAddr) = 1)
 
 #endif /* SHARED_MEMORY_H */

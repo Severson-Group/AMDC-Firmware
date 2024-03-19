@@ -20,7 +20,7 @@
 // CPUs, use "#if XPAR_CPU_ID == ?"
 ///////////////////////////////////////////////////////
 
-#define INTR_GIC_DEVICE_ID          XPAR_PS7_SCUGIC_0_DEVICE_ID     // good
+#define INTR_GIC_DEVICE_ID XPAR_PS7_SCUGIC_0_DEVICE_ID // good
 
 int intr_init();
 
