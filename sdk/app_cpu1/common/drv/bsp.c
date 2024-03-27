@@ -1,11 +1,12 @@
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)                         \
+    || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
 // Ensure a valid hardware target is specified
 // NOTE: this firmware only supports REV D hardware onward
 #else
-#error "ERROR: Hardware target not specified correctly"
+#error "ERROR: Hardware target not specified correctly in user_config.h"
 // If you have this error, please define USER_CONFIG_HARDWARE_TARGET in your usr/user_config.h file!
 #endif
 
@@ -54,6 +55,10 @@ void bsp_init(void)
         printf("Hardware Target: REV E\n");
         break;
 
+    case AMDC_REV_F:
+        printf("Hardware Target: REV F\n");
+        break;
+
     default:
         printf("ERROR: Unknown AMDC hardware revision\n");
         while (1) {
@@ -79,9 +84,7 @@ void bsp_init(void)
 
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D)
     gpio_mux_init();
-#endif
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E)
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     gp3io_mux_init();
 #endif
 
