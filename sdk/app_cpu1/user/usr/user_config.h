@@ -6,8 +6,8 @@
 // This file is used to override system defines and conditionally enable
 // various system-level firmware features.
 
-// Specify hardware revision (i.e. REV D, REV E, etc)
-#define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_E)
+// Specify hardware revision (i.e. REV E, REV F, etc)
+#define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_F)
 
 // Override the default scheduler elementary frequency by defining SYS_TICK_FREQ here.
 // System uses 10kHz by default

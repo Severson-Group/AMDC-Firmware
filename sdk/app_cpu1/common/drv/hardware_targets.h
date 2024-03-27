@@ -7,5 +7,6 @@
 
 #define AMDC_REV_D (4)
 #define AMDC_REV_E (5)
+#define AMDC_REV_F (6)
 
 #endif // HARDWARE_TARGETS_H
