@@ -16,8 +16,10 @@ amdc/
 hw/*
 !hw/amdc_revd.bd
 !hw/amdc_reve.bd
+!hw/amdc_revf.bd
 !hw/constraints_amdc_revd.xdc
 !hw/constraints_amdc_reve.xdc
+!hw/constraints_amdc_revf.xdc
 
 
 #######
