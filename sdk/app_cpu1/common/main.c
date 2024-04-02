@@ -42,17 +42,17 @@
 
 // REV D has 2 GPIO ports, but only a single eddy current sensor driver IP block:
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_D) && (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES != 1)
-#error "ERROR: Vivado hardware target is REV E, but usr/user_config.h target is REV D!"
+#error "ERROR: Vivado hardware target should match usr/user_config.h target"
 #endif
 
 // REV E has 4 GPIO ports, each with their own eddy current sensor driver IP block:
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) && (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES != 4)
-#error "ERROR: Vivado hardware target is REV D, but usr/user_config.h target is REV E!"
+#error "ERROR: Vivado hardware target should match usr/user_config.h target"
 #endif
 
 // REV F has 4 GPIO ports, each with their own eddy current sensor driver IP block:
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F) && (XPAR_AMDC_EDDY_CURRENT_SENSOR_NUM_INSTANCES != 4)
-#error "ERROR: Vivado hardware target is REV D, but usr/user_config.h target is REV F!"
+#error "ERROR: Vivado hardware target should match usr/user_config.h target"
 #endif
 
 int main()

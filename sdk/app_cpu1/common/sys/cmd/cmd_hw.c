@@ -428,7 +428,7 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
 
 #elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
-            cmd_resp_print("AMDC REV E gpio device numbers:\r\n");
+            cmd_resp_print("AMDC REV E & REV F gpio device numbers:\r\n");
             cmd_resp_print("1. AMDS\r\n");
             cmd_resp_print("2. Eddy Current Sensor\r\n");
             cmd_resp_print("3. ILD1420 Proximity Sensor\r\n");
@@ -472,7 +472,7 @@ int cmd_hw(int argc, char **argv)
             */
 
 #elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
-            cmd_resp_print("AMDC REV E sts device numbers:\r\n");
+            cmd_resp_print("AMDC REV E & REV F sts device numbers:\r\n");
             // TODO: FILL IN BELOW AND REMOVE NEXT LINE
             cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n");
             /*
