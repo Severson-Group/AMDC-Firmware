@@ -58,7 +58,7 @@ int cmd_hw(int argc, char **argv)
     // Handle 'pwm' sub-command
     if (argc >= 2 && STREQ("pwm", argv[1])) {
         if (argc == 3 && STREQ("on", argv[2])) {
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
             // Turn on PWM hardware before enabling
             // so that the first cycle has correct duty
             pwm_enable_hw(true);
@@ -76,7 +76,7 @@ int cmd_hw(int argc, char **argv)
                 return CMD_FAILURE;
             }
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
             // Turn off PWM hardware after disabling
             // so that the last cycle has correct duty
             pwm_enable_hw(false);
@@ -205,7 +205,7 @@ int cmd_hw(int argc, char **argv)
         else
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
 
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
         if (port == 1)
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
         else if (port == 2)
@@ -316,7 +316,7 @@ int cmd_hw(int argc, char **argv)
         if (pin < 1 || pin > 2)
             return CMD_INVALID_ARGUMENTS;
 
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
         if (gpio_port < 1 || gpio_port > 4)
             return CMD_INVALID_ARGUMENTS;
 
@@ -379,7 +379,7 @@ int cmd_hw(int argc, char **argv)
 
             gpio_mux_set_device(gpio_port - 1, device);
 
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
             if (device < 0 || device > GP3IO_MUX_DEVICE_COUNT) {
                 return CMD_INVALID_ARGUMENTS;
             }
@@ -427,8 +427,8 @@ int cmd_hw(int argc, char **argv)
             cmd_resp_print("8. UNUSED\r\n");
             return CMD_SUCCESS;
 
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            cmd_resp_print("AMDC REV E gpio device numbers:\r\n");
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
+            cmd_resp_print("AMDC REV E & REV F gpio device numbers:\r\n");
             cmd_resp_print("1. AMDS\r\n");
             cmd_resp_print("2. Eddy Current Sensor\r\n");
             cmd_resp_print("3. ILD1420 Proximity Sensor\r\n");
@@ -471,8 +471,8 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
             */
 
-#elif USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
-            cmd_resp_print("AMDC REV E sts device numbers:\r\n");
+#elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
+            cmd_resp_print("AMDC REV E & REV F sts device numbers:\r\n");
             // TODO: FILL IN BELOW AND REMOVE NEXT LINE
             cmd_resp_print("Please check the block design by opening hw/amdc_reve.bd in Vivado.\r\n");
             /*

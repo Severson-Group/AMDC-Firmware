@@ -43,7 +43,7 @@ void gpio_direct_init()
     gpio_direct_write(GPIO_DIRECT_PORT1, GPIO_DIRECT_PIN2, GPIO_DIRECT_LOW);
     gpio_direct_write(GPIO_DIRECT_PORT2, GPIO_DIRECT_PIN1, GPIO_DIRECT_LOW);
     gpio_direct_write(GPIO_DIRECT_PORT2, GPIO_DIRECT_PIN2, GPIO_DIRECT_LOW);
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     gpio_direct_write(GPIO_DIRECT_PORT1, GPIO_DIRECT_PIN3, GPIO_DIRECT_LOW);
     gpio_direct_write(GPIO_DIRECT_PORT2, GPIO_DIRECT_PIN3, GPIO_DIRECT_LOW);
     gpio_direct_write(GPIO_DIRECT_PORT3, GPIO_DIRECT_PIN1, GPIO_DIRECT_LOW);
@@ -66,7 +66,7 @@ gpio_direct_level_t gpio_direct_read(gpio_direct_port_t port, gpio_direct_pin_t 
     case GPIO_DIRECT_PORT2:
         base_addr = GPIO2_DIRECT_BASE_ADDR;
         break;
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     case GPIO_DIRECT_PORT3:
         base_addr = GPIO3_DIRECT_BASE_ADDR;
         break;
@@ -96,7 +96,7 @@ void gpio_direct_write(gpio_direct_port_t port, gpio_direct_pin_t pin, gpio_dire
     case GPIO_DIRECT_PORT2:
         base_addr = GPIO2_DIRECT_BASE_ADDR;
         break;
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     case GPIO_DIRECT_PORT3:
         base_addr = GPIO3_DIRECT_BASE_ADDR;
         break;
@@ -131,7 +131,7 @@ void gpio_direct_toggle(gpio_direct_port_t port, gpio_direct_pin_t pin)
     case GPIO_DIRECT_PORT2:
         base_addr = GPIO2_DIRECT_BASE_ADDR;
         break;
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     case GPIO_DIRECT_PORT3:
         base_addr = GPIO3_DIRECT_BASE_ADDR;
         break;

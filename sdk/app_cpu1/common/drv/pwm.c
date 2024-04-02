@@ -114,7 +114,7 @@ void pwm_set_all_rst(uint8_t rst)
 }
 
 // Hardware disabling of PWM was added to REV E hardware
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
 
 static bool is_pwm_enable_hw_enabled = false;
 

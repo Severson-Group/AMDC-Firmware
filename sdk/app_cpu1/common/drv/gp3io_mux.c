@@ -1,5 +1,5 @@
 #include "usr/user_config.h"
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
 
 #include "drv/gp3io_mux.h"
 #include "xil_io.h"

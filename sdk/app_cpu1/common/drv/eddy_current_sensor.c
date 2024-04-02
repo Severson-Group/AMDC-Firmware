@@ -17,7 +17,7 @@ void eddy_current_sensor_init(void)
                                    EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
                                    EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
+#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
     eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
