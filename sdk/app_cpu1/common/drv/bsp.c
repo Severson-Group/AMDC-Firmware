@@ -70,7 +70,6 @@ void bsp_init(void)
     analog_init(ANALOG_BASE_ADDR);
     pwm_init();
 
-    timing_manager_init();
     cpu_timer_init();
     led_init();
     sts_mux_init();

@@ -63,8 +63,6 @@ int main()
     // User BSP library initialization
     bsp_init();
 
-    test_int();
-
     // Initialize system tasks
     serial_init();
     commands_init();
@@ -93,6 +91,9 @@ int main()
 
     // Initialize scheduler (sets up h/w timer, interrupt, etc)
     scheduler_init();
+
+    // Initialize timing manager
+    timing_manager_init();
 
     // Run scheduler => this takes over the system and never returns!
     scheduler_run();
