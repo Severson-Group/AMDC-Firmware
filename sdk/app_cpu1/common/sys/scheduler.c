@@ -192,6 +192,7 @@ void scheduler_run(void)
     while (1) {
         uint32_t my_elapsed_usec = elapsed_usec;
         tasks_running = true;
+
         task_control_block_t *t = tasks;
         while (t != NULL) {
             uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
@@ -210,6 +211,7 @@ void scheduler_run(void)
             // Go to next task in linked list
             t = t->next;
         }
+
         tasks_running = false;
 
 #if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
@@ -218,12 +220,9 @@ void scheduler_run(void)
         // NOTE: this is specifically before the while loop below so that the new
         // data arrives before it is needed in the next control loop.
         motherboard_request_new_data(MOTHERBOARD_1_BASE_ADDR);
-
-#if USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E
         motherboard_request_new_data(MOTHERBOARD_2_BASE_ADDR);
         motherboard_request_new_data(MOTHERBOARD_3_BASE_ADDR);
         motherboard_request_new_data(MOTHERBOARD_4_BASE_ADDR);
-#endif
 #endif
 
         // Wait here until unpaused (i.e. when SysTick fires)
