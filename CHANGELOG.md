@@ -2,6 +2,11 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.2.0
+
+- Add support for REV F hardware
+- Fix `pcbtest` app for REV E/F hardware targets
+
 ## v1.1.0
 
 - Add GPIO driver for direct pin-level access
