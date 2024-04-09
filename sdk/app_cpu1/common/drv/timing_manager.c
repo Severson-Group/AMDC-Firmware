@@ -42,7 +42,7 @@ int interrupt_system_init(void)
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
     Xil_ExceptionRegisterHandler(
-       XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
+        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
 
     // Set priority of IRQ_F2P[0:0] to 0xA0 and a trigger for a rising edge 0x3
     XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, ISR_RISING_EDGE);
@@ -106,7 +106,7 @@ void timing_manager_init(void)
 
     // Initialize the stats
     for (int i = 0; i < NUM_SENSORS; i++) {
-    	// ensure each sensor has their own statistics
+        // ensure each sensor has their own statistics
         statistics_init(&sensor_stats[i]);
     }
 
@@ -306,8 +306,8 @@ double timing_manager_get_time_per_sensor(sensor_t sensor)
  */
 void timing_manager_sensor_stats(void)
 {
-	static int times_called;
-	times_called++;
+    static int times_called;
+    times_called++;
     // Iterate through for each sensor push the status
     for (int i = 0; i < NUM_SENSORS; i++) {
         double val = timing_manager_get_time_per_sensor(i);

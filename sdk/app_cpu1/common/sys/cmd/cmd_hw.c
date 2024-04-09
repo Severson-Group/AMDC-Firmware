@@ -39,12 +39,11 @@ static command_help_t cmd_help[] = {
     { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
     { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
       "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
-    { "tm trigger <HIGH|LOW|BOTH>",
-      "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
+    { "tm trigger <HIGH|LOW|BOTH>", "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
     { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
     { "tm enable <adc|encoder|eddy> <port [if eddy]>",
       "Enable a sensor; if eddy is chosen, specify the port, otherwise, leave blank" },
-	{ "hw tm time <adc|encoder|eddy> <port [if eddy]>", "Read acquisition time of sensor"},
+    { "hw tm time <adc|encoder|eddy> <port [if eddy]>", "Read acquisition time of sensor" },
 };
 
 void cmd_hw_register(void)
@@ -254,7 +253,7 @@ int cmd_hw(int argc, char **argv)
         else if (argc == 4 && STREQ("ratio", argv[2])) {
             uint32_t ratio = (uint32_t)(atoi(argv[3]));
             if (ratio < 0) {
-            	return CMD_INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             }
             timing_manager_set_ratio(ratio);
             return CMD_SUCCESS;
@@ -278,7 +277,7 @@ int cmd_hw(int argc, char **argv)
                 } else if (port == 4) {
                     timing_manager_enable_eddy_4();
                 } else {
-                	return CMD_INVALID_ARGUMENTS;
+                    return CMD_INVALID_ARGUMENTS;
                 }
             }
             return CMD_SUCCESS;
@@ -286,27 +285,27 @@ int cmd_hw(int argc, char **argv)
 
         // 'hw tm time <sensor>'
         else if (argc >= 4 && STREQ("time", argv[2])) {
-        	statistics_t *stats;
+            statistics_t *stats;
             if (STREQ("encoder", argv[3])) {
-            	stats = timing_manager_get_stats_per_sensor(ENCODER);
+                stats = timing_manager_get_stats_per_sensor(ENCODER);
             } else if (STREQ("eddy", argv[3])) {
-            	int32_t port = atoi(argv[4]);
-            	// enable eddy current sensor based on selected port
-            	if (port == 1) {
-            		stats = timing_manager_get_stats_per_sensor(EDDY_0);
-            	} else if (port == 2) {
-            		stats = timing_manager_get_stats_per_sensor(EDDY_1);
-            	} else if (port == 3) {
-            		stats = timing_manager_get_stats_per_sensor(EDDY_2);
-            	} else if (port == 4) {
-            		stats = timing_manager_get_stats_per_sensor(EDDY_3);
-            	} else {
-            		return CMD_INVALID_ARGUMENTS;
-            	}
+                int32_t port = atoi(argv[4]);
+                // enable eddy current sensor based on selected port
+                if (port == 1) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_0);
+                } else if (port == 2) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_1);
+                } else if (port == 3) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_2);
+                } else if (port == 4) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_3);
+                } else {
+                    return CMD_INVALID_ARGUMENTS;
+                }
             } else if (STREQ("adc", argv[3])) {
-            	stats = timing_manager_get_stats_per_sensor(ADC);
+                stats = timing_manager_get_stats_per_sensor(ADC);
             } else {
-            	return CMD_INVALID_ARGUMENTS;
+                return CMD_INVALID_ARGUMENTS;
             }
             cmd_resp_printf("Time: %d\n\r", stats->value);
             return CMD_SUCCESS;
