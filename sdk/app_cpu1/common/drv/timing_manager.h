@@ -18,14 +18,7 @@
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 #define UPPER_16_SHIFT           (16)
 
-typedef enum {
-	EDDY_0 = 0,
-	EDDY_1 = 1,
-	EDDY_2 = 2,
-	EDDY_3 = 3,
-	ENCODER = 4,
-	ADC = 5
-} sensor_t;
+typedef enum { EDDY_0 = 0, EDDY_1 = 1, EDDY_2 = 2, EDDY_3 = 3, ENCODER = 4, ADC = 5 } sensor_t;
 
 // Initialization
 int interrupt_system_init();

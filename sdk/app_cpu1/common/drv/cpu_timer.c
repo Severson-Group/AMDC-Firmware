@@ -1,5 +1,5 @@
-#include "drv/clock.h"
 #include "drv/cpu_timer.h"
+#include "drv/clock.h"
 #include "sys/defines.h"
 //#include "xparameters.h"
 //#include "xtmrctr.h"

@@ -1,5 +1,5 @@
-#include "drv/clock.h"
 #include "drv/timing_manager.h"
+#include "drv/clock.h"
 #include "usr/user_config.h"
 #include "xil_assert.h"
 #include "xil_exception.h"

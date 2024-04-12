@@ -1,5 +1,5 @@
-#include "drv/clock.h"
 #include "drv/eddy_current_sensor.h"
+#include "drv/clock.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
 #include <stdbool.h>
