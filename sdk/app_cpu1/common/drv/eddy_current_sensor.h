@@ -8,8 +8,6 @@
 
 #include "xparameters.h"
 
-#define FPGA_CLK_FREQ_MHZ (200)
-
 #define EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ (5000)
 #define EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS (10)
 

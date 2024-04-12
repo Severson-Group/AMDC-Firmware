@@ -1,5 +1,5 @@
+#include "drv/clock.h"
 #include "drv/timing_manager.h"
-#include "sys/statistics.h"
 #include "usr/user_config.h"
 #include "xil_assert.h"
 #include "xil_exception.h"
@@ -58,21 +58,6 @@ int interrupt_system_init(void)
 
     // Enable interrupts for IRQ_F2P[0:0]
     XScuGic_Enable(intc_instance_ptr, INTC_INTERRUPT_ID_0);
-
-    // Set priority of IRQ_F2P[1:1] lower than [0:0] and a trigger for a rising edge 0x3
-    XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_1, ISR1_PRIORITY, ISR_RISING_EDGE);
-
-    XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, INTC_INTERRUPT_ID_1);
-
-    // Connect ISR1 to the interrupt controller
-    result = XScuGic_Connect(
-        intc_instance_ptr, INTC_INTERRUPT_ID_1, (Xil_ExceptionHandler) isr_1, (void *) intc_instance_ptr);
-    if (result != XST_SUCCESS) {
-        return result; // Exit setup with bad result
-    }
-
-    // Enable interrupts for IRQ_F2P[1:1]
-    XScuGic_Enable(intc_instance_ptr, INTC_INTERRUPT_ID_1);
 
     // Enable non-critical exceptions
     Xil_ExceptionEnable();
@@ -239,7 +224,7 @@ void timing_manager_trigger_on_pwm_both(void)
 /*
  * Set the trigger on PWM carrier high only
  */
-void timing_manager_trigger_on_pwm_high()
+void timing_manager_trigger_on_pwm_high(void)
 {
     // Get the current address of the config register
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
@@ -297,7 +282,7 @@ double timing_manager_get_time_per_sensor(sensor_t sensor)
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     }
     // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
-    time = (double) clock_cycles / 200;
+    time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
     return time;
 }
 

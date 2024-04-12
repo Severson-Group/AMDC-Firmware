@@ -1,3 +1,4 @@
+#include "drv/clock.h"
 #include "drv/cpu_timer.h"
 #include "sys/defines.h"
 //#include "xparameters.h"
@@ -7,9 +8,6 @@
 // https://stackoverflow.com/questions/3247373/3250835#3250835
 
 static inline void init_perfcounters(int32_t do_reset, int32_t enable_divider);
-
-static const double CPU_CLOCK_FREQ_MHZ = 666.666;
-static const double CPU_CLOCK_FREQ_HZ = CPU_CLOCK_FREQ_MHZ * 1e6;
 
 void cpu_timer_init(void)
 {
@@ -32,13 +30,13 @@ uint32_t cpu_timer_now(void)
 
 double cpu_timer_ticks_to_usec(uint32_t ticks)
 {
-    double usec = (double) ticks / CPU_CLOCK_FREQ_MHZ;
+    double usec = (double) ticks / CLOCK_CPU1_CLK_FREQ_MHZ;
     return usec;
 }
 
 double cpu_timer_ticks_to_sec(uint32_t ticks)
 {
-    double sec = (double) ticks / CPU_CLOCK_FREQ_HZ;
+    double sec = (double) ticks / CLOCK_CPU1_CLK_FREQ_HZ;
     return sec;
 }
 

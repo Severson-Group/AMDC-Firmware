@@ -1,3 +1,4 @@
+#include "drv/clock.h"
 #include "drv/eddy_current_sensor.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
@@ -46,7 +47,7 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
     // We want half a period since sclk_cnt is the number of FPGA CLK cycles to wait before toggling SCLK
     uint32_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
 
-    uint32_t fpga_period_ns = 1000 / FPGA_CLK_FREQ_MHZ;
+    uint32_t fpga_period_ns = 1000 / CLOCK_FPGA_CLK_FREQ_MHZ;
 
     uint32_t sclk_cnt = sclk_half_period_ns / fpga_period_ns;
 

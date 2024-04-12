@@ -9,20 +9,23 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INTC_INTERRUPT_ID_0      61 // IRQ_F2P[0:0]
-#define INTC_INTERRUPT_ID_1      62 // IRQ_F2P[1:1]
-#define ISR0_PRIORITY            0x08
-#define ISR1_PRIORITY            0x00
-#define ISR_RISING_EDGE          0x3
-#define DEFAULT_SENSOR_ENABLE    0x00
-#define LOWER_16_MASK            0x00FF
-#define NUM_SENSORS              6
-#define TIMING_MANAGER_BASE_ADDR XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR
-#define UPPER_16_SHIFT           16
+#define INTC_INTERRUPT_ID_0      (61) // IRQ_F2P[0:0]
+#define ISR0_PRIORITY            (0x08)
+#define ISR_RISING_EDGE          (0x3)
+#define DEFAULT_SENSOR_ENABLE    (0x00)
+#define LOWER_16_MASK            (0x00FF)
+#define NUM_SENSORS              (6)
+#define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
+#define UPPER_16_SHIFT           (16)
 
-enum { EDDY_0 = 0, EDDY_1 = 1, EDDY_2 = 2, EDDY_3 = 3, ENCODER = 4, ADC = 5 };
-
-typedef uint8_t sensor_t;
+typedef enum {
+	EDDY_0 = 0,
+	EDDY_1 = 1,
+	EDDY_2 = 2,
+	EDDY_3 = 3,
+	ENCODER = 4,
+	ADC = 5
+} sensor_t;
 
 // Initialization
 int interrupt_system_init();
