@@ -1,4 +1,5 @@
 #include "drv/eddy_current_sensor.h"
+#include "drv/clock.h"
 #include "usr/user_config.h"
 #include "xil_io.h"
 #include <stdbool.h>
@@ -12,15 +13,10 @@ void eddy_current_sensor_init(void)
     // Default PWM carrier frequency for AMDC is 100 kHz
     //   To trigger on both the peak and valley of the PWM carrier (200 kHz), SCLK needs to be quite fast.
     //   The default SCLK frequency of 5 MHz allows us to fit a conversion cycle into the 5us interval.
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_1_BASE_ADDR);
     eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_1_BASE_ADDR,
                                    EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
                                    EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
-
 #if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_2_BASE_ADDR);
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_3_BASE_ADDR);
-    eddy_current_sensor_trigger_on_pwm_both(EDDY_CURRENT_SENSOR_4_BASE_ADDR);
     eddy_current_sensor_set_timing(EDDY_CURRENT_SENSOR_2_BASE_ADDR,
                                    EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
                                    EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
@@ -31,34 +27,6 @@ void eddy_current_sensor_init(void)
                                    EDDY_CURRENT_SENSOR_DEFAULT_SCLK_FREQ_KHZ,
                                    EDDY_CURRENT_SENSOR_DEFAULT_PROP_DELAY_NS);
 #endif
-}
-
-void eddy_current_sensor_trigger_on_pwm_high(uint32_t base_addr)
-{
-    // Get the current value of the config register and set the pwm_high trigger bit
-    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
-    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x1));
-}
-
-void eddy_current_sensor_trigger_on_pwm_low(uint32_t base_addr)
-{
-    // Get the current value of the config register and set the pwm_low trigger bit
-    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
-    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x2));
-}
-
-void eddy_current_sensor_trigger_on_pwm_both(uint32_t base_addr)
-{
-    // Get the current value of the config register and set both the pwm_high and pwm_low trigger bits
-    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
-    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) | 0x3));
-}
-
-void eddy_current_sensor_trigger_on_pwm_clear(uint32_t base_addr)
-{
-    // Get the current value of the config register and clear both the pwm_high and pwm_low trigger bits
-    uint32_t config_reg_address = base_addr + (3 * sizeof(uint32_t));
-    Xil_Out32(config_reg_address, (Xil_In32(config_reg_address) & ~0x3));
 }
 
 void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, uint32_t propogation_delay_ns)
@@ -78,7 +46,7 @@ void eddy_current_sensor_set_timing(uint32_t base_addr, uint32_t sclk_freq_khz, 
     // We want half a period since sclk_cnt is the number of FPGA CLK cycles to wait before toggling SCLK
     uint32_t sclk_half_period_ns = (1000000 / sclk_freq_khz) / 2;
 
-    uint32_t fpga_period_ns = 1000 / FPGA_CLK_FREQ_MHZ;
+    uint32_t fpga_period_ns = 1000 / CLOCK_FPGA_CLK_FREQ_MHZ;
 
     uint32_t sclk_cnt = sclk_half_period_ns / fpga_period_ns;
 

@@ -1,7 +1,7 @@
 
 `timescale 1 ns / 1 ps
 
-	module amdc_encoder_v1_0 #
+	module amdc_timing_manager_v1_0 #
 	(
 		// Users to add parameters here
 
@@ -11,20 +11,28 @@
 
 		// Parameters of Axi Slave Bus Interface S00_AXI
 		parameter integer C_S00_AXI_DATA_WIDTH	= 32,
-		parameter integer C_S00_AXI_ADDR_WIDTH	= 4
+		parameter integer C_S00_AXI_ADDR_WIDTH	= 6
 	)
 	(
 		// Users to add ports here
-        input wire A,
-        input wire B,
-        input wire Z,
-        input wire alarm_A,
-        input wire alarm_B,
-        input wire alarm_Z,
-        input wire alarm_D,
-        input wire trigger,
-		input wire enable,
-        output wire done,
+		output wire trigger,
+		input  wire pwm_carrier_low,
+		input  wire pwm_carrier_high,
+		input  wire adc_done,
+		input  wire encoder_done,
+		input  wire eddy_0_done,
+		input  wire eddy_1_done,
+		input  wire eddy_2_done,
+		input  wire eddy_3_done,
+		output wire sched_isr,
+		output wire en_eddy_0,
+		output wire en_eddy_1,
+		output wire en_eddy_2,
+		output wire en_eddy_3,
+    	output wire en_adc,
+		output wire en_encoder,
+		output wire [2:0] debug,
+
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -53,10 +61,10 @@
 		input wire  s00_axi_rready
 	);
 // Instantiation of Axi Bus Interface S00_AXI
-	amdc_encoder_v1_0_S00_AXI # ( 
+	amdc_timing_manager_v1_0_S00_AXI # ( 
 		.C_S_AXI_DATA_WIDTH(C_S00_AXI_DATA_WIDTH),
 		.C_S_AXI_ADDR_WIDTH(C_S00_AXI_ADDR_WIDTH)
-	) amdc_encoder_v1_0_S00_AXI_inst (
+	) amdc_timing_manager_v1_0_S00_AXI_inst (
 		.S_AXI_ACLK(s00_axi_aclk),
 		.S_AXI_ARESETN(s00_axi_aresetn),
 		.S_AXI_AWADDR(s00_axi_awaddr),
@@ -78,12 +86,23 @@
 		.S_AXI_RRESP(s00_axi_rresp),
 		.S_AXI_RVALID(s00_axi_rvalid),
 		.S_AXI_RREADY(s00_axi_rready),
-		.A(A),
-		.B(B),
-		.Z(Z),
+		.pwm_carrier_high(pwm_carrier_high),
+		.pwm_carrier_low(pwm_carrier_low),
 		.trigger(trigger),
-		.enable(enable),
-		.done(done)
+		.sched_isr(sched_isr),
+		.adc_done(adc_done),
+		.encoder_done(encoder_done),
+		.eddy_0_done(eddy_0_done),
+		.eddy_1_done(eddy_1_done),
+		.eddy_2_done(eddy_2_done),
+		.eddy_3_done(eddy_3_done),
+		.en_eddy_0(en_eddy_0),
+		.en_eddy_1(en_eddy_1),
+		.en_eddy_2(en_eddy_2),
+		.en_eddy_3(en_eddy_3),
+		.en_adc(en_adc),
+		.en_encoder(en_encoder),
+		.debug(debug)
 	);
 
 	// Add user logic here

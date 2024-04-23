@@ -16,6 +16,7 @@
 // NOTE: UART uses 115200 baud
 
 #include "drv/bsp.h"
+#include "drv/timing_manager.h"
 #include "sys/cmd/cmd_counter.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
@@ -95,6 +96,9 @@ int main()
 
     // Initialize scheduler (sets up h/w timer, interrupt, etc)
     scheduler_init();
+
+    // Initialize timing manager
+    timing_manager_init();
 
     // Run scheduler => this takes over the system and never returns!
     scheduler_run();
