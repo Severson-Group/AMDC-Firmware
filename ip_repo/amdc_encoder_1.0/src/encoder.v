@@ -24,7 +24,7 @@ output wire [31:0] counter;
 output wire [31:0] position;
 output reg [31:0] steps_synced;
 output reg [31:0] position_synced;
-output wire done;
+output reg done;
 
 // State machine signals that indicate
 // when steps increment or decrement
@@ -243,28 +243,32 @@ assign position = know_pos ? my_pos : 32'hFFFFFFFF;
 // Asserts done once the steps have been updated.
 // **************************************************
 
-reg done_sync;
-
+reg set_done;
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         steps_synced <= 32'b0;
         position_synced <= 32'hFFFFFFFF;
-        done_sync <= 0;
+        set_done <= 0;
     end
     
     else if (trigger) begin
         steps_synced <= counter;
         position_synced <= position;
-        done_sync <= 1;
+        set_done <= 1;
     end              
     
     else begin
         steps_synced <= steps_synced;
         position_synced <= position_synced;
-        done_sync <= 0;
+        set_done <= 0;
     end
 end
 
-assign done = done_sync;
+// Generate 'done' signal
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) done <= 0;
+    else if (trigger) done <= 0;
+    else if (set_done) done <= 1;
+end
 
 endmodule

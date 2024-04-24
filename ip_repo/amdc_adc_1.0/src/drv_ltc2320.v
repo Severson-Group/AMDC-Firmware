@@ -32,7 +32,7 @@ module drv_ltc2320(
 	CNV_n, SCK, SDO, CLKOUT,
 	data_valid,
 	clkdiv,
-	trigger,
+	trigger, adc_done,
 	data1, data2, data3, data4,
 	data5, data6, data7, data8
 );
@@ -50,6 +50,7 @@ output SCK;
 input [7:0] SDO;
 
 output reg data_valid;
+output reg adc_done;
 output wire [14:0] data1;
 output wire [14:0] data2;
 output wire [14:0] data3;
@@ -79,6 +80,8 @@ reg deassert_cnv_n;
 reg assert_cnv_n;
 reg deassert_data_valid;
 reg assert_data_valid;
+reg assert_adc_done;
+reg deassert_adc_done;
 
 
 // *****************************
@@ -112,6 +115,22 @@ always @(posedge clk, negedge rst_n) begin
 		data_valid <= 1'b1;
 	else
 		data_valid <= data_valid;
+end
+
+// *****************************
+// *****************************
+//    adc_done set/reset flop
+// *****************************
+// *****************************
+always @(posedge clk, negedge rst_n) begin
+	if (!rst_n)
+		adc_done <= 1'b0;
+	else if (deassert_adc_done)
+		adc_done <= 1'b0;
+	else if (assert_adc_done)
+		adc_done <= 1'b1;
+	else
+		adc_done <= adc_done;
 end
 
 
@@ -269,13 +288,15 @@ always @(*) begin
 	assert_cnv_n = 0;
 	deassert_data_valid = 0;
 	assert_data_valid = 0;
+	assert_adc_done = 0;
+	deassert_adc_done = 0;
 	
 	case (state)
         `SM_IDLE: begin
             // Wait for trigger signal to actually start the conversion
             if (trigger) begin
+                deassert_adc_done = 1;
                 next_state = `SM_CNV;
-                deassert_data_valid = 1;
             end
         end
 	    
@@ -325,6 +346,7 @@ always @(*) begin
 			if (bit_counter >= 5'd16) begin
 				reset_delay_counter = 1;
 				assert_data_valid = 1;
+				assert_adc_done = 1;
 				next_state = `SM_HANG;
 			end
 		end
@@ -332,7 +354,7 @@ always @(*) begin
 		`SM_HANG: begin
 			// Wait for a bit of dead time between conversions
 			if (delay_counter >= `CYCLES_TO_HANG) begin
-				next_state = `SM_CNV;
+				next_state = `SM_IDLE;
 			end
 		end
 	endcase
