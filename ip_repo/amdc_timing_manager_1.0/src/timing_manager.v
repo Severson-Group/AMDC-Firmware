@@ -18,7 +18,7 @@ module timing_manager(
                         adc_time, encoder_time,
                         eddy0_time, eddy1_time,
                         eddy2_time, eddy3_time,
-                        trigger
+                        trigger, count_time
                         );
     
     ////////////
@@ -51,10 +51,9 @@ module timing_manager(
     // Signifies when all the sensors are done
     wire all_done;
     // Counts FPGA clock cycles for each sensor
-    reg [15:0] count_time;
+    output reg [15:0] count_time;
     // See if any are enabled for all_done to be triggered
     wire sensors_enabled;
-    reg set_sched_isr;
     
     //////////////////////////////////////////////////////////////////
     // Logic to generate interrupt based on PWM carrier. This       //
@@ -133,25 +132,12 @@ module timing_manager(
     //////////////////////////////////////////////////////////////////
     // Send an interrupt to the PS once all of the sensors are done //
     // with their conversion/acquisition. This will trigger a       //
-    // FreeRTOS task on the C side in the timing manager driver     //
+    // task on the C side in the timing manager driver              //
     //////////////////////////////////////////////////////////////////
-    always @(posedge clk, negedge rst_n) begin
-        if (!rst_n) begin
-            set_sched_isr <= 0;
-        end
-        else if (all_done_pe) begin
-            set_sched_isr <= 1;
-        end
-        else begin
-            set_sched_isr <= 0; // ISR only called when all sensors are done
-        end
-    end
-    
-    // Set/reset flop for the interrupt
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             sched_isr <= 0;
-        else if (set_sched_isr)
+        else if (all_done_pe)
             sched_isr <= 1;
         else if (reset_sched_isr)
             sched_isr <= 0;

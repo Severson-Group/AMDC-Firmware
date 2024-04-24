@@ -484,7 +484,6 @@
 
 	// Add user logic here
     wire adc_data_valid;
-    assign adc_done = adc_data_valid;
     
     wire [14:0] adc_data1;
     wire [14:0] adc_data2;
@@ -518,6 +517,7 @@
         .CLKOUT(adc_clkout),
         .data_valid(adc_data_valid),
         .clkdiv(clkdiv),
+        .adc_done(adc_done),
         .data1(adc_data1),
         .data2(adc_data2),
         .data3(adc_data3),

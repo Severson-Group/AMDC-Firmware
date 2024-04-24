@@ -504,6 +504,7 @@
 	wire [31:0] output_reg_6;
 	wire [31:0] output_reg_7;
     wire reset_sched_isr;
+    wire [15:0] count_time;
 
 	// Implement memory mapped register select and read logic generation
 	// Slave register read enable is asserted when valid address is available
@@ -523,7 +524,7 @@
 	        4'h7   : reg_data_out <= output_reg_7;
 	        4'h8   : reg_data_out <= slv_reg8;
 	        4'h9   : reg_data_out <= slv_reg9;
-	        4'hA   : reg_data_out <= slv_reg10;
+	        4'hA   : reg_data_out <= count_time;
 	        4'hB   : reg_data_out <= slv_reg11;
 	        4'hC   : reg_data_out <= slv_reg12;
 	        4'hD   : reg_data_out <= slv_reg13;
@@ -623,7 +624,8 @@
 	.eddy2_time(eddy2_time),
 	.eddy3_time(eddy3_time),
 	.trigger(trigger),
-	.reset_sched_isr(reset_sched_isr)
+	.reset_sched_isr(reset_sched_isr),
+	.count_time(count_time)
     );
 
 	// User logic ends

@@ -310,7 +310,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a4b61345</spirit:value>
+            <spirit:value>6155e7e6</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -326,7 +326,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>a4b61345</spirit:value>
+            <spirit:value>6155e7e6</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -859,7 +859,7 @@
       <spirit:file>
         <spirit:name>hdl/amdc_encoder_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_9454f5cb</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_5dbef0cd</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -992,8 +992,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_encoder_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>16</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-02-14T15:56:02Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>18</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-04-24T16:27:50Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="wisc.edu:user:amdc_encoder:1.0_ARCHIVE_LOCATION">c:/Users/npetersen2/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@102ba367_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
@@ -1127,13 +1127,49 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7d192690_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@5e4e13c0_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@62825c92_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@35f8d787_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3a44b532_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@116b679d_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3211bd15_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4efd62fe_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@68c7daa0_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6eef7c8f_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9c6b7ac_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31f2b3c3_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@24dce9ee_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3dfbcf70_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4b557594_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@b754c2d_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3be83daa_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@632886ba_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@12be8a46_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@696782ae_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@48355268_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@69ba8bdc_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1ca775c8_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@400e18e1_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1609cef4_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3e399493_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c864205_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2a21ad9e_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@28bfeddb_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2152cd1d_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7700f9da_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ab15c28_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6923972_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@690a0752_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@7c76b071_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@205e2e3b_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@53a6f1da_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@129b203f_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4eb9cbc2_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_encoder_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="074dfd38"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="cad338b0"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="cfc18720"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="8b4f5552"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="6992ea72"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="7a98626d"/>
