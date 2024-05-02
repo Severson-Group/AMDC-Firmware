@@ -17,8 +17,6 @@
 #include "sys/util.h"
 #include "usr/user_config.h"
 
-#include "xil_io.h"
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
