@@ -84,7 +84,7 @@ void timing_manager_init(void)
     timing_manager_trigger_on_pwm_both();
 
     // Set the user ratio for the trigger
-    timing_manager_set_ratio(20);
+    timing_manager_set_ratio(DEFAULT_PWM_RATIO);
 
     // Enable selected sensors for timing acquisition
     timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
@@ -94,9 +94,6 @@ void timing_manager_init(void)
         // ensure each sensor has their own statistics
         statistics_init(&sensor_stats[i]);
     }
-
-    // Disable interrupt 1 - currently not needed
-    // XScuGic_Disable(&intc, INTC_INTERRUPT_ID_1);
 }
 
 /*
@@ -108,6 +105,7 @@ void isr_0(void *intc_inst_ptr)
 {
     // Push stats for each sensor
     timing_manager_sensor_stats();
+    timing_manager_clear_isr();
 }
 
 /*

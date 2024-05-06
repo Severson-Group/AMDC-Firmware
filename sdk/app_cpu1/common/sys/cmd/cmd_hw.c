@@ -306,7 +306,7 @@ int cmd_hw(int argc, char **argv)
             } else {
                 return CMD_INVALID_ARGUMENTS;
             }
-            cmd_resp_printf("Time: %d\n\r", stats->value);
+            cmd_resp_printf("Time (us): %f\n\r", stats->value);
             return CMD_SUCCESS;
         }
     }
