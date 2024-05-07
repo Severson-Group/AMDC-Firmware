@@ -19,11 +19,19 @@
         input  wire pwm_carrier_low,
         input  wire adc_done,
         input  wire encoder_done,
+        input  wire amds_0_done,
+        input  wire amds_1_done,
+        input  wire amds_2_done,
+        input  wire amds_3_done,
         input  wire eddy_0_done,
         input  wire eddy_1_done,
         input  wire eddy_2_done,
         input  wire eddy_3_done,
         output wire sched_isr,
+		output wire en_amds_0,
+		output wire en_amds_1,
+		output wire en_amds_2,
+		output wire en_amds_3,
 		output wire en_eddy_0,
 		output wire en_eddy_1,
 		output wire en_eddy_2,
@@ -503,6 +511,8 @@
     wire [31:0] output_reg_5;
 	wire [31:0] output_reg_6;
 	wire [31:0] output_reg_7;
+    wire [31:0] output_reg_11;
+	wire [31:0] output_reg_12;
     wire reset_sched_isr;
     wire [15:0] count_time;
 
@@ -525,8 +535,8 @@
 	        4'h8   : reg_data_out <= slv_reg8;
 	        4'h9   : reg_data_out <= slv_reg9;
 	        4'hA   : reg_data_out <= count_time;
-	        4'hB   : reg_data_out <= slv_reg11;
-	        4'hC   : reg_data_out <= slv_reg12;
+	        4'hB   : reg_data_out <= output_reg_11;
+	        4'hC   : reg_data_out <= output_reg_12;
 	        4'hD   : reg_data_out <= slv_reg13;
 	        4'hE   : reg_data_out <= slv_reg14;
 	        4'hF   : reg_data_out <= slv_reg15;
@@ -555,9 +565,11 @@
 
 	// Add user logic here
 	
-	wire [15:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+	wire [15:0] adc_time, encoder_time, amds0_time, amds1_time, amds2_time, amds3_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
 	assign output_reg_5 = {eddy1_time, eddy0_time};
 	assign output_reg_6 = {eddy3_time, eddy2_time};
+    assign output_reg_11 = {amds1_time, amds0_time};
+	assign output_reg_12 = {amds3_time, amds2_time};
 	assign output_reg_7 = {adc_time, encoder_time};
 	wire [15:0] user_ratio;
 	wire [7:0] en_bits;
@@ -571,7 +583,7 @@
 
 	// Get the enable bits from the user to
 	// decode them in the timing manager
-	assign en_bits = slv_reg1[7:0];
+	assign en_bits = slv_reg1[15:0];
 
 	// User defined method of synchronizing the pwm on high, low, or both
 	wire event_qualifier;
@@ -606,11 +618,19 @@
 	.en_bits(en_bits),
     .adc_done(adc_done),
     .encoder_done(encoder_done),
+    .amds_0_done(amds_0_done),
+    .amds_1_done(amds_1_done),
+    .amds_2_done(amds_2_done),
+    .amds_3_done(amds_3_done),
     .eddy_0_done(eddy_0_done),
     .eddy_1_done(eddy_1_done),
     .eddy_2_done(eddy_2_done),
     .eddy_3_done(eddy_3_done),
     .sched_isr(sched_isr),
+	.en_amds_0(en_amds_0),
+	.en_amds_1(en_amds_1),
+	.en_amds_2(en_amds_2),
+	.en_amds_3(en_amds_3),
 	.en_eddy_0(en_eddy_0),
 	.en_eddy_1(en_eddy_1),
 	.en_eddy_2(en_eddy_2),
@@ -619,6 +639,10 @@
 	.en_encoder(en_encoder),
 	.adc_time(adc_time),
 	.encoder_time(encoder_time),
+	.amds0_time(amds0_time),
+	.amds1_time(amds1_time),
+	.amds2_time(amds2_time),
+	.amds3_time(amds3_time),
 	.eddy0_time(eddy0_time),
 	.eddy1_time(eddy1_time),
 	.eddy2_time(eddy2_time),

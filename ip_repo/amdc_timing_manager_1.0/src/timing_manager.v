@@ -6,11 +6,15 @@ module timing_manager(
                         en_bits, reset_sched_isr,
                         // DONE SIGNALS
                         adc_done, encoder_done,
+                        amds_0_done, amds_1_done,
+                        amds_2_done, amds_3_done,
                         eddy_0_done, eddy_1_done,
                         eddy_2_done, eddy_3_done,
                         // OUTPUTS
                         sched_isr,
                         // Enable signals
+                        en_amds_0, en_amds_1,
+                        en_amds_2, en_amds_3,
                         en_eddy_0, en_eddy_1,
                         en_eddy_2, en_eddy_3,
                         en_adc, en_encoder,
@@ -26,9 +30,10 @@ module timing_manager(
     ////////////
     input clk, rst_n;
     input wire [15:0] user_ratio;
-    input wire [7:0] en_bits;
+    input wire [15:0] en_bits;
     input wire adc_done;
     input wire encoder_done;
+    input wire amds_0_done, amds_1_done, amds_2_done, amds_3_done;
     input wire eddy_0_done, eddy_1_done, eddy_2_done, eddy_3_done;
     input wire event_qualifier;
     input wire reset_sched_isr;
@@ -37,10 +42,13 @@ module timing_manager(
     // OUTPUTS //
     /////////////
     output reg sched_isr;
+    output wire en_amds_0, en_amds_1, en_amds_2, en_amds_3;
     output wire en_eddy_0, en_eddy_1, en_eddy_2, en_eddy_3;
     output wire en_adc, en_encoder;
     output reg trigger;
-    output reg [15:0] adc_time, encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+    output reg [15:0] amds0_time, amds1_time, amds2_time, amds3_time;
+    output reg [15:0] eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+    output reg [15:0] adc_time, encoder_time;
     
     //////////////////////
     // Internal signals //
@@ -82,22 +90,30 @@ module timing_manager(
 
     //////////////////////////////////////////////////////////////////
     // Logic that decides which sensors are being used. This takes  //
-    // in an 8-bit number that has the bits set to whichever        //
+    // in a 16-bit number that has the bits set to whichever        //
     // sensor should to be enabled (0x00 by default) for timing.    //
     // BITS:                                                        //
-    // en_bits[0]: Eddy current sensor - GPIO0                      //
-    // en_bits[1]: Eddy current sensor - GPIO1                      //
-    // en_bits[2]: Eddy current sensor - GPIO2                      //
-    // en_bits[3]: Eddy current sensor - GPIO3                      //
-    // en_bits[4]: Encoder                                          //
-    // en_bits[5]: ADC                                              //
+    // en_bits[0]: AMDS - GPIO0                                     //
+    // en_bits[1]: AMDS - GPIO1                                     //
+    // en_bits[2]: AMDS - GPIO2                                     //
+    // en_bits[3]: AMDS - GPIO3                                     //
+    // en_bits[4]: Eddy current sensor - GPIO0                      //
+    // en_bits[5]: Eddy current sensor - GPIO1                      //
+    // en_bits[6]: Eddy current sensor - GPIO2                      //
+    // en_bits[7]: Eddy current sensor - GPIO3                      //
+    // en_bits[8]: Encoder                                          //
+    // en_bits[9]: ADC                                              //
     //////////////////////////////////////////////////////////////////
-    assign en_eddy_0 =  en_bits[0];
-    assign en_eddy_1 =  en_bits[1];
-    assign en_eddy_2 =  en_bits[2];
-    assign en_eddy_3 =  en_bits[3];
-    assign en_encoder = en_bits[4];
-    assign en_adc =     en_bits[5];
+    assign en_amds_0 =  en_bits[0];
+    assign en_amds_1 =  en_bits[1];
+    assign en_amds_2 =  en_bits[2];
+    assign en_amds_3 =  en_bits[3];
+    assign en_eddy_0 =  en_bits[4];
+    assign en_eddy_1 =  en_bits[5];
+    assign en_eddy_2 =  en_bits[6];
+    assign en_eddy_3 =  en_bits[7];
+    assign en_encoder = en_bits[8];
+    assign en_adc =     en_bits[9];
 
     //////////////////////////////////////////////////////////////////
     // The signal all_done will be asserted when all of the enabled //
@@ -108,12 +124,17 @@ module timing_manager(
     // can also only be high if at least one sensor is enabled.     //
     //////////////////////////////////////////////////////////////////
     assign sensors_enabled = en_eddy_0 | en_eddy_1 | en_eddy_2 | en_eddy_3 |
+                            en_amds_0 | en_amds_1 | en_amds_2 | en_amds_3 |
                             en_encoder | en_adc;
     
     assign all_done = ((!en_eddy_0 || eddy_0_done) &
                         (!en_eddy_1 || eddy_1_done) &
                         (!en_eddy_2 || eddy_2_done) &
                         (!en_eddy_3 || eddy_3_done) &
+                        (!en_amds_0 || amds_0_done) &
+                        (!en_amds_1 || amds_1_done) &
+                        (!en_amds_2 || amds_2_done) &
+                        (!en_amds_3 || amds_3_done) &
                         (!en_encoder || encoder_done) &
                         (!en_adc || adc_done)) &
                         sensors_enabled;
@@ -150,8 +171,8 @@ module timing_manager(
     // signal is recieved from a sensor, and done once all are done //
     //////////////////////////////////////////////////////////////////
 
-	reg adc_ff, encoder_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
-	wire adc_pe, encoder_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
+	reg adc_ff, encoder_ff, amds_0_ff, amds_1_ff, amds_2_ff, amds_3_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
+	wire adc_pe, encoder_pe, amds_0_pe, amds_1_pe, amds_2_pe, amds_3_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
 	
 	// Detect a rising edge for each done signal to copy over at that point
 	
@@ -190,6 +211,30 @@ module timing_manager(
 		eddy_3_ff <= eddy_3_done;
 	end
 	assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
+
+	// AMDS 0
+	always @(posedge clk) begin
+		amds_0_ff <= amds_0_done;
+	end
+	assign amds_0_pe = amds_0_done & ~amds_0_ff;
+
+	// AMDS 1
+	always @(posedge clk) begin
+		amds_1_ff <= amds_1_done;
+	end
+	assign amds_1_pe = amds_1_done & ~amds_1_ff;
+
+	// AMDS 2
+	always @(posedge clk) begin
+		amds_2_ff <= amds_2_done;
+	end
+	assign amds_2_pe = amds_2_done & ~amds_2_ff;
+
+	// AMDS 3
+	always @(posedge clk) begin
+		amds_3_ff <= amds_3_done;
+	end
+	assign amds_3_pe = amds_3_done & ~amds_3_ff;
 	
 
     // Count the time when start_count is asserted, otherwise
@@ -234,6 +279,30 @@ module timing_manager(
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) eddy3_time <= 0;
         else if (eddy_3_pe) eddy3_time <= count_time;
+    end
+
+    // Get AMDS 0 time
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n) amds0_time <= 0;
+        else if (amds_0_pe) amds0_time <= count_time;
+    end
+
+    // Get AMDS 1 time
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n) amds1_time <= 0;
+        else if (amds_1_pe) amds1_time <= count_time;
+    end
+
+    // Get AMDS 2 time
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n) amds2_time <= 0;
+        else if (amds_2_pe) amds2_time <= count_time;
+    end
+
+    // Get AMDS 3 time
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n) amds3_time <= 0;
+        else if (amds_3_pe) amds3_time <= count_time;
     end
 
 endmodule
