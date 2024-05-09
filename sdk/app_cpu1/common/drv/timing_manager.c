@@ -132,58 +132,57 @@ void timing_manager_set_ratio(uint32_t ratio)
 }
 
 /*
- * Select which sensors should be used for timing acquisition
+ * Enables/disables all user-requested sensors for timing acquisition, according to provided enable bits.
+ * Can be used to disable all sensors if enable_bits argument is 0x0000.
  */
-void timing_manager_select_sensors(uint8_t enable_bits)
+void timing_manager_select_sensors(uint16_t enable_bits)
 {
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the enable bits to the config register
-    Xil_Out32(config_reg_addr, enable_bits);
+    // There are only 10 sensors supported in the timing manager, so the first 6 enable bits should always be cleared
+    if (enable_bits & 0xFC00) {
+        // If here, there was a non-zero bit in the most significant six bits
+        xil_printf("Timing Manager: Invalid enable_bits argument passed to timing_manager_select_sensors()");
+    } else {
+        // Get the current address for the target config register (slv_reg1)
+        uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+        // Assign the enable bits to the config register
+        Xil_Out32(config_reg_addr, enable_bits);
+    }
 }
 
 /*
- * Enable eddy current sensor 1
+ * Enables AMDS in a single GPIO port
  */
-void timing_manager_enable_eddy_1(void)
+void timing_manager_enable_amds(uint8_t amds_port_number)
 {
-    // Get the current address for the target config register (slv_reg2)
+    // Get the address for the target config register (slv_reg1)
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x01));
+
+    if (amds_port_number >= 1 && amds_port_number <= 4) {
+        // AMDS enables are bits 0-3 in slv_reg1,
+        // therefore enabling AMDS in GPIO Port 1 (1-indexed) is bit 0
+        uint32_t enable_bits = 0x1 << (amds_port_number - 1);
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | enable_bits));
+    } else {
+        xil_printf("Timing Manager: AMDS port number should be in the range 1 - 4");
+    }
 }
 
 /*
- * Enable eddy current sensor 2
+ * Enables user-requested eddy current sensor in a single GPIO port
  */
-void timing_manager_enable_eddy_2(void)
+void timing_manager_enable_eddy_current_sensor(uint8_t eddy_sensor_port_number)
 {
-    // Get the current address for the target config register (slv_reg2)
+    // Get the address for the target config register (slv_reg1)
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x02));
-}
 
-/*
- * Enable eddy current sensor 3
- */
-void timing_manager_enable_eddy_3(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x04));
-}
-
-/*
- * Enable eddy current sensor 4
- */
-void timing_manager_enable_eddy_4(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x08));
+    if (eddy_sensor_port_number >= 1 && eddy_sensor_port_number <= 4) {
+        // Eddy Current Sensors enables are bits 4-7 in slv_reg1,
+        // therefore enabling eddy current sensor 1 (the first GPIO port) is bit 4
+        uint32_t enable_bits = 0x1 << (eddy_sensor_port_number + 3);
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | enable_bits));
+    } else {
+        xil_printf("Timing Manager: Eddy Current Sensor port number should be in the range 1 - 4");
+    }
 }
 
 /*
@@ -191,10 +190,10 @@ void timing_manager_enable_eddy_4(void)
  */
 void timing_manager_enable_encoder(void)
 {
-    // Get the current address for the target config register (slv_reg2)
+    // Get the address for the target config register (slv_reg1)
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x10));
+    // Write to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x100));
 }
 
 /*
@@ -202,10 +201,10 @@ void timing_manager_enable_encoder(void)
  */
 void timing_manager_enable_adc(void)
 {
-    // Get the current address for the target config register (slv_reg2)
+    // Get the address for the target config register (slv_reg1)
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x20));
+    // Write to the config register
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x200));
 }
 
 /*
@@ -260,7 +259,19 @@ double timing_manager_get_time_per_sensor(sensor_t sensor)
     int clock_cycles = 0;
     double time = 0;
 
-    if (sensor == EDDY_0) {
+    if (sensor == AMDS_0) {
+        // Lower 16 bits of slave reg 11
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (11 * sizeof(uint32_t)))) & LOWER_16_MASK;
+    } else if (sensor == AMDS_1) {
+        // Upper 16 bits of slave reg 11
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (11 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+    } else if (sensor == AMDS_2) {
+        // Lower 16 bits of slave reg 12
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (12 * sizeof(uint32_t)))) & LOWER_16_MASK;
+    } else if (sensor == AMDS_3) {
+        // Upper 16 bits of slave reg 12
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (12 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
+    } else if (sensor == EDDY_0) {
         // Lower 16 bits of slave reg 5
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
     } else if (sensor == EDDY_1) {
