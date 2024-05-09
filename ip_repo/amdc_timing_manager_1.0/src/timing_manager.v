@@ -1,29 +1,29 @@
 module timing_manager(
-                        // INPUTS
-                        clk, rst_n,
-                        event_qualifier,
-                        user_ratio,
-                        en_bits, reset_sched_isr,
-                        // DONE SIGNALS
-                        adc_done, encoder_done,
-                        amds_0_done, amds_1_done,
-                        amds_2_done, amds_3_done,
-                        eddy_0_done, eddy_1_done,
-                        eddy_2_done, eddy_3_done,
-                        // OUTPUTS
-                        sched_isr,
-                        // Enable signals
-                        en_amds_0, en_amds_1,
-                        en_amds_2, en_amds_3,
-                        en_eddy_0, en_eddy_1,
-                        en_eddy_2, en_eddy_3,
-                        en_adc, en_encoder,
-                        // Time
-                        adc_time, encoder_time,
-                        eddy0_time, eddy1_time,
-                        eddy2_time, eddy3_time,
-                        trigger, count_time
-                        );
+    // INPUTS
+    clk, rst_n,
+    event_qualifier,
+    user_ratio,
+    en_bits, reset_sched_isr,
+    // DONE SIGNALS
+    adc_done, encoder_done,
+    amds_0_done, amds_1_done,
+    amds_2_done, amds_3_done,
+    eddy_0_done, eddy_1_done,
+    eddy_2_done, eddy_3_done,
+    // OUTPUTS
+    sched_isr,
+    // Enable signals
+    en_amds_0, en_amds_1,
+    en_amds_2, en_amds_3,
+    en_eddy_0, en_eddy_1,
+    en_eddy_2, en_eddy_3,
+    en_adc, en_encoder,
+    // Time
+    adc_time, encoder_time,
+    eddy0_time, eddy1_time,
+    eddy2_time, eddy3_time,
+    trigger, count_time
+);
     
     ////////////
     // INPUTS //
@@ -82,10 +82,10 @@ module timing_manager(
             count <= count + 1;
             trigger <= 0;
         end
-	   else begin
+       else begin
             count <= count;
             trigger <= 0;
-	   end
+       end
     end
 
     //////////////////////////////////////////////////////////////////
@@ -139,16 +139,16 @@ module timing_manager(
                         (!en_adc || adc_done)) &
                         sensors_enabled;
 
-	//////////////////////////////////////////////////////////////////
-	// Rising edge detection for all_done, which signifies when to	//
-	// send an interrupt											//
-	//////////////////////////////////////////////////////////////////
-	reg all_done_ff;
-	wire all_done_pe;
-	always @(posedge clk) begin
-		all_done_ff <= all_done;
-	end
-	assign all_done_pe = all_done & ~all_done_ff;
+    //////////////////////////////////////////////////////////////////
+    // Rising edge detection for all_done, which signifies when to    //
+    // send an interrupt                                            //
+    //////////////////////////////////////////////////////////////////
+    reg all_done_ff;
+    wire all_done_pe;
+    always @(posedge clk) begin
+        all_done_ff <= all_done;
+    end
+    assign all_done_pe = all_done & ~all_done_ff;
 
     //////////////////////////////////////////////////////////////////
     // Send an interrupt to the PS once all of the sensors are done //
@@ -171,77 +171,77 @@ module timing_manager(
     // signal is recieved from a sensor, and done once all are done //
     //////////////////////////////////////////////////////////////////
 
-	reg adc_ff, encoder_ff, amds_0_ff, amds_1_ff, amds_2_ff, amds_3_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
-	wire adc_pe, encoder_pe, amds_0_pe, amds_1_pe, amds_2_pe, amds_3_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
-	
-	// Detect a rising edge for each done signal to copy over at that point
-	
-	// ADC
-	always @(posedge clk) begin
-		adc_ff <= adc_done;
-	end
-	assign adc_pe = adc_done & ~adc_ff;		
+    reg adc_ff, encoder_ff, amds_0_ff, amds_1_ff, amds_2_ff, amds_3_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
+    wire adc_pe, encoder_pe, amds_0_pe, amds_1_pe, amds_2_pe, amds_3_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
+    
+    // Detect a rising edge for each done signal to copy over at that point
+    
+    // ADC
+    always @(posedge clk) begin
+        adc_ff <= adc_done;
+    end
+    assign adc_pe = adc_done & ~adc_ff;        
 
-	// Encoder
-	always @(posedge clk) begin
-		encoder_ff <= encoder_done;
-	end
-	assign encoder_pe = encoder_done & ~encoder_ff;
-	
-	// Eddy 0
-	always @(posedge clk) begin
-		eddy_0_ff <= eddy_0_done;
-	end
-	assign eddy_0_pe = eddy_0_done & ~eddy_0_ff;
+    // Encoder
+    always @(posedge clk) begin
+        encoder_ff <= encoder_done;
+    end
+    assign encoder_pe = encoder_done & ~encoder_ff;
+    
+    // Eddy 0
+    always @(posedge clk) begin
+        eddy_0_ff <= eddy_0_done;
+    end
+    assign eddy_0_pe = eddy_0_done & ~eddy_0_ff;
 
-	// Eddy 1
-	always @(posedge clk) begin
-		eddy_1_ff <= eddy_1_done;
-	end
-	assign eddy_1_pe = eddy_1_done & ~eddy_1_ff;
+    // Eddy 1
+    always @(posedge clk) begin
+        eddy_1_ff <= eddy_1_done;
+    end
+    assign eddy_1_pe = eddy_1_done & ~eddy_1_ff;
 
-	// Eddy 2
-	always @(posedge clk) begin
-		eddy_2_ff <= eddy_2_done;
-	end
-	assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
+    // Eddy 2
+    always @(posedge clk) begin
+        eddy_2_ff <= eddy_2_done;
+    end
+    assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
 
-	// Eddy 3
-	always @(posedge clk) begin
-		eddy_3_ff <= eddy_3_done;
-	end
-	assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
+    // Eddy 3
+    always @(posedge clk) begin
+        eddy_3_ff <= eddy_3_done;
+    end
+    assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
 
-	// AMDS 0
-	always @(posedge clk) begin
-		amds_0_ff <= amds_0_done;
-	end
-	assign amds_0_pe = amds_0_done & ~amds_0_ff;
+    // AMDS 0
+    always @(posedge clk) begin
+        amds_0_ff <= amds_0_done;
+    end
+    assign amds_0_pe = amds_0_done & ~amds_0_ff;
 
-	// AMDS 1
-	always @(posedge clk) begin
-		amds_1_ff <= amds_1_done;
-	end
-	assign amds_1_pe = amds_1_done & ~amds_1_ff;
+    // AMDS 1
+    always @(posedge clk) begin
+        amds_1_ff <= amds_1_done;
+    end
+    assign amds_1_pe = amds_1_done & ~amds_1_ff;
 
-	// AMDS 2
-	always @(posedge clk) begin
-		amds_2_ff <= amds_2_done;
-	end
-	assign amds_2_pe = amds_2_done & ~amds_2_ff;
+    // AMDS 2
+    always @(posedge clk) begin
+        amds_2_ff <= amds_2_done;
+    end
+    assign amds_2_pe = amds_2_done & ~amds_2_ff;
 
-	// AMDS 3
-	always @(posedge clk) begin
-		amds_3_ff <= amds_3_done;
-	end
-	assign amds_3_pe = amds_3_done & ~amds_3_ff;
-	
+    // AMDS 3
+    always @(posedge clk) begin
+        amds_3_ff <= amds_3_done;
+    end
+    assign amds_3_pe = amds_3_done & ~amds_3_ff;
+    
 
     // Count the time when start_count is asserted, otherwise
     // the time should be reset to 0.
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) count_time <= 0;
-        else if (trigger) count_time <= 0;	// Restart upon trigger
+        else if (trigger) count_time <= 0;    // Restart upon trigger
         else count_time <= count_time + 1;
     end
 
