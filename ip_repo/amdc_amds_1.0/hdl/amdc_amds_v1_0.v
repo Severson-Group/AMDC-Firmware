@@ -17,9 +17,8 @@
         // Users to add ports here
         input wire enable,
         input wire trigger,
-        input wire [1:0] motherboard_data,
-        output wire motherboard_sync_adc,
-        output wire motherboard_sync_tx,
+        input wire [1:0] amds_data,
+        output wire sync_adc,
         output wire done,
         // User ports ends
         // Do not modify the ports beyond this line
@@ -76,9 +75,8 @@
         .S_AXI_RREADY(s00_axi_rready),
         .enable(enable),
         .trigger(trigger),
-        .motherboard_data(motherboard_data),
-        .motherboard_sync_adc(motherboard_sync_adc),
-        .motherboard_sync_tx(motherboard_sync_tx),
+        .amds_data(amds_data),
+        .sync_adc(sync_adc),
         .done(done)
     );
 

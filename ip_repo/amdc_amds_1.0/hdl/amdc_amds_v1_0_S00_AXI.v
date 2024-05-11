@@ -17,9 +17,8 @@
         // Users to add ports here
         input wire enable,
         input wire trigger,
-        input wire [1:0] motherboard_data,
-        output wire motherboard_sync_adc,
-        output wire motherboard_sync_tx,
+        input wire [1:0] amds_data,
+        output wire sync_adc,
         output wire done,
         // User ports ends
         // Do not modify the ports beyond this line
@@ -565,21 +564,18 @@
     //////////////
 
     // ======
-    // Construct SYNC_ADC signal based on PWM carrier and user enable bit
+    // Construct SYNC_ADC signal based on trigger and user enable bit
     // ======
     
-    reg sync_pwm_out;
+    reg sync_adc_flop;
     always @(posedge S_AXI_ACLK) begin
-        if (~S_AXI_ARESETN) begin
-            sync_pwm_out <= 1'b0;
-        end
-        
-        else if (pwm_carrier_low | pwm_carrier_high) begin
-            sync_pwm_out <= ~sync_pwm_out;
-        end
+        if (~S_AXI_ARESETN)
+            sync_adc_flop <= 1'b0;
+        else if (trigger)
+            sync_adc_flop <= ~sync_adc_flop;
     end
     
-    assign motherboard_sync_adc = (sync_adc_en) ? sync_pwm_out : 1'b0;
+    assign sync_adc = (enable) ? sync_adc_flop : 1'b0;
 
 
 
@@ -593,53 +589,52 @@
     
     // ======
     // Detect changes in SYNC_TX bit.
-    // If changes, toggle signal to motherboard which will start the transmission of data.
+    // If changes, toggle signal to AMDS which will start the transmission of data.
     //
     // Note, we could just pass through the config reg bit straight to the physical wire, but
     // doing it this way ensure the FPGA knows what's going on and can start a FSM for rx.
     // ======
     
-    reg prev_sync_tx;
-    always @(posedge S_AXI_ACLK) begin
-        if (~S_AXI_ARESETN) begin
-            prev_sync_tx <= 1'b0;
-        end
+    // reg prev_sync_tx;
+    // always @(posedge S_AXI_ACLK) begin
+    //     if (~S_AXI_ARESETN) begin
+    //         prev_sync_tx <= 1'b0;
+    //     end
     
-        else begin
-            prev_sync_tx <= sync_tx;
-        end
-    end
+    //     else begin
+    //         prev_sync_tx <= sync_tx;
+    //     end
+    // end
     
-    // Look for transitions on sync_tx bit in control reg
-    wire start_data_tx;
-    assign start_data_tx = prev_sync_tx ^ sync_tx;
+    // // Look for transitions on sync_tx bit in control reg
+    // wire start_data_tx;
+    // assign start_data_tx = prev_sync_tx ^ sync_tx;
 
-    // Implement state machine for reading DOUT1 and DOUT2 from motherboard...
-    // for now, just toggle the sync_tx line which will start the transmission from the motherboard.
+    // Implement state machine for reading DOUT1 and DOUT2 from AMDS...
+    // for now, just toggle the sync_tx line which will start the transmission from the AMDS.
     //
     // i.e. these signals contain serial data of the ADC sampled values:
-    // - motherboard_data1 <== DCs 1..4
-    // - motherboard_data2 <== DCs 5..8
+    // - amds_data1 <== DCs 1..4
+    // - amds_data2 <== DCs 5..8
     
-    reg sync_tx_out;
-    always @(posedge S_AXI_ACLK) begin
-        if (~S_AXI_ARESETN) begin
-            sync_tx_out <= 1'b0;
-        end
+    // reg sync_tx_out;
+    // always @(posedge S_AXI_ACLK) begin
+    //     if (~S_AXI_ARESETN) begin
+    //         sync_tx_out <= 1'b0;
+    //     end
         
-        else if (start_data_tx) begin
-            sync_tx_out <= ~sync_tx_out;
-        end
-    end
+    //     else if (start_data_tx) begin
+    //         sync_tx_out <= ~sync_tx_out;
+    //     end
+    // end
     
-    assign motherboard_sync_tx = sync_tx_out;
+    // assign amds_sync_tx = sync_tx_out;
     
-    // This module listens to the two data inputs from the motherboard.
+    // This module listens to the two data inputs from the AMDS.
     // When the sync_tx line toggles, this module knows to expect a new
     // data packet transmission. Therefore, it will start a state machine
     // internally to read each UART word.
-    wire is_dout_valid0;
-    wire is_dout_valid1;
+    wire is_dout0_valid0, is_dout1_valid1;
    
     wire [15:0] my_adc_data0;
     wire [15:0] my_adc_data1;
@@ -657,13 +652,64 @@
     wire [15:0] counter_data1_valid;
     wire [15:0] counter_data1_corrupt;
     wire [15:0] counter_data1_timeout;
+
+    // Start receiving data on the first falling edge of the data line, after the trigger
+    reg [1:0] amds_data_ff;
+    wire amds_data0_fe, amds_data1_fe;
+
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            // Good idea to reset to zero to guarantee the first falling edge is real
+            amds_data_ff <= 2'b00;
+        else
+            amds_data_ff <= amds_data
+    end
+
+    assign amds_data0_fe = amds_data_ff[0] & ~amds_data[0];
+    assign amds_data1_fe = amds_data_ff[1] & ~amds_data[1];
+
+
+    reg waiting_for_data0, waiting_for_data1, start_rx0, start_rx1;
+
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            waiting_for_first_fe0 <= 1'b0;
+        else if (trigger & done)
+            waiting_for_first_fe0 <= 1'b1;
+        else if (start_rx0)
+            waiting_for_first_fe0 <= 1'b0;
+    end
+
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            waiting_for_first_fe1 <= 1'b0;
+        else if (trigger & done)
+            waiting_for_first_fe1 <= 1'b1;
+        else if (start_rx1)
+            waiting_for_first_fe1 <= 1'b0;
+    end
+
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            start_rx0 <= 1'b0;
+        else if (waiting_for_first_fe0 & amds_data0_fe)
+            start_rx0 <= 1'b1;
+    end
+
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            start_rx1 <= 1'b0;
+        else if (waiting_for_first_fe1 & amds_data1_fe)
+            start_rx1 <= 1'b1;
+    end
     
     adc_uart_rx iADC_UART_RX0 (
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
-        .start_rx(start_data_tx),
-        .din(motherboard_data[0]),
-        .is_dout_valid(is_dout_valid0),
+        .start_rx(start_rx0),
+        .din(amds_data[0]),
+        .is_dout_valid(is_dout0_valid),
+        .adc_uart_done(adc_uart0_done),
         .adc_dout0(my_adc_data0),
         .adc_dout1(my_adc_data1),
         .adc_dout2(my_adc_data2),
@@ -676,9 +722,10 @@
     adc_uart_rx iADC_UART_RX1 (
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
-        .start_rx(start_data_tx),
-        .din(motherboard_data[1]),
-        .is_dout_valid(is_dout_valid1),
+        .start_rx(start_rx1),
+        .din(amds_data[1]),
+        .is_dout_valid(is_dout1_valid),
+        .adc_uart_done(adc_uart1_done),
         .adc_dout0(my_adc_data4),
         .adc_dout1(my_adc_data5),
         .adc_dout2(my_adc_data6),
@@ -703,7 +750,7 @@
             status_reg <= 32'b0;
         end
     
-        else if (is_dout_valid0 & is_dout_valid1) begin
+        else if (is_dout0_valid & is_dout1_valid) begin
             adc_dout0 <= {{16{my_adc_data0[15]}}, my_adc_data0};
             adc_dout1 <= {{16{my_adc_data1[15]}}, my_adc_data1};
             adc_dout2 <= {{16{my_adc_data2[15]}}, my_adc_data2};
@@ -726,6 +773,12 @@
         corrupt_reg[31:0] <= {counter_data1_corrupt, counter_data0_corrupt};
         timeout_reg[31:0] <= {counter_data1_timeout, counter_data0_timeout};
     end
+
+    // Receiving is done when both sub-receivers are done
+    // We cannot reuse the is_dout_valid signals, because if corrupt data was received, the receiver is "done",
+    //   but valid did not go high. And done MUST go high even in the case of corrupt/timed-out data, because the 
+    //   timing manager will not send out another trigger until we tell it we're done
+    assign done = adc_uart0_done & adc_uart1_done;
 
 
 
