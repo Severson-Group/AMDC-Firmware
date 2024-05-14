@@ -72,20 +72,27 @@ module timing_manager(
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
             count <= 0;
-            trigger <= 0;
         end
-        else if (count == user_ratio) begin
-            count <= 0;
-            trigger <= 1;
-        end
+	else if (count == user_ratio) begin
+	    count <= 0;
+	end
         else if (event_qualifier) begin
             count <= count + 1;
+        end
+    end
+
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n) begin
             trigger <= 0;
         end
-       else begin
-            count <= count;
+        else if ((count == user_ratio) & all_done) begin
+            // Send next trigger if the count of PWM events has reached the
+            // desired user ratio, and all enabled sensors are done sampling
+            trigger <= 1;
+        end
+        else begin
             trigger <= 0;
-       end
+        end
     end
 
     //////////////////////////////////////////////////////////////////
