@@ -258,23 +258,25 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
 
-        // "hw tm enable <sensor> <port [if eddy]>
+        // hw tm enable <sensor> [port if eddy/amds]
         else if (argc >= 4 && STREQ("enable", argv[2])) {
             if (STREQ("encoder", argv[3])) {
                 timing_manager_enable_encoder();
             } else if (STREQ("adc", argv[3])) {
                 timing_manager_enable_adc();
+            } else if (argc == 5 && STREQ("amds", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // enable AMDS based on selected port
+                if (port >= 1 && port <= 4) {
+                    timing_manager_enable_amds(port);
+                } else {
+                    return CMD_INVALID_ARGUMENTS;
+                }
             } else if (argc == 5 && STREQ("eddy", argv[3])) {
                 int32_t port = atoi(argv[4]);
                 // enable eddy current sensor based on selected port
-                if (port == 1) {
-                    timing_manager_enable_eddy_1();
-                } else if (port == 2) {
-                    timing_manager_enable_eddy_2();
-                } else if (port == 3) {
-                    timing_manager_enable_eddy_3();
-                } else if (port == 4) {
-                    timing_manager_enable_eddy_4();
+                if (port >= 1 && port <= 4) {
+                    timing_manager_enable_eddy_current_sensor(port);
                 } else {
                     return CMD_INVALID_ARGUMENTS;
                 }
@@ -282,22 +284,36 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
 
-        // 'hw tm time <sensor>'
+        // hw tm time <sensor>
         else if (argc >= 4 && STREQ("time", argv[2])) {
             statistics_t *stats;
             if (STREQ("encoder", argv[3])) {
                 stats = timing_manager_get_stats_per_sensor(ENCODER);
+            } else if (STREQ("amds", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // get time for AMDS based on selected port
+                if (port == 1) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_1);
+                } else if (port == 2) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_2);
+                } else if (port == 3) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_3);
+                } else if (port == 4) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_4);
+                } else {
+                    return CMD_INVALID_ARGUMENTS;
+                }
             } else if (STREQ("eddy", argv[3])) {
                 int32_t port = atoi(argv[4]);
-                // enable eddy current sensor based on selected port
+                // get time for eddy current sensor based on selected port
                 if (port == 1) {
-                    stats = timing_manager_get_stats_per_sensor(EDDY_0);
-                } else if (port == 2) {
                     stats = timing_manager_get_stats_per_sensor(EDDY_1);
-                } else if (port == 3) {
+                } else if (port == 2) {
                     stats = timing_manager_get_stats_per_sensor(EDDY_2);
-                } else if (port == 4) {
+                } else if (port == 3) {
                     stats = timing_manager_get_stats_per_sensor(EDDY_3);
+                } else if (port == 4) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_4);
                 } else {
                     return CMD_INVALID_ARGUMENTS;
                 }

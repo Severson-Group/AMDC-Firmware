@@ -20,22 +20,19 @@
 #define UPPER_16_SHIFT           (16)
 
 typedef enum {
-    AMDS_0 = 0,
-    AMDS_0 = 1,
-    AMDS_0 = 2,
-    AMDS_0 = 3,
-    EDDY_0 = 4,
-    EDDY_1 = 5,
-    EDDY_2 = 6,
-    EDDY_3 = 7,
+    AMDS_1 = 0,
+    AMDS_2 = 1,
+    AMDS_3 = 2,
+    AMDS_4 = 3,
+    EDDY_1 = 4,
+    EDDY_2 = 5,
+    EDDY_3 = 6,
+    EDDY_4 = 7,
     ENCODER = 8,
     ADC = 9
 } sensor_t;
 
-typedef enum {
-    MANUAL = 0,
-    AUTOMATIC = 1
-} trigger_mode_t;
+typedef enum { MANUAL = 0, AUTOMATIC = 1 } trigger_mode_t;
 
 // Initialization
 int interrupt_system_init();

@@ -105,20 +105,17 @@ void timing_manager_init(void)
  *
  * AUTOMATIC mode will trigger all enabled sensors according to the settings set by the
  * timing_manager_set_ratio() when all enabled sensors are done sampling
- * 
+ *
  * MANUAL mode will only trigger sensors when the user makes a call to the
  * timing_manager_send_manual_trigger() function, although manual triggers will still be aligned
- * to the peaks and/or valleys of the PWM carrier 
+ * to the peaks and/or valleys of the PWM carrier
  */
 void timing_manager_set_mode(trigger_mode_t mode)
 {
-    if (mode)
-    {
+    if (mode) {
         // AUTOMATIC: Set slv_reg0[0]
         Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) | 0x00000001));
-    }
-    else
-    {
+    } else {
         // MANUAL: Clear slv_reg0[0]
         Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
     }
@@ -274,7 +271,7 @@ void timing_manager_trigger_on_pwm_low(void)
 {
     // Get the current address of the config register
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
-    // Set only the carrier high bit
+    // Set only the carrier low bit
     Xil_Out32(config_reg_addr, 0x0002);
 }
 
@@ -297,28 +294,28 @@ double timing_manager_get_time_per_sensor(sensor_t sensor)
     int clock_cycles = 0;
     double time = 0;
 
-    if (sensor == AMDS_0) {
+    if (sensor == AMDS_1) {
         // Lower 16 bits of slave reg 11
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (11 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == AMDS_1) {
+    } else if (sensor == AMDS_2) {
         // Upper 16 bits of slave reg 11
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (11 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    } else if (sensor == AMDS_2) {
+    } else if (sensor == AMDS_3) {
         // Lower 16 bits of slave reg 12
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (12 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == AMDS_3) {
+    } else if (sensor == AMDS_4) {
         // Upper 16 bits of slave reg 12
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (12 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    } else if (sensor == EDDY_0) {
+    } else if (sensor == EDDY_1) {
         // Lower 16 bits of slave reg 5
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == EDDY_1) {
+    } else if (sensor == EDDY_2) {
         // Upper 16 bits of slave reg 5
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    } else if (sensor == EDDY_2) {
+    } else if (sensor == EDDY_3) {
         // Lower 16 bits of slave reg 6
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == EDDY_3) {
+    } else if (sensor == EDDY_4) {
         // Upper 16 bits of slave reg 6
         clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
     } else if (sensor == ENCODER) {
