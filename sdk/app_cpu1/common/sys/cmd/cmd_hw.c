@@ -234,17 +234,42 @@ int cmd_hw(int argc, char **argv)
 
     // Handle 'tm' sub-command
     if (argc >= 2 && STREQ("tm", argv[1])) {
-        // hw timing manager trigger <HIGH|LOW|BOTH>
-        if (argc == 4 && STREQ("trigger", argv[2])) {
+        // hw tm trigger_pwm <HIGH|LOW|BOTH>
+        if (argc == 4 && STREQ("trigger_pwm", argv[2])) {
             if (STREQ("HIGH", argv[3])) {
                 timing_manager_trigger_on_pwm_high();
             } else if (STREQ("LOW", argv[3])) {
                 timing_manager_trigger_on_pwm_low();
-            } else if (STREQ("BOTH", argv[3]))
+            } else if (STREQ("BOTH", argv[3])) {
                 timing_manager_trigger_on_pwm_both();
-            else {
+            } else {
                 return CMD_INVALID_ARGUMENTS;
             }
+            return CMD_SUCCESS;
+        }
+
+        // hw tm mode <AUTO|MANUAL>
+        if (argc == 4 && STREQ("mode", argv[2])) {
+            if (STREQ("AUTO", argv[3])) {
+                timing_manager_set_mode(AUTOMATIC);
+            } else if (STREQ("MANUAL", argv[3])) {
+                timing_manager_set_mode(MANUAL);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+            return CMD_SUCCESS;
+        }
+
+        // hw tm send_trigger
+        if (argc == 3 && STREQ("send_trigger", argv[2])) {
+            // Verify that timing manager is in manual mode
+            if ((Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1) == 0) {
+                timing_manager_send_manual_trigger();
+            } else {
+                xil_printf("Failed to send manual trigger. Is the timing manager in manual mode?");
+                return CMD_FAILURE;
+            }
+
             return CMD_SUCCESS;
         }
 
