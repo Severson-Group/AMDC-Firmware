@@ -94,7 +94,7 @@
     reg [31:0] adc_dout5;
     reg [31:0] adc_dout6;
     reg [31:0] adc_dout7;
-    reg [31:0] status_reg;
+    reg [31:0] ch_valid_reg;
     reg [31:0] valid_reg;
     reg [31:0] corrupt_reg;
     reg [31:0] timeout_reg;
@@ -516,8 +516,8 @@
             4'h5   : reg_data_out <= adc_dout5;
             4'h6   : reg_data_out <= adc_dout6;
             4'h7   : reg_data_out <= adc_dout7;
-            4'h8   : reg_data_out <= slv_reg8;  // Configuration register
-            4'h9   : reg_data_out <= status_reg;
+            4'h8   : reg_data_out <= slv_reg8;
+            4'h9   : reg_data_out <= ch_valid_reg;
             4'hA   : reg_data_out <= valid_reg;
             4'hB   : reg_data_out <= corrupt_reg;
             4'hC   : reg_data_out <= timeout_reg;
@@ -549,24 +549,9 @@
 
     // Add user logic here
 
-
-
-
-
-
-
-
-
-
-
-    ////////////////
-    // UPDATE ME
-    //////////////
-
     // ======
     // Construct SYNC_ADC signal based on trigger and user enable bit
     // ======
-    
     reg sync_adc_flop;
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
@@ -576,65 +561,12 @@
     end
     
     assign sync_adc = (enable) ? sync_adc_flop : 1'b0;
-
-
-
-
-
-
-
-
-    
-
-    
-    // ======
-    // Detect changes in SYNC_TX bit.
-    // If changes, toggle signal to AMDS which will start the transmission of data.
-    //
-    // Note, we could just pass through the config reg bit straight to the physical wire, but
-    // doing it this way ensure the FPGA knows what's going on and can start a FSM for rx.
-    // ======
-    
-    // reg prev_sync_tx;
-    // always @(posedge S_AXI_ACLK) begin
-    //     if (~S_AXI_ARESETN) begin
-    //         prev_sync_tx <= 1'b0;
-    //     end
-    
-    //     else begin
-    //         prev_sync_tx <= sync_tx;
-    //     end
-    // end
-    
-    // // Look for transitions on sync_tx bit in control reg
-    // wire start_data_tx;
-    // assign start_data_tx = prev_sync_tx ^ sync_tx;
-
-    // Implement state machine for reading DOUT1 and DOUT2 from AMDS...
-    // for now, just toggle the sync_tx line which will start the transmission from the AMDS.
-    //
-    // i.e. these signals contain serial data of the ADC sampled values:
-    // - amds_data1 <== DCs 1..4
-    // - amds_data2 <== DCs 5..8
-    
-    // reg sync_tx_out;
-    // always @(posedge S_AXI_ACLK) begin
-    //     if (~S_AXI_ARESETN) begin
-    //         sync_tx_out <= 1'b0;
-    //     end
-        
-    //     else if (start_data_tx) begin
-    //         sync_tx_out <= ~sync_tx_out;
-    //     end
-    // end
-    
-    // assign amds_sync_tx = sync_tx_out;
     
     // This module listens to the two data inputs from the AMDS.
-    // When the sync_tx line toggles, this module knows to expect a new
-    // data packet transmission. Therefore, it will start a state machine
-    // internally to read each UART word.
-    wire is_dout0_valid0, is_dout1_valid1;
+    // When a data line first goes low after a trigger event, this module
+    // knows to expect a new data packet transmission. Therefore, it will
+    // start a state machine internally to read each UART word.
+    wire [3:0] is_dout0_valid, is_dout1_valid;
    
     wire [15:0] my_adc_data0;
     wire [15:0] my_adc_data1;
@@ -653,7 +585,7 @@
     wire [15:0] counter_data1_corrupt;
     wire [15:0] counter_data1_timeout;
 
-    // Start receiving data on the first falling edge of the data line, after the trigger
+    // Start receiving data (assert start_rx) on the first falling edge of the data line, after the trigger
     reg [1:0] amds_data_ff;
     wire amds_data0_fe, amds_data1_fe;
 
@@ -671,7 +603,7 @@
 
     reg waiting_for_data0, waiting_for_data1, start_rx0, start_rx1;
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             waiting_for_first_fe0 <= 1'b0;
         else if (trigger & done)
@@ -680,7 +612,7 @@
             waiting_for_first_fe0 <= 1'b0;
     end
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             waiting_for_first_fe1 <= 1'b0;
         else if (trigger & done)
@@ -689,14 +621,14 @@
             waiting_for_first_fe1 <= 1'b0;
     end
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             start_rx0 <= 1'b0;
         else if (waiting_for_first_fe0 & amds_data0_fe)
             start_rx0 <= 1'b1;
     end
 
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+    always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             start_rx1 <= 1'b0;
         else if (waiting_for_first_fe1 & amds_data1_fe)
@@ -735,39 +667,72 @@
         .counter_data_timeout(counter_data1_timeout)
     );
     
-    // Only latch in new data when we are told it is valid!
+    // Latch in new data when we get the done signal from the adc_uart_rx module
+    // ** IMPORTANT: Data is not necessarily always valid! User will have to read the 
+    //               channel valid register in the C code to verify validity of each ADC's data!
     always @(posedge S_AXI_ACLK) begin
-        if (~S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
             adc_dout0 <= 32'b0;
-            adc_dout1 <= 32'b0;
-            adc_dout2 <= 32'b0;
-            adc_dout3 <= 32'b0;
-            adc_dout4 <= 32'b0;
-            adc_dout5 <= 32'b0;
-            adc_dout6 <= 32'b0;
-            adc_dout7 <= 32'b0;
-            
-            status_reg <= 32'b0;
-        end
-    
-        else if (is_dout0_valid & is_dout1_valid) begin
+        else if (adc_uart0_done)
             adc_dout0 <= {{16{my_adc_data0[15]}}, my_adc_data0};
-            adc_dout1 <= {{16{my_adc_data1[15]}}, my_adc_data1};
-            adc_dout2 <= {{16{my_adc_data2[15]}}, my_adc_data2};
-            adc_dout3 <= {{16{my_adc_data3[15]}}, my_adc_data3};
-            adc_dout4 <= {{16{my_adc_data4[15]}}, my_adc_data4};
-            adc_dout5 <= {{16{my_adc_data5[15]}}, my_adc_data5};
-            adc_dout6 <= {{16{my_adc_data6[15]}}, my_adc_data6};
-            adc_dout7 <= {{16{my_adc_data7[15]}}, my_adc_data7};
-            
-            status_reg[0] <= 1'b0;
-        end
-        
-        else begin
-            status_reg[0] <= 1'b1;
-        end
     end
-    
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout1 <= 32'b0;
+        else if (adc_uart0_done)
+            adc_dout1 <= {{16{my_adc_data1[15]}}, my_adc_data1};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout2 <= 32'b0;
+        else if (adc_uart0_done)
+            adc_dout2 <= {{16{my_adc_data2[15]}}, my_adc_data2};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout3 <= 32'b0;
+        else if (adc_uart0_done)
+            adc_dout3 <= {{16{my_adc_data3[15]}}, my_adc_data3};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout4 <= 32'b0;
+        else if (adc_uart1_done)
+            adc_dout4 <= {{16{my_adc_data4[15]}}, my_adc_data4};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout5 <= 32'b0;
+        else if (adc_uart1_done)
+            adc_dout5 <= {{16{my_adc_data5[15]}}, my_adc_data5};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout6 <= 32'b0;
+        else if (adc_uart1_done)
+            adc_dout6 <= {{16{my_adc_data6[15]}}, my_adc_data6};
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            adc_dout7 <= 32'b0;
+        else if (adc_uart1_done)
+            adc_dout7 <= {{16{my_adc_data7[15]}}, my_adc_data7};
+    end
+
+    // =============================================
+    // Channel Valid Register
+    // * Allows C code to check if the data is valid
+    // =============================================
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            ch_valid_reg <= 32'b0;
+        else if (done)
+            ch_valid_reg <= {24'b0, is_dout1_valid, is_dout0_valid};
+    end
+
+    // ===============
+    // Debug Registers
+    // ===============
     always @(posedge S_AXI_ACLK) begin
         valid_reg[31:0] <= {counter_data1_valid, counter_data0_valid};
         corrupt_reg[31:0] <= {counter_data1_corrupt, counter_data0_corrupt};
@@ -776,33 +741,9 @@
 
     // Receiving is done when both sub-receivers are done
     // We cannot reuse the is_dout_valid signals, because if corrupt data was received, the receiver is "done",
-    //   but valid did not go high. And done MUST go high even in the case of corrupt/timed-out data, because the 
-    //   timing manager will not send out another trigger until we tell it we're done
+    //   but the data is not valid. And done MUST go high even in the case of corrupt/timed-out data, because the 
+    //   timing manager will freeze, and not send out another trigger or call the ISR until we tell it we're done
     assign done = adc_uart0_done & adc_uart1_done;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // User logic ends
 

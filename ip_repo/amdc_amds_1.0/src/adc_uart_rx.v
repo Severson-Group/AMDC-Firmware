@@ -4,13 +4,14 @@ module adc_uart_rx(
 	input wire clk,
 	input wire rst_n,
 	
-	// Flag which is triggered for 1 clock cycle when a transmission is requested from the motherboard
+	// Flag which is triggered for 1 clock cycle when a transmission is requested from the AMDS
 	input wire start_rx,
 	
-	// The data line coming from the motherboard
+	// The data line coming from the AMDS
 	input wire din,
 	
-	output reg is_dout_valid,
+	output wire [3:0] is_dout_valid, // is_dout_valid[0] == 1 implies that adc_dout0 is valid
+    output reg adc_uart_done,
 	output reg [15:0] adc_dout0,
 	output reg [15:0] adc_dout1,
 	output reg [15:0] adc_dout2,
@@ -20,25 +21,6 @@ module adc_uart_rx(
     output reg [15:0] counter_data_corrupt,
     output reg [15:0] counter_data_timeout
 );
-
-
-// =======================
-// S/R flop: is_dout_valid
-// =======================
-
-reg deassert_data_valid;
-reg assert_data_valid;
-
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		is_dout_valid <= 1'b0;
-	else if (deassert_data_valid)
-		is_dout_valid <= 1'b0;
-	else if (assert_data_valid)
-		is_dout_valid <= 1'b1;
-	else
-		is_dout_valid <= is_dout_valid;
-end
 
 // ==============
 // Packet Counter
@@ -59,6 +41,54 @@ always @(posedge clk, negedge rst_n) begin
 	else
 		packet_counter <= packet_counter;
 end
+
+// =======================
+// S/R flops: is_doutN_valid
+// =======================
+
+reg is_dout0_valid, is_dout1_valid, is_dout2_valid, is_dout3_valid;
+
+reg assert_data_valid, clr_all_data_valid;
+
+always @(posedge clk, negedge rst_n) begin
+	if (~rst_n)
+		is_dout0_valid <= 1'b0;
+	else if (clr_all_data_valid)
+		is_dout0_valid <= 1'b0;
+	else if (assert_data_valid & packet_counter == 0)
+		is_dout0_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+	if (~rst_n)
+		is_dout1_valid <= 1'b0;
+	else if (clr_all_data_valid)
+		is_dout1_valid <= 1'b0;
+	else if (assert_data_valid & packet_counter == 1)
+		is_dout1_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+	if (~rst_n)
+		is_dout2_valid <= 1'b0;
+	else if (clr_all_data_valid)
+		is_dout2_valid <= 1'b0;
+	else if (assert_data_valid & packet_counter == 2)
+		is_dout2_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+	if (~rst_n)
+		is_dout3_valid <= 1'b0;
+	else if (clr_all_data_valid)
+		is_dout3_valid <= 1'b0;
+	else if (assert_data_valid & packet_counter == 3)
+		is_dout3_valid <= 1'b1;
+end
+
+// Concatenate the individual valid registers into output bus
+assign is_dout_valid = {is_dout3_valid, is_dout2_valid, is_dout1_valid, is_dout0_valid};
+
 
 // ==============
 // Data Valid Counter
@@ -96,6 +126,20 @@ always @(posedge clk, negedge rst_n) begin
 		counter_data_timeout <= counter_data_timeout + 1;
 end
 
+// ==============
+// Done
+// ==============
+
+reg assert_done, deassert_done;
+
+always @(posedge clk, negedge rst_n) begin
+	if (~rst_n)
+		adc_uart_done <= 1'b0;
+	else if (deassert_done)
+		adc_uart_done <= 1'b0;
+    else if (assert_done)
+        adc_uart_done <= 1'b1;
+end
 
 // ==============
 // UART RX module
@@ -201,9 +245,12 @@ always @(*) begin
 	
 	rst_packet_counter = 0;
 	inc_packet_counter = 0;
+
+    assert_done = 0;
+    deassert_done = 0;
 	
 	assert_data_valid = 0;
-	deassert_data_valid = 0;
+    clr_all_data_valid = 0;
 	
 	load_doutN_LSB = 0;
 	load_doutN_MSB = 0;
@@ -218,8 +265,10 @@ always @(*) begin
 				// Incoming UART transmission, so start UART RX module
 				uart_start_rx = 1;
 				
-				// Tell user that the data is no longer valid
-				deassert_data_valid = 1;
+				// Tell user that the all data regs are no longer valid
+				clr_all_data_valid = 1;
+
+                deassert_done = 1;
 			
 				rst_packet_counter = 1;
 				next_state = `SM_WAIT_FOR_HEADER;
@@ -229,24 +278,27 @@ always @(*) begin
 		`SM_WAIT_FOR_HEADER: begin
 			if (uart_is_byte_valid) begin
 				// Check that the new header is valid:
-				// * expect MSB byte to be 0x9
-				// * expect packet number in LSB byte
+				// * expect MSByte to be 0x9
+				// * expect packet number in LSByte
 				if ((uart_data_byte[7:4] == 4'h9) & (uart_data_byte[3:0] == packet_counter)) begin
-					// Yay! Valid header!
 					inc_counter_data_valid = 1;
-					
 					next_state = `SM_WAIT_FOR_DATA_MSB;
-					uart_start_rx = 1;
+					uart_start_rx = 1; // start the receiver again for the first byte of actual data
 				end
 				else begin
 					// Something broke... back to beginning!
 					next_state = `SM_IDLE;
+                    // assert done even if header mismatch, so this sensor doesn't freeze the timing manager
+                    assert_done = 1;
 				end
 			end
 			
 			else if (uart_is_rx_error) begin
 				// Something broke... back to beginning!
 				next_state = `SM_IDLE;
+
+                // assert done even if corrupt/timeout error, so this sensor doesn't freeze the timing manager
+                assert_done = 1;
 				
 				if (uart_is_data_corrupt)
 				    inc_counter_data_corrupt = 1;
@@ -266,6 +318,9 @@ always @(*) begin
 			else if (uart_is_rx_error) begin
 				// Something broke... back to beginning!
 				next_state = `SM_IDLE;
+
+                // assert done even if corrupt/timeout error, so this sensor doesn't freeze the timing manager
+                assert_done = 1;
 				
 				if (uart_is_data_corrupt)
 				    inc_counter_data_corrupt = 1;
@@ -284,6 +339,9 @@ always @(*) begin
 			else if (uart_is_rx_error) begin
 				// Something broke... back to beginning!
 				next_state = `SM_IDLE;
+
+                // assert done even if corrupt/timeout error, so this sensor doesn't freeze the timing manager
+                assert_done = 1;
 				
 				if (uart_is_data_corrupt)
 				    inc_counter_data_corrupt = 1;
@@ -293,17 +351,28 @@ always @(*) begin
 		end
 		
 		`SM_DONE: begin
-			if (packet_counter >= 4'd3) begin
-				// Done! Got all data now
-				// Tell user that the data is now valid
-				assert_data_valid = 1;
+			if (packet_counter == 4'd3) begin
+				// Done! Successfully captured all 4 data packets
 				next_state = `SM_IDLE;
+                assert_done = 1;
+
+                // don't forget to assert that the final packet is valid too!
+                assert_data_valid = 1;
 			end
-			else begin
+            else if (packet_counter >= 4'd0 & packet_counter <= 4'd2) begin
+                // assert that this non-final packet is valid
+                assert_data_valid = 1;
+
 				// Still more data to rx
 				inc_packet_counter = 1;
 				uart_start_rx = 1;
 				next_state = `SM_WAIT_FOR_HEADER;
+            end
+			else begin
+                // Packet counter did something weird, abort all data
+                clr_all_data_valid = 1;
+                assert_done = 1;
+                next_state = `SM_IDLE;
 			end
 		end
 	endcase
