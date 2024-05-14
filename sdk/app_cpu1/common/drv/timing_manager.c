@@ -80,6 +80,10 @@ void timing_manager_init(void)
         printf("Error initializing interrupt system.");
     }
 
+    // Set the timing manager to automatic triggering
+    // (this call is redundant, as the FPGA should reset slv_reg0 to 0x0000_0001)
+    timing_manager_set_mode(AUTOMATIC);
+
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both();
 
@@ -94,6 +98,40 @@ void timing_manager_init(void)
         // ensure each sensor has their own statistics
         statistics_init(&sensor_stats[i]);
     }
+}
+
+/* Sets the timing manager's trigger mode by writing to the mode bit in the configuration
+ * register (slv_reg0). Accepted arguments for mode are AUTOMATIC (default) and MANUAL
+ *
+ * AUTOMATIC mode will trigger all enabled sensors according to the settings set by the
+ * timing_manager_set_ratio() when all enabled sensors are done sampling
+ * 
+ * MANUAL mode will only trigger sensors when the user makes a call to the
+ * timing_manager_send_manual_trigger() function, although manual triggers will still be aligned
+ * to the peaks and/or valleys of the PWM carrier 
+ */
+void timing_manager_set_mode(trigger_mode_t mode)
+{
+    if (mode)
+    {
+        // AUTOMATIC: Set slv_reg0[0]
+        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) | 0x00000001));
+    }
+    else
+    {
+        // MANUAL: Clear slv_reg0[0]
+        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
+    }
+}
+
+/* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
+ * on the next qualifying PWM peak/valley. Calling this function is only effective if
+ * the user has set the timing manager to MANUAL mode by calling timing_manager_set_mode(MANUAL)
+ */
+void timing_manager_send_manual_trigger()
+{
+    // A manual trigger is initiated in the FPGA by flipping slv_reg0[1]
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR, Xil_In32(TIMING_MANAGER_BASE_ADDR) ^ 0x00000002);
 }
 
 /*
