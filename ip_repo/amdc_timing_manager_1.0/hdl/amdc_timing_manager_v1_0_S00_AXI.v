@@ -257,7 +257,7 @@
     begin
       if ( S_AXI_ARESETN == 1'b0 )
         begin
-          slv_reg0 <= 0;
+          slv_reg0 <= 32'h00000001;
           slv_reg1 <= 0;
           slv_reg2 <= 0;
           slv_reg3 <= 0;
@@ -524,19 +524,19 @@
     begin
           // Address decoding for reading registers
           case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-            4'h0   : reg_data_out <= slv_reg0;
-            4'h1   : reg_data_out <= slv_reg1;
-            4'h2   : reg_data_out <= slv_reg2;
-            4'h3   : reg_data_out <= slv_reg3;
-            4'h4   : reg_data_out <= slv_reg4;
-            4'h5   : reg_data_out <= output_reg_5;
-            4'h6   : reg_data_out <= output_reg_6;
-            4'h7   : reg_data_out <= output_reg_7;
-            4'h8   : reg_data_out <= slv_reg8;
-            4'h9   : reg_data_out <= slv_reg9;
-            4'hA   : reg_data_out <= count_time;
-            4'hB   : reg_data_out <= output_reg_11;
-            4'hC   : reg_data_out <= output_reg_12;
+            4'h0   : reg_data_out <= slv_reg0; // Configuration register
+            4'h1   : reg_data_out <= slv_reg1; // Sensor Enable Bits
+            4'h2   : reg_data_out <= slv_reg2; // User Ratio
+            4'h3   : reg_data_out <= slv_reg3; // PWM Sync
+            4'h4   : reg_data_out <= slv_reg4; // Unused
+            4'h5   : reg_data_out <= output_reg_5; // Eddy Times
+            4'h6   : reg_data_out <= output_reg_6; // Eddy Times
+            4'h7   : reg_data_out <= output_reg_7; // ADC & Encoder Times
+            4'h8   : reg_data_out <= slv_reg8; // ISR
+            4'h9   : reg_data_out <= slv_reg9; // Unused
+            4'hA   : reg_data_out <= count_time; // Timer
+            4'hB   : reg_data_out <= output_reg_11; // AMDS Times
+            4'hC   : reg_data_out <= output_reg_12; // AMDS Times
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
             4'hF   : reg_data_out <= slv_reg15;
@@ -565,14 +565,34 @@
 
     // Add user logic here
     
-    wire [15:0] adc_time, encoder_time, amds0_time, amds1_time, amds2_time, amds3_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
+    wire [15:0] adc_time, amds0_time, amds1_time, amds2_time, amds3_time;
+    wire [15:0] encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
     assign output_reg_5 = {eddy1_time, eddy0_time};
     assign output_reg_6 = {eddy3_time, eddy2_time};
     assign output_reg_11 = {amds1_time, amds0_time};
     assign output_reg_12 = {amds3_time, amds2_time};
     assign output_reg_7 = {adc_time, encoder_time};
+    wire do_auto_triggering;
+    wire send_manual_trigger;
+    reg manual_trigger_ff;
     wire [15:0] user_ratio;
     wire [15:0] en_bits;
+
+    // Trigger configuration
+    // * Auto triggering is the default, triggers will be sent whenever <user_ratio> PWM events
+    //   have occurred and all the enabled sensors are done sampling
+    assign do_auto_triggering = slv_reg0[0]; // reset to 1
+    // * Manual triggering can be used for debugging sensor interfaces. Flipping the manual trigger
+    //   bit in the config register will request a single trigger event aligned to the next
+    //   peak and/or valley of the PWM carrier.
+    assign send_manual_trigger = (manual_trigger_ff ^ slv_reg0[1]) & !do_auto_triggering;
+
+    always @(posedge S_AXI_ACLK) begin
+      if ( S_AXI_ARESETN == 1'b0 )
+        manual_trigger_ff <= 0;
+      else
+        manual_trigger_ff <= slv_reg0[1];
+    end
     
     // Get the user ratio from slave register 2, assigning
     // the lower 16 bits
@@ -613,6 +633,8 @@
     timing_manager iTime(
     .clk(S_AXI_ACLK),
     .rst_n(S_AXI_ARESETN),
+    .do_auto_triggering(do_auto_triggering),
+    .send_manual_trigger(send_manual_trigger),
     .event_qualifier(event_qualifier),
     .user_ratio(user_ratio),
     .en_bits(en_bits),

@@ -1,6 +1,8 @@
 module timing_manager(
     // INPUTS
     clk, rst_n,
+    do_auto_triggering,
+    send_manual_trigger,
     event_qualifier,
     user_ratio,
     en_bits, reset_sched_isr,
@@ -29,6 +31,8 @@ module timing_manager(
     // INPUTS //
     ////////////
     input clk, rst_n;
+    input wire do_auto_triggering;
+    input wire send_manual_trigger;
     input wire [15:0] user_ratio;
     input wire [15:0] en_bits;
     input wire adc_done;
@@ -64,10 +68,10 @@ module timing_manager(
     wire sensors_enabled;
     
     //////////////////////////////////////////////////////////////////
-    // Logic to generate interrupt based on PWM carrier. This       //
+    // Logic to generate trigger based on PWM carrier. This         //
     // allows the scheduler to run synchronized to the PWM carrier. //
     // The user can define a ratio that determines when the         //
-    // interrupt is generated.                                      //
+    // trigger is generated.                                        //
     //////////////////////////////////////////////////////////////////
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) begin
@@ -82,17 +86,28 @@ module timing_manager(
     end
 
     always @(posedge clk, negedge rst_n) begin
-        if (!rst_n) begin
+        if (!rst_n)
             trigger <= 0;
-        end
-        else if ((count == user_ratio) & all_done) begin
-            // Send next trigger if the count of PWM events has reached the
-            // desired user ratio, and all enabled sensors are done sampling
+        else if (do_auto_triggering & (count == user_ratio) & all_done)
+            // In auto triggering mode, send the next trigger if the count of PWM events has
+            // reached the desired user ratio, and all enabled sensors are done sampling
             trigger <= 1;
-        end
-        else begin
+        else if (manual_trigger_queued & event_qualifier & all_done)
+            // If we are in manual trigger mode and the user has requested/queued a trigger,
+            // wait until all sensors are done and the next qualified PWM peak/valley to trigger
+            trigger <= 1;
+        else
             trigger <= 0;
-        end
+    end
+
+    reg manual_trigger_queued;
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            manual_trigger_queued <= 0;
+        else if (send_manual_trigger)
+            manual_trigger_queued <= 1;
+        else if (trigger)
+            manual_trigger_queued <= 0;
     end
 
     //////////////////////////////////////////////////////////////////
