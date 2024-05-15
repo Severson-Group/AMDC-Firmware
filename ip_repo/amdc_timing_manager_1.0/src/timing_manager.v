@@ -22,6 +22,8 @@ module timing_manager(
     en_adc, en_encoder,
     // Time
     adc_time, encoder_time,
+    amds0_time, amds1_time,
+    amds2_time, amds3_time,
     eddy0_time, eddy1_time,
     eddy2_time, eddy3_time,
     trigger, count_time

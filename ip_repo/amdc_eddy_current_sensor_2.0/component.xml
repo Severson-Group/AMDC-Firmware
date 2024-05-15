@@ -266,7 +266,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>4f23034e</spirit:value>
+            <spirit:value>08816d8a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -282,7 +282,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>4f23034e</spirit:value>
+            <spirit:value>08816d8a</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -349,32 +349,6 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>enable</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>pwm_carrier_high</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>pwm_carrier_low</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -801,7 +775,7 @@
       <spirit:file>
         <spirit:name>hdl/amdc_eddy_current_sensor_v2_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_f14a1ef1</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_5ab5476b</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -934,8 +908,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_eddy_current_sensor_v2.0</xilinx:displayName>
-      <xilinx:coreRevision>8</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-02-14T15:20:32Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>9</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-05-15T20:38:51Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1bc30478_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@f5e8c99_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
@@ -1003,14 +977,25 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@6fd86e46_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4910617a_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@62afaade_ARCHIVE_LOCATION">c:/Users/atolson3/Documents/AMDC/AMDC-Firmware/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@d311229_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3869d558_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3cd9a55c_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1bbda175_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4ea31a23_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5828087c_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@28d76f70_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f48e544_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@af2fb01_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5e3cfc13_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@2618e34b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_eddy_current_sensor_2.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="206b0a70"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="893f0462"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="507f74f7"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="c21122f3"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="5e8fa89b"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="2e811c89"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="6850aeac"/>
     </xilinx:packagingInfo>

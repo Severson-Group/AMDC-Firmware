@@ -567,6 +567,7 @@
     // knows to expect a new data packet transmission. Therefore, it will
     // start a state machine internally to read each UART word.
     wire [3:0] is_dout0_valid, is_dout1_valid;
+    wire adc_uart0_done, adc_uart1_done;
    
     wire [15:0] my_adc_data0;
     wire [15:0] my_adc_data1;
@@ -594,14 +595,14 @@
             // Good idea to reset to zero to guarantee the first falling edge is real
             amds_data_ff <= 2'b00;
         else
-            amds_data_ff <= amds_data
+            amds_data_ff <= amds_data;
     end
 
     assign amds_data0_fe = amds_data_ff[0] & ~amds_data[0];
     assign amds_data1_fe = amds_data_ff[1] & ~amds_data[1];
 
 
-    reg waiting_for_data0, waiting_for_data1, start_rx0, start_rx1;
+    reg waiting_for_first_fe0, waiting_for_first_fe1, start_rx0, start_rx1;
 
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
