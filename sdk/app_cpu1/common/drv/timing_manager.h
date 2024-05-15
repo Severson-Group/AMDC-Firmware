@@ -32,7 +32,7 @@ typedef enum {
     ADC = 9
 } sensor_t;
 
-typedef enum { MANUAL = 0, AUTOMATIC = 1 } trigger_mode_t;
+typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_t;
 
 // Initialization
 int interrupt_system_init();
@@ -40,6 +40,7 @@ void timing_manager_init();
 
 // Mode: Automatic vs Manual Triggering
 void timing_manager_set_mode(trigger_mode_t mode);
+trigger_mode_t timing_manager_get_mode(void);
 void timing_manager_send_manual_trigger(void);
 
 // Set user ratio

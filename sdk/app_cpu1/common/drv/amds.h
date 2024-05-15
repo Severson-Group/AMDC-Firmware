@@ -52,7 +52,7 @@ typedef enum {
 
 static inline bool amds_channel_in_bounds(amds_channel_t channel)
 {
-    if (channel >= AMDS_IN1 && channel < AMDS_NUM_CHANNELS) {
+    if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
         return true;
     }
 
@@ -61,7 +61,7 @@ static inline bool amds_channel_in_bounds(amds_channel_t channel)
 
 static inline bool amds_port_in_bounds(int port)
 {
-    if (port >= 1 && idx <= AMDS_MAX_IP_CORES) {
+    if (port >= 1 && port <= AMDS_MAX_IP_CORES) {
         return true;
     }
 
@@ -90,10 +90,8 @@ static inline uint32_t amds_port_to_base_addr(int port)
 
 void amds_init(void);
 
-void amds_set_adc_sampling(uint32_t base_addr, bool enable);
-void amds_request_new_data(uint32_t base_addr);
-
-int amds_get_data(uint32_t base_addr, mb_channel_e channel, int32_t *out);
+uint8_t amds_check_data_validity(uint32_t base_addr);
+int amds_get_data(uint32_t base_addr, amds_channel_t channel, int32_t *out);
 
 void amds_print_data(uint32_t base_addr);
 void amds_print_counters(uint32_t base_addr);

@@ -48,11 +48,16 @@ int cmd_amds(int argc, char **argv)
     if (argc == 3 && STREQ("valid", argv[2])) {
         uint8_t valid_bits = amds_check_data_validity(base_addr);
 
-        for (uint8_t i = 0; i < 8; i++) {
-            if (valid_bits[i])
-                cmd_resp_printf("Channel %i: Valid data", i + 1);
+        uint8_t mask = 0x01;
+        uint8_t channel = 1;
+
+        while (mask) {
+            if (valid_bits & mask)
+                cmd_resp_printf("Channel %i: Valid data", channel);
             else
-                cmd_resp_printf("Channel %i: Invalid data", i + 1);
+                cmd_resp_printf("Channel %i: Invalid data", channel);
+
+            mask = mask << 1;
         }
 
         return CMD_SUCCESS;

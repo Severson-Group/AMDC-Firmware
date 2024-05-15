@@ -3,11 +3,11 @@
 #if (USER_CONFIG_ENABLE_AMDS_SUPPORT == 1)
 
 #include "drv/amds.h"
-#include "drv/amds_defs.h"
 #include "sys/cmd/cmd_amds.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
 #include "sys/util.h"
+#include "xil_io.h"
 #include <stdbool.h>
 #include <stdint.h>
 

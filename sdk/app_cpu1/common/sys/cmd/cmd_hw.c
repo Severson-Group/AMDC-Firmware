@@ -40,10 +40,12 @@ static command_help_t cmd_help[] = {
     { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
       "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
     { "tm trigger <HIGH|LOW|BOTH>", "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
+    { "tm mode <AUTO|MANUAL>", "Switch the timing manager trigger mode" },
+    { "tm send_trigger", "If in MANUAL mode, trigger all enabled sensors" },
     { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
     { "tm enable <adc|encoder|eddy> <port [if eddy]>",
       "Enable a sensor; if eddy is chosen, specify the port, otherwise, leave blank" },
-    { "hw tm time <adc|encoder|eddy> <port [if eddy]>", "Read acquisition time of sensor" },
+    { "tm time <adc|encoder|eddy> <port [if eddy]>", "Read acquisition time of sensor" },
 };
 
 void cmd_hw_register(void)
@@ -251,9 +253,9 @@ int cmd_hw(int argc, char **argv)
         // hw tm mode <AUTO|MANUAL>
         if (argc == 4 && STREQ("mode", argv[2])) {
             if (STREQ("AUTO", argv[3])) {
-                timing_manager_set_mode(AUTOMATIC);
+                timing_manager_set_mode(TM_AUTOMATIC);
             } else if (STREQ("MANUAL", argv[3])) {
-                timing_manager_set_mode(MANUAL);
+                timing_manager_set_mode(TM_MANUAL);
             } else {
                 return CMD_INVALID_ARGUMENTS;
             }
@@ -263,10 +265,10 @@ int cmd_hw(int argc, char **argv)
         // hw tm send_trigger
         if (argc == 3 && STREQ("send_trigger", argv[2])) {
             // Verify that timing manager is in manual mode
-            if ((Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1) == 0) {
+            if (timing_manager_get_mode() == TM_MANUAL) {
                 timing_manager_send_manual_trigger();
             } else {
-                xil_printf("Failed to send manual trigger. Is the timing manager in manual mode?");
+                cmd_resp_printf("Failed to send manual trigger. Is the timing manager in manual mode?");
                 return CMD_FAILURE;
             }
 

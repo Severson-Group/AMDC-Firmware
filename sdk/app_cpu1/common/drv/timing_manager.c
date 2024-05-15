@@ -82,7 +82,7 @@ void timing_manager_init(void)
 
     // Set the timing manager to automatic triggering
     // (this call is redundant, as the FPGA should reset slv_reg0 to 0x0000_0001)
-    timing_manager_set_mode(AUTOMATIC);
+    timing_manager_set_mode(TM_AUTOMATIC);
 
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both();
@@ -119,6 +119,11 @@ void timing_manager_set_mode(trigger_mode_t mode)
         // MANUAL: Clear slv_reg0[0]
         Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
     }
+}
+
+trigger_mode_t timing_manager_get_mode()
+{
+    return (trigger_mode_t)(Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1);
 }
 
 /* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
