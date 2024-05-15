@@ -30,8 +30,8 @@
 #include "usr/user_config.h"
 #include <stdio.h>
 
-#if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
-#include "drv/motherboard.h"
+#if USER_CONFIG_ENABLE_AMDS_SUPPORT == 1
+#include "drv/amds.h"
 #endif
 
 #include "xil_exception.h"
@@ -80,9 +80,9 @@ int main()
     injection_init();
 #endif
 
-#if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
-    // Initialize motherboard driver and register command
-    motherboard_init();
+#if USER_CONFIG_ENABLE_AMDS_SUPPORT == 1
+    // Initialize AMDS driver and register command
+    amds_init();
 #endif
 
     // Register the "cnt" command
