@@ -53,9 +53,9 @@ int cmd_amds(int argc, char **argv)
 
         while (mask) {
             if (valid_bits & mask)
-                cmd_resp_printf("Channel %i: Valid data", channel);
+                cmd_resp_printf("Channel %i: Valid data\r\n", channel);
             else
-                cmd_resp_printf("Channel %i: Invalid data", channel);
+                cmd_resp_printf("Channel %i: Invalid data\r\n", channel);
 
             mask = mask << 1;
         }

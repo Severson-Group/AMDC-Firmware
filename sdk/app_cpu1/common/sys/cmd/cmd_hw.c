@@ -43,9 +43,9 @@ static command_help_t cmd_help[] = {
     { "tm mode <AUTO|MANUAL>", "Switch the timing manager trigger mode" },
     { "tm send_trigger", "If in MANUAL mode, trigger all enabled sensors" },
     { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
-    { "tm enable <adc|encoder|eddy> <port [if eddy]>",
+    { "tm enable <adc|encoder|amds|eddy> <port [if amds/eddy]>",
       "Enable a sensor; if eddy is chosen, specify the port, otherwise, leave blank" },
-    { "tm time <adc|encoder|eddy> <port [if eddy]>", "Read acquisition time of sensor" },
+    { "tm time <adc|encoder|amds|eddy> <port [if amds/eddy]>", "Read acquisition time of sensor" },
 };
 
 void cmd_hw_register(void)
@@ -268,7 +268,7 @@ int cmd_hw(int argc, char **argv)
             if (timing_manager_get_mode() == TM_MANUAL) {
                 timing_manager_send_manual_trigger();
             } else {
-                cmd_resp_printf("Failed to send manual trigger. Is the timing manager in manual mode?");
+                cmd_resp_printf("Failed to send manual trigger. Is the timing manager in manual mode?\r\n");
                 return CMD_FAILURE;
             }
 

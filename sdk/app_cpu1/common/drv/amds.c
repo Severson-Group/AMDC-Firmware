@@ -13,6 +13,8 @@
 
 void amds_init(void)
 {
+	xil_printf("AMDS: Initializing...");
+
     cmd_amds_register();
 }
 
@@ -63,7 +65,7 @@ void amds_print_data(uint32_t base_addr)
 
 void amds_print_counters(uint32_t base_addr)
 {
-    cmd_resp_printf("Valid  : %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_VALID_REG_OFFSET));
+    cmd_resp_printf("Valid: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_VALID_REG_OFFSET));
     cmd_resp_printf("Corrupt: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_CORRUPT_REG_OFFSET));
     cmd_resp_printf("Timeout: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_TIMEOUT_REG_OFFSET));
 }
