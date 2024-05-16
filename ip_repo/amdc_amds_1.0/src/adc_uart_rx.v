@@ -134,7 +134,8 @@ reg assert_done, deassert_done;
 
 always @(posedge clk, negedge rst_n) begin
     if (~rst_n)
-        adc_uart_done <= 1'b0;
+        // Start as done, so that the trigger does not freeze
+        adc_uart_done <= 1'b1;
     else if (deassert_done)
         adc_uart_done <= 1'b0;
     else if (assert_done)
