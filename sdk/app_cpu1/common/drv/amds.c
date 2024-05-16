@@ -13,7 +13,7 @@
 
 void amds_init(void)
 {
-	xil_printf("AMDS: Initializing...");
+    xil_printf("AMDS: Initializing...");
 
     cmd_amds_register();
 }
