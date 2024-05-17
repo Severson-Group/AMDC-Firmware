@@ -3,8 +3,11 @@
 #include "drv/led.h"
 #include "drv/motherboard.h"
 #include "drv/timer.h"
+#include "drv/timing_manager.h"
 #include "drv/watchdog.h"
+#include "xil_exception.h"
 #include "xil_printf.h"
+#include "xstatus.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -52,7 +55,11 @@ void scheduler_timer_isr(void *arg)
         }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
-
+#if USER_CONFIG_ISR_SOURCE == 1
+    // Push stats for each sensor
+    timing_manager_sensor_stats();
+    timing_manager_clear_isr();
+#endif
     elapsed_usec += SYS_TICK_USEC;
     scheduler_idle = false;
 }
@@ -66,8 +73,22 @@ void scheduler_init(void)
 {
     printf("SCHED:\tInitializing scheduler...\n");
 
+#if USER_CONFIG_ISR_SOURCE == 1
+    // Set up timing manager as scheduler ISR source
+    int result = 0;
+    result = timing_manager_interrupt_system_init((Xil_ExceptionHandler) scheduler_timer_isr);
+    if (result != XST_SUCCESS) {
+    	printf("Error initializing timing manager interrupt system.\n");
+    }
+#elif USER_CONFIG_ISR_SOURCE == 0
     // Start system timer for periodic interrupts
     timer_init(scheduler_timer_isr, SYS_TICK_USEC);
+    int result = 0;
+	result = timing_manager_interrupt_system_init((Xil_ExceptionHandler) timing_manager_isr);
+	if (result != XST_SUCCESS) {
+		printf("Error initializing timing manager interrupt system.\n");
+	}
+#endif
     printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 

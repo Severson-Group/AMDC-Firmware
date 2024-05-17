@@ -2,10 +2,9 @@
 #include "drv/clock.h"
 #include "usr/user_config.h"
 #include "xil_assert.h"
-#include "xil_exception.h"
+#include "xil_types.h"
 #include "xil_io.h"
 #include "xil_printf.h"
-#include "xil_types.h"
 #include "xscugic.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -22,7 +21,7 @@ statistics_t sensor_stats[NUM_SENSORS];
 /*
  * Sets up the interrupt system and enables interrupts for IRQ_F2P[1:0]
  */
-int interrupt_system_init(void)
+int timing_manager_interrupt_system_init(Xil_ExceptionHandler timing_manager_handler)
 {
     int result;
     XScuGic *intc_instance_ptr = &intc;
@@ -49,9 +48,9 @@ int interrupt_system_init(void)
 
     XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, INTC_INTERRUPT_ID_0);
 
-    // Connect ISR0 to the interrupt controller
+    // Connect the desired ISR to the interrupt controller
     result = XScuGic_Connect(
-        intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) isr_0, (void *) intc_instance_ptr);
+        intc_instance_ptr, INTC_INTERRUPT_ID_0, timing_manager_handler, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -72,16 +71,9 @@ int interrupt_system_init(void)
 void timing_manager_init(void)
 {
     printf("TIMING MANAGER:\tInitializing...\n");
-    // Initialize interrupts
-    int result = 0;
-    result = interrupt_system_init();
 
-    if (result != XST_SUCCESS) {
-        printf("Error initializing interrupt system.");
-    }
-
-    // Default event qualifier is PWM carrier high AND low
-    timing_manager_trigger_on_pwm_both();
+    // Default event qualifier is PWM carrier low
+    timing_manager_trigger_on_pwm_low();
 
     // Set the user ratio for the trigger
     timing_manager_set_ratio(DEFAULT_PWM_RATIO);
@@ -99,13 +91,13 @@ void timing_manager_init(void)
 /*
  * ISR for IRQ_F2P[0:0]. Called when sched_isr in timing
  * manager is set to 1, e.g. when all of the sensors are
- * done and the time has been collected.
+ * done and the time has been recorded for each one
  */
-void isr_0(void *intc_inst_ptr)
+void timing_manager_isr(void *intc_inst_ptr)
 {
     // Push stats for each sensor
-    timing_manager_sensor_stats();
-    timing_manager_clear_isr();
+	timing_manager_sensor_stats();
+	timing_manager_clear_isr();
 }
 
 /*

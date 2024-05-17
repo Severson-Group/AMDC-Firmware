@@ -4,6 +4,7 @@
 #include "drv/hardware_targets.h"
 #include "sys/statistics.h"
 #include "usr/user_config.h"
+#include "xil_exception.h"
 #include "xparameters.h"
 
 #include <stdbool.h>
@@ -13,7 +14,7 @@
 #define ISR0_PRIORITY            (0x08)
 #define ISR_RISING_EDGE          (0x3)
 #define DEFAULT_SENSOR_ENABLE    (0x00)
-#define DEFAULT_PWM_RATIO        (0x1)
+#define DEFAULT_PWM_RATIO        (10)	// Default: 100kHz PWM carrier frequency : 10kHz control rate
 #define LOWER_16_MASK            (0x0000FFFF)
 #define NUM_SENSORS              (6)
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
@@ -22,7 +23,7 @@
 typedef enum { EDDY_0 = 0, EDDY_1 = 1, EDDY_2 = 2, EDDY_3 = 3, ENCODER = 4, ADC = 5 } sensor_t;
 
 // Initialization
-int interrupt_system_init();
+int timing_manager_interrupt_system_init(Xil_ExceptionHandler timing_manager_handler);
 void timing_manager_init();
 
 // Set user ratio
@@ -44,7 +45,7 @@ void timing_manager_trigger_on_pwm_low(void);
 void timing_manager_trigger_on_pwm_clear(void);
 
 // Timing acquisition
-void isr_0(void *intc_inst_ptr);
+void timing_manager_isr(void *intc_inst_ptr);
 double timing_manager_get_time_per_sensor(sensor_t sensor);
 void timing_manager_sensor_stats(void);
 statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor);

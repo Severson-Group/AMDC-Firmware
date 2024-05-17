@@ -13,6 +13,11 @@
 // System uses 10kHz by default
 //#define SYS_TICK_FREQ (20000) // Hz
 
+// Specify the source of the scheduler ISR (timing manager by default)
+// set to 1 when the source is from the timing manager (i.e. based on sensor I/O),
+// 0 when time-based using the system timer
+#define USER_CONFIG_ISR_SOURCE (1)
+
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (1)
