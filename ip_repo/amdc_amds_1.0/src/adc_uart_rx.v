@@ -12,6 +12,7 @@ module adc_uart_rx(
     
     output wire [3:0] is_dout_valid, // is_dout_valid[0] == 1 implies that adc_dout0 is valid
     output reg adc_uart_done,
+    output reg assert_done,
     output reg [15:0] adc_dout0,
     output reg [15:0] adc_dout1,
     output reg [15:0] adc_dout2,
@@ -130,7 +131,7 @@ end
 // Done
 // ==============
 
-reg assert_done, deassert_done;
+reg deassert_done;
 
 always @(posedge clk, negedge rst_n) begin
     if (~rst_n)
@@ -139,6 +140,8 @@ always @(posedge clk, negedge rst_n) begin
     else if (deassert_done)
         adc_uart_done <= 1'b0;
     else if (assert_done)
+        // assert_done is declared above as a module output, 
+        // because it also needs to set a done flop in the parent driver
         adc_uart_done <= 1'b1;
 end
 

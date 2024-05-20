@@ -567,7 +567,8 @@
     // knows to expect a new data packet transmission. Therefore, it will
     // start a state machine internally to read each UART word.
     wire [3:0] is_dout0_valid, is_dout1_valid;
-    wire adc_uart0_done, adc_uart1_done;
+    wire adc_uart0_done, assert_done_0;
+    wire adc_uart1_done, assert_done_1;
    
     wire [15:0] my_adc_data0;
     wire [15:0] my_adc_data1;
@@ -647,6 +648,7 @@
         .din(amds_data[0]),
         .is_dout_valid(is_dout0_valid),
         .adc_uart_done(adc_uart0_done),
+        .assert_done(assert_done_0),
         .adc_dout0(my_adc_data0),
         .adc_dout1(my_adc_data1),
         .adc_dout2(my_adc_data2),
@@ -663,6 +665,7 @@
         .din(amds_data[1]),
         .is_dout_valid(is_dout1_valid),
         .adc_uart_done(adc_uart1_done),
+        .assert_done(assert_done_1),
         .adc_dout0(my_adc_data4),
         .adc_dout1(my_adc_data5),
         .adc_dout2(my_adc_data6),
@@ -744,11 +747,32 @@
         timeout_reg[31:0] <= {counter_data1_timeout, counter_data0_timeout};
     end
 
-    // Receiving is done when both sub-receivers are done
+    // Receiving is done when both sub-receivers are done, but
+    //   both done FFs must be cleared as soon as we recieve a trigger
     // We cannot reuse the is_dout_valid signals, because if corrupt data was received, the receiver is "done",
     //   but the data is not valid. And done MUST go high even in the case of corrupt/timed-out data, because the 
     //   timing manager will freeze, and not send out another trigger or call the ISR until we tell it we're done
-    assign done = adc_uart0_done & adc_uart1_done;
+    reg done_0;
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            done_0 <= 1'b1;
+        else if (trigger)
+            done_0 <= 1'b0;
+        else if (assert_done_0)
+            done_0 <= 1'b1;
+    end
+    
+    reg done_1;
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+        if (~S_AXI_ARESETN)
+            done_1 <= 1'b1;
+        else if (trigger)
+            done_1 <= 1'b0;
+        else if (assert_done_1)
+            done_1 <= 1'b1;
+    end
+    
+    assign done = done_0 & done_1;
 
     // User logic ends
 
