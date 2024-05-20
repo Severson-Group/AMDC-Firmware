@@ -32,7 +32,7 @@ module timing_manager(
     ////////////
     // INPUTS //
     ////////////
-    input clk, rst_n;
+    input wire clk, rst_n;
     input wire do_auto_triggering;
     input wire send_manual_trigger;
     input wire [15:0] user_ratio;
@@ -87,6 +87,7 @@ module timing_manager(
         end
     end
 
+    reg manual_trigger_queued;
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             trigger <= 0;
@@ -102,7 +103,6 @@ module timing_manager(
             trigger <= 0;
     end
 
-    reg manual_trigger_queued;
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             manual_trigger_queued <= 0;

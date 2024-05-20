@@ -627,6 +627,8 @@
             start_rx0 <= 1'b0;
         else if (waiting_for_first_fe0 & amds_data0_fe)
             start_rx0 <= 1'b1;
+        else
+            start_rx0 <= 1'b0;
     end
 
     always @(posedge S_AXI_ACLK) begin
@@ -634,6 +636,8 @@
             start_rx1 <= 1'b0;
         else if (waiting_for_first_fe1 & amds_data1_fe)
             start_rx1 <= 1'b1;
+        else
+            start_rx1 <= 1'b0;
     end
     
     adc_uart_rx iADC_UART_RX0 (
