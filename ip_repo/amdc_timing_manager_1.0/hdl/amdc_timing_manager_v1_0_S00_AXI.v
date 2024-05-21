@@ -514,7 +514,7 @@
     wire [31:0] output_reg_11;
     wire [31:0] output_reg_12;
     wire reset_sched_isr;
-    wire [15:0] count_time;
+    wire [31:0] count_time;
 
     // Implement memory mapped register select and read logic generation
     // Slave register read enable is asserted when valid address is available
@@ -565,12 +565,12 @@
 
     // Add user logic here
     
-    wire [15:0] adc_time, amds0_time, amds1_time, amds2_time, amds3_time;
-    wire [15:0] encoder_time, eddy0_time, eddy1_time, eddy2_time, eddy3_time;
-    assign output_reg_5 = {eddy1_time, eddy0_time};
-    assign output_reg_6 = {eddy3_time, eddy2_time};
-    assign output_reg_11 = {amds1_time, amds0_time};
-    assign output_reg_12 = {amds3_time, amds2_time};
+    wire [15:0] adc_time, amds_0_time, amds_1_time, amds_2_time, amds_3_time;
+    wire [15:0] encoder_time, eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
+    assign output_reg_5 = {eddy_1_time, eddy_0_time};
+    assign output_reg_6 = {eddy_3_time, eddy_2_time};
+    assign output_reg_11 = {amds_1_time, amds_0_time};
+    assign output_reg_12 = {amds_3_time, amds_2_time};
     assign output_reg_7 = {adc_time, encoder_time};
     wire do_auto_triggering;
     wire send_manual_trigger;
@@ -661,14 +661,14 @@
     .en_encoder(en_encoder),
     .adc_time(adc_time),
     .encoder_time(encoder_time),
-    .amds0_time(amds0_time),
-    .amds1_time(amds1_time),
-    .amds2_time(amds2_time),
-    .amds3_time(amds3_time),
-    .eddy0_time(eddy0_time),
-    .eddy1_time(eddy1_time),
-    .eddy2_time(eddy2_time),
-    .eddy3_time(eddy3_time),
+    .amds_0_time(amds_0_time),
+    .amds_1_time(amds_1_time),
+    .amds_2_time(amds_2_time),
+    .amds_3_time(amds_3_time),
+    .eddy_0_time(eddy_0_time),
+    .eddy_1_time(eddy_1_time),
+    .eddy_2_time(eddy_2_time),
+    .eddy_3_time(eddy_3_time),
     .trigger(trigger),
     .reset_sched_isr(reset_sched_isr),
     .count_time(count_time)
