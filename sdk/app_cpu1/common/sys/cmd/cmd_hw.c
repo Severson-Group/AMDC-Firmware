@@ -39,7 +39,7 @@ static command_help_t cmd_help[] = {
     { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
     { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
       "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
-    { "tm trigger <HIGH|LOW|BOTH>", "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
+    { "tm trigger_pwm <HIGH|LOW|BOTH>", "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
     { "tm mode <AUTO|MANUAL>", "Switch the timing manager trigger mode" },
     { "tm send_trigger", "If in MANUAL mode, trigger all enabled sensors" },
     { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
