@@ -44,7 +44,8 @@ static command_help_t cmd_help[] = {
     { "tm send_trigger", "If in MANUAL mode, trigger all enabled sensors" },
     { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
     { "tm enable <adc|encoder|amds|eddy> <port [if amds/eddy]>",
-      "Enable a sensor; if eddy is chosen, specify the port, otherwise, leave blank" },
+      "Enable a sensor; for AMDS or eddy, specify the port, otherwise leave blank" },
+    { "tm disable_all", "Disables all enabled sensors" },
     { "tm time <adc|encoder|amds|eddy> <port [if amds/eddy]>", "Read acquisition time of sensor" },
 };
 
@@ -308,6 +309,12 @@ int cmd_hw(int argc, char **argv)
                     return CMD_INVALID_ARGUMENTS;
                 }
             }
+            return CMD_SUCCESS;
+        }
+
+        // hw tm disable_all
+        else if (argc >= 3 && STREQ("disable_all", argv[2])) {
+            timing_manager_select_sensors(0x0000);
             return CMD_SUCCESS;
         }
 
