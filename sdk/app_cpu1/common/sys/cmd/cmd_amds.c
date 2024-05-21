@@ -58,6 +58,7 @@ int cmd_amds(int argc, char **argv)
                 cmd_resp_printf("Channel %i: Invalid data\r\n", channel);
 
             mask = mask << 1;
+            channel++;
         }
 
         return CMD_SUCCESS;

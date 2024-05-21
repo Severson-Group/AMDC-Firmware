@@ -296,7 +296,7 @@ void timing_manager_trigger_on_pwm_clear(void)
  */
 double timing_manager_get_time_per_sensor(sensor_t sensor)
 {
-    int clock_cycles = 0;
+    uint32_t clock_cycles = 0;
     double time = 0;
 
     if (sensor == AMDS_1) {

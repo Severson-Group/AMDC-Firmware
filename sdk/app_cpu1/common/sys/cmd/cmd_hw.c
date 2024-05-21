@@ -320,20 +320,20 @@ int cmd_hw(int argc, char **argv)
 
         // hw tm time <sensor>
         else if (argc >= 4 && STREQ("time", argv[2])) {
-            statistics_t *stats;
+            double time = 0;
             if (STREQ("encoder", argv[3])) {
-                stats = timing_manager_get_stats_per_sensor(ENCODER);
+                time = timing_manager_get_time_per_sensor(ENCODER);
             } else if (STREQ("amds", argv[3])) {
                 int32_t port = atoi(argv[4]);
                 // get time for AMDS based on selected port
                 if (port == 1) {
-                    stats = timing_manager_get_stats_per_sensor(AMDS_1);
+                    time = timing_manager_get_time_per_sensor(AMDS_1);
                 } else if (port == 2) {
-                    stats = timing_manager_get_stats_per_sensor(AMDS_2);
+                    time = timing_manager_get_time_per_sensor(AMDS_2);
                 } else if (port == 3) {
-                    stats = timing_manager_get_stats_per_sensor(AMDS_3);
+                    time = timing_manager_get_time_per_sensor(AMDS_3);
                 } else if (port == 4) {
-                    stats = timing_manager_get_stats_per_sensor(AMDS_4);
+                    time = timing_manager_get_time_per_sensor(AMDS_4);
                 } else {
                     return CMD_INVALID_ARGUMENTS;
                 }
@@ -341,22 +341,22 @@ int cmd_hw(int argc, char **argv)
                 int32_t port = atoi(argv[4]);
                 // get time for eddy current sensor based on selected port
                 if (port == 1) {
-                    stats = timing_manager_get_stats_per_sensor(EDDY_1);
+                    time = timing_manager_get_time_per_sensor(EDDY_1);
                 } else if (port == 2) {
-                    stats = timing_manager_get_stats_per_sensor(EDDY_2);
+                    time = timing_manager_get_time_per_sensor(EDDY_2);
                 } else if (port == 3) {
-                    stats = timing_manager_get_stats_per_sensor(EDDY_3);
+                    time = timing_manager_get_time_per_sensor(EDDY_3);
                 } else if (port == 4) {
-                    stats = timing_manager_get_stats_per_sensor(EDDY_4);
+                    time = timing_manager_get_time_per_sensor(EDDY_4);
                 } else {
                     return CMD_INVALID_ARGUMENTS;
                 }
             } else if (STREQ("adc", argv[3])) {
-                stats = timing_manager_get_stats_per_sensor(ADC);
+                time = timing_manager_get_time_per_sensor(ADC);
             } else {
                 return CMD_INVALID_ARGUMENTS;
             }
-            cmd_resp_printf("Time (us): %f\n\r", stats->value);
+            cmd_resp_printf("Time (us): %.3f\r\n", time);
             return CMD_SUCCESS;
         }
     }
