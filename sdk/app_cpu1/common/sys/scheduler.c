@@ -7,10 +7,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#if USER_CONFIG_ENABLE_AMDS_SUPPORT == 1
-#include "drv/amds.h"
-#endif
-
 // Used to give each task a unique ID
 static int next_tcb_id = 0;
 

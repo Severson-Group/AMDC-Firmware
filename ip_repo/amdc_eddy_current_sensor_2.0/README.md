@@ -25,7 +25,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 0x00 | SENSOR_DATA_X | R   | IP Data Register |
 | 0x04 | SENSOR_DATA_Y | R   | IP Data Register |
 | 0x08 | SPI_DIVIDER   | R/W | IP Configuration Register |
-| 0x0C | UNUSED        | R   | Unused Register  |
+| 0x0C | UNUSED        | R/W | Unused Register  |
 | 0x10 | SHIFT_INDEX   | R/W | IP Configuration Register |
 
 

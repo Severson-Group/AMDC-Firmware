@@ -50,7 +50,7 @@ typedef enum {
     AMDS_NUM_CHANNELS,
 } amds_channel_t;
 
-static inline bool amds_channel_in_bounds(amds_channel_t channel)
+static inline bool is_amds_channel_in_bounds(amds_channel_t channel)
 {
     if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
         return true;

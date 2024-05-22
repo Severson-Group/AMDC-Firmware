@@ -110,27 +110,29 @@ void timing_manager_init(void)
  * timing_manager_send_manual_trigger() function, although manual triggers will still be aligned
  * to the peaks and/or valleys of the PWM carrier
  */
-void timing_manager_set_mode(trigger_mode_t mode)
+void timing_manager_set_mode(trigger_mode_e mode)
 {
-    if (mode) {
+    if (mode == TM_AUTOMATIC) {
         // AUTOMATIC: Set slv_reg0[0]
         Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) | 0x00000001));
-    } else {
+    } else if (mode == TM_MANUAL) {
         // MANUAL: Clear slv_reg0[0]
         Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
+    } else {
+        // Do nothing
     }
 }
 
-trigger_mode_t timing_manager_get_mode()
+trigger_mode_e timing_manager_get_mode(void)
 {
-    return (trigger_mode_t)(Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1);
+    return (trigger_mode_e)(Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1);
 }
 
 /* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
  * on the next qualifying PWM peak/valley. Calling this function is only effective if
  * the user has set the timing manager to MANUAL mode by calling timing_manager_set_mode(MANUAL)
  */
-void timing_manager_send_manual_trigger()
+void timing_manager_send_manual_trigger(void)
 {
     // A manual trigger is initiated in the FPGA by flipping slv_reg0[1]
     Xil_Out32(TIMING_MANAGER_BASE_ADDR, Xil_In32(TIMING_MANAGER_BASE_ADDR) ^ 0x00000002);
@@ -294,7 +296,7 @@ void timing_manager_trigger_on_pwm_clear(void)
 /*
  * Get the acquisition time for the requested sensor, in nanoseconds
  */
-double timing_manager_get_time_per_sensor(sensor_t sensor)
+double timing_manager_get_time_per_sensor(sensor_e sensor)
 {
     uint32_t clock_cycles = 0;
     double time = 0;
@@ -353,7 +355,7 @@ void timing_manager_sensor_stats(void)
  * Takes in a sensor value, and returns a reference to the struct
  * containing the stats for that sensor
  */
-statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
+statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor)
 {
     // Get pointer to the stats for the specified sensor
     return &sensor_stats[sensor];

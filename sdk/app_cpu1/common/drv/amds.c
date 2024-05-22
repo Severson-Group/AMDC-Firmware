@@ -44,7 +44,7 @@ uint8_t amds_check_data_validity(uint32_t base_addr)
  */
 int amds_get_data(uint32_t base_addr, amds_channel_t channel, int32_t *out)
 {
-    if (!amds_channel_in_bounds(channel)) {
+    if (!is_amds_channel_in_bounds(channel)) {
         return FAILURE;
     } else {
         *out = (int32_t)(Xil_In32(base_addr + channel * sizeof(uint32_t)));

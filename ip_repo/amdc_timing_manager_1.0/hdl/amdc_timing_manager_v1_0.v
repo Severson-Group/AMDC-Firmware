@@ -37,7 +37,7 @@
 		output wire en_eddy_1,
 		output wire en_eddy_2,
 		output wire en_eddy_3,
-    	output wire en_adc,
+		output wire en_adc,
 		output wire en_encoder,
 		output wire [2:0] debug,
 
@@ -100,7 +100,7 @@
 		.sched_isr(sched_isr),
 		.adc_done(adc_done),
 		.encoder_done(encoder_done),
-    	.amds_0_done(amds_0_done),
+		.amds_0_done(amds_0_done),
 		.amds_1_done(amds_1_done),
 		.amds_2_done(amds_2_done),
 		.amds_3_done(amds_3_done),

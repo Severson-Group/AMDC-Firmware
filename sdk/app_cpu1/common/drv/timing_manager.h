@@ -30,17 +30,17 @@ typedef enum {
     EDDY_4 = 7,
     ENCODER = 8,
     ADC = 9
-} sensor_t;
+} sensor_e;
 
-typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_t;
+typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_e;
 
 // Initialization
-int interrupt_system_init();
-void timing_manager_init();
+int interrupt_system_init(void);
+void timing_manager_init(void);
 
 // Mode: Automatic vs Manual Triggering
-void timing_manager_set_mode(trigger_mode_t mode);
-trigger_mode_t timing_manager_get_mode(void);
+void timing_manager_set_mode(trigger_mode_e mode);
+trigger_mode_e timing_manager_get_mode(void);
 void timing_manager_send_manual_trigger(void);
 
 // Set user ratio
@@ -61,9 +61,9 @@ void timing_manager_trigger_on_pwm_clear(void);
 
 // Timing acquisition
 void isr_0(void *intc_inst_ptr);
-double timing_manager_get_time_per_sensor(sensor_t sensor);
+double timing_manager_get_time_per_sensor(sensor_e sensor);
 void timing_manager_sensor_stats(void);
-statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor);
+statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor);
 void timing_manager_clear_isr(void);
 
 #endif // TIMING_MANAGER_H
