@@ -308,6 +308,8 @@ int cmd_hw(int argc, char **argv)
                 case 4:
                     timing_manager_enable_sensor(AMDS_4);
                     break;
+                default:
+                    return CMD_INVALID_ARGUMENTS;
                 }
             } else if (argc == 5 && STREQ("eddy", argv[3])) {
                 int32_t port = atoi(argv[4]);
@@ -325,6 +327,8 @@ int cmd_hw(int argc, char **argv)
                 case 4:
                     timing_manager_enable_sensor(EDDY_4);
                     break;
+                default:
+                    return CMD_INVALID_ARGUMENTS;
                 }
             }
             return CMD_SUCCESS;
