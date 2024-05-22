@@ -508,13 +508,13 @@
     end    
 
     // Internal signals
-    wire [31:0] output_reg_5;
-    wire [31:0] output_reg_6;
-    wire [31:0] output_reg_7;
-    wire [31:0] output_reg_11;
-    wire [31:0] output_reg_12;
-    wire reset_sched_isr;
     wire [31:0] count_time;
+    wire [31:0] adc_enc_time_reg;
+    wire [31:0] amds_01_time_reg;
+    wire [31:0] amds_23_time_reg;
+    wire [31:0] eddy_01_time_reg;
+    wire [31:0] eddy_23_time_reg;
+    wire reset_sched_isr;
 
     // Implement memory mapped register select and read logic generation
     // Slave register read enable is asserted when valid address is available
@@ -524,19 +524,19 @@
     begin
           // Address decoding for reading registers
           case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-            4'h0   : reg_data_out <= slv_reg0; // Configuration register
+            4'h0   : reg_data_out <= slv_reg0; // Trigger configuration register
             4'h1   : reg_data_out <= slv_reg1; // Sensor Enable Bits
             4'h2   : reg_data_out <= slv_reg2; // User Ratio
             4'h3   : reg_data_out <= slv_reg3; // PWM Sync
-            4'h4   : reg_data_out <= slv_reg4; // Unused
-            4'h5   : reg_data_out <= output_reg_5; // Eddy Times
-            4'h6   : reg_data_out <= output_reg_6; // Eddy Times
-            4'h7   : reg_data_out <= output_reg_7; // ADC & Encoder Times
-            4'h8   : reg_data_out <= slv_reg8; // ISR
-            4'h9   : reg_data_out <= slv_reg9; // Unused
-            4'hA   : reg_data_out <= count_time; // Timer
-            4'hB   : reg_data_out <= output_reg_11; // AMDS Times
-            4'hC   : reg_data_out <= output_reg_12; // AMDS Times
+            4'h4   : reg_data_out <= slv_reg4; // ISR
+            4'h5   : reg_data_out <= count_time; // Trigger timer
+            4'h6   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
+            4'h7   : reg_data_out <= amds_01_time_reg; // AMDS Times
+            4'h8   : reg_data_out <= amds_23_time_reg; // AMDS Times
+            4'h9   : reg_data_out <= eddy_01_time_reg; // Eddy Times
+            4'hA   : reg_data_out <= eddy_23_time_reg; // Eddy Times
+            4'hB   : reg_data_out <= slv_reg11; // Unused
+            4'hC   : reg_data_out <= slv_reg12;
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
             4'hF   : reg_data_out <= slv_reg15;
@@ -565,13 +565,15 @@
 
     // Add user logic here
     
-    wire [15:0] adc_time, amds_0_time, amds_1_time, amds_2_time, amds_3_time;
-    wire [15:0] encoder_time, eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
-    assign output_reg_5 = {eddy_1_time, eddy_0_time};
-    assign output_reg_6 = {eddy_3_time, eddy_2_time};
-    assign output_reg_11 = {amds_1_time, amds_0_time};
-    assign output_reg_12 = {amds_3_time, amds_2_time};
-    assign output_reg_7 = {adc_time, encoder_time};
+    wire [15:0] adc_time, encoder_time;
+    wire [15:0] amds_0_time, amds_1_time, amds_2_time, amds_3_time;
+    wire [15:0] eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
+    assign adc_enc_time_reg = {encoder_time, adc_time};
+    assign amds_01_time_reg = {amds_1_time, amds_0_time};
+    assign amds_23_time_reg = {amds_3_time, amds_2_time};
+    assign eddy_01_time_reg = {eddy_1_time, eddy_0_time};
+    assign eddy_23_time_reg = {eddy_3_time, eddy_2_time};
+
     wire do_auto_triggering;
     wire send_manual_trigger;
     reg manual_trigger_ff;
@@ -599,7 +601,7 @@
     assign user_ratio = slv_reg2[15:0];
     
     // reset interrupt 0
-    assign reset_sched_isr = slv_reg8[0];
+    assign reset_sched_isr = slv_reg4[0];
 
     // Get the enable bits from the user to
     // decode them in the timing manager
@@ -637,6 +639,7 @@
     .send_manual_trigger(send_manual_trigger),
     .event_qualifier(event_qualifier),
     .user_ratio(user_ratio),
+    .sched_isr(sched_isr),
     .en_bits(en_bits),
     .adc_done(adc_done),
     .encoder_done(encoder_done),
@@ -648,7 +651,8 @@
     .eddy_1_done(eddy_1_done),
     .eddy_2_done(eddy_2_done),
     .eddy_3_done(eddy_3_done),
-    .sched_isr(sched_isr),
+    .en_adc(en_adc),
+    .en_encoder(en_encoder),
     .en_amds_0(en_amds_0),
     .en_amds_1(en_amds_1),
     .en_amds_2(en_amds_2),
@@ -657,8 +661,6 @@
     .en_eddy_1(en_eddy_1),
     .en_eddy_2(en_eddy_2),
     .en_eddy_3(en_eddy_3),
-    .en_adc(en_adc),
-    .en_encoder(en_encoder),
     .adc_time(adc_time),
     .encoder_time(encoder_time),
     .amds_0_time(amds_0_time),

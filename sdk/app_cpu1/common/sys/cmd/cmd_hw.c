@@ -288,25 +288,43 @@ int cmd_hw(int argc, char **argv)
 
         // hw tm enable <sensor> [port if eddy/amds]
         else if (argc >= 4 && STREQ("enable", argv[2])) {
-            if (STREQ("encoder", argv[3])) {
-                timing_manager_enable_encoder();
-            } else if (STREQ("adc", argv[3])) {
-                timing_manager_enable_adc();
+            if (STREQ("adc", argv[3])) {
+                timing_manager_enable_sensor(ADC);
+            } else if (STREQ("encoder", argv[3])) {
+                timing_manager_enable_sensor(ENCODER);
             } else if (argc == 5 && STREQ("amds", argv[3])) {
                 int32_t port = atoi(argv[4]);
                 // enable AMDS based on selected port
-                if (port >= 1 && port <= 4) {
-                    timing_manager_enable_amds(port);
-                } else {
-                    return CMD_INVALID_ARGUMENTS;
+                switch (port) {
+                case 1:
+                    timing_manager_enable_sensor(AMDS_1);
+                    break;
+                case 2:
+                    timing_manager_enable_sensor(AMDS_2);
+                    break;
+                case 3:
+                    timing_manager_enable_sensor(AMDS_3);
+                    break;
+                case 4:
+                    timing_manager_enable_sensor(AMDS_4);
+                    break;
                 }
             } else if (argc == 5 && STREQ("eddy", argv[3])) {
                 int32_t port = atoi(argv[4]);
                 // enable eddy current sensor based on selected port
-                if (port >= 1 && port <= 4) {
-                    timing_manager_enable_eddy_current_sensor(port);
-                } else {
-                    return CMD_INVALID_ARGUMENTS;
+                switch (port) {
+                case 1:
+                    timing_manager_enable_sensor(EDDY_1);
+                    break;
+                case 2:
+                    timing_manager_enable_sensor(EDDY_2);
+                    break;
+                case 3:
+                    timing_manager_enable_sensor(EDDY_3);
+                    break;
+                case 4:
+                    timing_manager_enable_sensor(EDDY_4);
+                    break;
                 }
             }
             return CMD_SUCCESS;

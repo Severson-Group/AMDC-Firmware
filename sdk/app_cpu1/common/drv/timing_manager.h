@@ -19,17 +19,36 @@
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 #define UPPER_16_SHIFT           (16)
 
+// Slave Register Offsets
+#define TIMING_MANAGER_TRIG_CFG_REG_OFFSET     (0)
+#define TIMING_MANAGER_ENABLE_CFG_REG_OFFSET   (1 * sizeof(uint32_t))
+#define TIMING_MANAGER_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
+#define TIMING_MANAGER_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
+#define TIMING_MANAGER_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
+#define TIMING_MANAGER_TRIG_TIME_REG_OFFSET    (5 * sizeof(uint32_t))
+#define TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
+#define TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
+#define TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))
+#define TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET (9 * sizeof(uint32_t))
+#define TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET (10 * sizeof(uint32_t))
+
+// IMPORTANT:
+// This enumeration must be kept in sync with the order of sensors in the FPGA!
+// Sensors built-on to the AMDC come first, followed by sensor peripherals that
+// can be attached to a GPIO port for example.
+// Make sure that any updates made to this enumeration are matched to an update
+// in the timing manager IP's verilog!!
 typedef enum {
-    AMDS_1 = 0,
-    AMDS_2 = 1,
-    AMDS_3 = 2,
-    AMDS_4 = 3,
-    EDDY_1 = 4,
-    EDDY_2 = 5,
-    EDDY_3 = 6,
-    EDDY_4 = 7,
-    ENCODER = 8,
-    ADC = 9
+    ADC = 0,
+    ENCODER = 1,
+    AMDS_1 = 2,
+    AMDS_2 = 3,
+    AMDS_3 = 4,
+    AMDS_4 = 5,
+    EDDY_1 = 6,
+    EDDY_2 = 7,
+    EDDY_3 = 8,
+    EDDY_4 = 9
 } sensor_e;
 
 typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_e;
