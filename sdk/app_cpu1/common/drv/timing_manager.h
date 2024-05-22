@@ -67,10 +67,7 @@ void timing_manager_set_ratio(uint32_t ratio);
 
 // Enable sensors
 void timing_manager_select_sensors(uint16_t enable_bits);
-void timing_manager_enable_amds(uint8_t amds_port_number);
-void timing_manager_enable_eddy_current_sensor(uint8_t eddy_current_sensor_port_number);
-void timing_manager_enable_encoder(void);
-void timing_manager_enable_adc(void);
+void timing_manager_enable_sensor(sensor_e sensor);
 
 // PWM trigger
 void timing_manager_trigger_on_pwm_both(void);

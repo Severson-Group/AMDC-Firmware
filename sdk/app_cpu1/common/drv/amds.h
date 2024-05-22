@@ -48,9 +48,9 @@ typedef enum {
 
     // Keep this as last entry!
     AMDS_NUM_CHANNELS,
-} amds_channel_t;
+} amds_channel_e;
 
-static inline bool is_amds_channel_in_bounds(amds_channel_t channel)
+static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 {
     if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
         return true;
@@ -59,7 +59,7 @@ static inline bool is_amds_channel_in_bounds(amds_channel_t channel)
     return false;
 }
 
-static inline bool amds_port_in_bounds(int port)
+static inline bool is_amds_port_in_bounds(int port)
 {
     if (port >= 1 && port <= AMDS_MAX_IP_CORES) {
         return true;
@@ -90,11 +90,11 @@ static inline uint32_t amds_port_to_base_addr(int port)
 
 void amds_init(void);
 
-uint8_t amds_check_data_validity(uint32_t base_addr);
-int amds_get_data(uint32_t base_addr, amds_channel_t channel, int32_t *out);
+uint8_t amds_check_data_validity(uint8_t port);
+int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
 
-void amds_print_data(uint32_t base_addr);
-void amds_print_counters(uint32_t base_addr);
-void amds_get_counters(uint32_t base_addr, uint32_t *V, uint32_t *C, uint32_t *T);
+void amds_print_data(uint8_t port);
+void amds_print_counters(uint8_t port);
+void amds_get_counters(uint8_t port, uint32_t *V, uint32_t *C, uint32_t *T);
 
 #endif // AMDS_H

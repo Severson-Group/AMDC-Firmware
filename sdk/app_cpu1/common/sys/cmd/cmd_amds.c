@@ -27,26 +27,24 @@ void cmd_amds_register(void)
 
 int cmd_amds(int argc, char **argv)
 {
-    uint32_t base_addr = 0;
+    uint8_t port = 0;
 
     if (argc >= 2) {
-        int port = atoi(argv[1]);
-        if (!amds_port_in_bounds(port)) {
+        port = atoi(argv[1]);
+        if (!is_amds_port_in_bounds(port)) {
             return CMD_INVALID_ARGUMENTS;
         }
-
-        base_addr = amds_port_to_base_addr(port);
     }
 
     // Handle 'amds <port> data' command
     if (argc == 3 && STREQ("data", argv[2])) {
-        amds_print_data(base_addr);
+        amds_print_data(port);
         return CMD_SUCCESS;
     }
 
     // Handle 'amds <port> valid' command
     if (argc == 3 && STREQ("valid", argv[2])) {
-        uint8_t valid_bits = amds_check_data_validity(base_addr);
+        uint8_t valid_bits = amds_check_data_validity(port);
 
         uint8_t mask = 0x01;
         uint8_t channel = 1;
@@ -66,7 +64,7 @@ int cmd_amds(int argc, char **argv)
 
     // Handle 'amds <port> counters' command
     if (argc == 3 && STREQ("counters", argv[2])) {
-        amds_print_counters(base_addr);
+        amds_print_counters(port);
         return CMD_SUCCESS;
     }
 
