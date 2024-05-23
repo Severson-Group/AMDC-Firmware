@@ -80,6 +80,10 @@ void timing_manager_init(void)
         printf("Error initializing interrupt system.");
     }
 
+    // Set the timing manager to automatic triggering
+    // (this call is redundant, as the FPGA should reset slv_reg0 to 0x0000_0001)
+    timing_manager_set_mode(TM_AUTOMATIC);
+
     // Default event qualifier is PWM carrier high AND low
     timing_manager_trigger_on_pwm_both();
 
@@ -94,6 +98,44 @@ void timing_manager_init(void)
         // ensure each sensor has their own statistics
         statistics_init(&sensor_stats[i]);
     }
+}
+
+/* Sets the timing manager's trigger mode by writing to the mode bit in the trigger
+ * configuration register. Accepted arguments for mode are AUTOMATIC (default) and MANUAL
+ *
+ * AUTOMATIC mode will trigger all enabled sensors according to the settings set by the
+ * timing_manager_set_ratio() when all enabled sensors are done sampling
+ *
+ * MANUAL mode will only trigger sensors when the user makes a call to the
+ * timing_manager_send_manual_trigger() function, although manual triggers will still be aligned
+ * to the peaks and/or valleys of the PWM carrier
+ */
+void timing_manager_set_mode(trigger_mode_e mode)
+{
+    if (mode == TM_AUTOMATIC) {
+        // AUTOMATIC: Set slv_reg0[0]
+        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) | 0x00000001));
+    } else if (mode == TM_MANUAL) {
+        // MANUAL: Clear slv_reg0[0]
+        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
+    } else {
+        // Do nothing
+    }
+}
+
+trigger_mode_e timing_manager_get_mode(void)
+{
+    return (trigger_mode_e)(Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1);
+}
+
+/* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
+ * on the next qualifying PWM peak/valley. Calling this function is only effective if
+ * the user has set the timing manager to MANUAL mode by calling timing_manager_set_mode(MANUAL)
+ */
+void timing_manager_send_manual_trigger(void)
+{
+    // A manual trigger is initiated in the FPGA by flipping slv_reg0[1]
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR, Xil_In32(TIMING_MANAGER_BASE_ADDR) ^ 0x00000002);
 }
 
 /*
@@ -114,8 +156,8 @@ void isr_0(void *intc_inst_ptr)
  */
 void timing_manager_clear_isr(void)
 {
-    Xil_Out32(TIMING_MANAGER_BASE_ADDR + (8 * sizeof(uint32_t)), 1);
-    Xil_Out32(TIMING_MANAGER_BASE_ADDR + (8 * sizeof(uint32_t)), 0);
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET, 1);
+    Xil_Out32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET, 0);
 }
 
 /*
@@ -125,87 +167,42 @@ void timing_manager_clear_isr(void)
  */
 void timing_manager_set_ratio(uint32_t ratio)
 {
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (2 * sizeof(uint32_t));
+    // Get the current address for the target config register
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_RATIO_CFG_REG_OFFSET;
     // Assign the ratio to the config register
     Xil_Out32(config_reg_addr, ratio);
 }
 
 /*
- * Select which sensors should be used for timing acquisition
+ * Enables/disables all user-requested sensors for timing acquisition, according to provided enable bits.
+ * Can be used to disable all sensors if enable_bits argument is 0x0000.
  */
-void timing_manager_select_sensors(uint8_t enable_bits)
+void timing_manager_select_sensors(uint16_t enable_bits)
 {
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
+    // Get the address for the enable bit config register
+    uint32_t enable_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ENABLE_CFG_REG_OFFSET;
     // Assign the enable bits to the config register
-    Xil_Out32(config_reg_addr, enable_bits);
+    Xil_Out32(enable_reg_addr, enable_bits);
 }
 
 /*
- * Enable eddy current sensor 1
+ * Enables a single user-requested sensor (by configuring the appropriate bit in the timing manager)
  */
-void timing_manager_enable_eddy_1(void)
+void timing_manager_enable_sensor(sensor_e sensor)
 {
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x01));
-}
+    // Get the address for the enable configuration register
+    uint32_t enable_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ENABLE_CFG_REG_OFFSET;
 
-/*
- * Enable eddy current sensor 2
- */
-void timing_manager_enable_eddy_2(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x02));
-}
-
-/*
- * Enable eddy current sensor 3
- */
-void timing_manager_enable_eddy_3(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x04));
-}
-
-/*
- * Enable eddy current sensor 4
- */
-void timing_manager_enable_eddy_4(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x08));
-}
-
-/*
- * Enable encoder
- */
-void timing_manager_enable_encoder(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x10));
-}
-
-/*
- * Enable ADC
- */
-void timing_manager_enable_adc(void)
-{
-    // Get the current address for the target config register (slv_reg2)
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (1 * sizeof(uint32_t));
-    // Assign the  to the config register
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x20));
+    // IMPORTANT:
+    //   sensor_e enumeration is a critical enumeration where the enumeration order matters!
+    //   Since the ADC is "sensor 0", its enable bit in the timing manager's enable
+    //   configuration register is slv_reg1[0]
+    //   Since the ENCODER is "sensor 1", its enable bit is slv_reg1[1]
+    //   ... and so on for all the other sensors defined in the enumeration ...
+    //   The enumeration MUST be kept in agreement with the sensor order in the FPGA, so
+    //   that we can use this simple bit-shift to set the correct bit in the FPGA
+    uint32_t enable_bit = 0x1 << sensor;
+    Xil_Out32(enable_reg_addr, (Xil_In32(enable_reg_addr) | enable_bit));
 }
 
 /*
@@ -214,9 +211,9 @@ void timing_manager_enable_adc(void)
 void timing_manager_trigger_on_pwm_both(void)
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
+    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
     // Set both the carrier high and low trigger bits
-    Xil_Out32(config_reg_addr, 0x0003);
+    Xil_Out32(pwm_config_reg_addr, 0x0003);
 }
 
 /*
@@ -225,9 +222,9 @@ void timing_manager_trigger_on_pwm_both(void)
 void timing_manager_trigger_on_pwm_high(void)
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
+    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
     // Set only the carrier high bit
-    Xil_Out32(config_reg_addr, 0x0001);
+    Xil_Out32(pwm_config_reg_addr, 0x0001);
 }
 
 /*
@@ -236,9 +233,9 @@ void timing_manager_trigger_on_pwm_high(void)
 void timing_manager_trigger_on_pwm_low(void)
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
-    // Set only the carrier high bit
-    Xil_Out32(config_reg_addr, 0x0002);
+    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
+    // Set only the carrier low bit
+    Xil_Out32(pwm_config_reg_addr, 0x0002);
 }
 
 /*
@@ -247,38 +244,40 @@ void timing_manager_trigger_on_pwm_low(void)
 void timing_manager_trigger_on_pwm_clear(void)
 {
     // Get the current address of the config register
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + (3 * sizeof(uint32_t));
+    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
     // Clear both the carrier high and low trigger bits
-    Xil_Out32(config_reg_addr, 0x0000);
+    Xil_Out32(pwm_config_reg_addr, 0x0000);
 }
 
 /*
  * Get the acquisition time for the requested sensor, in nanoseconds
  */
-double timing_manager_get_time_per_sensor(sensor_t sensor)
+double timing_manager_get_time_per_sensor(sensor_e sensor)
 {
-    int clock_cycles = 0;
+    uint32_t clock_cycles = 0;
     double time = 0;
 
-    if (sensor == EDDY_0) {
-        // Lower 16 bits of slave reg 5
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == EDDY_1) {
-        // Upper 16 bits of slave reg 5
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (5 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    } else if (sensor == EDDY_2) {
-        // Lower 16 bits of slave reg 6
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == EDDY_3) {
-        // Upper 16 bits of slave reg 6
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (6 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    } else if (sensor == ENCODER) {
-        // Lower 16 bits of slave reg 7
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) & LOWER_16_MASK;
-    } else if (sensor == ADC) {
-        // Upper 16 bits of slave reg 7
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + (7 * sizeof(uint32_t)))) >> UPPER_16_SHIFT;
-    }
+    if (sensor == ADC)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) & LOWER_16_MASK;
+    else if (sensor == ENCODER)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+    else if (sensor == AMDS_1)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) & LOWER_16_MASK;
+    else if (sensor == AMDS_2)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+    else if (sensor == AMDS_3)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) & LOWER_16_MASK;
+    else if (sensor == AMDS_4)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+    else if (sensor == EDDY_1)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) & LOWER_16_MASK;
+    else if (sensor == EDDY_2)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+    else if (sensor == EDDY_3)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) & LOWER_16_MASK;
+    else if (sensor == EDDY_4)
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+
     // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
     return time;
@@ -302,7 +301,7 @@ void timing_manager_sensor_stats(void)
  * Takes in a sensor value, and returns a reference to the struct
  * containing the stats for that sensor
  */
-statistics_t *timing_manager_get_stats_per_sensor(sensor_t sensor)
+statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor)
 {
     // Get pointer to the stats for the specified sensor
     return &sensor_stats[sensor];
