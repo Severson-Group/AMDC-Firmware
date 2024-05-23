@@ -249,7 +249,7 @@ module amdc_spi_master(
     //   CONVERT/RECIEVE cycle has completed and the data is valid
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
-            done <= 1'b0;
+            done <= 1'b1;
         else if(clr_done)
             done <= 1'b0;
         else if(set_done)

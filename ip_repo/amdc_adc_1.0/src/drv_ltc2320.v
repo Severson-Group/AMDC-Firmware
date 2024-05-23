@@ -124,7 +124,7 @@ end
 // *****************************
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		adc_done <= 1'b0;
+		adc_done <= 1'b1;
 	else if (deassert_adc_done)
 		adc_done <= 1'b0;
 	else if (assert_adc_done)

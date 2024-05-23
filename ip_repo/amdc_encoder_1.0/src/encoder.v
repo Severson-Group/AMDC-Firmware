@@ -266,7 +266,7 @@ end
 
 // Generate 'done' signal
 always @(posedge clk, negedge rst_n) begin
-    if (!rst_n) done <= 0;
+    if (!rst_n) done <= 1;
     else if (trigger) done <= 0;
     else if (set_done) done <= 1;
 end
