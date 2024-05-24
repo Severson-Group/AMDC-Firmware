@@ -535,8 +535,8 @@
             4'h8   : reg_data_out <= amds_23_time_reg; // AMDS Times
             4'h9   : reg_data_out <= eddy_01_time_reg; // Eddy Times
             4'hA   : reg_data_out <= eddy_23_time_reg; // Eddy Times
-            4'hB   : reg_data_out <= slv_reg11; // Unused
-            4'hC   : reg_data_out <= slv_reg12;
+            4'hB   : reg_data_out <= slv_reg11; // Interrupt Mode
+            4'hC   : reg_data_out <= slv_reg12; // Unused
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
             4'hF   : reg_data_out <= slv_reg15;
@@ -577,6 +577,7 @@
     wire do_auto_triggering;
     wire send_manual_trigger;
     reg manual_trigger_ff;
+    wire sched_source_mode;
     wire [15:0] user_ratio;
     wire [15:0] en_bits;
 
@@ -588,6 +589,9 @@
     //   bit in the config register will request a single trigger event aligned to the next
     //   peak and/or valley of the PWM carrier.
     assign send_manual_trigger = (manual_trigger_ff ^ slv_reg0[1]) & !do_auto_triggering;
+    
+    // Determines the source of the interrupt for the scheduler with two modes
+    assign sched_source_mode = slv_reg11[0];
 
     always @(posedge S_AXI_ACLK) begin
       if ( S_AXI_ARESETN == 1'b0 )
@@ -600,7 +604,7 @@
     // the lower 16 bits
     assign user_ratio = slv_reg2[15:0];
     
-    // reset interrupt 0
+    // reset scheduler interrupt
     assign reset_sched_isr = slv_reg4[0];
 
     // Get the enable bits from the user to
@@ -628,7 +632,7 @@
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
        if (!S_AXI_ARESETN)
            debug <= 0;
-       else if (sched_isr)
+       else if (count_time)
            debug <= ~debug;
     end
     
@@ -673,6 +677,7 @@
     .eddy_3_time(eddy_3_time),
     .trigger(trigger),
     .reset_sched_isr(reset_sched_isr),
+    .sched_source_mode(sched_source_mode),
     .count_time(count_time)
     );
 
