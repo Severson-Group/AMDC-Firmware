@@ -13,7 +13,7 @@
 #define ISR0_PRIORITY            (0x08)
 #define ISR_RISING_EDGE          (0x3)
 #define DEFAULT_SENSOR_ENABLE    (0x0000)
-#define DEFAULT_PWM_RATIO        (0x1)
+#define DEFAULT_PWM_RATIO        (10)
 #define LOWER_16_MASK            (0x0000FFFF)
 #define NUM_SENSORS              (10)
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
@@ -54,7 +54,7 @@ typedef enum {
 typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_e;
 
 // Initialization
-int interrupt_system_init(void);
+int timing_manager_interrupt_system_init(void);
 void timing_manager_init(void);
 
 // Mode: Automatic vs Manual Triggering
@@ -76,7 +76,9 @@ void timing_manager_trigger_on_pwm_low(void);
 void timing_manager_trigger_on_pwm_clear(void);
 
 // Timing acquisition
-void isr_0(void *intc_inst_ptr);
+void timing_manager_isr(void *intc_inst_ptr);
+void timing_manager_set_scheduler_source(void);
+double timing_manager_get_tick_delta(void);
 double timing_manager_get_time_per_sensor(sensor_e sensor);
 void timing_manager_sensor_stats(void);
 statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor);

@@ -94,9 +94,6 @@ int main()
     // Show start message to user, asking for cmds
     commands_start_msg();
 
-    // Initialize scheduler (sets up h/w timer, interrupt, etc)
-    scheduler_init();
-
     // Initialize timing manager
     timing_manager_init();
 

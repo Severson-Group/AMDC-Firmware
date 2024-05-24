@@ -2,6 +2,7 @@
 #include "drv/hardware_targets.h"
 #include "drv/led.h"
 #include "drv/timer.h"
+#include "drv/timing_manager.h"
 #include "drv/watchdog.h"
 #include "xil_printf.h"
 #include <stdbool.h>
@@ -23,7 +24,7 @@ static volatile uint32_t elapsed_usec = 0;
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
-void scheduler_timer_isr(void *arg)
+void scheduler_tick(void)
 {
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
@@ -51,23 +52,13 @@ void scheduler_timer_isr(void *arg)
         }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
-
     elapsed_usec += SYS_TICK_USEC;
-    scheduler_idle = false;
+    scheduler_idle = false; // run task
 }
 
 uint32_t scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
-}
-
-void scheduler_init(void)
-{
-    printf("SCHED:\tInitializing scheduler...\n");
-
-    // Start system timer for periodic interrupts
-    timer_init(scheduler_timer_isr, SYS_TICK_USEC);
-    printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
 void scheduler_tcb_init(

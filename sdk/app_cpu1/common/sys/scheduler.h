@@ -43,7 +43,7 @@ typedef struct task_control_block_t {
     struct task_control_block_t *next;
 } task_control_block_t;
 
-void scheduler_init(void);
+void scheduler_tick(void);
 void scheduler_run(void);
 
 void scheduler_tcb_init(
