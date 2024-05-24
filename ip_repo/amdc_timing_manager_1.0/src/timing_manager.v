@@ -27,7 +27,7 @@ module timing_manager(
     amds_2_time, amds_3_time,
     eddy_0_time, eddy_1_time,
     eddy_2_time, eddy_3_time,
-    trigger, count_time
+    trigger, sched_tick_time
 );
     
     ////////////
@@ -57,6 +57,7 @@ module timing_manager(
     output reg [15:0] adc_time, encoder_time;
     output reg [15:0] amds_0_time, amds_1_time, amds_2_time, amds_3_time;
     output reg [15:0] eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
+    output reg [31:0] sched_tick_time;
     
     //////////////////////
     // Internal signals //
@@ -67,7 +68,9 @@ module timing_manager(
     // Signifies when all the sensors are done
     wire all_done;
     // Counts FPGA clock cycles for each sensor
-    output reg [31:0] count_time;
+    reg [31:0] count_time;
+    // Counts elapsed time for each interrupt cycle
+    reg [31:0] count_tick_time;
     // See if any are enabled for all_done to be triggered
     wire sensors_enabled;
     
@@ -264,6 +267,30 @@ module timing_manager(
             count_time <= 32'h0;    // Restart upon trigger
         else
             count_time <= count_time + 1;
+    end
+    
+    // Count the elapsed time between each scheduler ISR call
+    reg sched_isr_ff;
+    wire sched_isr_pe;
+    always @(posedge clk) begin
+        sched_isr_ff <= sched_isr;
+    end
+    assign sched_isr_pe = sched_isr & ~sched_isr_ff;
+
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            count_tick_time <= 32'h0;
+        else if (sched_isr_pe)
+            count_tick_time <= 32'h0;   // restart upon ISR call
+        else
+            count_tick_time <= count_tick_time + 1;
+    end
+    
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            sched_tick_time <= 32'h0;
+        else if (sched_isr_pe)
+            sched_tick_time <= count_tick_time;
     end
 
     // Get ADC time

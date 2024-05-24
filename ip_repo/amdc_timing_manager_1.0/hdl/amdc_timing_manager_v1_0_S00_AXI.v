@@ -508,7 +508,7 @@
     end    
 
     // Internal signals
-    wire [31:0] count_time;
+    wire [31:0] sched_tick_time;
     wire [31:0] adc_enc_time_reg;
     wire [31:0] amds_01_time_reg;
     wire [31:0] amds_23_time_reg;
@@ -529,14 +529,14 @@
             4'h2   : reg_data_out <= slv_reg2; // User Ratio
             4'h3   : reg_data_out <= slv_reg3; // PWM Sync
             4'h4   : reg_data_out <= slv_reg4; // ISR
-            4'h5   : reg_data_out <= count_time; // Trigger timer
+            4'h5   : reg_data_out <= sched_tick_time; // Trigger timer
             4'h6   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
             4'h7   : reg_data_out <= amds_01_time_reg; // AMDS Times
             4'h8   : reg_data_out <= amds_23_time_reg; // AMDS Times
             4'h9   : reg_data_out <= eddy_01_time_reg; // Eddy Times
             4'hA   : reg_data_out <= eddy_23_time_reg; // Eddy Times
-            4'hB   : reg_data_out <= slv_reg11; // Interrupt Mode
-            4'hC   : reg_data_out <= slv_reg12; // Unused
+            4'hB   : reg_data_out <= slv_reg11; // Unused
+            4'hC   : reg_data_out <= slv_reg12;
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
             4'hF   : reg_data_out <= slv_reg15;
@@ -591,7 +591,7 @@
     assign send_manual_trigger = (manual_trigger_ff ^ slv_reg0[1]) & !do_auto_triggering;
     
     // Determines the source of the interrupt for the scheduler with two modes
-    assign sched_source_mode = slv_reg11[0];
+    assign sched_source_mode = slv_reg4[1];
 
     always @(posedge S_AXI_ACLK) begin
       if ( S_AXI_ARESETN == 1'b0 )
@@ -632,7 +632,7 @@
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
        if (!S_AXI_ARESETN)
            debug <= 0;
-       else if (count_time)
+       else if (/*variable to check*/ 1)
            debug <= ~debug;
     end
     
@@ -678,7 +678,7 @@
     .trigger(trigger),
     .reset_sched_isr(reset_sched_isr),
     .sched_source_mode(sched_source_mode),
-    .count_time(count_time)
+    .sched_tick_time(sched_tick_time)
     );
 
     // User logic ends
