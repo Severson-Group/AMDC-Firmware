@@ -1,7 +1,6 @@
 #include "sys/scheduler.h"
 #include "drv/hardware_targets.h"
 #include "drv/led.h"
-#include "drv/timer.h"
 #include "drv/timing_manager.h"
 #include "drv/watchdog.h"
 #include "xil_printf.h"
@@ -30,19 +29,21 @@ void scheduler_tick(void)
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
-		// Use raw printf so this goes directly to the UART device
-		xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
-		xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
+    	if (timing_manager_get_tick_delta() >= 25) {
+			// Use raw printf so this goes directly to the UART device
+			xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
+			xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
 
-		led_set_color(0, LED_COLOR_RED);
-		led_set_color(1, LED_COLOR_RED);
-		led_set_color(2, LED_COLOR_RED);
-		led_set_color(3, LED_COLOR_RED);
+			led_set_color(0, LED_COLOR_RED);
+			led_set_color(1, LED_COLOR_RED);
+			led_set_color(2, LED_COLOR_RED);
+			led_set_color(3, LED_COLOR_RED);
 
-		// Hang here so the user can debug why the code took so long
-		// and overran the time slice! See the `running_task` variable.
-		while (1) {
-		}
+			// Hang here so the user can debug why the code took so long
+			// and overran the time slice! See the `running_task` variable.
+			while (1) {
+			}
+    	}
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
     elapsed_usec += timing_manager_get_tick_delta();
@@ -197,13 +198,13 @@ void scheduler_run(void)
 
         tasks_running = false;
 
-        // Wait here until unpaused (i.e. when SysTick fires)
+        // Wait here until unpaused
         scheduler_idle = true;
         while (scheduler_idle) {
         }
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
-        // Reset the watchdog timer after SysTick fires
+        // Reset the watchdog timer after timer fires
         watchdog_reset();
 #endif
     }
