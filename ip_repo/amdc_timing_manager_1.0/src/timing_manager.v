@@ -222,6 +222,30 @@ module timing_manager(
         end
     end
 
+    // Count the elapsed time between each scheduler ISR call
+    reg sched_isr_ff;
+    wire sched_isr_pe;
+    always @(posedge clk) begin
+        sched_isr_ff <= sched_isr;
+    end
+    assign sched_isr_pe = sched_isr & ~sched_isr_ff;
+
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            count_tick_time <= 32'h1;
+        else if (sched_isr_pe)
+            count_tick_time <= 32'h1;   // restart upon ISR call
+        else
+            count_tick_time <= count_tick_time + 1;
+    end
+    
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            sched_tick_time <= 32'h0;
+        else if (sched_isr_pe)
+            sched_tick_time <= count_tick_time;
+    end
+
     ////////////////////////////////////////////////////////////////// 
     // Generating the acquisition time per sensor. Once the trigger //
     // is sent and the user decides what sensors to enable, then    //
@@ -258,7 +282,6 @@ module timing_manager(
     assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
     assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
     
-
     // Count the time when trigger is asserted
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
@@ -267,30 +290,6 @@ module timing_manager(
             count_time <= 32'h0;    // Restart upon trigger
         else
             count_time <= count_time + 1;
-    end
-    
-    // Count the elapsed time between each scheduler ISR call
-    reg sched_isr_ff;
-    wire sched_isr_pe;
-    always @(posedge clk) begin
-        sched_isr_ff <= sched_isr;
-    end
-    assign sched_isr_pe = sched_isr & ~sched_isr_ff;
-
-    always @(posedge clk, negedge rst_n) begin
-        if (!rst_n)
-            count_tick_time <= 32'h0;
-        else if (sched_isr_pe)
-            count_tick_time <= 32'h0;   // restart upon ISR call
-        else
-            count_tick_time <= count_tick_time + 1;
-    end
-    
-    always @(posedge clk, negedge rst_n) begin
-        if (!rst_n)
-            sched_tick_time <= 32'h0;
-        else if (sched_isr_pe)
-            sched_tick_time <= count_tick_time;
     end
 
     // Get ADC time
