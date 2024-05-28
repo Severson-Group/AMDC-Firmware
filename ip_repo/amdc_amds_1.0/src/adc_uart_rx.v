@@ -30,17 +30,15 @@ module adc_uart_rx(
 reg rst_packet_counter;
 reg inc_packet_counter;
 
-reg [3:0] packet_counter;
+reg [1:0] packet_counter;
 
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n)
-        packet_counter <= 4'b0;
+        packet_counter <= 2'b0;
     else if (rst_packet_counter)
-        packet_counter <= 4'b0;
+        packet_counter <= 2'b0;
     else if (inc_packet_counter)
         packet_counter <= packet_counter + 1;
-    else
-        packet_counter <= packet_counter;
 end
 
 // =======================
@@ -363,7 +361,7 @@ always @(*) begin
                 // don't forget to assert that the final packet is valid too!
                 assert_data_valid = 1;
             end
-            else if (packet_counter >= 4'd0 & packet_counter <= 4'd2) begin
+            else /*if (packet_counter >= 4'd0 & packet_counter <= 4'd2)*/ begin
                 // assert that this non-final packet is valid
                 assert_data_valid = 1;
 
@@ -372,12 +370,12 @@ always @(*) begin
                 uart_start_rx = 1;
                 next_state = `SM_WAIT_FOR_HEADER;
             end
-            else begin
-                // Packet counter did something weird, abort all data
-                clr_all_data_valid = 1;
-                assert_done = 1;
-                next_state = `SM_IDLE;
-            end
+            // else begin
+            //     // Packet counter did something weird, abort all data
+            //     clr_all_data_valid = 1;
+            //     assert_done = 1;
+            //     next_state = `SM_IDLE;
+            // end
         end
     endcase
 end
