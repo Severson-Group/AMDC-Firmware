@@ -94,6 +94,7 @@
     reg [31:0] adc_dout5;
     reg [31:0] adc_dout6;
     reg [31:0] adc_dout7;
+    reg [15:0] trigger_to_fe0_timer, trigger_to_fe1_timer;
     reg [31:0] ch_valid_reg;
     reg [31:0] valid_reg;
     reg [31:0] corrupt_reg;
@@ -516,7 +517,7 @@
             4'h5   : reg_data_out <= adc_dout5;
             4'h6   : reg_data_out <= adc_dout6;
             4'h7   : reg_data_out <= adc_dout7;
-            4'h8   : reg_data_out <= slv_reg8;
+            4'h8   : reg_data_out <= {trigger_to_fe1_timer, trigger_to_fe0_timer};
             4'h9   : reg_data_out <= ch_valid_reg;
             4'hA   : reg_data_out <= valid_reg;
             4'hB   : reg_data_out <= corrupt_reg;
@@ -561,7 +562,7 @@
     end
     
     assign sync_adc = (enable) ? sync_adc_flop : 1'b0;
-    
+
     // This module listens to the two data inputs from the AMDS.
     // When a data line first goes low after a trigger event, this module
     // knows to expect a new data packet transmission. Therefore, it will
@@ -588,19 +589,26 @@
     wire [15:0] counter_data1_timeout;
 
     // Start receiving data (assert start_rx) on the first falling edge of the data line, after the trigger
-    reg [1:0] amds_data_ff;
+    reg [1:0] amds_data_ff1, amds_data_ff2, amds_data_ff3;
     wire amds_data0_fe, amds_data1_fe;
 
+    // Need to double-flop the data lines for meta-stability! ff3 is used for edge detection
     always @(posedge S_AXI_ACLK) begin
-        if (~S_AXI_ARESETN)
+        if (~S_AXI_ARESETN) begin
             // Good idea to reset to zero to guarantee the first falling edge is real
-            amds_data_ff <= 2'b00;
-        else
-            amds_data_ff <= amds_data;
+            amds_data_ff1 <= 2'b00;
+            amds_data_ff2 <= 2'b00;
+            amds_data_ff3 <= 2'b00;
+        end
+        else begin
+            amds_data_ff1 <= amds_data;
+            amds_data_ff2 <= amds_data_ff1;
+            amds_data_ff3 <= amds_data_ff2;
+        end
     end
 
-    assign amds_data0_fe = amds_data_ff[0] & ~amds_data[0];
-    assign amds_data1_fe = amds_data_ff[1] & ~amds_data[1];
+    assign amds_data0_fe = amds_data_ff3[0] & ~amds_data_ff2[0];
+    assign amds_data1_fe = amds_data_ff3[1] & ~amds_data_ff2[1];
 
 
     reg waiting_for_first_fe0, waiting_for_first_fe1, start_rx0, start_rx1;
@@ -640,12 +648,32 @@
         else
             start_rx1 <= 1'b0;
     end
+
+    // In testing, we noticed that the delay from the SYNC_ADC trigger to the
+    // first falling edge is not always consistent. These timers count that delay
+    // and dump it into a slave register for debugging
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            trigger_to_fe0_timer <= 16'h0;
+        else if (trigger)
+            trigger_to_fe0_timer <= 16'h0;
+        else if (waiting_for_first_fe0)
+            trigger_to_fe0_timer <= trigger_to_fe0_timer + 1;
+    end
+    always @(posedge S_AXI_ACLK) begin
+        if (~S_AXI_ARESETN)
+            trigger_to_fe1_timer <= 16'h0;
+        else if (trigger)
+            trigger_to_fe1_timer <= 16'h0;
+        else if (waiting_for_first_fe1)
+            trigger_to_fe1_timer <= trigger_to_fe1_timer + 1;
+    end
     
     adc_uart_rx iADC_UART_RX0 (
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
         .start_rx(start_rx0),
-        .din(amds_data[0]),
+        .din(amds_data_ff2[0]),
         .is_dout_valid(is_dout0_valid),
         .adc_uart_done(adc_uart0_done),
         .assert_done(assert_done_0),
@@ -662,7 +690,7 @@
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
         .start_rx(start_rx1),
-        .din(amds_data[1]),
+        .din(amds_data_ff2[1]),
         .is_dout_valid(is_dout1_valid),
         .adc_uart_done(adc_uart1_done),
         .assert_done(assert_done_1),

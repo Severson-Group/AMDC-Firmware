@@ -32,30 +32,18 @@ module uart_rx(
 );
 
 // ==============
-// Double flop "din" for meta-stability concerns!
-// ... so, use *_ff2 for actual input
-//
-// din => din_ff1 => din_ff2
-//
-// NOTE: din_ff3 is used to detect falling edges
-//
+// "din" has already been double-flopped for meta-stability in the AXI driver file!
+// 
+// NOTE: din_ff is used to detect falling edges
 // ==============
 
-reg din_ff1, din_ff2, din_ff3;
+reg din_ff;
 
 always @(posedge clk, negedge rst_n) begin
-	if (~rst_n) begin
-		din_ff1 <= 1'b0;
-		din_ff2 <= 1'b0;
-		din_ff3 <= 1'b0;
-	end
-	
-	else begin
-		// Flop din
-		din_ff1 <= din;
-		din_ff2 <= din_ff1;
-		din_ff3 <= din_ff2;
-	end
+	if (~rst_n)
+		din_ff <= 1'b0;
+	else
+		din_ff <= din;
 end
 
 // ===========================
@@ -63,7 +51,7 @@ end
 // ===========================
 
 wire din_fall;
-assign din_fall = (~din_ff2 & din_ff3) ? 1'b1 : 1'b0;
+assign din_fall = (~din & din_ff);
 
 // =================
 // UART RX Shift Reg
@@ -79,7 +67,7 @@ always @(posedge clk, negedge rst_n) begin
 	else if (reset_reg_shift)
 		shift_reg <= 9'b0;
 	else if (shift_reg_shift)
-		shift_reg <= {din_ff2, shift_reg[8:1]};
+		shift_reg <= {din, shift_reg[8:1]};
 end
 
 // Extract only the data bits from the shift reg

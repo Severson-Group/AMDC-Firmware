@@ -266,7 +266,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7958838e</spirit:value>
+            <spirit:value>d16d1b98</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -282,7 +282,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7958838e</spirit:value>
+            <spirit:value>d16d1b98</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -895,8 +895,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_amds_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>8</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-05-28T14:17:00Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>9</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-05-28T15:59:44Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@b6a820a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1dc30708_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
@@ -975,13 +975,25 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@4ea99974_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@5db53d34_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2a9b3fb4_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@39ec0009_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59f0cd9a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@32054ca1_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59241b5_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6be85f8a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f8b2991_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4d633245_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3d2b353a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1967c120_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@3d80e1be_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@312f0725_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@21200b29_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="addc58e4"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="e0cb6ddb"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="04608e2e"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="206c29dc"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e7b50784"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="0048a12a"/>

@@ -123,4 +123,32 @@ void amds_get_counters(uint8_t port, uint32_t *V, uint32_t *C, uint32_t *T)
     }
 }
 
+int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out)
+{
+    uint32_t base_addr = amds_port_to_base_addr(port);
+
+    if (base_addr == 0) {
+        // This means an invalid port argument was passed
+        cmd_resp_printf("AMDS: Invalid Port Argument\r\n");
+        return FAILURE;
+    } else {
+        // This register contains the FPGA cycle delay for both data line 0 and data line 1
+        // Data line 0 is bits [15:0] and Data line 1 is bits [31:16]
+        uint32_t delay_cycles_both_lines = Xil_In32(base_addr + AMDS_DELAY_TIMER_REG_OFFSET);
+
+        if (channel >= AMDS_CH_1 && channel <= AMDS_CH_4) {
+            // Delay time in us for data line 0
+            *out = (delay_cycles_both_lines & 0xFFFF) / CLOCK_FPGA_CLK_FREQ_MHZ;
+            return SUCCESS;
+        } else if (channel >= AMDS_CH_5 && channel <= AMDS_CH_8) {
+            // Delay time in us for data line 1
+            *out = (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
+            return SUCCESS;
+        } else {
+            cmd_resp_printf("AMDS: Invalid Channel Argument\r\n");
+            return FAILURE;
+        }
+    }
+}
+
 #endif // USER_CONFIG_ENABLE_AMDS_SUPPORT
