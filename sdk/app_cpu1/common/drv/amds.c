@@ -138,11 +138,11 @@ int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double 
 
         if (channel >= AMDS_CH_1 && channel <= AMDS_CH_4) {
             // Delay time in us for data line 0
-            *out = (delay_cycles_both_lines & 0xFFFF) / CLOCK_FPGA_CLK_FREQ_MHZ;
+            *out = (double) (delay_cycles_both_lines & 0xFFFF) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;
         } else if (channel >= AMDS_CH_5 && channel <= AMDS_CH_8) {
             // Delay time in us for data line 1
-            *out = (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
+            *out = (double) (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;
         } else {
             cmd_resp_printf("AMDS: Invalid Channel Argument\r\n");
