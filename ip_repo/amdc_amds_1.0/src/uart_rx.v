@@ -21,8 +21,8 @@ module uart_rx(
 	// Asserted when we saw a start bit and have receieved all data
 	output reg is_byte_valid,
 
-	// Asserted when data is corrupt
-	output reg is_data_corrupt,
+	// Asserted when we saw a start bit and received all data, but failed the parity check
+	output reg is_byte_corrupt,
 	
 	// Asserted when the user has started a rx, but we never saw a start bit!
 	output reg is_rx_timeout,
@@ -33,17 +33,22 @@ module uart_rx(
 
 // ==============
 // "din" has already been double-flopped for meta-stability in the AXI driver file!
+//
+// HOWEVER... all of the state machines above this UART receiver add in several clock
+// cycles of delay. Without extra flopping of the data line in this module, the start bit
+// will fall several clock cyles before this module's SM is in the WAIT_START_BIT_STATE
+// Therefore, we will add some extra flopping in this module to line things up again
 // 
-// NOTE: din_ff is used to detect falling edges
+// NOTE: The last ff is used to detect falling edges
 // ==============
 
-reg din_ff;
+reg [4:0] din_flopper;
 
 always @(posedge clk, negedge rst_n) begin
 	if (~rst_n)
-		din_ff <= 1'b0;
+		din_flopper <= 1'b0;
 	else
-		din_ff <= din;
+		din_flopper <= {din_flopper[3:0], din};
 end
 
 // ===========================
@@ -51,7 +56,7 @@ end
 // ===========================
 
 wire din_fall;
-assign din_fall = (~din & din_ff);
+assign din_fall = (~din_flopper[3] & din_flopper[4]);
 
 // =================
 // UART RX Shift Reg
@@ -67,7 +72,7 @@ always @(posedge clk, negedge rst_n) begin
 	else if (reset_reg_shift)
 		shift_reg <= 9'b0;
 	else if (shift_reg_shift)
-		shift_reg <= {din, shift_reg[8:1]};
+		shift_reg <= {din_flopper[3], shift_reg[8:1]};
 end
 
 // Extract only the data bits from the shift reg
@@ -93,21 +98,21 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 // =======================
-// S/R flop: is_data_corrupt
+// S/R flop: is_byte_corrupt
 // =======================
 
-reg deassert_is_data_corrupt;
-reg assert_is_data_corrupt;
+reg deassert_is_byte_corrupt;
+reg assert_is_byte_corrupt;
 
 always @(posedge clk, negedge rst_n) begin
 	if (~rst_n)
-		is_data_corrupt <= 1'b0;
-	else if (deassert_is_data_corrupt)
-		is_data_corrupt <= 1'b0;
-	else if (assert_is_data_corrupt)
-		is_data_corrupt <= 1'b1;
+		is_byte_corrupt <= 1'b0;
+	else if (deassert_is_byte_corrupt)
+		is_byte_corrupt <= 1'b0;
+	else if (assert_is_byte_corrupt)
+		is_byte_corrupt <= 1'b1;
 	else
-		is_data_corrupt <= is_data_corrupt;
+		is_byte_corrupt <= is_byte_corrupt;
 end
 
 // =======================
@@ -224,8 +229,8 @@ always @(*) begin
 	assert_is_byte_valid = 0;
 	deassert_is_rx_timeout = 0;
 	assert_is_rx_timeout = 0;
-	deassert_is_data_corrupt = 0;
-	assert_is_data_corrupt = 0;
+	deassert_is_byte_corrupt = 0;
+	assert_is_byte_corrupt = 0;
 	
 	case (state)
 		`SM_IDLE: begin
@@ -235,7 +240,7 @@ always @(*) begin
 				reset_timeout_counter = 1;
 				deassert_is_byte_valid = 1;
 				deassert_is_rx_timeout = 1;
-				deassert_is_data_corrupt = 1;
+				deassert_is_byte_corrupt = 1;
 				next_state = `SM_WAIT_START_BIT;
 			end
 		end	
@@ -297,7 +302,7 @@ always @(*) begin
 			end
 			else begin
 				// Data is corrupt!
-				assert_is_data_corrupt = 1;
+				assert_is_byte_corrupt = 1;
 			end
 			
 			next_state = `SM_IDLE;

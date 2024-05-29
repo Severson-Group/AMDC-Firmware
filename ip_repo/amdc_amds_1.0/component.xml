@@ -266,7 +266,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d16d1b98</spirit:value>
+            <spirit:value>ead87ff2</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -282,7 +282,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>d16d1b98</spirit:value>
+            <spirit:value>ead87ff2</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -895,8 +895,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_amds_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>9</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2024-05-28T15:59:44Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>10</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2024-05-29T17:28:04Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@b6a820a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1dc30708_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
@@ -987,13 +987,24 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@3d80e1be_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@312f0725_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@21200b29_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@64b3c7fc_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1055b5a3_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@390ad689_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6936c490_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5ba4b0ca_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1e0aa062_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@ff423b3_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@54da8bd0_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@66130fb9_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@9faac41_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@577b3206_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2019.1</xilinx:xilinxVersion>
       <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="addc58e4"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="04608e2e"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="4d1b524a"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="206c29dc"/>
       <xilinx:checksum xilinx:scope="hdlParameters" xilinx:value="e7b50784"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="0048a12a"/>
