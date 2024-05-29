@@ -19,6 +19,13 @@
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 #define UPPER_16_SHIFT           (16)
 
+// Expected times (us) for all the sensors based on default values
+#define ADC_DEFAULT_TIME        (0.82)
+#define ENCODER_DEFAULT_TIME    (0.005)
+#define AMDS_DEFAULT_TIME       (11.8)
+#define EDDY_DEFAULT_TIME       (4.11)
+#define MAX_DEFAULT_SENSOR_TIME (AMDS_DEFAULT_TIME)
+
 // Slave Register Offsets
 #define TIMING_MANAGER_TRIG_CFG_REG_OFFSET     (0)
 #define TIMING_MANAGER_ENABLE_CFG_REG_OFFSET   (1 * sizeof(uint32_t))
