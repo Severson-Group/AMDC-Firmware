@@ -678,8 +678,8 @@ typedef struct sm_ctx_info_t {
     int var_idx;
 } sm_ctx_info_t;
 
-// Set to 0 to ensure this task runs every time possible
-#define SM_INFO_INTERVAL_USEC   0
+// Set to 0 to ensure this task runs as fast as possible
+#define SM_INFO_INTERVAL_USEC 0
 
 void state_machine_info_callback(void *arg)
 {

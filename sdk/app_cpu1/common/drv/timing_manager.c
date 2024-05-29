@@ -47,7 +47,8 @@ int timing_manager_interrupt_system_init(void)
     XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, INTC_INTERRUPT_ID_0);
 
     // Connect ISR0 to the interrupt controller
-    result = XScuGic_Connect(intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) timing_manager_isr, (void *) intc_instance_ptr);
+    result = XScuGic_Connect(
+        intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) timing_manager_isr, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
@@ -57,7 +58,8 @@ int timing_manager_interrupt_system_init(void)
 
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
-    Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
+    Xil_ExceptionRegisterHandler(
+        XIL_EXCEPTION_ID_INT, (Xil_ExceptionHandler) XScuGic_InterruptHandler, intc_instance_ptr);
 
     // Enable non-critical exceptions
     Xil_ExceptionEnable();
@@ -72,7 +74,7 @@ int timing_manager_interrupt_system_init(void)
 void timing_manager_init(void)
 {
     printf("TIMING MANAGER:\tInitializing...\n");
-    // Initializes the interrupt used to 
+    // Initializes the interrupt used to
     int result = 0;
     result = timing_manager_interrupt_system_init();
     if (result != XST_SUCCESS) {
@@ -148,7 +150,7 @@ void timing_manager_send_manual_trigger(void)
  *
  * Mode 0 uses the timing manager's 'trigger' signal, i.e. the control
  * frequency based on the PWM carrier frequency and the specified user ratio.
- * 
+ *
  * Mode 1 uses the timing manager's 'all_done' signal, calling the scheduler
  * when all the sensors are done with acquisition. When no sensors are enabled,
  * the scheduler is called as in mode 0 (based on the trigger). This mode
@@ -156,9 +158,9 @@ void timing_manager_send_manual_trigger(void)
  */
 void timing_manager_set_scheduler_source(void)
 {
-	uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
 #if USER_CONFIG_ISR_SOURCE == 0
-	// Clear slv_reg4[1]
+    // Clear slv_reg4[1]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFFD));
 #elif USER_CONFIG_ISR_SOURCE == 1
     // Set slv_reg4[1]
@@ -172,7 +174,7 @@ void timing_manager_set_scheduler_source(void)
  */
 void timing_manager_isr(void *intc_inst_ptr)
 {
-	// Push stats for each sensor
+    // Push stats for each sensor
     timing_manager_sensor_stats();
     // Increment elapsed time and run tasks
     scheduler_tick();
@@ -186,8 +188,8 @@ void timing_manager_isr(void *intc_inst_ptr)
  */
 void timing_manager_clear_isr(void)
 {
-	uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
-	// Set slv_reg4[0]
+    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
+    // Set slv_reg4[0]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000001));
     // Clear slv_reg4[0]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFFE));
@@ -198,11 +200,12 @@ void timing_manager_clear_isr(void)
  */
 double timing_manager_get_tick_delta(void)
 {
-	double time = 0.0;
-	uint32_t clock_cycles;
-	clock_cycles = Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_TRIG_TIME_REG_OFFSET);
-	time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
-	return time;
+    double time = 0.0;
+    uint32_t clock_cycles;
+    // Get the number of clock cycles since the last ISR call to convert to us
+    clock_cycles = Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_TRIG_TIME_REG_OFFSET);
+    time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
+    return time;
 }
 
 /*

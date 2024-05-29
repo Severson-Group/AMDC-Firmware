@@ -45,7 +45,7 @@
 #endif
 
 // Set to 0 to ensure this task runs as fast as possible
-#define LOG_INTERVAL_USEC   0
+#define LOG_INTERVAL_USEC 0
 
 typedef enum var_type_e {
     LOG_INT = 1,
