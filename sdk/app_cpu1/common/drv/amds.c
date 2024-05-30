@@ -20,7 +20,11 @@ void amds_init(void)
 
 /* Returns a byte where each bit represents the validity of the most recently-returned data
  * for a single channel on this AMDC. bit[0] is for channel 1, bit[1] is for channel 2...
- * A '1' bit implies the data is valid, while a '0' bit implies invalid data
+ * A '1' bit implies the data is valid, while a '0' bit implies invalid data for that channel
+ * A return value of '255' implies all channels are valid
+ * To check the validity of a single channel, mask the return value like so:
+ *    uint8_t valid = amds_check_data_validity(port);
+ *    if (valid & AMDS_CH_X_VALID_MASK != 0) {...};
  *
  * port: the GPIO port number the AMDS mainboard is connected to
  *
