@@ -67,10 +67,6 @@ module timing_manager(
     reg [15:0] count;
     // Signifies when all the sensors are done
     wire all_done;
-    // Counts FPGA clock cycles for each sensor
-    reg [31:0] count_time;
-    // Counts elapsed time for each interrupt cycle
-    reg [31:0] count_tick_time;
     // See if any are enabled for all_done to be triggered
     wire sensors_enabled;
     
@@ -205,24 +201,23 @@ module timing_manager(
     //          of the all_done signal)
     //////////////////////////////////////////////////////////////////
     always @(posedge clk, negedge rst_n) begin
-        if (!rst_n) begin
+        if (!rst_n)
             sched_isr <= 0;
-        end
-        else if (~sched_source_mode & (count == user_ratio)) begin
+        else if (~sched_source_mode & (count == user_ratio))
+            // Legacy (mode 0)
             sched_isr <= 1;
-        end
-        else if (sched_source_mode & ~sensors_enabled & (count == user_ratio)) begin
+        else if (sched_source_mode & ~sensors_enabled & (count == user_ratio))
+            // Timing Manager (mode 1) with no sensors enabled
             sched_isr <= 1;
-        end
-        else if (sched_source_mode & all_done_pe) begin
+        else if (sched_source_mode & all_done_pe)
+            // Timing Manager (mode 1) after sensors are enabled
             sched_isr <= 1;
-        end
-        else if (reset_sched_isr) begin
+        else if (reset_sched_isr)
             sched_isr <= 0;
-        end
     end
 
-    // Count the elapsed time between each scheduler ISR call
+    // Get the elapsed time between each scheduler ISR call
+    reg [31:0] count_tick_time;
     reg sched_isr_ff;
     wire sched_isr_pe;
     always @(posedge clk) begin
@@ -230,6 +225,7 @@ module timing_manager(
     end
     assign sched_isr_pe = sched_isr & ~sched_isr_ff;
 
+    // Counts the number of clock cycles between interrupts
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             count_tick_time <= 32'h1;
@@ -239,6 +235,7 @@ module timing_manager(
             count_tick_time <= count_tick_time + 1;
     end
     
+    // Copy over the clock cycles when sched_isr is asserted
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             sched_tick_time <= 32'h0;
@@ -282,6 +279,8 @@ module timing_manager(
     assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
     assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
     
+    // Counts FPGA clock cycles for each sensor
+    reg [31:0] count_time;
     // Count the time when trigger is asserted
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
