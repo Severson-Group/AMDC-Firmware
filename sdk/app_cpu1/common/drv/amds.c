@@ -133,7 +133,6 @@ int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double 
 
     if (base_addr == 0) {
         // This means an invalid port argument was passed
-        cmd_resp_printf("AMDS: Invalid Port Argument\r\n");
         return FAILURE;
     } else {
         // This register contains the FPGA cycle delay for both data line 0 and data line 1
@@ -149,7 +148,6 @@ int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double 
             *out = (double) (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;
         } else {
-            cmd_resp_printf("AMDS: Invalid Channel Argument\r\n");
             return FAILURE;
         }
     }
