@@ -589,9 +589,6 @@
     //   bit in the config register will request a single trigger event aligned to the next
     //   peak and/or valley of the PWM carrier.
     assign send_manual_trigger = (manual_trigger_ff ^ slv_reg0[1]) & !do_auto_triggering;
-    
-    // Determines the source of the interrupt for the scheduler with two modes
-    assign sched_source_mode = slv_reg4[1];
 
     always @(posedge S_AXI_ACLK) begin
       if ( S_AXI_ARESETN == 1'b0 )
@@ -604,8 +601,11 @@
     // the lower 16 bits
     assign user_ratio = slv_reg2[15:0];
     
-    // reset scheduler interrupt
+    // Reset scheduler interrupt
     assign reset_sched_isr = slv_reg4[0];
+
+    // Determines the source of the interrupt for the scheduler with two modes
+    assign sched_source_mode = slv_reg4[1];
 
     // Get the enable bits from the user to
     // decode them in the timing manager
@@ -627,14 +627,6 @@
     // It can only be triggered once that past cycle is complete.   //
     //////////////////////////////////////////////////////////////////
     assign event_qualifier = (pwm_sync_high & pwm_carrier_high) | (pwm_sync_low & pwm_carrier_low); 
-    
-    // DEBUGGING
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-       if (!S_AXI_ARESETN)
-           debug <= 0;
-       else if (/*variable to check*/ 1)
-           debug <= ~debug;
-    end
     
     timing_manager iTime(
     .clk(S_AXI_ACLK),
@@ -678,7 +670,8 @@
     .trigger(trigger),
     .reset_sched_isr(reset_sched_isr),
     .sched_source_mode(sched_source_mode),
-    .sched_tick_time(sched_tick_time)
+    .sched_tick_time(sched_tick_time),
+    .debug(debug)
     );
 
     // User logic ends

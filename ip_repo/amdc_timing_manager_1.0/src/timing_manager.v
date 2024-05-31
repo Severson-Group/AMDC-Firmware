@@ -14,6 +14,7 @@ module timing_manager(
     eddy_0_done, eddy_1_done,
     eddy_2_done, eddy_3_done,
     // OUTPUTS
+    debug,
     sched_isr,
     // Enable signals
     en_adc, en_encoder,
@@ -27,7 +28,7 @@ module timing_manager(
     amds_2_time, amds_3_time,
     eddy_0_time, eddy_1_time,
     eddy_2_time, eddy_3_time,
-    trigger, sched_tick_time
+    trigger, sched_tick_time,
 );
     
     ////////////
@@ -58,6 +59,7 @@ module timing_manager(
     output reg [15:0] amds_0_time, amds_1_time, amds_2_time, amds_3_time;
     output reg [15:0] eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
     output reg [31:0] sched_tick_time;
+    output wire [2:0] debug;
     
     //////////////////////
     // Internal signals //
@@ -350,6 +352,11 @@ module timing_manager(
         if (!rst_n) eddy_3_time <= 0;
         else if (eddy_3_pe) eddy_3_time <= count_time[15:0];
     end
+
+    // This debug output can be connected to a GPIO port.
+    // The three bits can be assigned to any wires/registers
+    // to be monitored
+    assign debug = 3'b111;
 
 endmodule
 
