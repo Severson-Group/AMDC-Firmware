@@ -16,6 +16,7 @@ static command_help_t cmd_help[] = {
     { "<port> data", "Display latest data from all AMDS channels" },
     { "<port> valid", "Display the validity of all channels' latest data" },
     { "<port> counters", "Display debug counters from AMDS UART RX" },
+    { "<port> delay", "Display delay time in microseconds from trigger to UART activity on each data line" },
 };
 
 void cmd_amds_register(void)
@@ -65,6 +66,17 @@ int cmd_amds(int argc, char **argv)
     // Handle 'amds <port> counters' command
     if (argc == 3 && STREQ("counters", argv[2])) {
         amds_print_counters(port);
+        return CMD_SUCCESS;
+    }
+
+    // Handle 'amds <port> delay' command
+    if (argc == 3 && STREQ("delay", argv[2])) {
+        double delay = 0;
+        amds_get_trigger_to_edge_delay(port, AMDS_CH_1, &delay);
+        cmd_resp_printf("Data Line 0 Delay: %.3fus\r\n", delay);
+        amds_get_trigger_to_edge_delay(port, AMDS_CH_5, &delay);
+        cmd_resp_printf("Data Line 1 Delay: %.3fus\r\n", delay);
+
         return CMD_SUCCESS;
     }
 

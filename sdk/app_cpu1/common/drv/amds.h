@@ -1,6 +1,7 @@
 #ifndef AMDS_H
 #define AMDS_H
 
+#include "drv/clock.h"
 #include "drv/hardware_targets.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
@@ -22,18 +23,29 @@
 #endif
 
 // Offsets for relevant slave registers, to be added to one of the AMDS_N_BASE_ADDR
-#define AMDS_CH1_DATA_REG_OFFSET      (0)
-#define AMDS_CH2_DATA_REG_OFFSET      (1 * sizeof(uint32_t))
-#define AMDS_CH3_DATA_REG_OFFSET      (2 * sizeof(uint32_t))
-#define AMDS_CH4_DATA_REG_OFFSET      (3 * sizeof(uint32_t))
-#define AMDS_CH5_DATA_REG_OFFSET      (4 * sizeof(uint32_t))
-#define AMDS_CH6_DATA_REG_OFFSET      (5 * sizeof(uint32_t))
-#define AMDS_CH7_DATA_REG_OFFSET      (6 * sizeof(uint32_t))
-#define AMDS_CH8_DATA_REG_OFFSET      (7 * sizeof(uint32_t))
+#define AMDS_CH_1_DATA_REG_OFFSET     (0)
+#define AMDS_CH_2_DATA_REG_OFFSET     (1 * sizeof(uint32_t))
+#define AMDS_CH_3_DATA_REG_OFFSET     (2 * sizeof(uint32_t))
+#define AMDS_CH_4_DATA_REG_OFFSET     (3 * sizeof(uint32_t))
+#define AMDS_CH_5_DATA_REG_OFFSET     (4 * sizeof(uint32_t))
+#define AMDS_CH_6_DATA_REG_OFFSET     (5 * sizeof(uint32_t))
+#define AMDS_CH_7_DATA_REG_OFFSET     (6 * sizeof(uint32_t))
+#define AMDS_CH_8_DATA_REG_OFFSET     (7 * sizeof(uint32_t))
+#define AMDS_DELAY_TIMER_REG_OFFSET   (8 * sizeof(uint32_t))
 #define AMDS_CH_VALID_REG_OFFSET      (9 * sizeof(uint32_t))
 #define AMDS_COUNT_VALID_REG_OFFSET   (10 * sizeof(uint32_t))
 #define AMDS_COUNT_CORRUPT_REG_OFFSET (11 * sizeof(uint32_t))
 #define AMDS_COUNT_TIMEOUT_REG_OFFSET (12 * sizeof(uint32_t))
+
+// Bit masks for use with amds_check_data_validity()
+#define AMDS_CH_1_VALID_MASK 0x01
+#define AMDS_CH_2_VALID_MASK 0x02
+#define AMDS_CH_3_VALID_MASK 0x04
+#define AMDS_CH_4_VALID_MASK 0x08
+#define AMDS_CH_5_VALID_MASK 0x10
+#define AMDS_CH_6_VALID_MASK 0x20
+#define AMDS_CH_7_VALID_MASK 0x40
+#define AMDS_CH_8_VALID_MASK 0x80
 
 typedef enum {
     // Keep first channel index at 0!
@@ -96,5 +108,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);
 void amds_get_counters(uint8_t port, uint32_t *V, uint32_t *C, uint32_t *T);
+
+int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out);
 
 #endif // AMDS_H
