@@ -41,20 +41,20 @@ int timing_manager_interrupt_system_init(void)
     }
 
     // Set priority of IRQ_F2P[0:0] and a trigger for a rising edge 0x3
-    XScuGic_SetPriorityTriggerType(intc_instance_ptr, INTC_INTERRUPT_ID_0, ISR0_PRIORITY, 3);
+    XScuGic_SetPriorityTriggerType(intc_instance_ptr, TM_INTERRUPT_ID, TM_ISR_PRIORITY, ISR_RISING_EDGE);
 
     // Send interrupt to CPU 1
-    XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, INTC_INTERRUPT_ID_0);
+    XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, TM_INTERRUPT_ID);
 
     // Connect ISR0 to the interrupt controller
     result = XScuGic_Connect(
-        intc_instance_ptr, INTC_INTERRUPT_ID_0, (Xil_ExceptionHandler) timing_manager_isr, (void *) intc_instance_ptr);
+        intc_instance_ptr, TM_INTERRUPT_ID, (Xil_ExceptionHandler) timing_manager_isr, (void *) intc_instance_ptr);
     if (result != XST_SUCCESS) {
         return result; // Exit setup with bad result
     }
 
     // Enable interrupts for IRQ_F2P[0:0]
-    XScuGic_Enable(intc_instance_ptr, INTC_INTERRUPT_ID_0);
+    XScuGic_Enable(intc_instance_ptr, TM_INTERRUPT_ID);
 
     // Initialize the exception table and register the interrupt controller handler with the exception table
     Xil_ExceptionInit();
@@ -74,7 +74,7 @@ int timing_manager_interrupt_system_init(void)
 void timing_manager_init(void)
 {
     printf("TIMING MANAGER:\tInitializing...\n");
-    // Initializes the interrupt used to
+    // Initializes the interrupt used to update the sensor data and run scheduler tasks
     int result = 0;
     result = timing_manager_interrupt_system_init();
     if (result != XST_SUCCESS) {
@@ -88,7 +88,7 @@ void timing_manager_init(void)
     // (this call is redundant, as the FPGA should reset slv_reg0 to 0x0000_0001)
     timing_manager_set_mode(TM_AUTOMATIC);
 
-    // Default event qualifier is PWM carrier high AND low
+    // Default event qualifier is PWM carrier low
     timing_manager_trigger_on_pwm_low();
 
     // Set the user ratio for the trigger

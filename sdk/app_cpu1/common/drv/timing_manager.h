@@ -9,9 +9,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INTC_INTERRUPT_ID_0      (61) // IRQ_F2P[0:0]
-#define ISR0_PRIORITY            (0x08)
-#define ISR_RISING_EDGE          (0x3)
+#define TM_INTERRUPT_ID          (61) // IRQ_F2P[0:0]
+#define TM_ISR_PRIORITY          (0x08)
+#define ISR_RISING_EDGE          (3)
 #define DEFAULT_SENSOR_ENABLE    (0x0000)
 #define DEFAULT_PWM_RATIO        (10)
 #define LOWER_16_MASK            (0x0000FFFF)
