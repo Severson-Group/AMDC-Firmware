@@ -63,3 +63,7 @@ This IP core allows the user to map each individual status line on the inverters
 ### [`amdc_leds`](amdc_leds_1.0/README.md)
 
 This IP core drives the serially-addressable RGB LEDs on the REV D AMDC hardware. The FPGA uses a single data line to control the color outputs of all four LEDs via a serial chain approach. Using the associated C driver, users can set color values to memory-mapped registers which automatically are flushed out to the LED hardware.
+
+### [`amdc_timing_manager`](amdc_timing_manager_1.0/README.md)
+
+This IP core synchronizes the eddy current sensors, encoder, and ADC with the PWM carrier signal. It sends out a trigger to start an acquistion/conversion cycle for the enabled sensors, and sends an interrupt to the CPU once they are all completed to report timing and run the scheduler tasks. The associated C drivers are used to set the control rate, PWM trigger, enable sensors, and read the acquisition time for each sensor.
