@@ -25,10 +25,10 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP. Thi
 | -- | -- | -- | -- |
 | 0x00 | TRIG_CFG| R/W | Configuration Register |
 | 0x04 | ENABLE_CFG | R/W | Configuration Register |
-| 0x08 | RATIO_CFG| R/W | Configuration Register |
+| 0x08 | RATIO_CFG | R/W | Configuration Register |
 | 0x0C | PWM_CFG | R/W | Configuration Register |
 | 0x10 | ISR_REG | R/W | Configuration Register |
-| 0x14 | TRIG_TIME | R | Data Register |
+| 0x14 | ISR_TIME | R | Data Register |
 | 0x18 | ADC_ENC_TIME | R | Data Register |
 | 0x1C | AMDS_01_TIME | R | Data Register |
 | 0x20 | AMDS_23_TIME | R | Data Register |
@@ -68,7 +68,7 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP. Thi
 | 0 | RESET_SCHED_ISR | Clears the hardware interrupt once it has been recieved by the processing system |
 | 1 | SCHED_SOURCE_MODE | Determines the source of the interrupt for the scheduler: legacy mode or timing manager-synchronized |
 
-### TRIG_TIME
+### ISR_TIME
 
 | Bits | Name | Description |
 | -- | -- | -- |

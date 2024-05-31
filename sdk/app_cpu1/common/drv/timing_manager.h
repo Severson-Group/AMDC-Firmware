@@ -32,7 +32,7 @@
 #define TIMING_MANAGER_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
 #define TIMING_MANAGER_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
 #define TIMING_MANAGER_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
-#define TIMING_MANAGER_TRIG_TIME_REG_OFFSET    (5 * sizeof(uint32_t))
+#define TIMING_MANAGER_ISR_TIME_REG_OFFSET    (5 * sizeof(uint32_t))
 #define TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
 #define TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
 #define TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))

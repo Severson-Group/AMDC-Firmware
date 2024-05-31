@@ -203,7 +203,7 @@ double timing_manager_get_tick_delta(void)
     double time = 0.0;
     uint32_t clock_cycles;
     // Get the number of clock cycles since the last ISR call to convert to us
-    clock_cycles = Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_TRIG_TIME_REG_OFFSET);
+    clock_cycles = Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_TIME_REG_OFFSET);
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
     return time;
 }
