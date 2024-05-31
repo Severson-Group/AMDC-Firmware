@@ -20,7 +20,7 @@ module adc_uart_rx(
     
     output reg [15:0] counter_data_valid,
     output reg [15:0] counter_data_corrupt,
-    output reg [15:0] counter_data_timeout
+    output reg inc_counter_timeout
 );
 
 // ==============
@@ -111,18 +111,6 @@ always @(posedge clk, negedge rst_n) begin
         counter_data_corrupt <= 16'b0;
     else if (inc_counter_data_corrupt)
         counter_data_corrupt <= counter_data_corrupt + 1;
-end
-
-// ==============
-// Data Timeout Counter
-// ==============
-
-reg inc_counter_data_timeout;
-always @(posedge clk, negedge rst_n) begin
-    if (~rst_n)
-        counter_data_timeout <= 16'b0;
-    else if (inc_counter_data_timeout)
-        counter_data_timeout <= counter_data_timeout + 1;
 end
 
 // ==============
@@ -300,7 +288,7 @@ always @(*) begin
     
     inc_counter_data_valid = 0;
     inc_counter_data_corrupt = 0;
-    inc_counter_data_timeout = 0;
+    inc_counter_timeout = 0;
     
     case (state)
         `SM_IDLE: begin
@@ -348,7 +336,7 @@ always @(*) begin
                 // Uh oh... never received start bit for header byte
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_data_timeout = 1;
+                inc_counter_timeout = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end
@@ -375,7 +363,7 @@ always @(*) begin
                 // Uh oh... never received start bit for MSB
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_data_timeout = 1;
+                inc_counter_timeout = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end
@@ -399,7 +387,7 @@ always @(*) begin
                 // Uh oh... never received start bit for LSB
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_data_timeout = 1;
+                inc_counter_timeout = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end

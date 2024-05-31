@@ -172,25 +172,25 @@ end
 // Timeout Counter
 // ==============
 
-// Wait for a max of 10us for the UART RX falling edge,
-// signalling a start of packet.
+// Wait for a max of 2.5us for the start bit
+// after adc_uart_rx
 //
-// 10us = 10000ns = 2000 clock cycles
+// 2.5us = 2500ns = 500 clock cycles
 //
-// Let's have max of 2047, so 11 bit.
+// Let's have max of 512, so 9 bit.
 
-reg [10:0] timeout_counter;
+reg [8:0] timeout_counter;
 reg reset_timeout_counter;
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		timeout_counter <= 11'b0;
+		timeout_counter <= 9'b0;
 	else if (reset_timeout_counter)
-		timeout_counter <= 11'b0;
+		timeout_counter <= 9'b0;
 	else
 		timeout_counter <= timeout_counter + 1;
 end
 
-// Detect when timer = max value (i.e., about 10us)
+// Detect when timer = max value (i.e., about 2.5us)
 wire max_timeout_counter;
 assign max_timeout_counter = &timeout_counter;
 
