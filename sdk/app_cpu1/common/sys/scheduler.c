@@ -23,15 +23,22 @@ static volatile uint32_t elapsed_usec = 0;
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
+/*
+ * This function is called only from the timing manager ISR, and thus only
+ * runs in the context of the ISR.
+ *
+ * The elapsed time since the last ISR call is recorded and the state of the
+ * the scheduler is moved out of idle to run the tasks.
+ */
 void scheduler_tick(void)
 {
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
-        // When enabling the first sensor, the overrun check will occur
-        // due to the fast speed of the sensor quickly calling the ISR before
-        // it aligns with the normal trigger rate
+        // For the first callback after enabling the sensors in the timing manager,
+        // the overrun check will occur due to the fast speed of the sensor quickly
+        // calling the ISR before it aligns with the normal trigger rate
         //
         // Thus, we will make sure to only check this when the elapsed time
         // since the last call is larger than twice the maximum sensor time
