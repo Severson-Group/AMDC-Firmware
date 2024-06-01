@@ -189,10 +189,8 @@ void timing_manager_isr(void *intc_inst_ptr)
 void timing_manager_clear_isr(void)
 {
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
-    // Assert the reset bit to clear the interrupt
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000001));
-    // Deassert the bit so the interrupt does not get stuck in a "clear" state
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFFE));
+    // Reset the interrupt by flipping the bit in slv_reg4[0]
+    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) ^ 0x00000001));
 }
 
 /*

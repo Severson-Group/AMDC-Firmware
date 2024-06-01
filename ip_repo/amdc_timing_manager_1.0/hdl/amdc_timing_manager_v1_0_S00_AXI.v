@@ -514,7 +514,6 @@
     wire [31:0] amds_23_time_reg;
     wire [31:0] eddy_01_time_reg;
     wire [31:0] eddy_23_time_reg;
-    wire reset_sched_isr;
 
     // Implement memory mapped register select and read logic generation
     // Slave register read enable is asserted when valid address is available
@@ -580,6 +579,8 @@
     wire sched_source_mode;
     wire [15:0] user_ratio;
     wire [15:0] en_bits;
+    wire reset_sched_isr;
+    reg reset_isr_ff;
 
     // Trigger configuration
     // * Auto triggering is the default, triggers will be sent whenever <user_ratio> PWM events
@@ -601,8 +602,15 @@
     // the lower 16 bits
     assign user_ratio = slv_reg2[15:0];
     
-    // Reset scheduler interrupt
-    assign reset_sched_isr = slv_reg4[0];
+    // Reset scheduler interrupt: flipping the reset ISR bit in the configuration
+    // register will assert a reset signal to clear the interrupt
+    assign reset_sched_isr = slv_reg4[0] ^ reset_isr_ff;
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+      if (!S_AXI_ARESETN)
+        reset_isr_ff <= 0;
+      else
+        reset_isr_ff <= slv_reg4[0];
+    end
 
     // Determines the source of the interrupt for the scheduler with two modes
     assign sched_source_mode = slv_reg4[1];

@@ -205,6 +205,8 @@ module timing_manager(
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             sched_isr <= 0;
+        else if (reset_sched_isr)
+            sched_isr <= 0;
         else if (~sched_source_mode & (count == user_ratio))
             // Legacy (mode 0)
             sched_isr <= 1;
@@ -214,8 +216,6 @@ module timing_manager(
         else if (sched_source_mode & all_done_pe)
             // Timing Manager (mode 1) after sensors are enabled
             sched_isr <= 1;
-        else if (reset_sched_isr)
-            sched_isr <= 0;
     end
 
     // Get the elapsed time between each scheduler ISR call
