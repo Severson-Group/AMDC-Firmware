@@ -66,4 +66,4 @@ This IP core drives the serially-addressable RGB LEDs on the REV D AMDC hardware
 
 ### [`amdc_timing_manager`](amdc_timing_manager_1.0/README.md)
 
-This IP core synchronizes the eddy current sensors, encoder, and ADC with the PWM carrier signal. It sends out a trigger to start an acquistion/conversion cycle for the enabled sensors, and sends an interrupt to the CPU once they are all completed to report timing and run the scheduler tasks. The associated C drivers are used to set the control rate, PWM trigger, enable sensors, and read the acquisition time for each sensor.
+This IP core synchronizes all the sensors with the PWM carrier signal. It sends out a trigger to start an acquistion/conversion cycle for the enabled sensors, and sends an interrupt to the CPU once they are all completed to report timing and run the scheduler tasks. The associated C drivers are used to set the control rate, PWM trigger, enable sensors, and read the acquisition time for each sensor.
