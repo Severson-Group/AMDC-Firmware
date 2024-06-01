@@ -264,7 +264,8 @@ always @(posedge clk, negedge rst_n) begin
     end
 end
 
-// Generate 'done' signal
+// Generate 'done' signal. Assert signal by default to prevent trigger
+// signal in higher level code from hanging
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) done <= 1;
     else if (trigger) done <= 0;

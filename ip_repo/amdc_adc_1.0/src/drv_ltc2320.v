@@ -122,6 +122,8 @@ end
 //    adc_done set/reset flop
 // *****************************
 // *****************************
+// Assert 'done' signal by default to prevent trigger
+// signal in higher level code from hanging
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
 		adc_done <= 1'b1;
