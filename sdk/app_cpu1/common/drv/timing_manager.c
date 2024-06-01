@@ -97,9 +97,8 @@ void timing_manager_init(void)
     // Enable selected sensors for timing acquisition
     timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
 
-    // Initialize the stats
+    // Initialize the stats for each sensor
     for (int i = 0; i < NUM_SENSORS; i++) {
-        // ensure each sensor has their own statistics
         statistics_init(&sensor_stats[i]);
     }
 
@@ -146,7 +145,7 @@ void timing_manager_send_manual_trigger(void)
 }
 
 /*
- * Sepcify the interrupt source of the scheduler ISR:
+ * Specify the interrupt source of the scheduler ISR:
  *
  * Mode 0 uses the timing manager's 'trigger' signal, i.e. the control
  * frequency based on the PWM carrier frequency and the specified user ratio.
@@ -165,6 +164,8 @@ void timing_manager_set_scheduler_source(void)
 #elif USER_CONFIG_ISR_SOURCE == 1
     // Set slv_reg4[1]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000002));
+#else
+    #error Invalid configuration for ISR source
 #endif
 }
 
@@ -183,15 +184,14 @@ void timing_manager_isr(void *intc_inst_ptr)
 }
 
 /*
- * Clear the interrupt once the ISR
- * has been called
+ * Clear the interrupt once the ISR has been called
  */
 void timing_manager_clear_isr(void)
 {
     uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
-    // Set slv_reg4[0]
+    // Assert the reset bit to clear the interrupt
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000001));
-    // Clear slv_reg4[0]
+    // Deassert the bit so the interrupt does not get stuck in a "clear" state
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFFE));
 }
 
