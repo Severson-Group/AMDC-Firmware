@@ -18,7 +18,7 @@ static XScuGic intc;
 volatile uint32_t *baseaddr_p = (uint32_t *) TIMING_MANAGER_BASE_ADDR;
 
 // Array of statistics for each sensor
-statistics_t sensor_stats[NUM_SENSORS];
+statistics_t sensor_stats[TM_NUM_SENSORS];
 
 /*
  * Sets up the interrupt system and enables interrupts for IRQ_F2P[0]
@@ -41,7 +41,7 @@ int timing_manager_interrupt_system_init(void)
     }
 
     // Set priority of IRQ_F2P[0:0] and a trigger for a rising edge 0x3
-    XScuGic_SetPriorityTriggerType(intc_instance_ptr, TM_INTERRUPT_ID, TM_ISR_PRIORITY, ISR_RISING_EDGE);
+    XScuGic_SetPriorityTriggerType(intc_instance_ptr, TM_INTERRUPT_ID, TM_ISR_PRIORITY, TM_ISR_RISING_EDGE);
 
     // Send interrupt to CPU 1
     XScuGic_InterruptMaptoCpu(intc_instance_ptr, 1, TM_INTERRUPT_ID);
@@ -92,13 +92,13 @@ void timing_manager_init(void)
     timing_manager_trigger_on_pwm_low();
 
     // Set the user ratio for the trigger
-    timing_manager_set_ratio(DEFAULT_PWM_RATIO);
+    timing_manager_set_ratio(TM_DEFAULT_PWM_RATIO);
 
     // Enable selected sensors for timing acquisition
-    timing_manager_select_sensors(DEFAULT_SENSOR_ENABLE);
+    timing_manager_select_sensors(TM_DEFAULT_SENSOR_ENABLE);
 
     // Initialize the stats for each sensor
-    for (int i = 0; i < NUM_SENSORS; i++) {
+    for (int i = 0; i < TM_NUM_SENSORS; i++) {
         statistics_init(&sensor_stats[i]);
     }
 
@@ -165,7 +165,7 @@ void timing_manager_set_scheduler_source(void)
     // Set slv_reg4[1]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000002));
 #else
-    #error Invalid configuration for ISR source
+#error Invalid configuration for ISR source
 #endif
 }
 
@@ -304,25 +304,30 @@ double timing_manager_get_time_per_sensor(sensor_e sensor)
     double time = 0;
 
     if (sensor == ADC)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == ENCODER)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+        clock_cycles
+            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == AMDS_1)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == AMDS_2)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+        clock_cycles
+            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == AMDS_3)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == AMDS_4)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+        clock_cycles
+            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == EDDY_1)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == EDDY_2)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+        clock_cycles
+            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == EDDY_3)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) & LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == EDDY_4)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) >> UPPER_16_SHIFT;
+        clock_cycles
+            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
 
     // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
@@ -336,8 +341,8 @@ void timing_manager_sensor_stats(void)
 {
     static int times_called;
     times_called++;
-    // Iterate through for each sensor push the status
-    for (int i = 0; i < NUM_SENSORS; i++) {
+    // Update each sensor with the latest recorded acquisition time
+    for (int i = 0; i < TM_NUM_SENSORS; i++) {
         double val = timing_manager_get_time_per_sensor(i);
         statistics_push(&sensor_stats[i], val);
     }

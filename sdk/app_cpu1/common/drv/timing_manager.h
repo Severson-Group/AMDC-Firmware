@@ -9,22 +9,28 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define TM_INTERRUPT_ID          (61) // IRQ_F2P[0:0]
-#define TM_ISR_PRIORITY          (0x08)
-#define ISR_RISING_EDGE          (3)
-#define DEFAULT_SENSOR_ENABLE    (0x0000)
-#define DEFAULT_PWM_RATIO        (10)
-#define LOWER_16_MASK            (0x0000FFFF)
-#define NUM_SENSORS              (10)
-#define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
-#define UPPER_16_SHIFT           (16)
+// Interrupt configurations
+#define TM_INTERRUPT_ID    (61) // IRQ_F2P[0:0]
+#define TM_ISR_PRIORITY    (0x08)
+#define TM_ISR_RISING_EDGE (3)
+
+// Timing manager configurations
+#define TM_DEFAULT_SENSOR_ENABLE (0x0000)
+#define TM_DEFAULT_PWM_RATIO     (10)
+#define TM_NUM_SENSORS           (10)
+
+// Use to read separate halves of 32-bit slave registers
+#define TM_LOWER_16_MASK  (0x0000FFFF)
+#define TM_UPPER_16_SHIFT (16)
 
 // Expected times (us) for all the sensors based on default values
-#define ADC_DEFAULT_TIME        (0.82)
-#define ENCODER_DEFAULT_TIME    (0.005)
-#define AMDS_DEFAULT_TIME       (11.8)
-#define EDDY_DEFAULT_TIME       (4.11)
-#define MAX_DEFAULT_SENSOR_TIME (AMDS_DEFAULT_TIME)
+#define TM_ADC_DEFAULT_TIME        (0.82)
+#define TM_ENCODER_DEFAULT_TIME    (0.005)
+#define TM_AMDS_DEFAULT_TIME       (11.8)
+#define TM_EDDY_DEFAULT_TIME       (4.11)
+#define TM_MAX_DEFAULT_SENSOR_TIME (TM_AMDS_DEFAULT_TIME)
+
+#define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 
 // Slave Register Offsets
 #define TIMING_MANAGER_TRIG_CFG_REG_OFFSET     (0)

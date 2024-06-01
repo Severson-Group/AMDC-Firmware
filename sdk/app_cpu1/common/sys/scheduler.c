@@ -35,7 +35,7 @@ void scheduler_tick(void)
         //
         // Thus, we will make sure to only check this when the elapsed time
         // since the last call is larger than twice the maximum sensor time
-        if (timing_manager_get_tick_delta() >= (2 * MAX_DEFAULT_SENSOR_TIME)) {
+        if (timing_manager_get_tick_delta() >= (2 * TM_MAX_DEFAULT_SENSOR_TIME)) {
             // Use raw printf so this goes directly to the UART device
             xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
             xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
