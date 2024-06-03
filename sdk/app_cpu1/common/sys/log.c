@@ -678,8 +678,8 @@ typedef struct sm_ctx_info_t {
     int var_idx;
 } sm_ctx_info_t;
 
-#define SM_INFO_UPDATES_PER_SEC SYS_TICK_FREQ
-#define SM_INFO_INTERVAL_USEC   (USEC_IN_SEC / SM_INFO_UPDATES_PER_SEC)
+// Set to 0 to ensure this task runs as fast as possible
+#define SM_INFO_INTERVAL_USEC 0
 
 void state_machine_info_callback(void *arg)
 {
@@ -712,7 +712,7 @@ void state_machine_info_callback(void *arg)
 
     case INFO_MAX_SAMPLE_RATE:
     {
-        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
+        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATE_FREQ);
         cmd_resp_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;

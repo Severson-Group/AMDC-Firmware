@@ -6,6 +6,7 @@ module timing_manager(
     event_qualifier,
     user_ratio,
     en_bits, reset_sched_isr,
+    sched_source_mode,
     // DONE SIGNALS
     adc_done, encoder_done,
     amds_0_done, amds_1_done,
@@ -13,6 +14,7 @@ module timing_manager(
     eddy_0_done, eddy_1_done,
     eddy_2_done, eddy_3_done,
     // OUTPUTS
+    debug,
     sched_isr,
     // Enable signals
     en_adc, en_encoder,
@@ -26,7 +28,7 @@ module timing_manager(
     amds_2_time, amds_3_time,
     eddy_0_time, eddy_1_time,
     eddy_2_time, eddy_3_time,
-    trigger, count_time
+    trigger, sched_tick_time
 );
     
     ////////////
@@ -35,6 +37,7 @@ module timing_manager(
     input wire clk, rst_n;
     input wire do_auto_triggering;
     input wire send_manual_trigger;
+    input wire sched_source_mode;
     input wire [15:0] user_ratio;
     input wire [15:0] en_bits;
     input wire adc_done;
@@ -55,7 +58,9 @@ module timing_manager(
     output reg [15:0] adc_time, encoder_time;
     output reg [15:0] amds_0_time, amds_1_time, amds_2_time, amds_3_time;
     output reg [15:0] eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
-    
+    output reg [31:0] sched_tick_time;
+    output wire [2:0] debug;
+
     //////////////////////
     // Internal signals //
     //////////////////////
@@ -64,8 +69,6 @@ module timing_manager(
     reg [15:0] count;
     // Signifies when all the sensors are done
     wire all_done;
-    // Counts FPGA clock cycles for each sensor
-    output reg [31:0] count_time;
     // See if any are enabled for all_done to be triggered
     wire sensors_enabled;
     
@@ -167,7 +170,7 @@ module timing_manager(
                         sensors_enabled;
 
     //////////////////////////////////////////////////////////////////
-    // Rising edge detection for all_done, which signifies when to    //
+    // Rising edge detection for all_done, which signifies when to  //
     // send an interrupt                                            //
     //////////////////////////////////////////////////////////////////
     reg all_done_ff;
@@ -177,18 +180,69 @@ module timing_manager(
     end
     assign all_done_pe = all_done & ~all_done_ff;
 
-    //////////////////////////////////////////////////////////////////
-    // Send an interrupt to the PS once all of the sensors are done //
-    // with their conversion/acquisition. This will trigger a       //
-    // task on the C side in the timing manager driver              //
+    ///////////////////////////////////////////////////////////////////
+    // Scheduler Interrupts:
+    // Two different interrupts are used as a source of the scheduler
+    // in the C code (sent to the processing system from the FPGA):
+    // Mode = 0 (legacy mode):
+    //  -   interrupt is asserted every 'trigger' signal, and is not
+    //      synchronized to the sensor I/O - just the PWM carrier
+    //  -   the user_ratio determines the control frequency
+    //  -   *note* the actual trigger signal is not used as it is based
+    //      on the all_done signal, is synchronized to the sensors.
+    //      instead, this interrupt is based on the same condition as
+    //      the trigger, just excluding all_done
+    // Mode = 1 (timing manager):
+    //  - if no sensors are enabled:
+    //      -   the functionality is the same as mode 0, so based on
+    //          a 'trigger'
+    //  - if sensors are enabled:
+    //      -   interrupt is synchronized with sensor I/O and asserted
+    //          once all the enabled sensors have completed their
+    //          acquisition/conversion cycle (e.g. on the rising edge
+    //          of the all_done signal)
     //////////////////////////////////////////////////////////////////
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             sched_isr <= 0;
-        else if (all_done_pe)
-            sched_isr <= 1;
         else if (reset_sched_isr)
             sched_isr <= 0;
+        else if (~sched_source_mode & (count == user_ratio))
+            // Legacy (mode 0)
+            sched_isr <= 1;
+        else if (sched_source_mode & ~sensors_enabled & (count == user_ratio))
+            // Timing Manager (mode 1) with no sensors enabled
+            sched_isr <= 1;
+        else if (sched_source_mode & all_done_pe)
+            // Timing Manager (mode 1) after sensors are enabled
+            sched_isr <= 1;
+    end
+
+    // Get the elapsed time between each scheduler ISR call
+    reg [31:0] count_tick_time;
+    reg sched_isr_ff;
+    wire sched_isr_pe;
+    always @(posedge clk) begin
+        sched_isr_ff <= sched_isr;
+    end
+    assign sched_isr_pe = sched_isr & ~sched_isr_ff;
+
+    // Counts the number of clock cycles between interrupts
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            count_tick_time <= 32'h1;
+        else if (sched_isr_pe)
+            count_tick_time <= 32'h1;   // restart upon ISR call
+        else
+            count_tick_time <= count_tick_time + 1;
+    end
+
+    // Copy over the clock cycles when sched_isr is asserted
+    always @(posedge clk, negedge rst_n) begin
+        if (!rst_n)
+            sched_tick_time <= 32'h0;
+        else if (sched_isr_pe)
+            sched_tick_time <= count_tick_time;
     end
 
     ////////////////////////////////////////////////////////////////// 
@@ -201,7 +255,7 @@ module timing_manager(
     reg adc_ff, encoder_ff, amds_0_ff, amds_1_ff, amds_2_ff, amds_3_ff, eddy_0_ff, eddy_1_ff, eddy_2_ff, eddy_3_ff;
     wire adc_pe, encoder_pe, amds_0_pe, amds_1_pe, amds_2_pe, amds_3_pe, eddy_0_pe, eddy_1_pe, eddy_2_pe, eddy_3_pe;
     
-    // Detect a rising edge for each done signal to copy over at that point
+    // Detect a rising edge for each done signal to copy over time at that point
 
     always @(posedge clk) begin
         adc_ff <= adc_done;
@@ -227,9 +281,9 @@ module timing_manager(
     assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
     assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
     
-
-    // Count the time when start_count is asserted, otherwise
-    // the time should be reset to 0.
+    // Counts FPGA clock cycles for each sensor
+    reg [31:0] count_time;
+    // Count the time when trigger is asserted
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             count_time <= 32'h0;
@@ -298,6 +352,11 @@ module timing_manager(
         if (!rst_n) eddy_3_time <= 0;
         else if (eddy_3_pe) eddy_3_time <= count_time[15:0];
     end
+
+    // This debug output can be connected to a GPIO port.
+    // The three bits can be assigned to any wires/registers
+    // to be monitored
+    assign debug = 3'b111;
 
 endmodule
 

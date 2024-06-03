@@ -18,6 +18,10 @@ The AMDC platform makes extensive use of the IP blocks to interface with the har
 
 This IP core is responsible for driving the external ADC on the AMDC hardware (supports one ADC device). The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
 
+### [`amdc_amds`](amdc_amds_1.0/README.md)
+
+This IP core is a driver for the Advanced Motor Drive Sensing (AMDS) platform. The driver sends out the signal which triggers the AMDS to sample its sensors, collects the data returned from the AMDS, and makes the data available to the user C code via the AXI slave register interface. 
+
 ### [`amdc_analog`](amdc_analog_1.0/README.md) [unsupported]
 
 Unsupported IP used on REV C hardware. Drives two ADC devices together to create an effective 16 channel synchronous ADC.
@@ -63,3 +67,7 @@ This IP core allows the user to map each individual status line on the inverters
 ### [`amdc_leds`](amdc_leds_1.0/README.md)
 
 This IP core drives the serially-addressable RGB LEDs on the REV D AMDC hardware. The FPGA uses a single data line to control the color outputs of all four LEDs via a serial chain approach. Using the associated C driver, users can set color values to memory-mapped registers which automatically are flushed out to the LED hardware.
+
+### [`amdc_timing_manager`](amdc_timing_manager_1.0/README.md)
+
+This IP core synchronizes all the sensors with the PWM carrier signal. It sends out a trigger to start an acquistion/conversion cycle for the enabled sensors, and sends an interrupt to the CPU once they are all completed to report timing and run the scheduler tasks. The associated C drivers are used to set the control rate, PWM trigger, enable sensors, and read the acquisition time for each sensor.

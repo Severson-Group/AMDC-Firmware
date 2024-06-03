@@ -13,18 +13,6 @@
 #define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
-// SysTick
-//
-// The basic time quantum is defined to be SYS_TICK_FREQ.
-//
-// As an example, say we set this to 10kHz. At 666.6 MHz DSP clock,
-// we will have 66.6k cycles per time slice, meaning all tasks
-// combined have to consume <= 66.6k cycles
-#ifndef SYS_TICK_FREQ
-#define SYS_TICK_FREQ (10000) // Hz
-#endif
-#define SYS_TICK_USEC (SEC_TO_USEC(1) / SYS_TICK_FREQ)
-
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
 
@@ -43,7 +31,7 @@ typedef struct task_control_block_t {
     struct task_control_block_t *next;
 } task_control_block_t;
 
-void scheduler_init(void);
+void scheduler_tick(void);
 void scheduler_run(void);
 
 void scheduler_tcb_init(

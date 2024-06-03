@@ -19,7 +19,7 @@
 // Assume clk = 200MHz, period = 5ns
 `define CYCLES_TO_ASSERT_CNV	(7'd6)  // 30ns
 `define CYCLES_TO_WAIT_SAMPLING	(7'd90) // 450ns
-`define CYCLES_TO_HANG			(7'd200) // 1000ns
+`define CYCLES_TO_HANG			(8'd200) // 1000ns
 
 // Set SCK divisor from system clock (200MHz)
 `define SCK_DIV2  (2'b00) // 100   MHz
@@ -122,9 +122,11 @@ end
 //    adc_done set/reset flop
 // *****************************
 // *****************************
+// Assert 'done' signal by default to prevent trigger
+// signal in higher level code from hanging
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		adc_done <= 1'b0;
+		adc_done <= 1'b1;
 	else if (deassert_adc_done)
 		adc_done <= 1'b0;
 	else if (assert_adc_done)
@@ -237,15 +239,15 @@ end
 // *****************************
 
 // 7-bit counter: up to 128
-// Need to count max 450ns, so at 200MHz clk => 90 cycles (< 128)
+// Need to count max 1000ns, so at 200MHz clk => 200 cycles (< 255)
 
-reg [6:0] delay_counter;
+reg [7:0] delay_counter;
 
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		delay_counter <= 7'b0;
+		delay_counter <= 8'b0;
 	else if (reset_delay_counter)
-		delay_counter <= 7'b0;
+		delay_counter <= 8'b0;
 	else
 		delay_counter <= delay_counter + 1;
 end

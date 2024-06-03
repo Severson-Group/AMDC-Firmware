@@ -1,7 +1,7 @@
 #include "sys/scheduler.h"
 #include "drv/hardware_targets.h"
 #include "drv/led.h"
-#include "drv/timer.h"
+#include "drv/timing_manager.h"
 #include "drv/watchdog.h"
 #include "xil_printf.h"
 #include <stdbool.h>
@@ -23,18 +23,26 @@ static volatile uint32_t elapsed_usec = 0;
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
-void scheduler_timer_isr(void *arg)
+/*
+ * This function is called only from the timing manager ISR, and thus only
+ * runs in the context of the ISR.
+ *
+ * The elapsed time since the last ISR call is recorded and the state of the
+ * the scheduler is moved out of idle to run the tasks.
+ */
+void scheduler_tick(void)
 {
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
-        // Per AMDC-Firmware Issue #265, during start-up, the overrun check
-        // seems to falsely trigger, or at least, we do not care about the trigger.
+        // For the first callback after enabling the sensors in the timing manager,
+        // the overrun check will occur due to the fast speed of the sensor quickly
+        // calling the ISR before it aligns with the normal trigger rate
         //
-        // To fix this, wait until at least 100 time slices have elapsed
-        // before allowing it to trigger.
-        if (elapsed_usec > 100 * SYS_TICK_USEC) {
+        // Thus, we will make sure to only check this when the elapsed time
+        // since the last call is larger than twice the maximum sensor time
+        if (timing_manager_get_tick_delta() >= (2 * TM_MAX_DEFAULT_SENSOR_TIME)) {
             // Use raw printf so this goes directly to the UART device
             xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
             xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
@@ -51,23 +59,13 @@ void scheduler_timer_isr(void *arg)
         }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
-
-    elapsed_usec += SYS_TICK_USEC;
-    scheduler_idle = false;
+    elapsed_usec += timing_manager_get_tick_delta();
+    scheduler_idle = false; // run task
 }
 
 uint32_t scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
-}
-
-void scheduler_init(void)
-{
-    printf("SCHED:\tInitializing scheduler...\n");
-
-    // Start system timer for periodic interrupts
-    timer_init(scheduler_timer_isr, SYS_TICK_USEC);
-    printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
 }
 
 void scheduler_tcb_init(
@@ -213,13 +211,13 @@ void scheduler_run(void)
 
         tasks_running = false;
 
-        // Wait here until unpaused (i.e. when SysTick fires)
+        // Wait here until unpaused
         scheduler_idle = true;
         while (scheduler_idle) {
         }
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
-        // Reset the watchdog timer after SysTick fires
+        // Reset the watchdog timer after timer fires
         watchdog_reset();
 #endif
     }
