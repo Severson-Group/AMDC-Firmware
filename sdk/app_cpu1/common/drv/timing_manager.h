@@ -30,20 +30,20 @@
 #define TM_EDDY_DEFAULT_TIME       (4.11)
 #define TM_MAX_DEFAULT_SENSOR_TIME (TM_AMDS_DEFAULT_TIME)
 
-#define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
+#define TM_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 
 // Slave Register Offsets
-#define TIMING_MANAGER_TRIG_CFG_REG_OFFSET     (0)
-#define TIMING_MANAGER_ENABLE_CFG_REG_OFFSET   (1 * sizeof(uint32_t))
-#define TIMING_MANAGER_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
-#define TIMING_MANAGER_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
-#define TIMING_MANAGER_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
-#define TIMING_MANAGER_ISR_TIME_REG_OFFSET     (5 * sizeof(uint32_t))
-#define TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
-#define TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
-#define TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))
-#define TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET (9 * sizeof(uint32_t))
-#define TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET (10 * sizeof(uint32_t))
+#define TM_TRIG_CFG_REG_OFFSET     (0)
+#define TM_ENABLE_CFG_REG_OFFSET   (1 * sizeof(uint32_t))
+#define TM_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
+#define TM_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
+#define TM_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
+#define TM_ISR_TIME_REG_OFFSET     (5 * sizeof(uint32_t))
+#define TM_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
+#define TM_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
+#define TM_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))
+#define TM_EDDY_01_TIME_REG_OFFSET (9 * sizeof(uint32_t))
+#define TM_EDDY_23_TIME_REG_OFFSET (10 * sizeof(uint32_t))
 
 // IMPORTANT:
 // This enumeration must be kept in sync with the order of sensors in the FPGA!

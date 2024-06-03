@@ -15,7 +15,7 @@
 static XScuGic intc;
 
 // Address of AXI PL interrupt generator (timing manger IP)
-volatile uint32_t *baseaddr_p = (uint32_t *) TIMING_MANAGER_BASE_ADDR;
+volatile uint32_t *baseaddr_p = (uint32_t *) TM_BASE_ADDR;
 
 // Array of statistics for each sensor
 statistics_t sensor_stats[TM_NUM_SENSORS];
@@ -121,10 +121,10 @@ void timing_manager_set_mode(trigger_mode_e mode)
 {
     if (mode == TM_AUTOMATIC) {
         // AUTOMATIC: Set slv_reg0[0]
-        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) | 0x00000001));
+        Xil_Out32(TM_BASE_ADDR, (Xil_In32(TM_BASE_ADDR) | 0x00000001));
     } else if (mode == TM_MANUAL) {
         // MANUAL: Clear slv_reg0[0]
-        Xil_Out32(TIMING_MANAGER_BASE_ADDR, (Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0xFFFFFFFE));
+        Xil_Out32(TM_BASE_ADDR, (Xil_In32(TM_BASE_ADDR) & 0xFFFFFFFE));
     } else {
         // Do nothing
     }
@@ -132,7 +132,7 @@ void timing_manager_set_mode(trigger_mode_e mode)
 
 trigger_mode_e timing_manager_get_mode(void)
 {
-    return (trigger_mode_e)(Xil_In32(TIMING_MANAGER_BASE_ADDR) & 0x1);
+    return (trigger_mode_e)(Xil_In32(TM_BASE_ADDR) & 0x1);
 }
 
 /* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
@@ -142,7 +142,7 @@ trigger_mode_e timing_manager_get_mode(void)
 void timing_manager_send_manual_trigger(void)
 {
     // A manual trigger is initiated in the FPGA by flipping slv_reg0[1]
-    Xil_Out32(TIMING_MANAGER_BASE_ADDR, Xil_In32(TIMING_MANAGER_BASE_ADDR) ^ 0x00000002);
+    Xil_Out32(TM_BASE_ADDR, Xil_In32(TM_BASE_ADDR) ^ 0x00000002);
 }
 
 /*
@@ -158,7 +158,7 @@ void timing_manager_send_manual_trigger(void)
  */
 void timing_manager_set_scheduler_source(void)
 {
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
+    uint32_t config_reg_addr = TM_BASE_ADDR + TM_ISR_REG_OFFSET;
 #if USER_CONFIG_ISR_SOURCE == 0
     // Clear slv_reg4[1]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFFD));
@@ -189,7 +189,7 @@ void timing_manager_isr(void *intc_inst_ptr)
  */
 void timing_manager_clear_isr(void)
 {
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_REG_OFFSET;
+    uint32_t config_reg_addr = TM_BASE_ADDR + TM_ISR_REG_OFFSET;
     // Reset the interrupt by flipping the bit in slv_reg4[0]
     Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) ^ 0x00000001));
 }
@@ -202,7 +202,7 @@ double timing_manager_get_tick_delta(void)
     double time = 0.0;
     uint32_t clock_cycles;
     // Get the number of clock cycles since the last ISR call to convert to us
-    clock_cycles = Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ISR_TIME_REG_OFFSET);
+    clock_cycles = Xil_In32(TM_BASE_ADDR + TM_ISR_TIME_REG_OFFSET);
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
     return time;
 }
@@ -215,7 +215,7 @@ double timing_manager_get_tick_delta(void)
 void timing_manager_set_ratio(uint32_t ratio)
 {
     // Get the current address for the target config register
-    uint32_t config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_RATIO_CFG_REG_OFFSET;
+    uint32_t config_reg_addr = TM_BASE_ADDR + TM_RATIO_CFG_REG_OFFSET;
     // Assign the ratio to the config register
     Xil_Out32(config_reg_addr, ratio);
 }
@@ -227,7 +227,7 @@ void timing_manager_set_ratio(uint32_t ratio)
 void timing_manager_select_sensors(uint16_t enable_bits)
 {
     // Get the address for the enable bit config register
-    uint32_t enable_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ENABLE_CFG_REG_OFFSET;
+    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_ENABLE_CFG_REG_OFFSET;
     // Assign the enable bits to the config register
     Xil_Out32(enable_reg_addr, enable_bits);
 }
@@ -238,7 +238,7 @@ void timing_manager_select_sensors(uint16_t enable_bits)
 void timing_manager_enable_sensor(sensor_e sensor)
 {
     // Get the address for the enable configuration register
-    uint32_t enable_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ENABLE_CFG_REG_OFFSET;
+    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_ENABLE_CFG_REG_OFFSET;
 
     // IMPORTANT:
     //   sensor_e enumeration is a critical enumeration where the enumeration order matters!
@@ -258,7 +258,7 @@ void timing_manager_enable_sensor(sensor_e sensor)
 void timing_manager_trigger_on_pwm_both(void)
 {
     // Get the current address of the config register
-    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
+    uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set both the carrier high and low trigger bits
     Xil_Out32(pwm_config_reg_addr, 0x0003);
 }
@@ -269,7 +269,7 @@ void timing_manager_trigger_on_pwm_both(void)
 void timing_manager_trigger_on_pwm_high(void)
 {
     // Get the current address of the config register
-    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
+    uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set only the carrier high bit
     Xil_Out32(pwm_config_reg_addr, 0x0001);
 }
@@ -280,7 +280,7 @@ void timing_manager_trigger_on_pwm_high(void)
 void timing_manager_trigger_on_pwm_low(void)
 {
     // Get the current address of the config register
-    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
+    uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set only the carrier low bit
     Xil_Out32(pwm_config_reg_addr, 0x0002);
 }
@@ -291,7 +291,7 @@ void timing_manager_trigger_on_pwm_low(void)
 void timing_manager_trigger_on_pwm_clear(void)
 {
     // Get the current address of the config register
-    uint32_t pwm_config_reg_addr = TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_PWM_CFG_REG_OFFSET;
+    uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Clear both the carrier high and low trigger bits
     Xil_Out32(pwm_config_reg_addr, 0x0000);
 }
@@ -305,30 +305,25 @@ double timing_manager_get_time_per_sensor(sensor_e sensor)
     double time = 0;
 
     if (sensor == ADC)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_ADC_ENC_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == ENCODER)
-        clock_cycles
-            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_ADC_ENC_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == AMDS_1)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_AMDS_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == AMDS_2)
-        clock_cycles
-            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_AMDS_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == AMDS_3)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_AMDS_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == AMDS_4)
-        clock_cycles
-            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_AMDS_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == EDDY_1)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_EDDY_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == EDDY_2)
-        clock_cycles
-            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_EDDY_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
     else if (sensor == EDDY_3)
-        clock_cycles = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_EDDY_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
     else if (sensor == EDDY_4)
-        clock_cycles
-            = (Xil_In32(TIMING_MANAGER_BASE_ADDR + TIMING_MANAGER_EDDY_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+        clock_cycles = (Xil_In32(TM_BASE_ADDR + TM_EDDY_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
 
     // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
