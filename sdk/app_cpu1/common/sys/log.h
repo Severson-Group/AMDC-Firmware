@@ -44,8 +44,8 @@
 #error "Max number of logging variables too large to meet timing! Please reduce."
 #endif
 
-#define LOG_UPDATES_PER_SEC (SYS_TICK_FREQ)
-#define LOG_INTERVAL_USEC   (USEC_IN_SEC / LOG_UPDATES_PER_SEC)
+// Set to 0 to ensure this task runs as fast as possible
+#define LOG_INTERVAL_USEC 0
 
 typedef enum var_type_e {
     LOG_INT = 1,

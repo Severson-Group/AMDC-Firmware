@@ -9,9 +9,12 @@
 // Specify hardware revision (i.e. REV E, REV F, etc)
 #define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_F)
 
-// Override the default scheduler elementary frequency by defining SYS_TICK_FREQ here.
-// System uses 10kHz by default
-//#define SYS_TICK_FREQ (20000) // Hz
+// Specify the source of the scheduler ISR
+// Mode 0: legacy mode - scheduler is triggered based on the PWM carrier events and ratio
+//         of carrier frequency to desired control frequency
+// Mode 1: new mode - scheduler is triggered when all the enabled sensors are done
+//         acquiring their data
+#define USER_CONFIG_ISR_SOURCE (0)
 
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled

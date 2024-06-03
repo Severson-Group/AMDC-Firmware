@@ -21,7 +21,6 @@
 #include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
-#include "drv/timer.h"
 #include "drv/timing_manager.h"
 #include "drv/uart.h"
 #include "drv/watchdog.h"

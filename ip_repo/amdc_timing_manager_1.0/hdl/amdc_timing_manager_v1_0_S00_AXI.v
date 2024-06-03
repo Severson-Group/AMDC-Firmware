@@ -39,7 +39,7 @@
         output wire en_adc,
         output wire en_encoder,
         output wire trigger,
-        output reg [2:0] debug,
+        output wire [2:0] debug,
 
         // User ports ends
         // Do not modify the ports beyond this line
@@ -508,13 +508,12 @@
     end    
 
     // Internal signals
-    wire [31:0] count_time;
+    wire [31:0] sched_tick_time;
     wire [31:0] adc_enc_time_reg;
     wire [31:0] amds_01_time_reg;
     wire [31:0] amds_23_time_reg;
     wire [31:0] eddy_01_time_reg;
     wire [31:0] eddy_23_time_reg;
-    wire reset_sched_isr;
 
     // Implement memory mapped register select and read logic generation
     // Slave register read enable is asserted when valid address is available
@@ -529,7 +528,7 @@
             4'h2   : reg_data_out <= slv_reg2; // User Ratio
             4'h3   : reg_data_out <= slv_reg3; // PWM Sync
             4'h4   : reg_data_out <= slv_reg4; // ISR
-            4'h5   : reg_data_out <= count_time; // Trigger timer
+            4'h5   : reg_data_out <= sched_tick_time;  // Trigger timer
             4'h6   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
             4'h7   : reg_data_out <= amds_01_time_reg; // AMDS Times
             4'h8   : reg_data_out <= amds_23_time_reg; // AMDS Times
@@ -577,8 +576,11 @@
     wire do_auto_triggering;
     wire send_manual_trigger;
     reg manual_trigger_ff;
+    wire sched_source_mode;
     wire [15:0] user_ratio;
     wire [15:0] en_bits;
+    wire reset_sched_isr;
+    reg reset_isr_ff;
 
     // Trigger configuration
     // * Auto triggering is the default, triggers will be sent whenever <user_ratio> PWM events
@@ -600,8 +602,18 @@
     // the lower 16 bits
     assign user_ratio = slv_reg2[15:0];
     
-    // reset interrupt 0
-    assign reset_sched_isr = slv_reg4[0];
+    // Reset scheduler interrupt: flipping the reset ISR bit in the configuration
+    // register will assert a reset signal to clear the interrupt
+    assign reset_sched_isr = slv_reg4[0] ^ reset_isr_ff;
+    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
+      if (!S_AXI_ARESETN)
+        reset_isr_ff <= 0;
+      else
+        reset_isr_ff <= slv_reg4[0];
+    end
+
+    // Determines the source of the interrupt for the scheduler with two modes
+    assign sched_source_mode = slv_reg4[1];
 
     // Get the enable bits from the user to
     // decode them in the timing manager
@@ -623,14 +635,6 @@
     // It can only be triggered once that past cycle is complete.   //
     //////////////////////////////////////////////////////////////////
     assign event_qualifier = (pwm_sync_high & pwm_carrier_high) | (pwm_sync_low & pwm_carrier_low); 
-    
-    // DEBUGGING
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-       if (!S_AXI_ARESETN)
-           debug <= 0;
-       else if (sched_isr)
-           debug <= ~debug;
-    end
     
     timing_manager iTime(
     .clk(S_AXI_ACLK),
@@ -673,7 +677,9 @@
     .eddy_3_time(eddy_3_time),
     .trigger(trigger),
     .reset_sched_isr(reset_sched_isr),
-    .count_time(count_time)
+    .sched_source_mode(sched_source_mode),
+    .sched_tick_time(sched_tick_time),
+    .debug(debug)
     );
 
     // User logic ends

@@ -9,15 +9,28 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define INTC_INTERRUPT_ID_0      (61) // IRQ_F2P[0:0]
-#define ISR0_PRIORITY            (0x08)
-#define ISR_RISING_EDGE          (0x3)
-#define DEFAULT_SENSOR_ENABLE    (0x0000)
-#define DEFAULT_PWM_RATIO        (0x1)
-#define LOWER_16_MASK            (0x0000FFFF)
-#define NUM_SENSORS              (10)
+// Interrupt configurations
+#define TM_INTERRUPT_ID    (61) // IRQ_F2P[0:0]
+#define TM_ISR_PRIORITY    (0x08)
+#define TM_ISR_RISING_EDGE (3)
+
+// Timing manager configurations
+#define TM_DEFAULT_SENSOR_ENABLE (0x0000)
+#define TM_DEFAULT_PWM_RATIO     (10)
+#define TM_NUM_SENSORS           (10)
+
+// Use to read separate halves of 32-bit slave registers
+#define TM_LOWER_16_MASK  (0x0000FFFF)
+#define TM_UPPER_16_SHIFT (16)
+
+// Expected times (us) for all the sensors based on default values
+#define TM_ADC_DEFAULT_TIME        (0.82)
+#define TM_ENCODER_DEFAULT_TIME    (0.005)
+#define TM_AMDS_DEFAULT_TIME       (11.8)
+#define TM_EDDY_DEFAULT_TIME       (4.11)
+#define TM_MAX_DEFAULT_SENSOR_TIME (TM_AMDS_DEFAULT_TIME)
+
 #define TIMING_MANAGER_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
-#define UPPER_16_SHIFT           (16)
 
 // Slave Register Offsets
 #define TIMING_MANAGER_TRIG_CFG_REG_OFFSET     (0)
@@ -25,7 +38,7 @@
 #define TIMING_MANAGER_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
 #define TIMING_MANAGER_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
 #define TIMING_MANAGER_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
-#define TIMING_MANAGER_TRIG_TIME_REG_OFFSET    (5 * sizeof(uint32_t))
+#define TIMING_MANAGER_ISR_TIME_REG_OFFSET     (5 * sizeof(uint32_t))
 #define TIMING_MANAGER_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
 #define TIMING_MANAGER_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
 #define TIMING_MANAGER_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))
@@ -54,7 +67,7 @@ typedef enum {
 typedef enum { TM_MANUAL = 0, TM_AUTOMATIC = 1 } trigger_mode_e;
 
 // Initialization
-int interrupt_system_init(void);
+int timing_manager_interrupt_system_init(void);
 void timing_manager_init(void);
 
 // Mode: Automatic vs Manual Triggering
@@ -76,7 +89,9 @@ void timing_manager_trigger_on_pwm_low(void);
 void timing_manager_trigger_on_pwm_clear(void);
 
 // Timing acquisition
-void isr_0(void *intc_inst_ptr);
+void timing_manager_isr(void *intc_inst_ptr);
+void timing_manager_set_scheduler_source(void);
+double timing_manager_get_tick_delta(void);
 double timing_manager_get_time_per_sensor(sensor_e sensor);
 void timing_manager_sensor_stats(void);
 statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor);
