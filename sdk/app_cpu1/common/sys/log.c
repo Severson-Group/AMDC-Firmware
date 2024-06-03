@@ -712,7 +712,7 @@ void state_machine_info_callback(void *arg)
 
     case INFO_MAX_SAMPLE_RATE:
     {
-        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
+        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATE_FREQ);
         cmd_resp_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;

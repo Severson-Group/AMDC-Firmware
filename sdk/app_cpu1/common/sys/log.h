@@ -1,6 +1,7 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include "drv/timing_manager.h"
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
 #include <stdbool.h>
@@ -46,6 +47,7 @@
 
 // Set to 0 to ensure this task runs as fast as possible
 #define LOG_INTERVAL_USEC 0
+#define LOG_UPDATE_FREQ   ((double) (1.0 / (timing_manager_get_tick_delta() * 1e-6)))
 
 typedef enum var_type_e {
     LOG_INT = 1,

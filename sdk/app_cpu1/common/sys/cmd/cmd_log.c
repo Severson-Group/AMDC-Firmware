@@ -62,7 +62,8 @@ int cmd_log(int argc, char **argv)
 
         // Parse arg4: samples_per_sec
         int samples_per_sec = atoi(argv[5]);
-        if (samples_per_sec > LOG_UPDATES_PER_SEC || samples_per_sec <= 0) {
+
+        if (samples_per_sec > LOG_UPDATE_FREQ || samples_per_sec <= 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
