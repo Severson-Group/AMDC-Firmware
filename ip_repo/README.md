@@ -18,6 +18,10 @@ The AMDC platform makes extensive use of the IP blocks to interface with the har
 
 This IP core is responsible for driving the external ADC on the AMDC hardware (supports one ADC device). The C driver let's the user configure the sampling rate, alignment to PWM, and digital filtering. The latest digitized value for each channel is available to the C code via memory-mapped registers.
 
+### [`amdc_amds`](amdc_amds_1.0/README.md)
+
+This IP core is a driver for the Advanced Motor Drive Sensing (AMDS) platform. The driver sends out the signal which triggers the AMDS to sample its sensors, collects the data returned from the AMDS, and makes the data available to the user C code via the AXI slave register interface. 
+
 ### [`amdc_analog`](amdc_analog_1.0/README.md) [unsupported]
 
 Unsupported IP used on REV C hardware. Drives two ADC devices together to create an effective 16 channel synchronous ADC.
