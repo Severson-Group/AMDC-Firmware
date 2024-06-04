@@ -44,10 +44,12 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP.
 | 0x64 | CARRIER_MAX | R/W | Configuration Register |
 | 0x68 | DEADTIME | R/W | Configuration Register |
 | 0x6C | RESETS | R/W | Configuration Register |
-| 0x70 | FLT_TEMP_OUT | R | Data Register |
-| 0x74 | FLT_DESAT_OUT | R | Data Register |
-| 0x78 | RDY_OUT | R | Data Register |
+| 0x70 | FLT_TEMP_OUT | R | Status Register |
+| 0x74 | FLT_DESAT_OUT | R | Status Register |
+| 0x78 | RDY_OUT | R | Status Register |
 | 0x7C | CONFIGURATION | R/W | Configuration Register |
+| 0x80 | PER_LEG_ENABLE | R/W | Configuration Register |
+| 0x84 | PER_LEG_REVERSE | R/W | Configuration Register |
 
 ### DUTY_RATIO_XX
 
@@ -103,4 +105,16 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP.
 | -- | -- | -- |
 | 0 | PWM_EN | If 1, PWM switching is enabled. If 0, PWM switching is disabled. |
 | 5:4 | PWM_DUTY_LATCHING_MODE | Configures when the new duty ratio values are latched into their respective registers. 2'b00 will latch at the next timing manager trigger event. 2'b01 will latch at the next peak/valley of the PWM carrier. 2'b10 will latch the values in immediately at the next rising clock edge. The value written to this register is determined in the `user_config.h` file. |
+
+### PER_LEG_ENABLE
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 23:0 | ENABLE_LEG | Each bit of this register enables a single leg of an inverter in the IP. Each set of three bits corresponds to an inverter, [2:0] is inverter 1. The least significant bit in any group of three is leg one of that inverter, middle bit leg two, and most significant bit leg three. |
+
+### PER_LEG_REVERSE
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 23:0 | REVERSE_LEG | Each bit of this register reverses a single leg of an inverter in the IP, meaning the gate drive signals for the top and bottom switch are flipped. Each set of three bits corresponds to an inverter, [2:0] is inverter 1. The least significant bit in any group of three is leg one of that inverter, middle bit leg two, and most significant bit leg three. |
 

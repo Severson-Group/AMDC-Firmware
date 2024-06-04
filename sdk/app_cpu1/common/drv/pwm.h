@@ -24,6 +24,8 @@
 #define PWM_FLT_DESAT_REG_OFFSET       (29 * sizeof(uint32_t))
 #define PWM_RDY_REG_OFFSET             (30 * sizeof(uint32_t))
 #define PWM_CONFIG_REG_OFFSET          (31 * sizeof(uint32_t))
+#define PWM_LEG_ENABLE_REG_OFFSET      (32 * sizeof(uint32_t))
+#define PWM_LEG_REVERSE_REG_OFFSET     (33 * sizeof(uint32_t))
 
 #define PWM_MUX_BASE_ADDR (XPAR_HIER_POWERSTACK_AMDC_PWM_MUX_0_S00_AXI_BASEADDR)
 
@@ -86,12 +88,15 @@ int pwm_set_deadtime_ns(uint16_t deadtime);
 double pwm_get_switching_freq(void);
 uint16_t pwm_get_deadtime_ns(void);
 
-void pwm_set_duty_latching_mode(void);
+int pwm_set_duty_latching_mode(void);
 int pwm_set_duty(pwm_channel_e channel, double duty);
 void pwm_set_all_duty_midscale(void);
 
 // Mux for PWM output pins
 int pwm_mux_set_all_pins(uint32_t *config);
 int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config);
+
+int pwm_set_leg_enabled(pwm_channel_e channel, bool enabled);
+int pwm_set_leg_reversed(pwm_channel_e channel, bool reversed);
 
 #endif // PWM_H

@@ -90,7 +90,7 @@ void pwm_init(void)
  * Mode 1: Update duty ratios at next PWM carrier peak/valley
  * Mode 2: Update duty ratios immediately (next FPGA clock rise)
  */
-void pwm_set_duty_latching_mode(void)
+int pwm_set_duty_latching_mode(void)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
@@ -113,6 +113,8 @@ void pwm_set_duty_latching_mode(void)
 #else
 #error Invalid configuration for PWM Duty Latching Mode
 #endif
+
+    return SUCCESS;
 }
 
 void pwm_set_all_duty_midscale(void)
@@ -369,6 +371,54 @@ int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
     }
 
     Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
+
+    return SUCCESS;
+}
+
+/* Enables or disables switching of a single leg of an inverter
+ * All legs (PWM channels) are enabled by default in the FPGA
+ */
+int pwm_set_leg_enabled(pwm_channel_e channel, bool enabled)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    uint32_t leg_enable_reg_addr = PWM_BASE_ADDR + PWM_LEG_ENABLE_REG_OFFSET;
+    uint32_t channel_bit = 0x000000001 << channel;
+
+    if (enabled) {
+        // Enabling this leg
+        Xil_Out32(leg_enable_reg_addr, Xil_In32(leg_enable_reg_addr) | channel_bit);
+    } else {
+        // Disabling this leg
+        Xil_Out32(leg_enable_reg_addr, Xil_In32(leg_enable_reg_addr) & ~channel_bit);
+    }
+
+    return SUCCESS;
+}
+
+/* Reverses the top/bottom gate drive signals to a single leg of an inverter
+ * All legs (PWM channels) are, by default, NOT reversed in the FPGA
+ */
+int pwm_set_leg_reversed(pwm_channel_e channel, bool reversed)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    uint32_t leg_reverse_reg_addr = PWM_BASE_ADDR + PWM_LEG_REVERSE_REG_OFFSET;
+    uint32_t channel_bit = 0x000000001 << channel;
+
+    if (reversed) {
+        // Reversing this leg
+        Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) | channel_bit);
+    } else {
+        // Disabling this leg
+        Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) & ~channel_bit);
+    }
 
     return SUCCESS;
 }

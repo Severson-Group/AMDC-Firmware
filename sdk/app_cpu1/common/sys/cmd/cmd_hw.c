@@ -25,9 +25,11 @@
 static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
-    { "pwm <on|off>", "Turn on/off PWM switching" },
+    { "pwm <on|off>", "Turn on/off all PWM switching" },
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
+    { "pwm leg_enable <pwm_idx> <on|off>", "Enable/disable a single PWM channel" },
+    { "pwm leg_reverse <pwm_idx> <on|off>", "Reverse/un-reverse a single PWM channel" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
     { "ild read", "Read the latest packet from ILD1420 sensor" },
     { "enc steps", "Read encoder steps from power-up" },
@@ -131,6 +133,46 @@ int cmd_hw(int argc, char **argv)
             }
 
             pwm_set_duty(pwm_idx, percent);
+
+            return CMD_SUCCESS;
+        }
+
+        // hw pwm leg_enable <pwm_idx> <on|off>
+        if (argc == 5 && STREQ("leg_enable", argv[2])) {
+            // Parse out switching pwm_idx arg
+            int pwm_idx = atoi(argv[3]);
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (STREQ("on", argv[4])) {
+                pwm_set_leg_enabled(pwm_idx, true);
+            } else if (STREQ("off", argv[4])) {
+                pwm_set_leg_enabled(pwm_idx, false);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            return CMD_SUCCESS;
+        }
+
+        // hw pwm leg_reverse <pwm_idx> <on|off>
+        if (argc == 5 && STREQ("leg_reverse", argv[2])) {
+            // Parse out switching pwm_idx arg
+            int pwm_idx = atoi(argv[3]);
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (STREQ("on", argv[4])) {
+                pwm_set_leg_reversed(pwm_idx, true);
+            } else if (STREQ("off", argv[4])) {
+                pwm_set_leg_reversed(pwm_idx, false);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
 
             return CMD_SUCCESS;
         }
