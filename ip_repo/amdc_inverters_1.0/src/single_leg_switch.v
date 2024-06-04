@@ -23,6 +23,8 @@ input CLK;		//50 MHz clock
 //input RST;		//reset signal
 input Sin;		//1 if leg output should be high, 0 if leg output should be low
 input pwm_en;
+input enable_leg;
+input reverse_leg;
 
 output wire Q1_out;
 output wire Q2_out;

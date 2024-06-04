@@ -931,7 +931,7 @@
     assign update_duty_ratios = (duty_update_mode == 2'b00) ? trigger :
                                 (duty_update_mode == 2'b01) ? (carrier_low | carrier_high) :
                                 (duty_update_mode == 2'b10) ? 1'b1 :
-                                (duty_update_mode == 2'b11) ? 1'b0 ;
+                                /* (update_mode == 2'b11) */  1'b0 ;
 	
 	// Assign duty ratios from regs received
 	always @(posedge S_AXI_ACLK) begin
