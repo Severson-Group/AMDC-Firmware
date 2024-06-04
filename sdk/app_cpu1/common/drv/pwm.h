@@ -15,6 +15,18 @@
 #define PWM_MAX_DEADTIME_NS ((1 << 16) - 1)
 #define PWM_MIN_DEADTIME_NS (25)
 
+#define PWM_BASE_ADDR                  (XPAR_HIER_POWERSTACK_AMDC_INVERTERS_0_S00_AXI_BASEADDR)
+#define PWM_CARRIER_CLK_DIV_REG_OFFSET (24 * sizeof(uint32_t))
+#define PWM_CARRIER_MAX_REG_OFFSET     (25 * sizeof(uint32_t))
+#define PWM_DEADTIME_REG_OFFSET        (26 * sizeof(uint32_t))
+#define PWM_RESETS_REG_OFFSET          (27 * sizeof(uint32_t))
+#define PWM_FLT_TEMP_REG_OFFSET        (28 * sizeof(uint32_t))
+#define PWM_FLT_DESAT_REG_OFFSET       (29 * sizeof(uint32_t))
+#define PWM_RDY_REG_OFFSET             (30 * sizeof(uint32_t))
+#define PWM_CONFIG_REG_OFFSET          (31 * sizeof(uint32_t))
+
+#define PWM_MUX_BASE_ADDR (XPAR_HIER_POWERSTACK_AMDC_PWM_MUX_0_S00_AXI_BASEADDR)
+
 typedef enum {
     // Keep first channel index at 0!
     PWM_OUT1 = 0,
@@ -74,8 +86,8 @@ int pwm_set_deadtime_ns(uint16_t deadtime);
 double pwm_get_switching_freq(void);
 uint16_t pwm_get_deadtime_ns(void);
 
+void pwm_set_duty_latching_mode(void);
 int pwm_set_duty(pwm_channel_e channel, double duty);
-
 void pwm_set_all_duty_midscale(void);
 
 // Mux for PWM output pins

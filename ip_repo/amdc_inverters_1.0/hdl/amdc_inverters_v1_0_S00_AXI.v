@@ -19,6 +19,7 @@
         input wire [7:0] rdy,
         input wire [7:0] flt_desat,
         input wire [7:0] flt_temp,
+        input wire trigger,
         output wire [7:0] rst,
         output wire [5:0] inverter1_pwm,
         output wire [5:0] inverter2_pwm,
@@ -829,38 +830,38 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        6'h00   : reg_data_out <= slv_reg0;
-	        6'h01   : reg_data_out <= slv_reg1;
-	        6'h02   : reg_data_out <= slv_reg2;
-	        6'h03   : reg_data_out <= slv_reg3;
-	        6'h04   : reg_data_out <= slv_reg4;
-	        6'h05   : reg_data_out <= slv_reg5;
-	        6'h06   : reg_data_out <= slv_reg6;
-	        6'h07   : reg_data_out <= slv_reg7;
-	        6'h08   : reg_data_out <= slv_reg8;
-	        6'h09   : reg_data_out <= slv_reg9;
-	        6'h0A   : reg_data_out <= slv_reg10;
-	        6'h0B   : reg_data_out <= slv_reg11;
-	        6'h0C   : reg_data_out <= slv_reg12;
-	        6'h0D   : reg_data_out <= slv_reg13;
-	        6'h0E   : reg_data_out <= slv_reg14;
-	        6'h0F   : reg_data_out <= slv_reg15;
-	        6'h10   : reg_data_out <= slv_reg16;
-	        6'h11   : reg_data_out <= slv_reg17;
-	        6'h12   : reg_data_out <= slv_reg18;
-	        6'h13   : reg_data_out <= slv_reg19;
-	        6'h14   : reg_data_out <= slv_reg20;
-	        6'h15   : reg_data_out <= slv_reg21;
-	        6'h16   : reg_data_out <= slv_reg22;
-	        6'h17   : reg_data_out <= slv_reg23;
-	        6'h18   : reg_data_out <= slv_reg24;
-	        6'h19   : reg_data_out <= slv_reg25;
-	        6'h1A   : reg_data_out <= slv_reg26;
-	        6'h1B   : reg_data_out <= slv_reg27;
+	        6'h00   : reg_data_out <= slv_reg0;     // Duty Ratio
+	        6'h01   : reg_data_out <= slv_reg1;     // Duty Ratio
+	        6'h02   : reg_data_out <= slv_reg2;     // Duty Ratio
+	        6'h03   : reg_data_out <= slv_reg3;     // Duty Ratio
+	        6'h04   : reg_data_out <= slv_reg4;     // Duty Ratio
+	        6'h05   : reg_data_out <= slv_reg5;     // Duty Ratio
+	        6'h06   : reg_data_out <= slv_reg6;     // Duty Ratio
+	        6'h07   : reg_data_out <= slv_reg7;     // Duty Ratio
+	        6'h08   : reg_data_out <= slv_reg8;     // Duty Ratio
+	        6'h09   : reg_data_out <= slv_reg9;     // Duty Ratio
+	        6'h0A   : reg_data_out <= slv_reg10;    // Duty Ratio
+	        6'h0B   : reg_data_out <= slv_reg11;    // Duty Ratio
+	        6'h0C   : reg_data_out <= slv_reg12;    // Duty Ratio
+	        6'h0D   : reg_data_out <= slv_reg13;    // Duty Ratio
+	        6'h0E   : reg_data_out <= slv_reg14;    // Duty Ratio
+	        6'h0F   : reg_data_out <= slv_reg15;    // Duty Ratio
+	        6'h10   : reg_data_out <= slv_reg16;    // Duty Ratio
+	        6'h11   : reg_data_out <= slv_reg17;    // Duty Ratio
+	        6'h12   : reg_data_out <= slv_reg18;    // Duty Ratio
+	        6'h13   : reg_data_out <= slv_reg19;    // Duty Ratio
+	        6'h14   : reg_data_out <= slv_reg20;    // Duty Ratio
+	        6'h15   : reg_data_out <= slv_reg21;    // Duty Ratio
+	        6'h16   : reg_data_out <= slv_reg22;    // Duty Ratio
+	        6'h17   : reg_data_out <= slv_reg23;    // Duty Ratio
+	        6'h18   : reg_data_out <= slv_reg24;    // Carrier Clk Div
+	        6'h19   : reg_data_out <= slv_reg25;    // Carrier Max
+	        6'h1A   : reg_data_out <= slv_reg26;    // Deadtime
+	        6'h1B   : reg_data_out <= slv_reg27;    // Resets
 	        6'h1C   : reg_data_out <= flt_temp_out; // slv_reg28
 	        6'h1D   : reg_data_out <= flt_desat_out; // slv_reg29
-	        6'h1E   : reg_data_out <= rdy_out; // slv_reg30
-	        6'h1F   : reg_data_out <= slv_reg31;
+	        6'h1E   : reg_data_out <= rdy_out;      // slv_reg30
+	        6'h1F   : reg_data_out <= slv_reg31;    // Config: PWM en, Duty Update Mode
 	        6'h20   : reg_data_out <= slv_reg32;
 	        6'h21   : reg_data_out <= slv_reg33;
 	        6'h22   : reg_data_out <= slv_reg34;
@@ -917,64 +918,78 @@
 	reg [15:0] D_L[23:0];
 	
 	wire pwm_en = slv_reg31[0];
+
+    // DUTY RATIO UPDATE MODES:
+    // 2'b00: Update duty ratios at next timing manager trigger (default)
+    // 2'b01: Update duty ratios at next PWM carrier peak/valley
+    // 2'b10: Update duty ratios immediately (next FPGA clock rise)
+
+    wire [1:0] duty_update_mode;
+    assign duty_update_mode = slv_reg31[5:4];
+
+    wire update_duty_ratios;
+    assign update_duty_ratios = (duty_update_mode == 2'b00) ? trigger :
+                                (duty_update_mode == 2'b01) ? (carrier_low | carrier_high) :
+                                (duty_update_mode == 2'b10) ? 1'b1 :
+                                (duty_update_mode == 2'b11) ? 1'b0 ;
 	
 	// Assign duty ratios from regs received
 	always @(posedge S_AXI_ACLK) begin
 		if (S_AXI_ARESETN == 1'b0 | ~pwm_en) begin
-			D_L[0] = 16'b0;
-			D_L[1] = 16'b0;
-			D_L[2] = 16'b0;
-			D_L[3] = 16'b0;
-			D_L[4] = 16'b0;
-			D_L[5] = 16'b0;
-			D_L[6] = 16'b0;
-			D_L[7] = 16'b0;
-			D_L[8] = 16'b0;
-			D_L[9] = 16'b0;
-			D_L[10] = 16'b0;
-			D_L[11] = 16'b0;
-			D_L[12] = 16'b0;
-			D_L[13] = 16'b0;
-			D_L[14] = 16'b0;
-			D_L[15] = 16'b0;
-			D_L[16] = 16'b0;
-			D_L[17] = 16'b0;
-			D_L[18] = 16'b0;
-			D_L[19] = 16'b0;
-			D_L[20] = 16'b0;
-			D_L[21] = 16'b0;
-			D_L[22] = 16'b0;
-			D_L[23] = 16'b0;
+			D_L[0] <= 16'b0;
+			D_L[1] <= 16'b0;
+			D_L[2] <= 16'b0;
+			D_L[3] <= 16'b0;
+			D_L[4] <= 16'b0;
+			D_L[5] <= 16'b0;
+			D_L[6] <= 16'b0;
+			D_L[7] <= 16'b0;
+			D_L[8] <= 16'b0;
+			D_L[9] <= 16'b0;
+			D_L[10] <= 16'b0;
+			D_L[11] <= 16'b0;
+			D_L[12] <= 16'b0;
+			D_L[13] <= 16'b0;
+			D_L[14] <= 16'b0;
+			D_L[15] <= 16'b0;
+			D_L[16] <= 16'b0;
+			D_L[17] <= 16'b0;
+			D_L[18] <= 16'b0;
+			D_L[19] <= 16'b0;
+			D_L[20] <= 16'b0;
+			D_L[21] <= 16'b0;
+			D_L[22] <= 16'b0;
+			D_L[23] <= 16'b0;
 		end
 		
 		else begin
 			// Only latch in the requested duty ratios
 			// when the carrier is low or high
-			if ((carrier_low | carrier_high) & pwm_en) begin
-				D_L[0] = slv_reg0[15:0];
-				D_L[1] = slv_reg1[15:0];
-				D_L[2] = slv_reg2[15:0];
-				D_L[3] = slv_reg3[15:0];
-				D_L[4] = slv_reg4[15:0];
-				D_L[5] = slv_reg5[15:0];
-				D_L[6] = slv_reg6[15:0];
-				D_L[7] = slv_reg7[15:0];
-				D_L[8] = slv_reg8[15:0];
-				D_L[9] = slv_reg9[15:0];
-				D_L[10] = slv_reg10[15:0];
-				D_L[11] = slv_reg11[15:0];
-				D_L[12] = slv_reg12[15:0];
-				D_L[13] = slv_reg13[15:0];
-				D_L[14] = slv_reg14[15:0];
-				D_L[15] = slv_reg15[15:0];
-				D_L[16] = slv_reg16[15:0];
-				D_L[17] = slv_reg17[15:0];
-				D_L[18] = slv_reg18[15:0];
-				D_L[19] = slv_reg19[15:0];
-				D_L[20] = slv_reg20[15:0];
-				D_L[21] = slv_reg21[15:0];
-				D_L[22] = slv_reg22[15:0];
-				D_L[23] = slv_reg23[15:0];
+			if (update_duty_ratios & pwm_en) begin
+				D_L[0] <= slv_reg0[15:0];
+				D_L[1] <= slv_reg1[15:0];
+				D_L[2] <= slv_reg2[15:0];
+				D_L[3] <= slv_reg3[15:0];
+				D_L[4] <= slv_reg4[15:0];
+				D_L[5] <= slv_reg5[15:0];
+				D_L[6] <= slv_reg6[15:0];
+				D_L[7] <= slv_reg7[15:0];
+				D_L[8] <= slv_reg8[15:0];
+				D_L[9] <= slv_reg9[15:0];
+				D_L[10] <= slv_reg10[15:0];
+				D_L[11] <= slv_reg11[15:0];
+				D_L[12] <= slv_reg12[15:0];
+				D_L[13] <= slv_reg13[15:0];
+				D_L[14] <= slv_reg14[15:0];
+				D_L[15] <= slv_reg15[15:0];
+				D_L[16] <= slv_reg16[15:0];
+				D_L[17] <= slv_reg17[15:0];
+				D_L[18] <= slv_reg18[15:0];
+				D_L[19] <= slv_reg19[15:0];
+				D_L[20] <= slv_reg20[15:0];
+				D_L[21] <= slv_reg21[15:0];
+				D_L[22] <= slv_reg22[15:0];
+				D_L[23] <= slv_reg23[15:0];
 			end
 		end
 	end

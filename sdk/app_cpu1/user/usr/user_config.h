@@ -16,6 +16,13 @@
 //         acquiring their data
 #define USER_CONFIG_ISR_SOURCE (0)
 
+// Specify the duty ratio latching mode. This will be the point during the control cycle
+//   at which the new duty ratios will be latched into the inverter control hardware
+// Mode 0: Update duty ratios at next timing manager trigger (default)
+// Mode 1: Update duty ratios at next PWM carrier peak/valley
+// Mode 2: Update duty ratios immediately (next FPGA clock rise)
+#define USER_CONFIG_PWM_DUTY_LATCHING_MODE (0)
+
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (1)
