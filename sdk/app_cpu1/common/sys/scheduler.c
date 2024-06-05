@@ -18,7 +18,7 @@ static task_control_block_t *tasks = NULL;
 static task_control_block_t *running_task = NULL;
 
 // Incremented every SysTick interrupt to track time
-static volatile uint32_t elapsed_usec = 0;
+static volatile double elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
@@ -63,7 +63,7 @@ void scheduler_tick(void)
     scheduler_idle = false; // run task
 }
 
-uint32_t scheduler_get_elapsed_usec(void)
+double scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
 }
@@ -187,12 +187,12 @@ void scheduler_run(void)
 
     // This is the main event loop that runs the device
     while (1) {
-        uint32_t my_elapsed_usec = elapsed_usec;
+        double my_elapsed_usec = elapsed_usec;
         tasks_running = true;
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
+            double usec_since_last_run = my_elapsed_usec - t->last_run_usec;
 
             if (usec_since_last_run >= t->interval_usec) {
                 // Time to run this task!

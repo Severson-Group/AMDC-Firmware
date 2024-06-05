@@ -9,7 +9,7 @@
 #include "usr/user_config.h"
 
 // Utility defines for time conversions
-#define USEC_IN_SEC       (1000000)
+#define USEC_IN_SEC       (1000000.0)
 #define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
@@ -23,8 +23,8 @@ typedef struct task_control_block_t {
     bool is_registered;
     task_callback_t callback;
     void *callback_arg;
-    uint32_t interval_usec;
-    uint32_t last_run_usec;
+    double interval_usec;
+    double last_run_usec;
 
     task_stats_t stats;
 
@@ -41,6 +41,6 @@ int scheduler_tcb_register_high_priority(task_control_block_t *tcb);
 int scheduler_tcb_unregister(task_control_block_t *tcb);
 bool scheduler_tcb_is_registered(task_control_block_t *tcb);
 
-uint32_t scheduler_get_elapsed_usec(void);
+double scheduler_get_elapsed_usec(void);
 
 #endif // SCHEDULER_H

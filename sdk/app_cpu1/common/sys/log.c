@@ -184,7 +184,7 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
 void log_callback(void *arg)
 {
-    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
+    uint32_t elapsed_usec = (uint32_t) scheduler_get_elapsed_usec();
 
     _do_log_to_buffer(elapsed_usec);
     _do_log_to_stream(elapsed_usec);
