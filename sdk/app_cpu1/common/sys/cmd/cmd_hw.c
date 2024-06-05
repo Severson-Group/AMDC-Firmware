@@ -141,40 +141,50 @@ int cmd_hw(int argc, char **argv)
         if (argc == 5 && STREQ("leg_enable", argv[2])) {
             // Parse out switching pwm_idx arg
             int pwm_idx = atoi(argv[3]);
+            int result = FAILURE;
 
             if (!pwm_is_valid_channel(pwm_idx)) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
             if (STREQ("on", argv[4])) {
-                pwm_set_leg_enabled(pwm_idx, true);
+                result = pwm_set_leg_enabled(pwm_idx, true);
             } else if (STREQ("off", argv[4])) {
-                pwm_set_leg_enabled(pwm_idx, false);
+                result = pwm_set_leg_enabled(pwm_idx, false);
             } else {
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            return CMD_SUCCESS;
+            if (result == SUCCESS) {
+                return CMD_SUCCESS;
+            } else {
+                return CMD_FAILURE;
+            }
         }
 
         // hw pwm leg_reverse <pwm_idx> <on|off>
         if (argc == 5 && STREQ("leg_reverse", argv[2])) {
             // Parse out switching pwm_idx arg
             int pwm_idx = atoi(argv[3]);
+            int result = FAILURE;
 
             if (!pwm_is_valid_channel(pwm_idx)) {
                 return CMD_INVALID_ARGUMENTS;
             }
 
             if (STREQ("on", argv[4])) {
-                pwm_set_leg_reversed(pwm_idx, true);
+                result = pwm_set_leg_reversed(pwm_idx, true);
             } else if (STREQ("off", argv[4])) {
-                pwm_set_leg_reversed(pwm_idx, false);
+                result = pwm_set_leg_reversed(pwm_idx, false);
             } else {
                 return CMD_INVALID_ARGUMENTS;
             }
 
-            return CMD_SUCCESS;
+            if (result == SUCCESS) {
+                return CMD_SUCCESS;
+            } else {
+                return CMD_FAILURE;
+            }
         }
     }
 
