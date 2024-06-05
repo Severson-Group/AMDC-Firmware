@@ -61,8 +61,9 @@ void pwm_init(void)
     // Opens all switches...
     pwm_disable();
 
-    // Set the duty latching mode using value in user_config.h
-    pwm_set_duty_latching_mode();
+    // Set the duty latching mode to the default mode 0,
+    // latch at next trigger event
+    pwm_set_duty_latching_mode(0);
 
     pwm_toggle_reset();
 
@@ -90,7 +91,7 @@ void pwm_init(void)
  * Mode 1: Update duty ratios at next PWM carrier peak/valley
  * Mode 2: Update duty ratios immediately (next FPGA clock rise)
  */
-int pwm_set_duty_latching_mode(void)
+int pwm_set_duty_latching_mode(uint8_t mode)
 {
     // Only allow PWM configuration changes when switching is off
     if (pwm_is_enabled()) {
@@ -99,20 +100,21 @@ int pwm_set_duty_latching_mode(void)
 
     uint32_t config_reg_addr = PWM_BASE_ADDR + PWM_CONFIG_REG_OFFSET;
 
-#if USER_CONFIG_PWM_DUTY_LATCHING_MODE == 0
-    // Set slv_reg31[5:4] = 2'b00
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFCF));
-#elif USER_CONFIG_PWM_DUTY_LATCHING_MODE == 1
-    // Set slv_reg31[5:4] = 2'b01
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000010));
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFDF));
-#elif USER_CONFIG_PWM_DUTY_LATCHING_MODE == 2
-    // Set slv_reg31[5:4] = 2'b10
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000020));
-    Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFEF));
-#else
-#error Invalid configuration for PWM Duty Latching Mode
-#endif
+    if (mode == 0) {
+        // Set slv_reg31[5:4] = 2'b00
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFCF));
+    } else if (mode == 1) {
+        // Set slv_reg31[5:4] = 2'b01
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000010));
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFDF));
+    } else if (mode == 2) {
+        // Set slv_reg31[5:4] = 2'b10
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000020));
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFEF));
+    } else {
+        // Invalid PWM Duty Latching Mode
+        return FAILURE;
+    }
 
     return SUCCESS;
 }
@@ -143,7 +145,6 @@ void pwm_set_all_rst(uint8_t rst)
     uint32_t value = 0;
     value |= (uint32_t) rst;
 
-    // Offset 27 is rst output reg
     Xil_Out32(PWM_BASE_ADDR + PWM_RESETS_REG_OFFSET, value);
 }
 
@@ -259,7 +260,6 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // NOTE: FPGA enforces minimum register value of 5
     // This should help prevent shoot-through events.
 
-    // Write to slave reg 26 to set deadtime value
     Xil_Out32(PWM_BASE_ADDR + PWM_DEADTIME_REG_OFFSET, deadtime);
 
     // Store current deadtime so we can access later
@@ -318,7 +318,6 @@ static int pwm_set_carrier_divisor(uint8_t divisor)
 
     carrier_divisor = divisor;
 
-    // Write to slave reg 24 to set triangle carrier clk divisor
     Xil_Out32(PWM_BASE_ADDR + PWM_CARRIER_CLK_DIV_REG_OFFSET, divisor);
 
     return SUCCESS;
@@ -335,7 +334,6 @@ static int pwm_set_carrier_max(uint16_t max)
 
     carrier_max = max;
 
-    // Write to slave reg 25 to set triangle carrier max value
     Xil_Out32(PWM_BASE_ADDR + PWM_CARRIER_MAX_REG_OFFSET, max);
 
     // Since we updated carrier max value, reset PWMs to new 50%
@@ -416,7 +414,7 @@ int pwm_set_leg_reversed(pwm_channel_e channel, bool reversed)
         // Reversing this leg
         Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) | channel_bit);
     } else {
-        // Disabling this leg
+        // Un-reversing this leg
         Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) & ~channel_bit);
     }
 

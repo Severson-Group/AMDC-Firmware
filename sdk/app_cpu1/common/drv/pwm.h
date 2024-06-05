@@ -88,7 +88,7 @@ int pwm_set_deadtime_ns(uint16_t deadtime);
 double pwm_get_switching_freq(void);
 uint16_t pwm_get_deadtime_ns(void);
 
-int pwm_set_duty_latching_mode(void);
+int pwm_set_duty_latching_mode(uint8_t mode);
 int pwm_set_duty(pwm_channel_e channel, double duty);
 void pwm_set_all_duty_midscale(void);
 

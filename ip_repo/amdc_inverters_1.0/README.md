@@ -1,6 +1,8 @@
 # IP: `amdc_inverters_1.0`
 
-This IP core drives the inverter power stack.
+This IP core implements standard sine-triangle PWM for 2-level voltage source inverters. It is set up such that the top and bottom switches are controlled "per leg" with some user configured dead-time between `ON` states. The dead-time is common across all PWM outputs.
+
+The end-user is not intended to manually set the register values in this IP core for a desired PWM switching frequency and then desired duty ratios. Instead, the associated C-code API functions located in `drv/pwm.h` handle the low-level interface and setting the raw register values. The user simply sets the PWM carrier by selecting a frequency and dead-time, and then assigns duty ratios using floating point numbers, 0 to 1.
 
 ## Features
 
@@ -55,7 +57,7 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP.
 
 | Bits | Name | Description |
 | -- | -- | -- |
-| 15:0 | DUTY_RATIO | Duty ratio for a a single inverter leg, expressed as a 16-bit nummber. A value equal to the carrier max implies a duty ratio of 1. |
+| 15:0 | DUTY_RATIO | Duty ratio for a single inverter leg, expressed as a 16-bit number. A value equal to the carrier max implies a duty ratio of 1. |
 
 ### CARRIER_CLK_DIV
 
