@@ -17,7 +17,7 @@ Note that a trigger signal can only be asserted if none of the sensors are still
 
 ## IP Interface
 
-This IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface sends an enabling signal to the ADC, encoder, and eddy current sensors, and recieves a done signal once they have completed their respective acquisitions. This IP also interfaces with the ZYNQ7 processing system.
+This IP is accessed via the AXI4-Lite register-based interface from the DSP. This interface sends an enable signal to the ADC, encoder, AMDS, and eddy current sensors, and recieves a done signal once they have completed their respective acquisitions. This IP also interfaces with the ZYNQ7 processing system.
 
 ## Register Map
 
