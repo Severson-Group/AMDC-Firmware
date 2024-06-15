@@ -7,9 +7,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define PWM_BASE_ADDR     (0x43C20000)
-#define PWM_MUX_BASE_ADDR (0x43C40000)
-
 static int pwm_set_carrier_divisor(uint8_t divisor);
 static int pwm_set_carrier_max(uint16_t max);
 static int pwm_set_duty_raw(pwm_channel_e channel, uint16_t value);
@@ -64,6 +61,10 @@ void pwm_init(void)
     // Opens all switches...
     pwm_disable();
 
+    // Set the duty latching mode to the default mode 0,
+    // latch at next trigger event
+    pwm_set_duty_latching_mode(0);
+
     pwm_toggle_reset();
 
     pwm_set_switching_freq(PWM_DEFAULT_SWITCHING_FREQ_HZ);
@@ -81,6 +82,41 @@ void pwm_init(void)
         mux_config_data[i] = i;
     }
     pwm_mux_set_all_pins(mux_config_data);
+}
+
+/*
+ * Sets the duty latching mode based off of the value in user_config.h
+ * DUTY RATIO UPDATE MODES:
+ * Mode 0: Update duty ratios at next timing manager trigger (default)
+ * Mode 1: Update duty ratios at next PWM carrier peak/valley
+ * Mode 2: Update duty ratios immediately (next FPGA clock rise)
+ */
+int pwm_set_duty_latching_mode(uint8_t mode)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    uint32_t config_reg_addr = PWM_BASE_ADDR + PWM_CONFIG_REG_OFFSET;
+
+    if (mode == 0) {
+        // Set slv_reg31[5:4] = 2'b00
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFCF));
+    } else if (mode == 1) {
+        // Set slv_reg31[5:4] = 2'b01
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000010));
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFDF));
+    } else if (mode == 2) {
+        // Set slv_reg31[5:4] = 2'b10
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) | 0x00000020));
+        Xil_Out32(config_reg_addr, (Xil_In32(config_reg_addr) & 0xFFFFFFEF));
+    } else {
+        // Invalid PWM Duty Latching Mode
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
 
 void pwm_set_all_duty_midscale(void)
@@ -109,8 +145,7 @@ void pwm_set_all_rst(uint8_t rst)
     uint32_t value = 0;
     value |= (uint32_t) rst;
 
-    // Offset 27 is rst output reg
-    Xil_Out32(PWM_BASE_ADDR + (27 * sizeof(uint32_t)), value);
+    Xil_Out32(PWM_BASE_ADDR + PWM_RESETS_REG_OFFSET, value);
 }
 
 // Hardware disabling of PWM was added to REV E hardware
@@ -143,31 +178,35 @@ int pwm_enable_hw(bool en)
 
 int pwm_enable(void)
 {
+    uint32_t config_reg_addr = PWM_BASE_ADDR + PWM_CONFIG_REG_OFFSET;
+
     if (pwm_is_enabled()) {
         return FAILURE;
     }
 
-    // Write to slave reg 31 LSB to enable PWM switching
-    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000001);
+    // Set slv_reg31[0] LSB to enable PWM switching
+    Xil_Out32(config_reg_addr, Xil_In32(config_reg_addr) | 0x00000001);
 
     return SUCCESS;
 }
 
 int pwm_disable(void)
 {
+    uint32_t config_reg_addr = PWM_BASE_ADDR + PWM_CONFIG_REG_OFFSET;
+
     if (!pwm_is_enabled()) {
         return FAILURE;
     }
 
-    // Write to slave reg 31 LSB to enable PWM switching
-    Xil_Out32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)), 0x00000000);
+    // Clear slv_reg31[0] LSB to disable PWM switching
+    Xil_Out32(config_reg_addr, Xil_In32(config_reg_addr) & 0xFFFFFFFE);
 
     return SUCCESS;
 }
 
 bool pwm_is_enabled(void)
 {
-    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + (31 * sizeof(uint32_t)));
+    uint32_t reg31 = Xil_In32(PWM_BASE_ADDR + PWM_CONFIG_REG_OFFSET);
 
     // LSB of reg 31 is enable bit for PWM
     return reg31 & 0x00000001;
@@ -221,8 +260,7 @@ int pwm_set_deadtime_ns(uint16_t time_ns)
     // NOTE: FPGA enforces minimum register value of 5
     // This should help prevent shoot-through events.
 
-    // Write to slave reg 26 to set deadtime value
-    Xil_Out32(PWM_BASE_ADDR + (26 * sizeof(uint32_t)), deadtime);
+    Xil_Out32(PWM_BASE_ADDR + PWM_DEADTIME_REG_OFFSET, deadtime);
 
     // Store current deadtime so we can access later
     now_deadtime = time_ns;
@@ -280,8 +318,7 @@ static int pwm_set_carrier_divisor(uint8_t divisor)
 
     carrier_divisor = divisor;
 
-    // Write to slave reg 24 to set triangle carrier clk divisor
-    Xil_Out32(PWM_BASE_ADDR + (24 * sizeof(uint32_t)), divisor);
+    Xil_Out32(PWM_BASE_ADDR + PWM_CARRIER_CLK_DIV_REG_OFFSET, divisor);
 
     return SUCCESS;
 }
@@ -297,8 +334,7 @@ static int pwm_set_carrier_max(uint16_t max)
 
     carrier_max = max;
 
-    // Write to slave reg 25 to set triangle carrier max value
-    Xil_Out32(PWM_BASE_ADDR + (25 * sizeof(uint32_t)), max);
+    Xil_Out32(PWM_BASE_ADDR + PWM_CARRIER_MAX_REG_OFFSET, max);
 
     // Since we updated carrier max value, reset PWMs to new 50%
     pwm_set_all_duty_midscale();
@@ -333,6 +369,54 @@ int pwm_mux_set_one_pin(uint32_t pwm_pin_idx, uint32_t config)
     }
 
     Xil_Out32(PWM_MUX_BASE_ADDR + (pwm_pin_idx * sizeof(uint32_t)), config);
+
+    return SUCCESS;
+}
+
+/* Enables or disables switching of a single leg of an inverter
+ * All legs (PWM channels) are enabled by default in the FPGA
+ */
+int pwm_set_leg_enabled(pwm_channel_e channel, bool enabled)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    uint32_t leg_enable_reg_addr = PWM_BASE_ADDR + PWM_LEG_ENABLE_REG_OFFSET;
+    uint32_t channel_bit = 0x000000001 << channel;
+
+    if (enabled) {
+        // Enabling this leg
+        Xil_Out32(leg_enable_reg_addr, Xil_In32(leg_enable_reg_addr) | channel_bit);
+    } else {
+        // Disabling this leg
+        Xil_Out32(leg_enable_reg_addr, Xil_In32(leg_enable_reg_addr) & ~channel_bit);
+    }
+
+    return SUCCESS;
+}
+
+/* Reverses the top/bottom gate drive signals to a single leg of an inverter
+ * All legs (PWM channels) are, by default, NOT reversed in the FPGA
+ */
+int pwm_set_leg_reversed(pwm_channel_e channel, bool reversed)
+{
+    // Only allow PWM configuration changes when switching is off
+    if (pwm_is_enabled()) {
+        return FAILURE;
+    }
+
+    uint32_t leg_reverse_reg_addr = PWM_BASE_ADDR + PWM_LEG_REVERSE_REG_OFFSET;
+    uint32_t channel_bit = 0x000000001 << channel;
+
+    if (reversed) {
+        // Reversing this leg
+        Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) | channel_bit);
+    } else {
+        // Un-reversing this leg
+        Xil_Out32(leg_reverse_reg_addr, Xil_In32(leg_reverse_reg_addr) & ~channel_bit);
+    }
 
     return SUCCESS;
 }
