@@ -17,7 +17,7 @@ static task_control_block_t *tasks = NULL;
 // at the currently running task
 static task_control_block_t *running_task = NULL;
 
-// Incremented every SysTick interrupt to track time
+// Incremented every timing manager interrupt to track time
 static volatile double elapsed_usec = 0;
 
 static bool tasks_running = false;
@@ -194,7 +194,12 @@ void scheduler_run(void)
         while (t != NULL) {
             double usec_since_last_run = my_elapsed_usec - t->last_run_usec;
 
-            if (usec_since_last_run >= t->interval_usec) {
+            // The task's usec_since_last_run may not be EXACTLY equal to the target interval
+            // due to the imprecision of converting FPGA time to double values in the C code.
+            // Therefore, we will schedule the task if the difference between the
+            // usec_since_last_run and the target interval is within the defined tolerance.
+            if ((usec_since_last_run - t->interval_usec) >= SCHEDULER_INTERVAL_TOLERANCE) {
+
                 // Time to run this task!
                 task_stats_pre_task(&t->stats);
                 running_task = t;

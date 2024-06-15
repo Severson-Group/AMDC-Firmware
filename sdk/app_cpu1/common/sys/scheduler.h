@@ -13,6 +13,11 @@
 #define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
+// Timing Threshold - 60ns
+//   Typically, the variance from the expected interval is no more than
+//   20ns, but we'll use a tolerance of three times this for safety :)
+#define SCHEDULER_INTERVAL_TOLERANCE (-0.06)
+
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
 
