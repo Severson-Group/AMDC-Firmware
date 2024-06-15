@@ -9,14 +9,18 @@
 #include "usr/user_config.h"
 
 // Utility defines for time conversions
-#define USEC_IN_SEC       (1000000.0)
+#define USEC_IN_SEC       (1000000)
 #define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
 // Timing Threshold - 60ns
-//   Typically, the variance from the expected interval is no more than
-//   20ns, but we'll use a tolerance of three times this for safety :)
-#define SCHEDULER_INTERVAL_TOLERANCE (-0.06)
+//   Typically, the variance of the measured interval from the expected interval is
+//   no more than 20ns, but we'll use a tolerance of three times this for safety :)
+//   The tolerance value is negative, as the target interval is subtracted from
+//   the measured interval. If the former is larger than the latter, the subtraction
+//   result will be a negative value. The check to run the task then confirms
+//   that the difference is *less-negative* than this tolerance
+#define SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.06)
 
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
