@@ -508,6 +508,7 @@
     end    
 
     // Internal signals
+    wire [31:0] sensor_done_status;
     wire [31:0] sched_tick_time;
     wire [31:0] adc_enc_time_reg;
     wire [31:0] amds_01_time_reg;
@@ -525,16 +526,16 @@
           case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
             4'h0   : reg_data_out <= slv_reg0; // Trigger configuration register
             4'h1   : reg_data_out <= slv_reg1; // Sensor Enable Bits
-            4'h2   : reg_data_out <= slv_reg2; // User Ratio
-            4'h3   : reg_data_out <= slv_reg3; // PWM Sync
-            4'h4   : reg_data_out <= slv_reg4; // ISR
-            4'h5   : reg_data_out <= sched_tick_time;  // Trigger timer
-            4'h6   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
-            4'h7   : reg_data_out <= amds_01_time_reg; // AMDS Times
-            4'h8   : reg_data_out <= amds_23_time_reg; // AMDS Times
-            4'h9   : reg_data_out <= eddy_01_time_reg; // Eddy Times
-            4'hA   : reg_data_out <= eddy_23_time_reg; // Eddy Times
-            4'hB   : reg_data_out <= slv_reg11; // Unused
+            4'h2   : reg_data_out <= sensor_done_status; // Sensor Done Status
+            4'h3   : reg_data_out <= slv_reg3; // User Ratio
+            4'h4   : reg_data_out <= slv_reg4; // PWM Sync
+            4'h5   : reg_data_out <= slv_reg5;  // ISR
+            4'h6   : reg_data_out <= sched_tick_time; // Trigger timer
+            4'h7   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
+            4'h8   : reg_data_out <= amds_01_time_reg; // AMDS Times
+            4'h9   : reg_data_out <= amds_23_time_reg; // AMDS Times
+            4'hA   : reg_data_out <= eddy_01_time_reg; // Eddy Times
+            4'hB   : reg_data_out <= eddy_23_time_reg; // Eddy Times
             4'hC   : reg_data_out <= slv_reg12;
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
@@ -600,31 +601,41 @@
     
     // Get the user ratio from slave register 2, assigning
     // the lower 16 bits
-    assign user_ratio = slv_reg2[15:0];
+    assign user_ratio = slv_reg3[15:0];
     
     // Reset scheduler interrupt: flipping the reset ISR bit in the configuration
     // register will assert a reset signal to clear the interrupt
-    assign reset_sched_isr = slv_reg4[0] ^ reset_isr_ff;
+    assign reset_sched_isr = slv_reg5[0] ^ reset_isr_ff;
     always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
       if (!S_AXI_ARESETN)
         reset_isr_ff <= 0;
       else
-        reset_isr_ff <= slv_reg4[0];
+        reset_isr_ff <= slv_reg5[0];
     end
 
     // Determines the source of the interrupt for the scheduler with two modes
-    assign sched_source_mode = slv_reg4[1];
+    assign sched_source_mode = slv_reg5[1];
 
     // Get the enable bits from the user to
     // decode them in the timing manager
     assign en_bits = slv_reg1[15:0];
 
+    // Output the sensor done statuses into a slv_reg to be accessible to the C code
+    wire all_done;
+    assign all_done = adc_done & encoder_done &
+                      amds_0_done & amds_1_done & amds_2_done & amds_3_done & 
+                      eddy_0_done & eddy_1_done & eddy_2_done & eddy_3_done;
+    assign sensor_done_status = {all_done, 21'b0,
+                                 eddy_3_done, eddy_2_done, eddy_1_done, eddy_0_done,
+                                 amds_3_done, amds_2_done, amds_1_done, amds_0_done, 
+                                 encoder_done, adc_done};
+
     // User defined method of synchronizing the pwm on high, low, or both
     wire event_qualifier;
     wire pwm_sync_high;
     wire pwm_sync_low;
-    assign pwm_sync_high = slv_reg3[0];
-    assign pwm_sync_low  = slv_reg3[1];
+    assign pwm_sync_high = slv_reg4[0];
+    assign pwm_sync_low  = slv_reg4[1];
     
     //////////////////////////////////////////////////////////////////
     // Generate event qualifier signal based on PWM to start        //

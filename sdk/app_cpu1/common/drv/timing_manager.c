@@ -227,7 +227,7 @@ void timing_manager_set_ratio(uint32_t ratio)
 void timing_manager_select_sensors(uint16_t enable_bits)
 {
     // Get the address for the enable bit config register
-    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_ENABLE_CFG_REG_OFFSET;
+    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET;
     // Assign the enable bits to the config register
     Xil_Out32(enable_reg_addr, enable_bits);
 }
@@ -238,7 +238,7 @@ void timing_manager_select_sensors(uint16_t enable_bits)
 void timing_manager_enable_sensor(sensor_e sensor)
 {
     // Get the address for the enable configuration register
-    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_ENABLE_CFG_REG_OFFSET;
+    uint32_t enable_reg_addr = TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET;
 
     // IMPORTANT:
     //   sensor_e enumeration is a critical enumeration where the enumeration order matters!
@@ -250,6 +250,40 @@ void timing_manager_enable_sensor(sensor_e sensor)
     //   that we can use this simple bit-shift to set the correct bit in the FPGA
     uint32_t enable_bit = 0x1 << sensor;
     Xil_Out32(enable_reg_addr, (Xil_In32(enable_reg_addr) | enable_bit));
+}
+
+bool timing_manager_is_sensor_done(sensor_e sensor)
+{
+    // Get the address for the sensor status register
+    uint32_t status_reg_addr = TM_BASE_ADDR + TM_SENSOR_STS_REG_OFFSET;
+
+    // IMPORTANT:
+    //   sensor_e enumeration is a critical enumeration where the enumeration order matters!
+    //   Since the ADC is "sensor 0", its enable bit in the timing manager's enable
+    //   configuration register is slv_reg1[0]
+    //   The enumeration MUST be kept in agreement with the sensor order in the FPGA, so
+    //   that we can use this simple bit-shift to check the correct bit in the FPGA
+    uint32_t sensor_bit = 0x1 << sensor;
+    uint32_t status = Xil_In32(status_reg_addr) & sensor_bit;
+
+    if (status == 0)
+        return false;
+    else
+        return true;
+}
+
+bool timing_manager_are_sensors_all_done(void)
+{
+    // Get the address for the sensor status register
+    uint32_t status_reg_addr = TM_BASE_ADDR + TM_SENSOR_STS_REG_OFFSET;
+
+    // The all_done bit is the register's MSb...
+    uint32_t status = Xil_In32(status_reg_addr) & 0x80000000;
+
+    if (status == 0)
+        return false;
+    else
+        return true;
 }
 
 /*

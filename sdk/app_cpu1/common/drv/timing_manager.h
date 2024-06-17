@@ -33,17 +33,18 @@
 #define TM_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 
 // Slave Register Offsets
-#define TM_TRIG_CFG_REG_OFFSET     (0)
-#define TM_ENABLE_CFG_REG_OFFSET   (1 * sizeof(uint32_t))
-#define TM_RATIO_CFG_REG_OFFSET    (2 * sizeof(uint32_t))
-#define TM_PWM_CFG_REG_OFFSET      (3 * sizeof(uint32_t))
-#define TM_ISR_REG_OFFSET          (4 * sizeof(uint32_t))
-#define TM_ISR_TIME_REG_OFFSET     (5 * sizeof(uint32_t))
-#define TM_ADC_ENC_TIME_REG_OFFSET (6 * sizeof(uint32_t))
-#define TM_AMDS_01_TIME_REG_OFFSET (7 * sizeof(uint32_t))
-#define TM_AMDS_23_TIME_REG_OFFSET (8 * sizeof(uint32_t))
-#define TM_EDDY_01_TIME_REG_OFFSET (9 * sizeof(uint32_t))
-#define TM_EDDY_23_TIME_REG_OFFSET (10 * sizeof(uint32_t))
+#define TM_TRIG_CFG_REG_OFFSET      (0)
+#define TM_SENSOR_EN_CFG_REG_OFFSET (1 * sizeof(uint32_t))
+#define TM_SENSOR_STS_REG_OFFSET    (2 * sizeof(uint32_t))
+#define TM_RATIO_CFG_REG_OFFSET     (3 * sizeof(uint32_t))
+#define TM_PWM_CFG_REG_OFFSET       (4 * sizeof(uint32_t))
+#define TM_ISR_REG_OFFSET           (5 * sizeof(uint32_t))
+#define TM_ISR_TIME_REG_OFFSET      (6 * sizeof(uint32_t))
+#define TM_ADC_ENC_TIME_REG_OFFSET  (7 * sizeof(uint32_t))
+#define TM_AMDS_01_TIME_REG_OFFSET  (8 * sizeof(uint32_t))
+#define TM_AMDS_23_TIME_REG_OFFSET  (9 * sizeof(uint32_t))
+#define TM_EDDY_01_TIME_REG_OFFSET  (10 * sizeof(uint32_t))
+#define TM_EDDY_23_TIME_REG_OFFSET  (11 * sizeof(uint32_t))
 
 // IMPORTANT:
 // This enumeration must be kept in sync with the order of sensors in the FPGA!
@@ -81,6 +82,10 @@ void timing_manager_set_ratio(uint32_t ratio);
 // Enable sensors
 void timing_manager_select_sensors(uint16_t enable_bits);
 void timing_manager_enable_sensor(sensor_e sensor);
+
+// Check done status of sensors
+bool timing_manager_is_sensor_done(sensor_e sensor);
+bool timing_manager_are_sensors_all_done(void);
 
 // PWM trigger
 void timing_manager_trigger_on_pwm_both(void);

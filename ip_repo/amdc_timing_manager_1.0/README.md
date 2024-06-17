@@ -23,17 +23,18 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP. Thi
 
 | Offset | Name | R/W | Description |
 | -- | -- | -- | -- |
-| 0x00 | TRIG_CFG| R/W | Configuration Register |
-| 0x04 | ENABLE_CFG | R/W | Configuration Register |
-| 0x08 | RATIO_CFG | R/W | Configuration Register |
-| 0x0C | PWM_CFG | R/W | Configuration Register |
-| 0x10 | ISR_REG | R/W | Configuration Register |
-| 0x14 | ISR_TIME | R | Data Register |
-| 0x18 | ADC_ENC_TIME | R | Data Register |
-| 0x1C | AMDS_01_TIME | R | Data Register |
-| 0x20 | AMDS_23_TIME | R | Data Register |
-| 0x24 | EDDY_01_TIME | R | Data Register |
-| 0x28 | EDDY_23_TIME | R | Data Register |
+| 0x00 | TRIG_CFG | R/W | Configuration Register |
+| 0x04 | SENSOR_EN_CFG | R/W | Configuration Register |
+| 0x08 | SENSOR_STS | R/W | Status Register |
+| 0x0C | RATIO_CFG | R/W | Configuration Register |
+| 0x10 | PWM_CFG | R/W | Configuration Register |
+| 0x14 | ISR_REG | R/W | Configuration Register |
+| 0x18 | ISR_TIME | R | Data Register |
+| 0x1C | ADC_ENC_TIME | R | Data Register |
+| 0x20 | AMDS_01_TIME | R | Data Register |
+| 0x24 | AMDS_23_TIME | R | Data Register |
+| 0x28 | EDDY_01_TIME | R | Data Register |
+| 0x2C | EDDY_23_TIME | R | Data Register |
 
 ### TRIG_CFG
 
@@ -42,11 +43,18 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP. Thi
 | 0 | DO_AUTO_TRIGGERING | Trigger is sent whenever <user_ratio> PWM events have occurred |
 | 1 | SEND_MANUAL_TRIGGER | Send a single trigger event aligned to the next PWM carrier peak or valley |
 
-### ENABLE_CFG
+### SENSOR_EN_CFG
 
 | Bits | Name | Description |
 | -- | -- | -- |
 | 15:0 | EN_BITS | Enable a specific sensor by setting its assigned bit (default 0x00) |
+
+### SENSOR_STS
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 15:0 | SENSOR_X_DONE | 'Done' status of each individual sensor |
+| 31 | ALL_DONE | 'Done' status of *all* sensors |
 
 ### RATIO_CFG
 
