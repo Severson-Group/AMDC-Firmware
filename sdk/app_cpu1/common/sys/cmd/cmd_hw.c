@@ -329,6 +329,14 @@ int cmd_hw(int argc, char **argv)
             return CMD_SUCCESS;
         }
 
+        // hw tm trig_count
+        if (argc == 3 && STREQ("trig_count", argv[2])) {
+            uint32_t count = timing_manager_get_trigger_count();
+            cmd_resp_printf("Dec: %i\tHex:%x\r\n", count, count);
+
+            return CMD_SUCCESS;
+        }
+
         // hw tm ratio <count>
         else if (argc == 4 && STREQ("ratio", argv[2])) {
             uint32_t ratio = (uint32_t)(atoi(argv[3]));

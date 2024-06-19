@@ -125,12 +125,14 @@ void timing_manager_init(void)
  */
 void timing_manager_set_mode(trigger_mode_e mode)
 {
+    uint32_t trigger_reg_addr = TM_BASE_ADDR + TM_TRIG_CFG_CNT_REG_OFFSET;
+
     if (mode == TM_AUTOMATIC) {
         // AUTOMATIC: Set slv_reg0[0]
-        Xil_Out32(TM_BASE_ADDR, (Xil_In32(TM_BASE_ADDR) | 0x00000001));
+        Xil_Out32(trigger_reg_addr, (Xil_In32(trigger_reg_addr) | 0x00000001));
     } else if (mode == TM_MANUAL) {
         // MANUAL: Clear slv_reg0[0]
-        Xil_Out32(TM_BASE_ADDR, (Xil_In32(TM_BASE_ADDR) & 0xFFFFFFFE));
+        Xil_Out32(trigger_reg_addr, (Xil_In32(trigger_reg_addr) & 0xFFFFFFFE));
     } else {
         // Do nothing
     }
@@ -138,7 +140,9 @@ void timing_manager_set_mode(trigger_mode_e mode)
 
 trigger_mode_e timing_manager_get_mode(void)
 {
-    return (trigger_mode_e)(Xil_In32(TM_BASE_ADDR) & 0x1);
+    uint32_t trigger_reg_addr = TM_BASE_ADDR + TM_TRIG_CFG_CNT_REG_OFFSET;
+
+    return (trigger_mode_e)(Xil_In32(trigger_reg_addr) & 0x1);
 }
 
 /* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,
@@ -147,8 +151,22 @@ trigger_mode_e timing_manager_get_mode(void)
  */
 void timing_manager_send_manual_trigger(void)
 {
+    uint32_t trigger_reg_addr = TM_BASE_ADDR + TM_TRIG_CFG_CNT_REG_OFFSET;
+
     // A manual trigger is initiated in the FPGA by flipping slv_reg0[1]
-    Xil_Out32(TM_BASE_ADDR, Xil_In32(TM_BASE_ADDR) ^ 0x00000002);
+    Xil_Out32(trigger_reg_addr, Xil_In32(trigger_reg_addr) ^ 0x00000002);
+}
+
+/*
+ * Read the count of timing manager triggers
+ */
+uint32_t timing_manager_get_trigger_count(void)
+{
+    uint32_t trigger_reg_addr = TM_BASE_ADDR + TM_TRIG_CFG_CNT_REG_OFFSET;
+
+    // Count is stored in upper 28 bits of slv_reg
+    uint32_t trigger_count = Xil_In32(trigger_reg_addr) >> 4;
+    return trigger_count;
 }
 
 /*

@@ -40,7 +40,7 @@
 #define TM_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 
 // Slave Register Offsets
-#define TM_TRIG_CFG_REG_OFFSET      (0)
+#define TM_TRIG_CFG_CNT_REG_OFFSET  (0)
 #define TM_SENSOR_EN_CFG_REG_OFFSET (1 * sizeof(uint32_t))
 #define TM_SENSOR_STS_REG_OFFSET    (2 * sizeof(uint32_t))
 #define TM_RATIO_CFG_REG_OFFSET     (3 * sizeof(uint32_t))
@@ -86,6 +86,7 @@ void timing_manager_init(void);
 void timing_manager_set_mode(trigger_mode_e mode);
 trigger_mode_e timing_manager_get_mode(void);
 void timing_manager_send_manual_trigger(void);
+uint32_t timing_manager_get_trigger_count(void);
 
 // Set/get user ratio
 void timing_manager_set_ratio(uint32_t ratio);
