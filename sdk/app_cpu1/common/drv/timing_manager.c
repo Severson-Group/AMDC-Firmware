@@ -15,12 +15,6 @@
 // Current PWM event sub-ratio, initially the default value
 static uint32_t now_ratio = TM_DEFAULT_PWM_RATIO;
 
-// Expected scheduler tick delta between ISR calls
-// If the user recently changed sensors, expected_tick_delta() should run
-// fully to recalculate this value (true initially)
-static double expected_tick_delta = 0.0;
-static bool recalculate_exp_tick_delta = true;
-
 // Instance of the interrupt controller
 static XScuGic intc;
 
@@ -224,53 +218,46 @@ double timing_manager_get_tick_delta(void)
  */
 double timing_manager_expected_tick_delta(void)
 {
-    if (recalculate_exp_tick_delta) {
-        double fsw = pwm_get_switching_freq();
+    double fsw = pwm_get_switching_freq();
 
-        // The no-sensor-time is the expected time in us between scheduler interrupts
-        // with no sensors enabled. This is just the switching period multiplied by the sub-ratio
-        double no_sensor_time = (now_ratio / fsw) * 1e6;
+    // The no-sensor-time is the expected time in us between scheduler interrupts
+    // with no sensors enabled. This is just the switching period multiplied by the sub-ratio
+    double no_sensor_time = (now_ratio / fsw) * 1e6;
 
-        // It is possible that the user could ask for a very low sub-ratio, and the sensors with
-        // a longer acquistion time may run over the no-sensor-time, which will cause the sensor
-        // triggering and ISR call to occur at the first valid multiple of the no-sensor-time instead
-        //
-        // Therefore, we should check all the sensors in order of longest to shortest acquistion to see
-        // if the longest enabled sensor will overrun the time calculated above
-        uint16_t enabled_sensors = Xil_In16(TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET);
-        bool is_amds_enabled = enabled_sensors & 0x3C;
-        bool is_eddy_enabled = enabled_sensors & 0x3C0;
-        bool is_adc_enabled = enabled_sensors & 0x1;
-        bool is_encoder_enabled = enabled_sensors & 0x2;
+    // It is possible that the user could ask for a very low sub-ratio, and the sensors with
+    // a longer acquistion time may run over the no-sensor-time, which will cause the sensor
+    // triggering and ISR call to occur at the first valid multiple of the no-sensor-time instead
+    //
+    // Therefore, we should check all the sensors in order of longest to shortest acquistion to see
+    // if the longest enabled sensor will overrun the time calculated above
+    uint16_t enabled_sensors = Xil_In16(TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET);
+    bool is_amds_enabled = enabled_sensors & 0x3C;
+    bool is_eddy_enabled = enabled_sensors & 0x3C0;
+    bool is_adc_enabled = enabled_sensors & 0x1;
+    bool is_encoder_enabled = enabled_sensors & 0x2;
 
-        // Longest sensor acquisition time, also in us
-        double longest_sensor_time = 0.0;
+    // Longest sensor acquisition time, also in us
+    double longest_sensor_time = 0.0;
 
-        if (is_amds_enabled) {
-            longest_sensor_time = TM_AMDS_DEFAULT_TIME;
-        } else if (is_eddy_enabled) {
-            longest_sensor_time = TM_EDDY_DEFAULT_TIME;
-        } else if (is_adc_enabled) {
-            longest_sensor_time = TM_ADC_DEFAULT_TIME;
-        } else if (is_encoder_enabled) {
-            longest_sensor_time = TM_ENCODER_DEFAULT_TIME;
-        } else {
-            // No sensors enabled, longest sensor time should remain 0.0
-        }
-
-        // Return the first multiple of the no-sensor-time which is greater than the longest-sensor-time
-        uint8_t multiple = 1;
-        while (multiple * no_sensor_time < longest_sensor_time) {
-            multiple++;
-        }
-
-        expected_tick_delta = multiple * no_sensor_time;
-
-        // THIS IS COMMENTED OUT SO THAT WE RECALCULATE EVERY TIME
-        // recalculate_exp_tick_delta = false;
+    if (is_amds_enabled) {
+        longest_sensor_time = TM_AMDS_DEFAULT_TIME;
+    } else if (is_eddy_enabled) {
+        longest_sensor_time = TM_EDDY_DEFAULT_TIME;
+    } else if (is_adc_enabled) {
+        longest_sensor_time = TM_ADC_DEFAULT_TIME;
+    } else if (is_encoder_enabled) {
+        longest_sensor_time = TM_ENCODER_DEFAULT_TIME;
+    } else {
+        // No sensors enabled, longest sensor time should remain 0.0
     }
 
-    return expected_tick_delta;
+    // Return the first multiple of the no-sensor-time which is greater than the longest-sensor-time
+    uint8_t multiple = 1;
+    while (multiple * no_sensor_time < longest_sensor_time) {
+        multiple++;
+    }
+
+    return multiple * no_sensor_time;
 }
 
 /*
