@@ -30,6 +30,13 @@
 #define TM_EDDY_DEFAULT_TIME       (4.11)
 #define TM_MAX_DEFAULT_SENSOR_TIME (TM_AMDS_DEFAULT_TIME)
 
+// Macro functions to check which sensors are enabled
+#define GET_SENSOR_ENABLE_BITS (Xil_In16(TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET))
+#define IS_ADC_ENABLED         ((bool) GET_SENSOR_ENABLE_BITS & 0x1)
+#define IS_ENCODER_ENABLED     ((bool) GET_SENSOR_ENABLE_BITS & 0x2)
+#define IS_ANY_AMDS_ENABLED    ((bool) GET_SENSOR_ENABLE_BITS & 0x3C)
+#define IS_ANY_EDDY_ENABLED    ((bool) GET_SENSOR_ENABLE_BITS & 0x3C0)
+
 #define TM_BASE_ADDR (XPAR_AMDC_TIMING_MANAGER_0_S00_AXI_BASEADDR)
 
 // Slave Register Offsets
@@ -45,6 +52,10 @@
 #define TM_AMDS_23_TIME_REG_OFFSET  (9 * sizeof(uint32_t))
 #define TM_EDDY_01_TIME_REG_OFFSET  (10 * sizeof(uint32_t))
 #define TM_EDDY_23_TIME_REG_OFFSET  (11 * sizeof(uint32_t))
+
+// This enumeration is used by the global "pwm_update_rate" to remember if we are triggering
+// on the high OR low (single update rate) or BOTH high and low (double update rate)
+typedef enum { TM_PWM_SINGLE = 1, TM_PWM_DOUBLE = 2 } pwm_update_rate_e;
 
 // IMPORTANT:
 // This enumeration must be kept in sync with the order of sensors in the FPGA!
@@ -92,7 +103,6 @@ bool timing_manager_are_sensors_all_done(void);
 void timing_manager_trigger_on_pwm_both(void);
 void timing_manager_trigger_on_pwm_high(void);
 void timing_manager_trigger_on_pwm_low(void);
-void timing_manager_trigger_on_pwm_clear(void);
 
 // Timing acquisition
 void timing_manager_isr(void *intc_inst_ptr);

@@ -12,8 +12,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// Current PWM event sub-ratio, initially the default value
+// Current PWM event sub-ratio, initially the default values
+// ie, ratio=10 & single update rate (on PWM low)
 static uint32_t now_ratio = TM_DEFAULT_PWM_RATIO;
+static pwm_update_rate_e pwm_update_rate = TM_PWM_SINGLE;
 
 // Instance of the interrupt controller
 static XScuGic intc;
@@ -218,34 +220,28 @@ double timing_manager_get_tick_delta(void)
  */
 double timing_manager_expected_tick_delta(void)
 {
-    double fsw = pwm_get_switching_freq();
+    double pwm_event_freq = pwm_get_switching_freq() * pwm_update_rate;
 
     // The no-sensor-time is the expected time in us between scheduler interrupts
-    // with no sensors enabled. This is just the switching period multiplied by the sub-ratio
-    double no_sensor_time = (now_ratio / fsw) * 1e6;
+    // with no sensors enabled. This is just the PWM event period period multiplied by the sub-ratio
+    double no_sensor_time = (((double) now_ratio) / pwm_event_freq) * 1e6;
 
     // It is possible that the user could ask for a very low sub-ratio, and the sensors with
     // a longer acquistion time may run over the no-sensor-time, which will cause the sensor
     // triggering and ISR call to occur at the first valid multiple of the no-sensor-time instead
-    //
-    // Therefore, we should check all the sensors in order of longest to shortest acquistion to see
-    // if the longest enabled sensor will overrun the time calculated above
-    uint16_t enabled_sensors = Xil_In16(TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET);
-    bool is_amds_enabled = enabled_sensors & 0x3C;
-    bool is_eddy_enabled = enabled_sensors & 0x3C0;
-    bool is_adc_enabled = enabled_sensors & 0x1;
-    bool is_encoder_enabled = enabled_sensors & 0x2;
 
     // Longest sensor acquisition time, also in us
     double longest_sensor_time = 0.0;
 
-    if (is_amds_enabled) {
+    // We should check all the sensors in order of longest to shortest acquistion to see
+    // if the longest enabled sensor will overrun the time calculated above
+    if (IS_ANY_AMDS_ENABLED) {
         longest_sensor_time = TM_AMDS_DEFAULT_TIME;
-    } else if (is_eddy_enabled) {
+    } else if (IS_ANY_EDDY_ENABLED) {
         longest_sensor_time = TM_EDDY_DEFAULT_TIME;
-    } else if (is_adc_enabled) {
+    } else if (IS_ADC_ENABLED) {
         longest_sensor_time = TM_ADC_DEFAULT_TIME;
-    } else if (is_encoder_enabled) {
+    } else if (IS_ENCODER_ENABLED) {
         longest_sensor_time = TM_ENCODER_DEFAULT_TIME;
     } else {
         // No sensors enabled, longest sensor time should remain 0.0
@@ -359,6 +355,10 @@ void timing_manager_trigger_on_pwm_both(void)
     uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set both the carrier high and low trigger bits
     Xil_Out32(pwm_config_reg_addr, 0x0003);
+
+    // Since we are triggering on the PWM carrier peak and valley, we need to remember
+    // that the PWM event rate is doubled
+    pwm_update_rate = TM_PWM_DOUBLE;
 }
 
 /*
@@ -370,6 +370,9 @@ void timing_manager_trigger_on_pwm_high(void)
     uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set only the carrier high bit
     Xil_Out32(pwm_config_reg_addr, 0x0001);
+
+    // Triggering on the PWM carrier peak only, so the PWM event rate is simply the switching freq
+    pwm_update_rate = TM_PWM_SINGLE;
 }
 
 /*
@@ -381,17 +384,9 @@ void timing_manager_trigger_on_pwm_low(void)
     uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
     // Set only the carrier low bit
     Xil_Out32(pwm_config_reg_addr, 0x0002);
-}
 
-/*
- * Clear the PWM event qualifier
- */
-void timing_manager_trigger_on_pwm_clear(void)
-{
-    // Get the current address of the config register
-    uint32_t pwm_config_reg_addr = TM_BASE_ADDR + TM_PWM_CFG_REG_OFFSET;
-    // Clear both the carrier high and low trigger bits
-    Xil_Out32(pwm_config_reg_addr, 0x0000);
+    // Triggering on the PWM carrier valley only, so the PWM event rate is simply the switching freq
+    pwm_update_rate = TM_PWM_SINGLE;
 }
 
 /*
