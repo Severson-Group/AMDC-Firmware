@@ -69,7 +69,7 @@ double scheduler_get_elapsed_usec(void)
 }
 
 void scheduler_tcb_init(
-    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec)
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, double interval_usec)
 {
     tcb->id = next_tcb_id++;
     tcb->name = name;
