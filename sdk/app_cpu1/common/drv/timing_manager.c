@@ -1,5 +1,6 @@
 #include "drv/timing_manager.h"
 #include "drv/clock.h"
+#include "drv/pwm.h"
 #include "sys/scheduler.h"
 #include "usr/user_config.h"
 #include "xil_assert.h"
@@ -10,6 +11,15 @@
 #include "xscugic.h"
 #include <stdint.h>
 #include <stdio.h>
+
+// Current PWM event sub-ratio, initially the default value
+static uint32_t now_ratio = TM_DEFAULT_PWM_RATIO;
+
+// Expected scheduler tick delta between ISR calls
+// If the user recently changed sensors, expected_tick_delta() should run
+// fully to recalculate this value (true initially)
+static double expected_tick_delta = 0.0;
+static bool recalculate_exp_tick_delta = true;
 
 // Instance of the interrupt controller
 static XScuGic intc;
@@ -92,7 +102,7 @@ void timing_manager_init(void)
     // Default event qualifier is PWM carrier low
     timing_manager_trigger_on_pwm_low();
 
-    // Set the user ratio for the trigger
+    // Set the PWM event sub-ratio for the trigger
     timing_manager_set_ratio(TM_DEFAULT_PWM_RATIO);
 
     // Enable selected sensors for timing acquisition
@@ -149,7 +159,7 @@ void timing_manager_send_manual_trigger(void)
  * Specify the interrupt source of the scheduler ISR:
  *
  * Mode 0 uses the timing manager's 'trigger' signal, i.e. the control
- * frequency based on the PWM carrier frequency and the specified user ratio.
+ * frequency based on the PWM carrier frequency and the user-specified PWM sub-ratio.
  *
  * Mode 1 uses the timing manager's 'all_done' signal, calling the scheduler
  * when all the sensors are done with acquisition. When no sensors are enabled,
@@ -195,7 +205,8 @@ void timing_manager_clear_isr(void)
 }
 
 /*
- * Gets the time (in us) between ISR calls
+ * Gets the real measured time (in us) between ISR calls by reading FPGA clock cycles
+ * since last ISR call
  */
 double timing_manager_get_tick_delta(void)
 {
@@ -208,16 +219,82 @@ double timing_manager_get_tick_delta(void)
 }
 
 /*
- * Set the user-defined ratio for the event qualifier
+ * Gets the expected time (in us) between ISR calls based on the user's switching frequency,
+ * PWM event sub-ratio, and enabled sensors
+ */
+double timing_manager_expected_tick_delta(void)
+{
+    if (recalculate_exp_tick_delta) {
+        double fsw = pwm_get_switching_freq();
+
+        // The no-sensor-time is the expected time in us between scheduler interrupts
+        // with no sensors enabled. This is just the switching period multiplied by the sub-ratio
+        double no_sensor_time = (now_ratio / fsw) * 1e6;
+
+        // It is possible that the user could ask for a very low sub-ratio, and the sensors with
+        // a longer acquistion time may run over the no-sensor-time, which will cause the sensor
+        // triggering and ISR call to occur at the first valid multiple of the no-sensor-time instead
+        //
+        // Therefore, we should check all the sensors in order of longest to shortest acquistion to see
+        // if the longest enabled sensor will overrun the time calculated above
+        uint16_t enabled_sensors = Xil_In16(TM_BASE_ADDR + TM_SENSOR_EN_CFG_REG_OFFSET);
+        bool is_amds_enabled = enabled_sensors & 0x3C;
+        bool is_eddy_enabled = enabled_sensors & 0x3C0;
+        bool is_adc_enabled = enabled_sensors & 0x1;
+        bool is_encoder_enabled = enabled_sensors & 0x2;
+
+        // Longest sensor acquisition time, also in us
+        double longest_sensor_time = 0.0;
+
+        if (is_amds_enabled) {
+            longest_sensor_time = TM_AMDS_DEFAULT_TIME;
+        } else if (is_eddy_enabled) {
+            longest_sensor_time = TM_EDDY_DEFAULT_TIME;
+        } else if (is_adc_enabled) {
+            longest_sensor_time = TM_ADC_DEFAULT_TIME;
+        } else if (is_encoder_enabled) {
+            longest_sensor_time = TM_ENCODER_DEFAULT_TIME;
+        } else {
+            // No sensors enabled, longest sensor time should remain 0.0
+        }
+
+        // Return the first multiple of the no-sensor-time which is greater than the longest-sensor-time
+        uint8_t multiple = 1;
+        while (multiple * no_sensor_time < longest_sensor_time) {
+            multiple++;
+        }
+
+        expected_tick_delta = multiple * no_sensor_time;
+
+        // THIS IS COMMENTED OUT SO THAT WE RECALCULATE EVERY TIME
+        // recalculate_exp_tick_delta = false;
+    }
+
+    return expected_tick_delta;
+}
+
+/*
+ * Set the user-defined PWM sub-ratio for the event qualifier
  * This ratio determines the frequency of an interrupt
  * being sent based on the specified event qualifier
  */
-void timing_manager_set_ratio(uint32_t ratio)
+void timing_manager_set_ratio(uint32_t new_ratio)
 {
     // Get the current address for the target config register
     uint32_t config_reg_addr = TM_BASE_ADDR + TM_RATIO_CFG_REG_OFFSET;
     // Assign the ratio to the config register
-    Xil_Out32(config_reg_addr, ratio);
+    Xil_Out32(config_reg_addr, new_ratio);
+
+    // Overwrite the ratio global variable
+    now_ratio = new_ratio;
+}
+
+/*
+ * Get the user-defined PWM sub-ratio for the event qualifier
+ */
+uint32_t timing_manager_get_ratio(void)
+{
+    return now_ratio;
 }
 
 /*
