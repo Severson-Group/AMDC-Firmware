@@ -508,6 +508,7 @@
     end    
 
     // Internal signals
+    reg [27:0] trigger_count;
     wire [31:0] sensor_done_status;
     wire [31:0] sched_tick_time;
     wire [31:0] adc_enc_time_reg;
@@ -524,7 +525,7 @@
     begin
           // Address decoding for reading registers
           case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-            4'h0   : reg_data_out <= slv_reg0; // Trigger configuration register
+            4'h0   : reg_data_out <= {trigger_count, slv_reg0[3:0]}; // Trigger configuration and debug count
             4'h1   : reg_data_out <= slv_reg1; // Sensor Enable Bits
             4'h2   : reg_data_out <= sensor_done_status; // Sensor Done Status
             4'h3   : reg_data_out <= slv_reg3; // User Ratio
@@ -597,6 +598,18 @@
         manual_trigger_ff <= 0;
       else
         manual_trigger_ff <= slv_reg0[1];
+    end
+
+    // Trigger Count
+    //   Count the number of triggers (for use when debugging timing manager)
+    //   28 bits lets us count 2^28, or 268 million triggers
+    //   If we're controlling at 10 kHz, it will take 26,843 seconds, or 7.4 hours
+    //   for this value to roll over
+    always @(posedge S_AXI_ACLK) begin
+        if (!S_AXI_ARESETN)
+            trigger_count <= 28'b0;
+        else if (trigger)
+            trigger_count <= trigger_count + 1;
     end
     
     // Get the user ratio from slave register 2, assigning

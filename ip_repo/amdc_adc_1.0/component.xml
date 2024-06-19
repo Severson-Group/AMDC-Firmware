@@ -914,11 +914,11 @@
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_adc_v1.0</xilinx:displayName>
       <xilinx:vendorDisplayName>UW-Madison</xilinx:vendorDisplayName>
-      <xilinx:coreRevision>11</xilinx:coreRevision>
+      <xilinx:coreRevision>12</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>xilinx.com:user:amdc_adc:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2024-06-17T15:59:38Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2024-06-19T20:24:49Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@59a47444_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_adc_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@73497e56_ARCHIVE_LOCATION">c:/Users/Nathan/Documents/GitHub/AMDC-Firmware/ip_repo/amdc_adc_1.0</xilinx:tag>
@@ -1120,6 +1120,11 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@607bcf20_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_adc_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7cd7d14a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_adc_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@6cb88eaf_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_adc_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4e4a709f_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_adc_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@28cd18b5_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_adc_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@1f6963d4_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_adc_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4fd4b9c6_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_adc_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6052900b_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-e/ip_repo/amdc_adc_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>

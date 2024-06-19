@@ -213,7 +213,6 @@ module timing_manager(
     end
 
     // Get the elapsed time between each scheduler ISR call
-    reg [31:0] count_tick_time;
     reg sched_isr_ff;
     wire sched_isr_pe;
     always @(posedge clk) begin
@@ -222,6 +221,7 @@ module timing_manager(
     assign sched_isr_pe = sched_isr & ~sched_isr_ff;
 
     // Counts the number of clock cycles between interrupts
+    reg [31:0] count_tick_time;
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             count_tick_time <= 32'h1;
@@ -275,9 +275,8 @@ module timing_manager(
     assign eddy_2_pe = eddy_2_done & ~eddy_2_ff;
     assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
     
-    // Counts FPGA clock cycles for each sensor
-    reg [31:0] count_time;
     // Count the time when trigger is asserted
+    reg [31:0] count_time;
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             count_time <= 32'h0;
@@ -287,6 +286,7 @@ module timing_manager(
             count_time <= count_time + 1;
     end
 
+    // Counts FPGA clock cycles for each sensor
     // Get ADC time
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n) adc_time <= 0;
