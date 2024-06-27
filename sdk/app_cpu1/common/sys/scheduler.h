@@ -13,6 +13,15 @@
 #define SEC_TO_USEC(sec)  (sec * USEC_IN_SEC)
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
+// Timing Threshold - 60ns
+//   Typically, the variance of the measured interval from the expected interval is
+//   no more than 20ns, but we'll use a tolerance of three times this for safety :)
+//   The tolerance value is negative, as the target interval is subtracted from
+//   the measured interval. If the former is larger than the latter, the subtraction
+//   result will be a negative value. The check to run the task then confirms
+//   that the difference is *less-negative* than this tolerance
+#define SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.06)
+
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
 
@@ -23,8 +32,8 @@ typedef struct task_control_block_t {
     bool is_registered;
     task_callback_t callback;
     void *callback_arg;
-    uint32_t interval_usec;
-    uint32_t last_run_usec;
+    double interval_usec;
+    double last_run_usec;
 
     task_stats_t stats;
 
@@ -35,12 +44,12 @@ void scheduler_tick(void);
 void scheduler_run(void);
 
 void scheduler_tcb_init(
-    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec);
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, double interval_usec);
 int scheduler_tcb_register(task_control_block_t *tcb);
 int scheduler_tcb_register_high_priority(task_control_block_t *tcb);
 int scheduler_tcb_unregister(task_control_block_t *tcb);
 bool scheduler_tcb_is_registered(task_control_block_t *tcb);
 
-uint32_t scheduler_get_elapsed_usec(void);
+double scheduler_get_elapsed_usec(void);
 
 #endif // SCHEDULER_H

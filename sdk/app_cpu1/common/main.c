@@ -72,6 +72,10 @@ int main()
     serial_init();
     commands_init();
     icc_tx_init();
+
+    // Initialize timing manager
+    timing_manager_init();
+
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif
@@ -93,9 +97,6 @@ int main()
 
     // Show start message to user, asking for cmds
     commands_start_msg();
-
-    // Initialize timing manager
-    timing_manager_init();
 
     // Run scheduler => this takes over the system and never returns!
     scheduler_run();

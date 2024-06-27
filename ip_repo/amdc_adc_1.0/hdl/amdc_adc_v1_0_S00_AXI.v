@@ -22,8 +22,6 @@
         output wire adc_cnv,
         output wire adc_done,
         input  wire adc_clkout,
-        input  wire pwm_carrier_high,
-        input  wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 

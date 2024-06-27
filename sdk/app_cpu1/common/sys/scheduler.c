@@ -17,8 +17,8 @@ static task_control_block_t *tasks = NULL;
 // at the currently running task
 static task_control_block_t *running_task = NULL;
 
-// Incremented every SysTick interrupt to track time
-static volatile uint32_t elapsed_usec = 0;
+// Incremented every timing manager interrupt to track time
+static volatile double elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
@@ -63,13 +63,13 @@ void scheduler_tick(void)
     scheduler_idle = false; // run task
 }
 
-uint32_t scheduler_get_elapsed_usec(void)
+double scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
 }
 
 void scheduler_tcb_init(
-    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec)
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, double interval_usec)
 {
     tcb->id = next_tcb_id++;
     tcb->name = name;
@@ -187,14 +187,19 @@ void scheduler_run(void)
 
     // This is the main event loop that runs the device
     while (1) {
-        uint32_t my_elapsed_usec = elapsed_usec;
+        double my_elapsed_usec = elapsed_usec;
         tasks_running = true;
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
+            double usec_since_last_run = my_elapsed_usec - t->last_run_usec;
 
-            if (usec_since_last_run >= t->interval_usec) {
+            // The task's usec_since_last_run may not be EXACTLY equal to the target interval
+            // due to the imprecision of converting FPGA time to double values in the C code.
+            // Therefore, we will schedule the task if the difference between the
+            // usec_since_last_run and the target interval is within the defined tolerance.
+            if ((usec_since_last_run - t->interval_usec) >= SCHEDULER_INTERVAL_TOLERANCE_USEC) {
+
                 // Time to run this task!
                 task_stats_pre_task(&t->stats);
                 running_task = t;
