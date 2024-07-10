@@ -68,7 +68,7 @@ int task_game_init(void)
 	xTaskCreate(task_game, (const char *) "game", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
 
-    return 0;
+    return SUCCESS;
 }
 
 int task_game_deinit(void)
@@ -82,7 +82,7 @@ int task_game_deinit(void)
     led_pos = 0;
     led_color_idx = 0;
 
-    return 0;
+    return SUCCESS;
 }
 
 int callbackIter = -2;
@@ -114,12 +114,9 @@ int game_started() {
 
 void task_game(void *arg)
 {
-	const TickType_t delayTicks = pdMS_TO_TICKS(1000.0 / TASK_GAME_UPDATES_PER_SEC);
 	for (;;) {
-		vTaskDelay(delayTicks);
-//		xil_printf("hello\n");
+		vTaskDelay(TASK_GAME_INTERVAL_TICKS);
 		if (callbackIter >= 0) {
-			// printf("Callback called %d\n", callbackIter);
 			callbackIter++;
 			if (callbackIter % 5 == 0) {
 				xil_printf("%d seconds left\n", secondsLeft);

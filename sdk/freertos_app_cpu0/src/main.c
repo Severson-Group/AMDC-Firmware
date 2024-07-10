@@ -45,6 +45,7 @@
 
 /* Begin User Includes */
 #include "drv/led.h"
+#include "drv/pwm.h"
 #include "drv/uart.h"
 #include "sys/serial.h"
 #include "sys/commands.h"
@@ -102,7 +103,6 @@ int main(void)
     ///////////////////////////
     // BEGIN USER CODE HERE //
     /////////////////////////
-
     /* initialise hardware */
 
     led_init();
@@ -118,7 +118,7 @@ int main(void)
     /* user apps */
     user_apps_init();
 
-    xil_printf("CPU0 - freertos game!\r\n");
+    xil_printf("CPU0 - Hello, World!!!\r\n");
 //    xil_printf("1 millisecond is %d ticks\n", pdMS_TO_TICKS(1));
 //    xil_printf("0.1 milliseconds is %d ticks\n", pdMS_TO_TICKS(0.1));
 //
