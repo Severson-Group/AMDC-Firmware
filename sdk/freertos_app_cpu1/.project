@@ -3,7 +3,7 @@
 	<name>freertos_app_cpu1</name>
 	<comment>Created by SDK v2019.1. amdc_freertos_bsp_cpu1 - ps7_cortexa9_1</comment>
 	<projects>
-		<project>amdc_freertos_bsp_cpu1</project>
+		<project>amdc_bsp_cpu1</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -27,12 +27,17 @@
 		<link>
 			<name>FreeRTOS-Kernel</name>
 			<type>2</type>
-			<location>S:/School/WEMPEC/firmware-rtos-e/sdk/FreeRTOS-Kernel</location>
+			<location>C:/Users/srich008/Information/v2-staging/sdk/FreeRTOS-Kernel</location>
+		</link>
+		<link>
+			<name>MemMang</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/v2-staging/sdk/FreeRTOS-Kernel/portable/MemMang</location>
 		</link>
 		<link>
 			<name>shared</name>
 			<type>2</type>
-			<location>S:/School/WEMPEC/firmware-rtos-e/sdk/shared</location>
+			<location>C:/Users/srich008/Information/v2-staging/sdk/shared</location>
 		</link>
 	</linkedResources>
 </projectDescription>
