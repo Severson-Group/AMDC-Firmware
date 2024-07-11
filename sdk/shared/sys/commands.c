@@ -9,7 +9,7 @@
 #include "sys/debug.h"
 #include "sys/defines.h"
 #include "sys/icc.h"
-// #include "sys/icc_tx.h"
+ #include "sys/icc_tx.h"
 // #include "sys/log.h"
 #include "sys/serial.h"
 #include "sys/util.h"
@@ -70,17 +70,15 @@ static sm_parse_ascii_cmd_ctx_t ctx_eth;
 
 static int _command_handler(int argc, char **argv);
 
-static void commands_main_uart(void *arg);
-//static void commands_callback_parse_eth(void *arg);
-//static void commands_callback_exec(void *arg);
+static void commands_uart(void *arg);
+static void commands_eth(void *arg);
+static void parse_commands(void *arg);
 
 // Head of linked list of commands
 static command_entry_t *cmds = NULL;
 
-static TaskHandle_t tcb_parse_uart;
-//static TaskHandle_t tcb_parse_eth;
-//static TaskHandle_t tcb_exec_uart;
-//static TaskHandle_t tcb_exec_eth;
+static TaskHandle_t tcb_uart;
+static TaskHandle_t tcb_eth;
 
 // The command response data should either go out UART or ETH,
 // depending on the command source. Therefore, we'll define
@@ -95,23 +93,23 @@ typedef enum cmd_src_e {
 
 static cmd_src_e current_cmd_source = CMD_SRC_UART;
 
-//void cmd_resp_write(char *msg, int len)
-//{
-//    if (current_cmd_source == CMD_SRC_UART) {
-//        serial_write(msg, len);
-//    } else {
-//        for (int i = 0; i < len; i++) {
+void cmd_resp_write(char *msg, int len)
+{
+    if (current_cmd_source == CMD_SRC_UART) {
+        serial_write(msg, len);
+    } else {
+        for (int i = 0; i < len; i++) {
 //            icc_tx_append_char_to_fifo(msg[i]);
-//        }
-//    }
-//}
+        }
+    }
+}
 
 void cmd_resp_print(char *msg)
 {
     if (current_cmd_source == CMD_SRC_UART) {
         debug_print(msg);
     } else {
-//        cmd_resp_write(msg, strlen(msg));
+        cmd_resp_write(msg, strlen(msg));
     }
 }
 
@@ -131,21 +129,12 @@ void commands_init(void)
     printf("CMD:\tInitializing command tasks...\n");
 
     // Command parse & exec task (UART)
-	xTaskCreate(commands_main_uart, (const char *) "command_parse_uart", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb_parse_uart);
+	xTaskCreate(commands_uart, (const char *) "command_uart", configMINIMAL_STACK_SIZE,
+				NULL, tskIDLE_PRIORITY, &tcb_uart);
 
 //    // Command parse task (ETH)
-//    scheduler_tcb_init(
-//        &tcb_parse_eth, commands_callback_parse_eth, &ctx_eth, "command_parse_eth", COMMANDS_INTERVAL_USEC);
-//    scheduler_tcb_register(&tcb_parse_eth);
-//
-//    // Command exec task (UART)
-//    scheduler_tcb_init(&tcb_exec_uart, commands_callback_exec, &ctx_uart, "command_exec_uart", COMMANDS_INTERVAL_USEC);
-//    scheduler_tcb_register(&tcb_exec_uart);
-//
-//    // Command exec task (ETH)
-//    scheduler_tcb_init(&tcb_exec_eth, commands_callback_exec, &ctx_eth, "command_exec_eth", COMMANDS_INTERVAL_USEC);
-//    scheduler_tcb_register(&tcb_exec_eth);
+    xTaskCreate(commands_eth, (const char *) "command_eth", configMINIMAL_STACK_SIZE,
+				NULL, tskIDLE_PRIORITY, &tcb_eth);
 
     cmd_help_register();
 }
@@ -288,7 +277,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
     }
 }
 
-static void commands_main_uart(void *arg)
+static void commands_uart(void *arg)
 {
 	sm_parse_ascii_cmd_ctx_t *ctx = &ctx_uart;
 	for (;;) {
@@ -310,204 +299,133 @@ static void commands_main_uart(void *arg)
 		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
 			ctx->recv_buffer_idx = 0;
 		}
-
-
-
-
-		// Get current pending cmd slot
-		pending_cmd_t *p = &ctx->pending_cmds[ctx->pending_cmd_read_idx];
-
-		if (p->ready) {
-			// Run me!
-
-			// Change current cmd source
-			if (ctx == &ctx_uart) {
-				current_cmd_source = CMD_SRC_UART;
-			} else if (ctx == &ctx_eth) {
-				current_cmd_source = CMD_SRC_ETH;
-			} else {
-				// unreachable
-			}
-
-	#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 0
-			// Echo back command to sender
-			for (int i = 0; i < p->argc; i++) {
-				cmd_resp_printf("%s", p->argv[i]);
-
-				if (i + 1 < p->argc) {
-					cmd_resp_print(" ");
-				}
-			}
-			cmd_resp_print("\r\n");
-	#endif
-
-			// Don't run a cmd that has errors
-			int err = p->err;
-			if (err == CMD_SUCCESS) {
-				err = _command_handler(p->argc, p->argv);
-			}
-
-			// Display command status to user
-			switch (err) {
-			case CMD_SUCCESS_QUIET:
-				// Don't print anything
-				break;
-
-			case CMD_SUCCESS:
-				cmd_resp_printf("SUCCESS\r\n\n");
-				break;
-
-			case CMD_FAILURE:
-				cmd_resp_printf("FAILURE\r\n\n");
-				break;
-
-			case CMD_INVALID_ARGUMENTS:
-				cmd_resp_printf("INVALID ARGUMENTS\r\n\n");
-				break;
-
-			case CMD_INPUT_TOO_LONG:
-				cmd_resp_printf("INPUT TOO LONG\r\n\n");
-				break;
-
-			case CMD_UNKNOWN_CMD:
-				cmd_resp_printf("UNKNOWN CMD\r\n\n");
-				break;
-
-			default:
-				cmd_resp_printf("UNKNOWN ERROR\r\n\n");
-				break;
-			}
-
-			p->ready = 0;
-
-			// Update READ index
-			if (++ctx->pending_cmd_read_idx >= MAX_PENDING_CMDS) {
-				ctx->pending_cmd_read_idx = 0;
-			}
-		}
+		parse_commands(ctx);
 	}
 }
 
-//static void commands_callback_parse_eth(void *arg)
-//{
-//    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
-//
-//    static const int MAX_NUM_BYTES_TO_TRY = 128;
-//
-//    // Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
-//    //
-//    // If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
-//    // pull out everything and return.
-//    for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
-//        // Check if there are any bytes in the FIFO
-//        if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
-//            // Shared buffer is empty
-//            return;
-//        }
-//
-//        // Read the oldest byte available
-//        uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
-//        uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
-//
-//        // Increment the consume count
-//        ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
-//
-//        // =====================
-//        // Process incoming char
-//        // =====================
-//
-//        char c_char = (char) c;
-//
-//        // Push the new byte into the rx buffer
-//        ctx->recv_buffer[ctx->recv_buffer_idx] = c_char;
-//
-//        // Run state machine to create pending cmds to execute
-//        _create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], 1);
-//
-//        // Move along in recv buffer
-//        ctx->recv_buffer_idx += 1;
-//        if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-//            ctx->recv_buffer_idx = 0;
-//        }
-//    }
-//}
+static void commands_eth(void *arg)
+{
+	sm_parse_ascii_cmd_ctx_t *ctx = &ctx_eth;
 
-//static void commands_callback_exec(void *arg)
-//{
-//    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
-//
-//    // Get current pending cmd slot
-//    pending_cmd_t *p = &ctx->pending_cmds[ctx->pending_cmd_read_idx];
-//
-//    if (p->ready) {
-//        // Run me!
-//
-//        // Change current cmd source
-//        if (ctx == &ctx_uart) {
-//            current_cmd_source = CMD_SRC_UART;
-//        } else if (ctx == &ctx_eth) {
-//            current_cmd_source = CMD_SRC_ETH;
-//        } else {
-//            // unreachable
-//        }
-//
-//#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 0
-//        // Echo back command to sender
-//        for (int i = 0; i < p->argc; i++) {
-//            cmd_resp_printf("%s", p->argv[i]);
-//
-//            if (i + 1 < p->argc) {
-//                cmd_resp_print(" ");
-//            }
-//        }
-//        cmd_resp_print("\r\n");
-//#endif
-//
-//        // Don't run a cmd that has errors
-//        int err = p->err;
-//        if (err == CMD_SUCCESS) {
-//            err = _command_handler(p->argc, p->argv);
-//        }
-//
-//        // Display command status to user
-//        switch (err) {
-//        case CMD_SUCCESS_QUIET:
-//            // Don't print anything
-//            break;
-//
-//        case CMD_SUCCESS:
-//            cmd_resp_printf("SUCCESS\r\n\n");
-//            break;
-//
-//        case CMD_FAILURE:
-//            cmd_resp_printf("FAILURE\r\n\n");
-//            break;
-//
-//        case CMD_INVALID_ARGUMENTS:
-//            cmd_resp_printf("INVALID ARGUMENTS\r\n\n");
-//            break;
-//
-//        case CMD_INPUT_TOO_LONG:
-//            cmd_resp_printf("INPUT TOO LONG\r\n\n");
-//            break;
-//
-//        case CMD_UNKNOWN_CMD:
-//            cmd_resp_printf("UNKNOWN CMD\r\n\n");
-//            break;
-//
-//        default:
-//            cmd_resp_printf("UNKNOWN ERROR\r\n\n");
-//            break;
-//        }
-//
-//        p->ready = 0;
-//
-//        // Update READ index
-//        if (++ctx->pending_cmd_read_idx >= MAX_PENDING_CMDS) {
-//            ctx->pending_cmd_read_idx = 0;
-//        }
-//    }
-//}
+    static const int MAX_NUM_BYTES_TO_TRY = 128;
+    for (;;) {
+    	vTaskDelay(COMMANDS_INTERVAL_TICKS);
+		// Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
+		//
+		// If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
+		// pull out everything and return.
+		for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
+			// Check if there are any bytes in the FIFO
+			if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
+				// Shared buffer is empty
+				break;
+			}
+
+			// Read the oldest byte available
+			uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
+			uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
+
+			// Increment the consume count
+			ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
+
+			// =====================
+			// Process incoming char
+			// =====================
+
+			char c_char = (char) c;
+
+			// Push the new byte into the rx buffer
+			ctx->recv_buffer[ctx->recv_buffer_idx] = c_char;
+
+			// Run state machine to create pending cmds to execute
+			_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], 1);
+
+			// Move along in recv buffer
+			ctx->recv_buffer_idx += 1;
+			if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
+				ctx->recv_buffer_idx = 0;
+			}
+		}
+		parse_commands(ctx);
+    }
+}
+
+static void parse_commands(void *arg)
+{
+    sm_parse_ascii_cmd_ctx_t *ctx = (sm_parse_ascii_cmd_ctx_t *) arg;
+
+    // Get current pending cmd slot
+    pending_cmd_t *p = &ctx->pending_cmds[ctx->pending_cmd_read_idx];
+
+    if (p->ready) {
+        // Run me!
+
+        // Change current cmd source
+        if (ctx == &ctx_uart) {
+            current_cmd_source = CMD_SRC_UART;
+        } else if (ctx == &ctx_eth) {
+            current_cmd_source = CMD_SRC_ETH;
+        } else {
+            // unreachable
+        }
+
+#if ECHO_BACK_WHEN_PROCESSING_INCOMING_CHARS == 0
+        // Echo back command to sender
+        for (int i = 0; i < p->argc; i++) {
+            cmd_resp_printf("%s", p->argv[i]);
+
+            if (i + 1 < p->argc) {
+                cmd_resp_print(" ");
+            }
+        }
+        cmd_resp_print("\r\n");
+#endif
+
+        // Don't run a cmd that has errors
+        int err = p->err;
+        if (err == CMD_SUCCESS) {
+            err = _command_handler(p->argc, p->argv);
+        }
+
+        // Display command status to user
+        switch (err) {
+        case CMD_SUCCESS_QUIET:
+            // Don't print anything
+            break;
+
+        case CMD_SUCCESS:
+            cmd_resp_printf("SUCCESS\r\n\n");
+            break;
+
+        case CMD_FAILURE:
+            cmd_resp_printf("FAILURE\r\n\n");
+            break;
+
+        case CMD_INVALID_ARGUMENTS:
+            cmd_resp_printf("INVALID ARGUMENTS\r\n\n");
+            break;
+
+        case CMD_INPUT_TOO_LONG:
+            cmd_resp_printf("INPUT TOO LONG\r\n\n");
+            break;
+
+        case CMD_UNKNOWN_CMD:
+            cmd_resp_printf("UNKNOWN CMD\r\n\n");
+            break;
+
+        default:
+            cmd_resp_printf("UNKNOWN ERROR\r\n\n");
+            break;
+        }
+
+        p->ready = 0;
+
+        // Update READ index
+        if (++ctx->pending_cmd_read_idx >= MAX_PENDING_CMDS) {
+            ctx->pending_cmd_read_idx = 0;
+        }
+    }
+}
 
 void commands_cmd_init(command_entry_t *cmd_entry,
                        const char *cmd,

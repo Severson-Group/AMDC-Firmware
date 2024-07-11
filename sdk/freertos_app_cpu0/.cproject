@@ -32,20 +32,24 @@
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2-staging/sdk/freertos_app_cpu0/freertos_app_cpu0/freertos_app_cpu0/src"/>
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2-staging/sdk/freertos_app_cpu0/freertos_app_cpu0/amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2Staging/AMDC-Firmware/sdk/shared"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/src}&quot;"/>
+									<listOptionValue builtIn="false" value="../freertos_app_cpu0/freertos_app_cpu0/src"/>
 									<listOptionValue builtIn="false" value="/freertos_app_cpu0/FreeRTOS-Kernel/portable/GCC/ARM_CA9"/>
 									<listOptionValue builtIn="false" value="/freertos_app_cpu0/FreeRTOS-Kernel/include"/>
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2Staging/AMDC-Firmware/sdk/amdc_bsp_cpu1/ps7_cortexa9_1/include"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/portable/GCC/ARM_CA9}&quot;"/>
+									<listOptionValue builtIn="false" value="../freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/include"/>
+									<listOptionValue builtIn="false" value="../freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/portable/GCC/ARM_CA9"/>
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2-staging/sdk/shared"/>
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2-staging/sdk/amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu1/src}&quot;"/>
+									<listOptionValue builtIn="false" value="../freertos_app_cpu1/src"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/portable/GCC/ARM_CA9}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu0/freertos_app_cpu0/FreeRTOS-Kernel/include}&quot;"/>
+									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/v2-staging/sdk/amdc_bsp_cpu1/ps7_cortexa9_1/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/portable/GCC/ARM_CA9}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\shared&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
+									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.1065277689" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -59,8 +63,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/portable/GCC/ARM_CA9}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\shared&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
+									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.1025800542" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
@@ -148,6 +152,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\shared&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
+									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.511174097" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -167,6 +173,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/freertos_app_cpu1/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Users\srich008\Information\v2-staging\sdk\shared&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
+									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.906961689" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_GAME"/>

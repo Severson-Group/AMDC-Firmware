@@ -32,7 +32,7 @@
 		<link>
 			<name>shared</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/v2-staging/sdk/shared</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-singlecore/sdk/shared</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -46,6 +46,7 @@ int task_blink_deinit(void)
     led_color_idx = 0;
 
     // Unregister task with scheduler
+    vTaskDelete(tcb);
     return SUCCESS;
 }
 
@@ -69,12 +70,15 @@ void task_blink(void *arg)
 
 void task_blink_stats_print(void)
 {
-//    task_stats_print(&tcb.stats); // no work in freertos
+	char statsBuffer[configSTATS_BUFFER_MAX_LENGTH];
+	vTaskGetRunTimeStats(statsBuffer);
+	xil_printf("%s\n", statsBuffer);
+//    task_stats_print(&tcb); // no work in freertos
 }
 
 void task_blink_stats_reset(void)
 {
-//    task_stats_reset(&tcb.stats);
+//    task_stats_reset(&tcb);
 }
 
 #endif // APP_BLINK

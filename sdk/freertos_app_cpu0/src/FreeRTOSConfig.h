@@ -149,18 +149,16 @@ to exclude the API function. */
 format the raw data provided by the uxTaskGetSystemState() function in to human
 readable ASCII form.  See the notes in the implementation of vTaskList() within
 FreeRTOS/Source/tasks.c for limitations. */
-#define configUSE_STATS_FORMATTING_FUNCTIONS 0
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
 
-/* The private watchdog is used to generate run time stats. */
-/*
+/* A separate timer is used to generate run time stats. */
 #include "xscuwdt.h"
-extern XScuWdt xWatchDogInstance;
-extern void vInitialiseTimerForRunTimeStats( void );
+extern XScuWdt xTimerStats;
+extern void vInitialiseTimerForRunTimeStats(void);
 #define configGENERATE_RUN_TIME_STATS 1
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vInitialiseTimerForRunTimeStats()
-#define portGET_RUN_TIME_COUNTER_VALUE() ( ( 0xffffffffUL - XScuWdt_ReadReg( xWatchDogInstance.Config.BaseAddr,
-XSCUWDT_COUNTER_OFFSET ) ) >> 1 )
-*/
+#define portGET_RUN_TIME_COUNTER_VALUE() ((0xffffffffUL - XScuWdt_ReadReg(xTimerStats.Config.BaseAddr, XSCUWDT_COUNTER_OFFSET)) >> 1)
+
 
 /* The size of the global output buffer that is available for use when there
 are multiple command interpreters running at once (for example, one on a UART
