@@ -12,6 +12,7 @@
 
 // Scheduler TCB which holds task "context"
 static TaskHandle_t tcb;
+static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 #define BUFFER_LENGTH (10 * 1024)
 static uint8_t send_buffer[BUFFER_LENGTH] = { 0 };
@@ -94,13 +95,13 @@ static void task_icc_tx(void *arg)
 
 void icc_tx_init(void)
 {
-//    if (scheduler_tcb_is_registered(&tcb)) {
-//        return;
-//    }
-
+   if (taskExists) {
+       return;
+   }
     // Fill TCB with parameters
     xTaskCreate(task_icc_tx, (const char *) "icc_tx", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
+    taskExists = 1;
 }
 
 void icc_tx_append_char_to_fifo(char c)

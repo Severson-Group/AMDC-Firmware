@@ -6,6 +6,7 @@
 /* Xilinx includes. */
 #include "xil_printf.h"
 /* other includes */
+#include "sys/defines.h"
 #include "usr/game/task_game.h"
 #include "drv/led.h"
 #include <stdint.h>
@@ -54,9 +55,13 @@ static uint8_t led_pos = 0;
 static uint8_t led_color_idx = 0;
 // Scheduler TCB which holds task "context"
 static TaskHandle_t tcb;
+static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 int task_game_init(void)
 {
+	if (taskExists) {
+		return FAILURE;
+	}
     // Turn off all LEDs
     for (uint8_t i = 1; i < NUM_LEDS; i++) {
         led_set_color(i, LED_COLOR_BLACK);
@@ -67,12 +72,15 @@ int task_game_init(void)
     // Command parse task (UART)
 	xTaskCreate(task_game, (const char *) "game", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
-
+	taskExists = 1;
     return SUCCESS;
 }
 
 int task_game_deinit(void)
 {
+	if (taskExists == 0) {
+		return FAILURE;
+	}
     // Turn off all LEDs
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, LED_COLOR_BLACK);
@@ -81,7 +89,8 @@ int task_game_deinit(void)
     // Reset state
     led_pos = 0;
     led_color_idx = 0;
-
+    vTaskDelete(tcb);
+    taskExists = 0;
     return SUCCESS;
 }
 

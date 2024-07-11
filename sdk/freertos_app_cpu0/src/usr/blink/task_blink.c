@@ -25,17 +25,25 @@ static led_color_t led_colors[NUM_LED_COLORS] = {
 
 // Scheduler TCB which holds task "context"
 static TaskHandle_t tcb;
+static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 int task_blink_init(void)
 {
+	if (taskExists) {
+		return FAILURE;
+	}
     // Fill TCB with parameters
 	xTaskCreate(task_blink, (const char *) "blink", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
+	taskExists = 1;
     return SUCCESS;
 }
 
 int task_blink_deinit(void)
 {
+	if (taskExists == 0) {
+		return FAILURE;
+	}
     // Turn off all LEDs
     for (uint8_t i = 0; i < NUM_LEDS; i++) {
         led_set_color(i, LED_COLOR_BLACK);
@@ -47,6 +55,7 @@ int task_blink_deinit(void)
 
     // Unregister task with scheduler
     vTaskDelete(tcb);
+    taskExists = 0;
     return SUCCESS;
 }
 

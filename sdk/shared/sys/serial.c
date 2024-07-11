@@ -24,11 +24,17 @@ static int print_amount = 0;
 
 /* task handle */
 static TaskHandle_t xSerialTaskHandle;
+static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
+
 void serial_init(void)
 {
+	if (taskExists) {
+		return;
+   	}
 	// Create serial task
 	xTaskCreate(serial_main, (const char *) "uartSerial", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &xSerialTaskHandle);
+	taskExists = 1;
 }
 
 void serial_main(void *arg)

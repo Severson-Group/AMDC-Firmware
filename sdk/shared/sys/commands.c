@@ -78,7 +78,9 @@ static void parse_commands(void *arg);
 static command_entry_t *cmds = NULL;
 
 static TaskHandle_t tcb_uart;
+static uint8_t uartTaskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 static TaskHandle_t tcb_eth;
+static uint8_t ethTaskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 // The command response data should either go out UART or ETH,
 // depending on the command source. Therefore, we'll define
@@ -127,14 +129,19 @@ void cmd_resp_printf(const char *format, ...)
 void commands_init(void)
 {
     printf("CMD:\tInitializing command tasks...\n");
-
     // Command parse & exec task (UART)
-	xTaskCreate(commands_uart, (const char *) "command_uart", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb_uart);
+    if (uartTaskExists == 0) {
+        xTaskCreate(commands_uart, (const char *) "command_uart", configMINIMAL_STACK_SIZE,
+				    NULL, tskIDLE_PRIORITY, &tcb_uart);
+        uartTaskExists = 1;
+	}
 
-//    // Command parse task (ETH)
-    xTaskCreate(commands_eth, (const char *) "command_eth", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb_eth);
+    // Command parse task (ETH)
+    if (ethTaskExists == 0) {
+        xTaskCreate(commands_eth, (const char *) "command_eth", configMINIMAL_STACK_SIZE,
+                    NULL, tskIDLE_PRIORITY, &tcb_eth);
+        ethTaskExists = 1;
+    }
 
     cmd_help_register();
 }

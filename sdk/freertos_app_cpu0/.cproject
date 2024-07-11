@@ -177,7 +177,6 @@
 									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.906961689" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="APP_GAME"/>
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.266773224" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
