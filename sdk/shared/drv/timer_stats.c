@@ -3,7 +3,7 @@
 #include "xscugic.h"
 #include "xscutimer.h"
 
-/* uses TIMER_1_DEVICE_ID, because the timer.h uses TIMER_0_DEVICE_ID */
+/* timer.h also uses TIMER_0_DEVICE_ID, meaning that it probably can't coexist with this timer. This should be changed (or they should be merged) */
 #define TIMER_DEVICE_ID XPAR_XSCUTIMER_0_DEVICE_ID
 #define TIMER_LOAD_VALUE(period_usec) ((period_usec * 333.333) - 1)
 
@@ -38,13 +38,6 @@ void vInitialiseTimerForRunTimeStats() {
 		fatalError("Error 2");
 		return;
 	}
-
-	// Connect the device to interrupt subsystem so that interrupts can occur
-//	Status = SetupIntrSystem(timer_isr, &IntcInstance, &xTimerStats, TIMER_IRPT_INTR);
-//	if (Status != XST_SUCCESS) {
-//		fatalError("Error 3");
-//		return;
-//	}
 
 	// Enable Auto reload mode
 	XScuTimer_EnableAutoReload(&xTimerStats);
