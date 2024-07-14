@@ -101,7 +101,7 @@ void cmd_resp_write(char *msg, int len)
         serial_write(msg, len);
     } else {
         for (int i = 0; i < len; i++) {
-//            icc_tx_append_char_to_fifo(msg[i]);
+            icc_tx_append_char_to_fifo(msg[i]);
         }
     }
 }
@@ -192,8 +192,8 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
             if (ctx == &ctx_uart) {
                 debug_print("\r\n");
             } else {
-//                icc_tx_append_char_to_fifo('\r');
-//                icc_tx_append_char_to_fifo('\n');
+                icc_tx_append_char_to_fifo('\r');
+                icc_tx_append_char_to_fifo('\n');
             }
 #endif
 
@@ -217,7 +217,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
         if (ctx == &ctx_uart) {
             serial_write(&c, 1);
         } else {
-//            icc_tx_append_char_to_fifo(c);
+            icc_tx_append_char_to_fifo(c);
         }
 #endif
 

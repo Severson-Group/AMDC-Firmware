@@ -82,12 +82,11 @@ void task_blink_stats_print(void)
 	char statsBuffer[configSTATS_BUFFER_MAX_LENGTH];
 	vTaskGetRunTimeStats(statsBuffer);
 	xil_printf("%s\n", statsBuffer);
-//    task_stats_print(&tcb); // no work in freertos
 }
 
 void task_blink_stats_reset(void)
 {
-//    task_stats_reset(&tcb);
+	/* currently does nothing */
 }
 
 #endif // APP_BLINK
