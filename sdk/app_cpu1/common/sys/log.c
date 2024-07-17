@@ -233,7 +233,7 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
     // log_interval_usec = (1,000,000 / 3,000) = 333.333 which becomes 333 usec
     //
     // Because this integer truncation happens the same way here as it does in
-    // log_var_register(), we do not expect any samples to get missed when logging
+    // log_callback(), we do not expect any samples to get missed when logging
     // even when running at not-nice frequencies.
     vars[idx].log_interval_usec = USEC_IN_SEC / samples_per_sec;
     vars[idx].last_logged_usec = 0;
@@ -508,7 +508,7 @@ void state_machine_dump_binary_callback(void *arg)
         // WARNING: A control frequency that results in a non-integer time interval period (example: 22 kHz / 45.45 us)
         //          will have that interval truncated (example, to 45 us) here. The host PC will have an incorrect time
         //          vector for any logged data in this case!!
-        //          See https://docs.amdc.dev/getting-started/user-guide/logging/index.html
+        //          See https://docs.amdc.dev/getting-started/user-guide/logging/
         uint32_t interval_usec = (uint32_t) v->log_interval_usec;
 
         // Write to output data stream (UART)
