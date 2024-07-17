@@ -34,7 +34,7 @@
 
 // Interrupt Controller Instance
 //   Defined here to be accessable in sys/icc.c
-static XScuGic InterruptController;
+XScuGic InterruptController;
 
 int intr_init();
 
