@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "app_blink.h": "c",
+        "cmd_game.h": "c",
+        "task_game.h": "c",
+        "scheduler.h": "c",
+        "debug.h": "c",
+        "stdint.h": "c",
+        "cstdlib": "c",
+        "led.h": "c",
+        "time.h": "c",
+        "stdlib.h": "c",
+        "limits": "c"
+    }
+}
