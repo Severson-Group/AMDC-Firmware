@@ -39,7 +39,7 @@
 #include "xil_mmu.h"
 #include "xil_printf.h"
 #include "xparameters.h"
-/* Firmware includes */
+/* Firmware includes. */
 #include "sys/icc.h"
 #include "sys/intr.h"
 
