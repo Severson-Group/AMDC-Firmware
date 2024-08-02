@@ -1,6 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include "projdefs.h"
+
 #define COMMANDS_UPDATES_PER_SEC (10000)
 #define COMMANDS_INTERVAL_TICKS  (pdMS_TO_TICKS(1000.0 / COMMANDS_UPDATES_PER_SEC))
 
