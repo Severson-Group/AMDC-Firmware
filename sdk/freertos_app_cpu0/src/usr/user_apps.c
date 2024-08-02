@@ -16,14 +16,6 @@
 #include "usr/blink/app_blink.h"
 #endif
 
-#ifdef APP_GAME
-#include "usr/game/app_game.h"
-#endif
-
-#ifdef APP_MATH
-#include "usr/math/app_math.h"
-#endif
-
 #ifdef APP_BETA_LABS
 #include "usr/beta_labs/app_beta_labs.h"
 #endif
@@ -44,14 +36,6 @@ void user_apps_init(void)
 
 #ifdef APP_BLINK
     app_blink_init();
-#endif
-
-#ifdef APP_GAME
-    app_game_init();
-#endif
-
-#ifdef APP_MATH
-    app_math_init();
 #endif
 
 #ifdef APP_BETA_LABS
