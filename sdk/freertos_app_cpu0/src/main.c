@@ -52,6 +52,18 @@
 #include "usr/user_apps.h"
 /* End User Includes */
 
+#define TIMER_ID              1
+#define DELAY_10_SECONDS      10000UL
+#define DELAY_1_SECOND        1000UL
+#define TIMER_CHECK_THRESHOLD 9
+/*-----------------------------------------------------------*/
+
+/* The Tx and Rx tasks as described at the top of this file. */
+static void prvTxTask(void *pvParameters);
+static void prvRxTask(void *pvParameters);
+static void prvBlinkyTask(void *pvParameters);
+static void vTimerCallback(TimerHandle_t pxTimer);
+
 #define DELAY_1_SECOND        1000UL
 #define INTC_HANDLER          XScuGic_InterruptHandler
 /*-----------------------------------------------------------*/
@@ -87,11 +99,51 @@ extern void vPortInstallFreeRTOSVectorTable(void);
 #define QUEUE_LENGTH 10
 #define ITEM_SIZE    sizeof(uint32_t)
 
+
+static TaskHandle_t xTxTaskHandle;
+static TaskHandle_t xRxTaskHandle;
+static TaskHandle_t xBlinkyTaskHandle;
+static QueueHandle_t xQueue = NULL;
+static TimerHandle_t xTimer = NULL;
+
+char HWstring[32] = "CPU0 - Hello World";
+long RxtaskCntr = 0;
+
+uint8_t message_status = 0;
+// 0 - sending messages
+// 1 - complete, success
+// 2 - complete, failure
+
 int main(void)
 {
     // Both CPUs: Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
+
+#if 1
+    // CPU0 ONLY:
+    // This code is required to start CPU1 from CPU0 during boot.
+    //
+    // This only applies when booting from flash via the FSBL.
+    // During development with JTAG loading, these low-level
+    // calls in this #if block are not needed! However, we'll
+    // keep them here since it doesn't affect performance...
+
+    // Write starting base address for CPU1 PC.
+    // It will look for this address upon waking up
+    static const uintptr_t CPU1_START_ADDR = 0xFFFFFFF0;
+    static const uint32_t CPU1_BASE_ADDR = 0x20080000;
+    Xil_Out32(CPU1_START_ADDR, CPU1_BASE_ADDR);
+
+    // Waits until write has finished
+    // DMB = Data Memory Barrier
+    dmb();
+
+    // Wake up CPU1 by sending the SEV command
+    // SEV = Set Event, which causes CPU1 to wake up and jump to CPU1_BASE_ADDR
+    __asm__("sev");
+#endif
+
 
     Xil_ExceptionInit();
     intr_init();
@@ -122,6 +174,56 @@ int main(void)
 //    xil_printf("10 ticks is %d milliseconds\n", pdTICKS_TO_MS(10));
 //    xil_printf("1 ticks is %d microseconds\n", (int) (pdTICKS_TO_MS(1) * 1000));
 
+    const TickType_t x10seconds = pdMS_TO_TICKS(DELAY_10_SECONDS);
+
+    /* Create the three tasks */
+    xTaskCreate(prvTxTask,                /* The function that implements the task. */
+                (const char *) "CPU0_Tx", /* Text name for the task, provided to assist debugging only. */
+                configMINIMAL_STACK_SIZE, /* The stack allocated to the task. */
+                NULL,                     /* The task parameter is not used, so set to NULL. */
+                tskIDLE_PRIORITY,         /* The task runs at the idle priority. */
+                &xTxTaskHandle);
+
+    xTaskCreate(prvRxTask,                /* The function that implements the task. */
+                (const char *) "CPU0_Rx", /* Text name for the task, provided to assist debugging only. */
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                tskIDLE_PRIORITY + 1,
+                &xRxTaskHandle);
+
+    // Create additional blinky task - CPU0 only
+    xTaskCreate(prvBlinkyTask,
+                (const char *) "CPU0_Blinky",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                tskIDLE_PRIORITY,
+                &xBlinkyTaskHandle);
+
+    /* Create the queue used by the tasks.  The Rx task has a higher priority
+    than the Tx task, so will preempt the Tx task and remove values from the
+    queue as soon as the Tx task writes to the queue - therefore the queue can
+    never have more than one item in it. */
+    xQueue = xQueueCreate(1, sizeof(HWstring));
+
+    /* Check the queue was created. */
+    configASSERT(xQueue);
+
+    /* Create a timer with a timer expiry of 10 seconds. The timer would expire
+     after 10 seconds and the timer call back would get called. In the timer call back
+     checks are done to ensure that the tasks have been running properly till then.
+     The tasks are deleted in the timer call back and a message is printed to convey that
+     the example has run successfully.
+     The timer expiry is set to 10 seconds and the timer set to not auto reload. */
+    xTimer = xTimerCreate((const char *) "CPU0_Timer", x10seconds, pdFALSE, (void *) TIMER_ID, vTimerCallback);
+
+    /* Check the timer was created. */
+    configASSERT(xTimer);
+
+    /* start the timer with a block time of 0 ticks. This means as soon
+       as the schedule starts the timer will start running and will expire after
+       10 seconds */
+    xTimerStart(xTimer, 0);
+
     /////////////////////////
     // END USER CODE HERE //
     ///////////////////////
@@ -135,7 +237,151 @@ int main(void)
     to be created.  See the memory management section on the FreeRTOS web site
     for more details. */
     for (;;) {
-    	xil_printf("IF YOU'RE READING THIS THEN A TERRIBLE ERROR HAS OCCURRED!\n");
+    	xil_printf("IF YOU'RE READING THIS THEN HEAP MEMORY HAS RUN OUT!\n");
+    }
+}
+
+/*-----------------------------------------------------------*/
+static void prvTxTask(void *pvParameters)
+{
+    const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
+
+    for (;;) {
+        if (message_status > 0) {
+            // Cannot delete tasks created using heap_1 implementation, so instead we suspend immediately if done
+            vTaskSuspend(NULL);
+        } else {
+            /* Delay for 1 second. */
+            vTaskDelay(x1second);
+
+            /* Send the next value on the queue.  The queue should always be
+            empty at this point so a block time of 0 is used. */
+            //  xQueueSend(xQueue,   /* The queue being written to. */
+            //             HWstring, /* The address of the data being sent. */
+            //             0UL);     /* The block time. */
+
+            xil_printf("DEBUG: CPU 0 about to attempt send\r\n");
+
+            // Send a message to the other core
+            size_t bytes_sent = xMessageBufferSend(xCPU0to1MessageBuffer, HWstring, sizeof(HWstring), 0UL);
+
+            xil_printf("DEBUG: CPU0 sent %d bytes to ICC buffer\r\n", bytes_sent);
+
+            if (bytes_sent == 0) {
+                xil_printf("ERROR: CPU 0 failed to write to ICC buffer\r\n");
+            }
+        }
+    }
+}
+
+/*-----------------------------------------------------------*/
+static void prvRxTask(void *pvParameters)
+{
+    char Rcvdstring[32] = "";
+
+    for (;;) {
+        if (message_status > 0) {
+            // Cannot delete tasks created using heap_1 implementation, so instead we suspend immediately if done
+            vTaskSuspend(NULL);
+        } else {
+
+            //  /* Block to wait for data arriving on the queue. */
+            //  xQueueReceive(xQueue,         /* The queue being read. */
+            //                Rcvdstring,     /* Data is read into this address. */
+            //                portMAX_DELAY); /* Wait without a timeout for data. */
+
+            xil_printf("DEBUG: CPU 0 about to attempt rcv\r\n");
+
+            size_t bytes_rcvd = xMessageBufferReceive(xCPU1to0MessageBuffer, Rcvdstring, 32, portMAX_DELAY);
+
+            xil_printf("DEBUG: CPU0 rcvd %d bytes from ICC buffer\r\n", bytes_rcvd);
+
+            if (bytes_rcvd == 0) {
+                xil_printf("CPU 0 failed to receive from ICC buffer\r\n");
+            } else {
+                /* Print the received data. */
+                xil_printf("CPU0 - Rx task received string from CPU1 Tx: %s\r\n", Rcvdstring);
+                RxtaskCntr++;
+            }
+        }
+    }
+}
+
+/*-----------------------------------------------------------*/
+static void prvBlinkyTask(void *pvParameters)
+{
+    const TickType_t x250ms = pdMS_TO_TICKS(DELAY_1_SECOND / 4);
+    uint8_t led_offset = 0;
+
+    for (;;) {
+        if (message_status == 0) {
+            // If not complete, cycle yellow every 250ms
+            vTaskDelay(x250ms);
+
+            led_set_color(0 + led_offset, LED_COLOR_YELLOW);
+            led_set_color(1 + led_offset, LED_COLOR_BLACK);
+            led_set_color(2 + led_offset, LED_COLOR_BLACK);
+            led_set_color(3 + led_offset, LED_COLOR_BLACK);
+
+            led_offset = (led_offset + 1) % 4;
+        } else if (message_status == 1) {
+            // If complete, flash all green every 250ms
+            vTaskDelay(x250ms);
+
+            led_set_color(LED0, LED_COLOR_BLACK);
+            led_set_color(LED1, LED_COLOR_BLACK);
+            led_set_color(LED2, LED_COLOR_BLACK);
+            led_set_color(LED3, LED_COLOR_BLACK);
+
+            vTaskDelay(x250ms);
+
+            led_set_color(LED0, LED_COLOR_GREEN);
+            led_set_color(LED1, LED_COLOR_GREEN);
+            led_set_color(LED2, LED_COLOR_GREEN);
+            led_set_color(LED3, LED_COLOR_GREEN);
+        } else {
+            // message_status must be 2, meaning failure
+            // flash all red every 250ms
+            vTaskDelay(x250ms);
+
+            led_set_color(LED0, LED_COLOR_BLACK);
+            led_set_color(LED1, LED_COLOR_BLACK);
+            led_set_color(LED2, LED_COLOR_BLACK);
+            led_set_color(LED3, LED_COLOR_BLACK);
+
+            vTaskDelay(x250ms);
+
+            led_set_color(LED0, LED_COLOR_RED);
+            led_set_color(LED1, LED_COLOR_RED);
+            led_set_color(LED2, LED_COLOR_RED);
+            led_set_color(LED3, LED_COLOR_RED);
+        }
+    }
+}
+
+/*-----------------------------------------------------------*/
+static void vTimerCallback(TimerHandle_t pxTimer)
+{
+    long lTimerId;
+    configASSERT(pxTimer);
+
+    lTimerId = (long) pvTimerGetTimerID(pxTimer);
+
+    if (lTimerId != TIMER_ID) {
+        xil_printf("CPU0 - FreeRTOS Hello World Example FAILED");
+    }
+
+    /* If the RxtaskCntr is updated every time the Rx task is called. The
+     Rx task is called every time the Tx task sends a message. The Tx task
+     sends a message every 1 second.
+     The timer expires after 10 seconds. We expect the RxtaskCntr to at least
+     have a value of 9 (TIMER_CHECK_THRESHOLD) when the timer expires. */
+    if (RxtaskCntr >= TIMER_CHECK_THRESHOLD) {
+        message_status = 1;
+        xil_printf("CPU0 - FreeRTOS Hello World Example PASSED\r\n");
+    } else {
+        message_status = 2;
+        xil_printf("CPU0 - FreeRTOS Hello World Example FAILED\r\n");
     }
 }
 
