@@ -40,7 +40,7 @@
 #include "xil_printf.h"
 #include "xparameters.h"
 /* Firmware includes */
-//#include "sys/icc.h"
+#include "sys/icc.h"
 #include "sys/intr.h"
 
 /* Begin User Includes */
