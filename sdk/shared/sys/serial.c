@@ -5,6 +5,7 @@
 #include "sys/serial.h"
 #include "drv/uart.h"
 #include "sys/util.h"
+#include "sys/task_priority.h"
 #include <string.h>
 
 #define OUTPUT_BUFFER_LENGTH (32 * 1024)
@@ -28,7 +29,7 @@ void serial_init(void)
 {
 	// Create serial task
 	xTaskCreate(serial_main, (const char *) "uartSerial", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &xSerialTaskHandle);
+				NULL, SERIAL_TASK_PRIORITY, &xSerialTaskHandle);
 }
 
 void serial_main(void *arg)

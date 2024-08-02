@@ -27,12 +27,12 @@
 		<link>
 			<name>FreeRTOS-Kernel</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/v2-staging/sdk/FreeRTOS-Kernel</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-singlecore-temp/sdk/FreeRTOS-Kernel</location>
 		</link>
 		<link>
 			<name>shared</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/v2-staging/sdk/shared</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-singlecore-temp/sdk/shared</location>
 		</link>
 	</linkedResources>
 </projectDescription>

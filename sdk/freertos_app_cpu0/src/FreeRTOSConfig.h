@@ -82,7 +82,7 @@
 #define configCPU_CLOCK_HZ                      100000000UL
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configTICK_RATE_HZ                      ((TickType_t) 1000)
+#define configTICK_RATE_HZ                      ((TickType_t) 10000)
 #define configPERIPHERAL_CLOCK_HZ               (33333000UL)
 #define configUSE_PREEMPTION                    1
 #define configUSE_IDLE_HOOK                     0 // TODO: For low-power, set 1 and implement vApplicationIdleHook()
@@ -149,18 +149,16 @@ to exclude the API function. */
 format the raw data provided by the uxTaskGetSystemState() function in to human
 readable ASCII form.  See the notes in the implementation of vTaskList() within
 FreeRTOS/Source/tasks.c for limitations. */
-#define configUSE_STATS_FORMATTING_FUNCTIONS 0
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
 
-/* The private watchdog is used to generate run time stats. */
-/*
+/* A separate timer is used to generate run time stats. */
 #include "xscuwdt.h"
-extern XScuWdt xWatchDogInstance;
-extern void vInitialiseTimerForRunTimeStats( void );
+extern XScuWdt xTimerStats;
+extern void vInitialiseTimerForRunTimeStats(void);
 #define configGENERATE_RUN_TIME_STATS 1
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vInitialiseTimerForRunTimeStats()
-#define portGET_RUN_TIME_COUNTER_VALUE() ( ( 0xffffffffUL - XScuWdt_ReadReg( xWatchDogInstance.Config.BaseAddr,
-XSCUWDT_COUNTER_OFFSET ) ) >> 1 )
-*/
+#define portGET_RUN_TIME_COUNTER_VALUE() ((0xffffffffUL - XScuWdt_ReadReg(xTimerStats.Config.BaseAddr, XSCUWDT_COUNTER_OFFSET)) >> 1)
+
 
 /* The size of the global output buffer that is available for use when there
 are multiple command interpreters running at once (for example, one on a UART
@@ -243,5 +241,9 @@ line interface. */
 #define configNET_MASK1 255
 #define configNET_MASK2 255
 #define configNET_MASK3 0
+
+/* MS to tick macros */
+#define pdMS_TO_TICKS(xTimeInMs)    ((TickType_t) (((xTimeInMs) * (uint64_t) configTICK_RATE_HZ) / (uint64_t) 1000U))
+#define pdTICKS_TO_MS(xTimeInTicks)    (((xTimeInTicks) * (uint64_t) 1000U) / (double) configTICK_RATE_HZ)
 
 #endif /* FREERTOS_CONFIG_H */

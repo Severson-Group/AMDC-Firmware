@@ -7,6 +7,7 @@
 #include "usr/blink/task_blink.h"
 #include "drv/led.h"
 #include "sys/defines.h"
+#include "sys/task_priority.h"
 #include <stdint.h>
 
 // Hold LED animation state
@@ -34,7 +35,7 @@ int task_blink_init(void)
 	}
     // Fill TCB with parameters
 	xTaskCreate(task_blink, (const char *) "blink", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb);
+				NULL, BLINK_TASK_PRIORITY, &tcb);
 	taskExists = 1;
     return SUCCESS;
 }

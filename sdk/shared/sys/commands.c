@@ -14,6 +14,7 @@
 // #include "sys/scheduler.h"
 #include "sys/serial.h"
 #include "sys/util.h"
+#include "sys/task_priority.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -133,7 +134,7 @@ void commands_init(void)
 
     // Command parse & exec task (UART)
 	xTaskCreate(commands_main_uart, (const char *) "command_parse_uart", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb_parse_uart);
+				NULL, CMD_UART_TASK_PRIORITY, &tcb_parse_uart);
 
 //    // Command parse task (ETH)
 //    scheduler_tcb_init(

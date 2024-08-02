@@ -21,6 +21,8 @@
  *  See sys/icc.c for more info.
  */
 
+XScuGic InterruptController;
+
 int intr_init()
 {
     int Status = XST_FAILURE;

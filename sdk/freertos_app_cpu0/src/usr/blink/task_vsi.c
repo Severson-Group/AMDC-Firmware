@@ -6,6 +6,7 @@
 #include "usr/blink/task_vsi.h"
 #include "drv/led.h"
 #include "sys/defines.h"
+#include "sys/task_priority.h"
 #include <math.h>
 #include <stdint.h>
 
@@ -27,7 +28,7 @@ void task_vsi_init(void)
 {
     // Fill TCB with parameters
     xTaskCreate(task_vsi, (const char *) "vsi", configMINIMAL_STACK_SIZE,
-				NULL, tskIDLE_PRIORITY, &tcb);
+				NULL, VSI_TASK_PRIORITY, &tcb);
 }
 
 void task_vsi(void *arg)
