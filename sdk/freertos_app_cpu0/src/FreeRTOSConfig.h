@@ -82,7 +82,7 @@
 #define configCPU_CLOCK_HZ                      100000000UL
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configTICK_RATE_HZ                      ((TickType_t) 10000)
+#define configTICK_RATE_HZ                      ((TickType_t) 1000)
 #define configPERIPHERAL_CLOCK_HZ               (33333000UL)
 #define configUSE_PREEMPTION                    1
 #define configUSE_IDLE_HOOK                     0 // TODO: For low-power, set 1 and implement vApplicationIdleHook()
@@ -243,9 +243,5 @@ line interface. */
 #define configNET_MASK1 255
 #define configNET_MASK2 255
 #define configNET_MASK3 0
-
-/* MS to tick macros */
-#define pdMS_TO_TICKS(xTimeInMs)    ((TickType_t) (((xTimeInMs) * (uint64_t) configTICK_RATE_HZ) / (uint64_t) 1000U))
-#define pdTICKS_TO_MS(xTimeInTicks)    (((xTimeInTicks) * (uint64_t) 1000U) / (double) configTICK_RATE_HZ)
 
 #endif /* FREERTOS_CONFIG_H */
