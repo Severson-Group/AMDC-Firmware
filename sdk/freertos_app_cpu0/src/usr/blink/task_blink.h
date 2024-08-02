@@ -1,7 +1,9 @@
 #ifndef TASK_BLINK_H
 #define TASK_BLINK_H
 
-#include "sys/scheduler.h"
+/* FreeRTOS includes */
+#include "FreeRTOS.h"
+#include "task.h"
 
 // Frequency that this task is called (in Hz)
 //
@@ -14,14 +16,14 @@
 //
 // This is what scheduler actually uses to run task,
 // but is generated via define above
-#define TASK_BLINK_INTERVAL_USEC (USEC_IN_SEC / TASK_BLINK_UPDATES_PER_SEC)
+#define TASK_BLINK_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_BLINK_UPDATES_PER_SEC))
 
 // Called in app init function to set up task (or via command)
 int task_blink_init(void);
 int task_blink_deinit(void);
 
 // Callback function which scheduler calls periodically
-void task_blink_callback(void *arg);
+void task_blink(void *arg);
 
 // Print the statistics gathered by the scheduler
 void task_blink_stats_print(void);

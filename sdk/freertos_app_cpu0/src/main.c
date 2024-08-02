@@ -45,6 +45,11 @@
 
 /* Begin User Includes */
 #include "drv/led.h"
+#include "drv/uart.h"
+#include "sys/serial.h"
+#include "sys/commands.h"
+#include "sys/cmd/cmd_counter.h"
+#include "usr/user_apps.h"
 /* End User Includes */
 
 #define TIMER_ID              1
@@ -58,6 +63,9 @@ static void prvTxTask(void *pvParameters);
 static void prvRxTask(void *pvParameters);
 static void prvBlinkyTask(void *pvParameters);
 static void vTimerCallback(TimerHandle_t pxTimer);
+
+#define DELAY_1_SECOND        1000UL
+#define INTC_HANDLER          XScuGic_InterruptHandler
 /*-----------------------------------------------------------*/
 
 /* This project has configSUPPORT_STATIC_ALLOCATION set to 1 (for Inter-Core Communication) so
@@ -90,6 +98,7 @@ extern void vPortInstallFreeRTOSVectorTable(void);
 
 #define QUEUE_LENGTH 10
 #define ITEM_SIZE    sizeof(uint32_t)
+
 
 static TaskHandle_t xTxTaskHandle;
 static TaskHandle_t xRxTaskHandle;
@@ -135,6 +144,7 @@ int main(void)
     __asm__("sev");
 #endif
 
+
     Xil_ExceptionInit();
     intr_init();
     icc_init();
@@ -144,11 +154,27 @@ int main(void)
     // BEGIN USER CODE HERE //
     /////////////////////////
 
+    /* setup interrupts */
+
     led_init();
+    uart_init();
+    serial_init();
+    commands_init();
+
+    /* command sets */
+    cmd_counter_register();
+
+    /* user apps */
+    user_apps_init();
+
+    xil_printf("CPU0 - freertos game!\r\n");
+//    xil_printf("1 millisecond is %d ticks\n", pdMS_TO_TICKS(1));
+//    xil_printf("0.1 milliseconds is %d ticks\n", pdMS_TO_TICKS(0.1));
+//
+//    xil_printf("10 ticks is %d milliseconds\n", pdTICKS_TO_MS(10));
+//    xil_printf("1 ticks is %d microseconds\n", (int) (pdTICKS_TO_MS(1) * 1000));
 
     const TickType_t x10seconds = pdMS_TO_TICKS(DELAY_10_SECONDS);
-
-    xil_printf("CPU0 - Hello from FreeRTOS example main()!\r\n");
 
     /* Create the three tasks */
     xTaskCreate(prvTxTask,                /* The function that implements the task. */
@@ -211,6 +237,7 @@ int main(void)
     to be created.  See the memory management section on the FreeRTOS web site
     for more details. */
     for (;;) {
+    	xil_printf("IF YOU'RE READING THIS THEN HEAP MEMORY HAS RUN OUT!\n");
     }
 }
 
@@ -409,4 +436,40 @@ void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
      * Note that, as the array is necessarily of type StackType_t,
      * configMINIMAL_STACK_SIZE is specified in words, not bytes. */
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+}
+
+/*******************************************************************************/
+/*              S E T U P   I N T E R R U P T   S Y S T E M                    */
+/*******************************************************************************/
+int SetupInterruptSystem(XScuGic *IntcInstancePtr) {
+	int Result;
+
+	XScuGic_Config *IntcConfig;
+
+	// Initialize the interrupt controller driver so that it is ready to use.
+
+	IntcConfig = XScuGic_LookupConfig(INTC_DEVICE_ID);//ELS -- this is misleading! there is only one XScuGic device (0)
+	if (NULL == IntcConfig) {
+		return XST_FAILURE;
+	}
+
+	Result = XScuGic_CfgInitialize(IntcInstancePtr, IntcConfig,
+			IntcConfig->CpuBaseAddress);
+	if (Result != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+
+	// Initialize the exception table and register the interrupt
+	// controller handler with the exception table
+
+	Xil_ExceptionInit();
+
+	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
+			(Xil_ExceptionHandler) INTC_HANDLER, IntcInstancePtr);
+
+	// Enable non-critical exceptions
+
+	Xil_ExceptionEnable();
+
+	return XST_SUCCESS;
 }

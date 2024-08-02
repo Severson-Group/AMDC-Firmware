@@ -1,4 +1,4 @@
-#include "drv/uart.h"
+#include "uart.h"
 #include "sys/defines.h"
 #include "xparameters.h"
 #include "xuartps.h"
