@@ -173,7 +173,7 @@ uint32_t timing_manager_get_trigger_count(void)
  * Specify the interrupt source of the scheduler ISR:
  *
  * Mode 0 uses the timing manager's 'trigger' signal, i.e. the control
- * frequency based on the PWM carrier frequency and the user-specified PWM sub-ratio.
+ * frequency is based on the PWM carrier frequency and the user-specified PWM sub-ratio.
  *
  * Mode 1 uses the timing manager's 'all_done' signal, calling the scheduler
  * when all the sensors are done with acquisition. When no sensors are enabled,
