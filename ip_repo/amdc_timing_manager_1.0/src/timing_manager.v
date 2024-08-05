@@ -196,19 +196,15 @@ module timing_manager(
     //          acquisition/conversion cycle (e.g. on the rising edge
     //          of the all_done signal)
     //////////////////////////////////////////////////////////////////
+    wire assert_sched_isr;
+    assign assert_sched_isr = sched_source_mode ? (sensors_enabled ? all_done_pe : (count == user_ratio)) : // sched_source_mode == 1, Timing Manager Mode
+                                                  (count == user_ratio);                                    // sched_source_mode == 0, Legacy Mode
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             sched_isr <= 0;
         else if (reset_sched_isr)
             sched_isr <= 0;
-        else if (~sched_source_mode & (count == user_ratio))
-            // Legacy (mode 0)
-            sched_isr <= 1;
-        else if (sched_source_mode & ~sensors_enabled & (count == user_ratio))
-            // Timing Manager (mode 1) with no sensors enabled
-            sched_isr <= 1;
-        else if (sched_source_mode & all_done_pe)
-            // Timing Manager (mode 1) after sensors are enabled
+        else if (assert_sched_isr)
             sched_isr <= 1;
     end
 

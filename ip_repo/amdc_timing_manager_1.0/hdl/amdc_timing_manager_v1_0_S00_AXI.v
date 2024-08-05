@@ -530,7 +530,7 @@
             4'h2   : reg_data_out <= sensor_done_status; // Sensor Done Status
             4'h3   : reg_data_out <= slv_reg3; // User Ratio
             4'h4   : reg_data_out <= slv_reg4; // PWM Sync
-            4'h5   : reg_data_out <= slv_reg5;  // ISR
+            4'h5   : reg_data_out <= {sched_isr,slv_reg5[30:0]};  // ISR - MSb is sched_isr from TM for debug
             4'h6   : reg_data_out <= sched_tick_time; // Trigger timer
             4'h7   : reg_data_out <= adc_enc_time_reg; // ADC & Encoder Times
             4'h8   : reg_data_out <= amds_01_time_reg; // AMDS Times

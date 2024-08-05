@@ -77,6 +77,7 @@ This IP is accessed via the AXI4-Lite register-based interface from the DSP. Thi
 | -- | -- | -- |
 | 0 | RESET_SCHED_ISR | Clears the hardware interrupt once it has been recieved by the processing system |
 | 1 | SCHED_SOURCE_MODE | Determines the source of the interrupt for the scheduler: legacy mode or timing manager-synchronized |
+| 31 | SCHED_ISR | (READ-ONLY) The scheduler ISR interrupt signal directly from the timing manager, made available for debugging |
 
 ### ISR_TIME
 
