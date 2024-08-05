@@ -17,6 +17,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+/* lwip */
+#include "lwip/lwip_glue.h"
+extern volatile int TcpFastTmrFlag;
+extern volatile int TcpSlowTmrFlag;
+void tcp_fasttmr(void);
+void tcp_slowtmr(void);
 
 #define RECV_BUFFER_LENGTH (4 * 1024)
 
@@ -314,46 +320,31 @@ static void commands_eth(void *arg)
 {
 	sm_parse_ascii_cmd_ctx_t *ctx = &ctx_eth;
 
-    static const int MAX_NUM_BYTES_TO_TRY = 128;
     for (;;) {
     	vTaskDelay(COMMANDS_INTERVAL_TICKS);
-		// Try to pull out the oldest MAX_NUM_BYTES_TO_TRY bytes from the shared FIFO from CPU0
-		//
-		// If there are less than MAX_NUM_BYTES_TO_TRY bytes in the FIFO, this code will simply
-		// pull out everything and return.
-		for (int i = 0; i < MAX_NUM_BYTES_TO_TRY; i++) {
-			// Check if there are any bytes in the FIFO
-			if (ICC_CPU0to1_CH0__GET_ProduceCount - ICC_CPU0to1_CH0__GET_ConsumeCount == 0) {
-				// Shared buffer is empty
-				break;
-			}
+    	eth_link_detect(my_netif);
+    	xemacif_input(my_netif);
+    	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
+		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read);
 
-			// Read the oldest byte available
-			uint8_t *sharedBuffer = ICC_CPU0to1_CH0__BufferBaseAddr;
-			uint8_t c = sharedBuffer[ICC_CPU0to1_CH0__GET_ConsumeCount % ICC_BUFFER_SIZE];
+		// Run state machine to create pending cmds to execute
+		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
 
-			// Increment the consume count
-			ICC_CPU0to1_CH0__SET_ConsumeCount(ICC_CPU0to1_CH0__GET_ConsumeCount + 1);
-
-			// =====================
-			// Process incoming char
-			// =====================
-
-			char c_char = (char) c;
-
-			// Push the new byte into the rx buffer
-			ctx->recv_buffer[ctx->recv_buffer_idx] = c_char;
-
-			// Run state machine to create pending cmds to execute
-			_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], 1);
-
-			// Move along in recv buffer
-			ctx->recv_buffer_idx += 1;
-			if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-				ctx->recv_buffer_idx = 0;
-			}
+		// Move along in recv buffer
+		ctx->recv_buffer_idx += num_bytes;
+		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
+			ctx->recv_buffer_idx = 0;
 		}
 		parse_commands(ctx);
+
+		if (TcpFastTmrFlag) {
+			tcp_fasttmr();
+			TcpFastTmrFlag = 0;
+		}
+		if (TcpSlowTmrFlag) {
+			tcp_slowtmr();
+			TcpSlowTmrFlag = 0;
+		}
     }
 }
 

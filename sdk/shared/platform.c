@@ -34,6 +34,7 @@
 #include "xparameters.h"
 
 #include "platform_config.h"
+#include "lwip/platform.h"
 
 /*
  * Uncomment one of the following two lines, depending on the target,
@@ -81,6 +82,8 @@ void init_uart()
 
 void init_platform()
 {
+	platform_setup_timer();
+	platform_setup_interrupts();
     /*
      * If you want to run this example outside of SDK,
      * uncomment one of the following two lines and also #include "ps7_init.h"
