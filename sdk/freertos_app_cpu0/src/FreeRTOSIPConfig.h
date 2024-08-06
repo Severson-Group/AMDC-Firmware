@@ -31,12 +31,14 @@
 #define FREERTOS_IP_CONFIG_H
 
 /* I put these here -Ryan */
-#define ipconfigIPv4_BACKWARD_COMPATIBLE  1
-#define ipconfigHAS_PRINTF                1
+#define ipconfigUSE_IPv4                  ( 1 )
 
-#define ipconfigZERO_COPY_RX_DRIVER       1
-#define ipconfigZERO_COPY_TX_DRIVER       1
-#define ipconfigDNS_USE_CALLBACKS         0
+#define ipconfigIPv4_BACKWARD_COMPATIBLE  ( 1 )
+#define ipconfigHAS_PRINTF                ( 1 )
+
+#define ipconfigZERO_COPY_RX_DRIVER       ( 1 )
+#define ipconfigZERO_COPY_TX_DRIVER       ( 1 )
+#define ipconfigDNS_USE_CALLBACKS         ( 0 )
 
  /* Zynq driver specific parameters */
  #define ipconfigNIC_INCLUDE_GEM				( 1 )
