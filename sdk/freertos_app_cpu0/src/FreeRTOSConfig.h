@@ -231,10 +231,25 @@ line interface. */
 #define configMAC_ADDR5 0x16
 
 /* IP address configuration. */
-#define configIP_ADDR0 172
-#define configIP_ADDR1 25
-#define configIP_ADDR2 218
-#define configIP_ADDR3 200
+#define configIP_ADDR0 192
+#define configIP_ADDR1 168
+#define configIP_ADDR2 0
+#define configIP_ADDR3 10
+
+/* Default gateway IP address configuration.  Used if ipconfigUSE_DHCP is set to
+ * 0, or ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
+#define configGATEWAY_ADDR0                  192
+#define configGATEWAY_ADDR1                  168
+#define configGATEWAY_ADDR2                  0
+#define configGATEWAY_ADDR3                  1
+
+/* Default DNS server configuration.  OpenDNS addresses are 208.67.222.222 and
+ * 208.67.220.220.  Used in ipconfigUSE_DHCP is set to 0, or ipconfigUSE_DHCP is
+ * set to 1 but a DNS server cannot be contacted.*/
+#define configDNS_SERVER_ADDR0               208
+#define configDNS_SERVER_ADDR1               67
+#define configDNS_SERVER_ADDR2               222
+#define configDNS_SERVER_ADDR3               222
 
 /* Netmask configuration. */
 #define configNET_MASK0 255

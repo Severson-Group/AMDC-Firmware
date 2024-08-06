@@ -30,8 +30,20 @@
 #ifndef FREERTOS_IP_CONFIG_H
 #define FREERTOS_IP_CONFIG_H
 
-#define ipconfigZERO_COPY_RX_DRIVER 1
-#define ipconfigZERO_COPY_TX_DRIVER 1
+/* I put these here -Ryan */
+#define ipconfigIPv4_BACKWARD_COMPATIBLE  1
+#define ipconfigHAS_PRINTF                1
+
+#define ipconfigZERO_COPY_RX_DRIVER       1
+#define ipconfigZERO_COPY_TX_DRIVER       1
+#define ipconfigDNS_USE_CALLBACKS         0
+
+ /* Zynq driver specific parameters */
+ #define ipconfigNIC_INCLUDE_GEM				( 1 )
+ #define ipconfigNIC_N_TX_DESC				( 32 )
+ #define ipconfigNIC_N_RX_DESC				( 32 )
+ //#define ipconfigNIC_LINKSPEED100			( 1 )
+ #define ipconfigNIC_LINKSPEED_AUTODETECT	(1)
 
 /* suppressing the use of _static as it is used for other tools like cbmc */
 /* coverity[misra_c_2012_rule_21_1_violation] */
@@ -40,23 +52,6 @@
 
 #define ipconfigUSE_ARP_REMOVE_ENTRY       1
 #define ipconfigUSE_ARP_REVERSED_LOOKUP    1
-
-/* Set to 1 to print out debug messages.  If ipconfigHAS_DEBUG_PRINTF is set to
- * 1 then FreeRTOS_debug_printf should be defined to the function used to print
- * out the debugging messages. */
-#define ipconfigHAS_DEBUG_PRINTF           0
-#if ( ipconfigHAS_DEBUG_PRINTF == 1 )
-    #define FreeRTOS_debug_printf( X )    configPRINTF( X )
-#endif
-
-/* Set to 1 to print out non debugging messages, for example the output of the
- * FreeRTOS_netstat() command, and ping replies.  If ipconfigHAS_PRINTF is set to 1
- * then FreeRTOS_printf should be set to the function used to print out the
- * messages. */
-#define ipconfigHAS_PRINTF    0
-#if ( ipconfigHAS_PRINTF == 1 )
-    #define FreeRTOS_printf( X )    configPRINTF( X )
-#endif
 
 /* Define the byte order of the target MCU (the MCU FreeRTOS+TCP is executing
  * on).  Valid options are pdFREERTOS_BIG_ENDIAN and pdFREERTOS_LITTLE_ENDIAN. */
@@ -132,14 +127,14 @@
  * set to 1 if a valid configuration cannot be obtained from a DHCP server for any
  * reason.  The static configuration used is that passed into the stack by the
  * FreeRTOS_IPInit() function call. */
-#define ipconfigUSE_DHCP                           1
-#define ipconfigDHCP_REGISTER_HOSTNAME             1
-#define ipconfigDHCP_USES_UNICAST                  1
+#define ipconfigUSE_DHCP                           0
+#define ipconfigDHCP_REGISTER_HOSTNAME             0
+#define ipconfigDHCP_USES_UNICAST                  0
 
 /* If ipconfigDHCP_USES_USER_HOOK is set to 1 then the application writer must
  * provide an implementation of the DHCP callback function,
  * xApplicationDHCPUserHook(). */
-#define ipconfigUSE_DHCP_HOOK                      1
+#define ipconfigUSE_DHCP_HOOK                      0
 
 /* When ipconfigUSE_DHCP is set to 1, DHCP requests will be sent out at
  * increasing time intervals until either a reply is received from a DHCP server
@@ -184,7 +179,7 @@
  * ipconfigINCLUDE_FULL_INET_ADDR is set to 1 then both FreeRTOS_inet_addr() and
  * FreeRTOS_indet_addr_quick() are available.  If ipconfigINCLUDE_FULL_INET_ADDR is
  * not set to 1 then only FreeRTOS_indet_addr_quick() is available. */
-#define ipconfigINCLUDE_FULL_INET_ADDR            1
+#define ipconfigINCLUDE_FULL_INET_ADDR            0
 
 /* ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS defines the total number of network buffer that
  * are available to the IP stack.  The total number of network buffers is limited

@@ -32,6 +32,8 @@
 #include "queue.h"
 #include "task.h"
 #include "timers.h"
+#include "FreeRTOS_IP.h"
+#include "FreeRTOS_Sockets.h"
 /* Xilinx includes. */
 #include "platform.h"
 #include "xil_cache.h"
@@ -89,6 +91,77 @@ extern void vPortInstallFreeRTOSVectorTable(void);
 #define QUEUE_LENGTH 10
 #define ITEM_SIZE    sizeof(uint32_t)
 
+/* needed for FreeRTOS-Plus-TCP */
+
+static UBaseType_t ulNextRand;
+
+UBaseType_t uxRand(void) {
+    const uint32_t ulMultiplier = 0x015a4e35UL, ulIncrement = 1UL;
+    /* Utility function to generate a pseudo random number. */
+    ulNextRand = (ulMultiplier * ulNextRand) + ulIncrement;
+    return((int) (ulNextRand) & 0x7fffUL );
+}
+
+BaseType_t xApplicationGetRandomNumber(uint32_t *pulNumber) {
+    *pulNumber = (uint32_t) uxRand();
+    return pdTRUE;
+}
+
+uint32_t ulApplicationGetNextSequenceNumber(uint32_t ulSourceAddress, uint16_t usSourcePort, uint32_t ulDestinationAddress, uint16_t usDestinationPort) {
+    return ( uint32_t ) uxRand();
+}
+
+void vApplicationIPNetworkEventHook(eIPCallbackEvent_t eNetworkEvent) {
+    static BaseType_t xTasksAlreadyCreated = pdFALSE;
+    /* If the network has just come up...*/
+    if ((eNetworkEvent == eNetworkUp) && (xTasksAlreadyCreated == pdFALSE)) {
+        /* Do nothing. Just a stub. */
+        xTasksAlreadyCreated = pdTRUE;
+    }
+}
+
+/* Default MAC address configuration.  The demo creates a virtual network
+ * connection that uses this MAC address by accessing the raw Ethernet data
+ * to and from a real network connection on the host PC.  See the
+ * configNETWORK_INTERFACE_TO_USE definition for information on how to configure
+ * the real network connection to use. */
+const uint8_t ucMACAddress[6] =
+{
+    configMAC_ADDR0,
+    configMAC_ADDR1,
+    configMAC_ADDR2,
+    configMAC_ADDR3,
+    configMAC_ADDR4,
+    configMAC_ADDR5
+};
+
+/* The default IP and MAC address used by the code. It is used as a place holder.
+ */
+static const uint8_t ucIPAddress[4] = {
+    configIP_ADDR0,
+    configIP_ADDR1,
+    configIP_ADDR2,
+    configIP_ADDR3
+};
+static const uint8_t ucNetMask[4] = {
+    configNET_MASK0,
+    configNET_MASK1,
+    configNET_MASK2,
+    configNET_MASK3
+};
+static const uint8_t ucGatewayAddress[4] = {
+    configGATEWAY_ADDR0,
+    configGATEWAY_ADDR1,
+    configGATEWAY_ADDR2,
+    configGATEWAY_ADDR3
+};
+static const uint8_t ucDNSServerAddress[4] = {
+    configDNS_SERVER_ADDR0,
+    configDNS_SERVER_ADDR1,
+    configDNS_SERVER_ADDR2,
+    configDNS_SERVER_ADDR3
+};
+
 int main(void)
 {
 	/* initialise hardware */
@@ -131,6 +204,9 @@ int main(void)
     ///////////////////////////
     // BEGIN USER CODE HERE //
     /////////////////////////
+
+    FreeRTOS_printf(("FreeRTOS_IPInit\n"));
+	FreeRTOS_IPInit(ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress);
 
 	commands_start_msg();
 
