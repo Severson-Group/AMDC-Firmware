@@ -53,6 +53,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/include}&quot;"/>
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
 									<listOptionValue builtIn="false" value="../../shared"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.1065277689" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -68,6 +71,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/include}&quot;"/>
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
 									<listOptionValue builtIn="false" value="../../shared"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq}&quot;"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.1025800542" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
@@ -117,10 +123,13 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/lwipopts.h|src/lwIP_Demo|include|FreeRTOS-Kernel|src/main2.c|shared|ARM_CA9|src/Blinky_Demo|MemMang|usr|lwip" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Zynq|GCC|FreeRTOS-Plus-TCP|source|src/lwipopts.h|src/lwIP_Demo|include|FreeRTOS-Kernel|src/main2.c|shared|ARM_CA9|src/Blinky_Demo|MemMang|usr|lwip" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ARM_CA9"/>
 						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel"/>
+						<entry excluding="source/portable/NetworkInterface|source/portable/Compiler|tools|test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Plus-TCP"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="GCC"/>
 						<entry excluding="heap_1.c|heap_5.c|heap_3.c|heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Zynq"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
 					</sourceEntries>
 				</configuration>
@@ -158,6 +167,9 @@
 									<listOptionValue builtIn="false" value="&quot;../../amdc_bsp_cpu1\ps7_cortexa9_1\include&quot;"/>
 									<listOptionValue builtIn="false" value="../../shared"/>
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq}&quot;"/>
 								</option>
 								<inputType id="xilinx.gnu.assembler.input.511174097" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
@@ -174,6 +186,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/portable/GCC/ARM_CA9}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Kernel/include}&quot;"/>
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}FreeRTOS-Plus-TCP/source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq}&quot;"/>
 								</option>
 								<option id="xilinx.gnu.compiler.symbols.defined.906961689" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_BLINK"/>
@@ -221,7 +236,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="MemMang/heap_1.c|MemMang/heap_5.c|MemMang/heap_3.c|MemMang/heap_2.c|lwip|usr|FreeRTOS-Kernel/examples|FreeRTOS-Kernel/portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="FreeRTOS-Plus-TCP/source/portable/NetworkInterface|FreeRTOS-Plus-TCP/source/portable/Compiler|FreeRTOS-Plus-TCP/tools|FreeRTOS-Plus-TCP/test|MemMang/heap_1.c|MemMang/heap_5.c|MemMang/heap_3.c|MemMang/heap_2.c|lwip|usr|FreeRTOS-Kernel/examples|FreeRTOS-Kernel/portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

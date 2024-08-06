@@ -35,14 +35,34 @@
 			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Kernel</location>
 		</link>
 		<link>
+			<name>FreeRTOS-Plus-TCP</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP</location>
+		</link>
+		<link>
+			<name>GCC</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC</location>
+		</link>
+		<link>
 			<name>MemMang</name>
 			<type>2</type>
 			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Kernel/portable/MemMang</location>
 		</link>
 		<link>
+			<name>Zynq</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq</location>
+		</link>
+		<link>
 			<name>shared</name>
 			<type>2</type>
 			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/shared</location>
+		</link>
+		<link>
+			<name>source</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP/source</location>
 		</link>
 	</linkedResources>
 </projectDescription>
