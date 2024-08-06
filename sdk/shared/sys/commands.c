@@ -17,12 +17,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-/* lwip */
-#include "lwip/lwip_glue.h"
-extern volatile int TcpFastTmrFlag;
-extern volatile int TcpSlowTmrFlag;
-void tcp_fasttmr(void);
-void tcp_slowtmr(void);
 
 #define RECV_BUFFER_LENGTH (4 * 1024)
 
@@ -322,29 +316,18 @@ static void commands_eth(void *arg)
 
     for (;;) {
     	vTaskDelay(COMMANDS_INTERVAL_TICKS);
-    	eth_link_detect(my_netif);
-    	xemacif_input(my_netif);
-    	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
-		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read);
+//    	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
+//		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read);
 
 		// Run state machine to create pending cmds to execute
-		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
-
-		// Move along in recv buffer
-		ctx->recv_buffer_idx += num_bytes;
-		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-			ctx->recv_buffer_idx = 0;
-		}
-		parse_commands(ctx);
-
-		if (TcpFastTmrFlag) {
-			tcp_fasttmr();
-			TcpFastTmrFlag = 0;
-		}
-		if (TcpSlowTmrFlag) {
-			tcp_slowtmr();
-			TcpSlowTmrFlag = 0;
-		}
+//		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
+//
+//		// Move along in recv buffer
+//		ctx->recv_buffer_idx += num_bytes;
+//		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
+//			ctx->recv_buffer_idx = 0;
+//		}
+//		parse_commands(ctx);
     }
 }
 

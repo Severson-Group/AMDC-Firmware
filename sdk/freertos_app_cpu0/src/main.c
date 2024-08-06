@@ -52,7 +52,6 @@
 #include "sys/cmd/cmd_counter.h"
 #include "sys/cmd/cmd_hw.h"
 #include "usr/user_apps.h"
-#include "lwip/lwip_glue.h"
 /* End User Includes */
 
 #define DELAY_1_SECOND        1000UL
@@ -89,38 +88,6 @@ extern void vPortInstallFreeRTOSVectorTable(void);
 
 #define QUEUE_LENGTH 10
 #define ITEM_SIZE    sizeof(uint32_t)
-
-void startLWIPTask() {
-	/* Set up LwIP stuff */
-	xil_printf("Setting up LwIP... ");
-	if (setup_lwip() == XST_SUCCESS) {
-		xil_printf("Success!\r\n");
-	} else {
-		xil_printf("Failure\r\n");
-	}
-
-	xil_printf("Setting up listening sockets... ");
-	if (start_tcpip() == XST_SUCCESS) {
-		xil_printf("Success!\r\n");
-	} else {
-		xil_printf("Failure\r\n");
-	}
-	while (1) {
-		vTaskDelay((pdMS_TO_TICKS(1000.0 / 1000)));
-		/* sleep until there are packets to process
-		 * This semaphore is set by the packet receive interrupt
-		 * routine.
-		 */
-
-		/* move all received packets to lwIP */
-		xemacif_input(netif);
-	}
-}
-
-void sys_thread_new( const char *pcName, void( *pxThread )( void *pvParameters ), void *pvArg, int iStackSize, int iPriority ) {
-	xTaskHandle xCreatedTask;
-	xTaskCreate( pxThread, ( const char * const) pcName, iStackSize, pvArg, iPriority, &xCreatedTask );
-}
 
 int main(void)
 {
@@ -160,7 +127,6 @@ int main(void)
 
     Xil_ExceptionInit();
     vPortInstallFreeRTOSVectorTable();
-    portENABLE_INTERRUPTS();
 
     ///////////////////////////
     // BEGIN USER CODE HERE //
@@ -187,9 +153,6 @@ int main(void)
     ///////////////////////
 
     /* Start the tasks and timer running. */
-    sys_thread_new("setupLWIP", (void(*)(void*)) startLWIPTask, 0,
-    	                1024,
-    	                2);
     vTaskStartScheduler();
 
     /* If all is well, the scheduler will now be running, and the following line

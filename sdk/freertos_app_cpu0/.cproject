@@ -86,7 +86,7 @@
 							<tool id="xilinx.gnu.armv7.c.toolchain.linker.debug.1207653686" name="ARM v7 gcc linker" superClass="xilinx.gnu.armv7.c.toolchain.linker.debug">
 								<option id="xilinx.gnu.linker.inferred.swplatform.lpath.1738237184" name="Software Platform Library Path" superClass="xilinx.gnu.linker.inferred.swplatform.lpath"/>
 								<option id="xilinx.gnu.linker.inferred.swplatform.flags.167023752" name="Software Platform Inferred Flags" superClass="xilinx.gnu.linker.inferred.swplatform.flags" valueType="libs">
-									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,-llwip4,--end-group"/>
+									<listOptionValue builtIn="false" value="-Wl,--start-group,-lxil,-lgcc,-lc,--end-group"/>
 								</option>
 								<option id="xilinx.gnu.c.linker.option.lscript.418790366" name="Linker Script" superClass="xilinx.gnu.c.linker.option.lscript" value="../src/lscript.ld" valueType="string"/>
 								<option id="xilinx.gnu.c.link.option.ldflags.1703502591" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value=" -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=none -specs=Xilinx.spec" valueType="string"/>

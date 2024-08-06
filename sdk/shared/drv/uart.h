@@ -2,7 +2,6 @@
 #define UART_H
 
 #include <stdint.h>
-#include "lwip/socket_manager.h"
 
 #define UART_RX_FIFO_LENGTH (64)
 #define UART_TX_FIFO_LENGTH (64)
