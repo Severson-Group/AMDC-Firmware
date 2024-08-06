@@ -120,7 +120,7 @@
 						<entry excluding="src/lwipopts.h|src/lwIP_Demo|include|FreeRTOS-Kernel|src/main2.c|shared|ARM_CA9|src/Blinky_Demo|MemMang|usr|lwip" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ARM_CA9"/>
 						<entry excluding="examples|portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS-Kernel"/>
-						<entry excluding="heap_4.c|heap_5.c|heap_3.c|heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
+						<entry excluding="heap_1.c|heap_5.c|heap_3.c|heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="MemMang"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="shared"/>
 					</sourceEntries>
 				</configuration>
@@ -221,7 +221,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="MemMang/heap_4.c|MemMang/heap_5.c|MemMang/heap_3.c|MemMang/heap_2.c|lwip|usr|FreeRTOS-Kernel/examples|FreeRTOS-Kernel/portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="MemMang/heap_1.c|MemMang/heap_5.c|MemMang/heap_3.c|MemMang/heap_2.c|lwip|usr|FreeRTOS-Kernel/examples|FreeRTOS-Kernel/portable" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
