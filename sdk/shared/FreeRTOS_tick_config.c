@@ -32,6 +32,7 @@
 /* Xilinx includes. */
 #include "xscugic.h"
 #include "xscutimer.h"
+#include "xemacps.h"
 
 #define XSCUTIMER_CLOCK_HZ (XPAR_CPU_CORTEXA9_0_CPU_CLK_FREQ_HZ / 2UL)
 
@@ -100,6 +101,13 @@ void vConfigureTickInterrupt(void)
     /* Enable the interrupt in the xTimer itself. */
     vClearTickInterrupt();
     XScuTimer_EnableInterrupt(&xTimer);
+
+    /* secret special code from https://support.xilinx.com/s/question/0D54U00007hz8SRSAY/freertos-tcpip-interrupt-issues?language=en_US */
+//    XScuGic_SetPriorityTriggerType(&xInterruptController, XPS_GEM0_INT_ID, 4, 1);  // level sensitive
+//    XScuGic_Connect(&xInterruptController, XPS_GEM0_INT_ID,
+//      (Xil_ExceptionHandler)XEmacPs_IntrHandler, (void *)&xInterruptController);
+//
+//    XScuGic_Enable(&xInterruptController, XPS_GEM0_INT_ID);
 }
 /*-----------------------------------------------------------*/
 
