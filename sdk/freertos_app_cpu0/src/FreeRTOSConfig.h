@@ -82,7 +82,7 @@
 #define configCPU_CLOCK_HZ                      100000000UL
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configUSE_TICKLESS_IDLE                 0
-#define configTICK_RATE_HZ                      ((TickType_t) 10000)
+#define configTICK_RATE_HZ                      ((TickType_t) 1000)
 #define configPERIPHERAL_CLOCK_HZ               (33333000UL)
 #define configUSE_PREEMPTION                    1
 #define configUSE_IDLE_HOOK                     0 // TODO: For low-power, set 1 and implement vApplicationIdleHook()
@@ -103,6 +103,7 @@
 #define configUSE_QUEUE_SETS                    1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
 #define configSUPPORT_STATIC_ALLOCATION         1
+#define configAPPLICATION_ALLOCATED_HEAP        1
 
 /* AMDC ADDITION: Need to specify this callback config so we can create message buffers with callbacks
  *                  This is done for Inter-Core Communication (src/sys/icc.c) */
@@ -233,14 +234,15 @@ line interface. */
 /* IP address configuration. */
 #define configIP_ADDR0 192
 #define configIP_ADDR1 168
-#define configIP_ADDR2 0
+#define configIP_ADDR2 1
 #define configIP_ADDR3 10
+#define configIP_PORT 7
 
 /* Default gateway IP address configuration.  Used if ipconfigUSE_DHCP is set to
  * 0, or ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
 #define configGATEWAY_ADDR0                  192
 #define configGATEWAY_ADDR1                  168
-#define configGATEWAY_ADDR2                  0
+#define configGATEWAY_ADDR2                  1
 #define configGATEWAY_ADDR3                  1
 
 /* Default DNS server configuration.  OpenDNS addresses are 208.67.222.222 and

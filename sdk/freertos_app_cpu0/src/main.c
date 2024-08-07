@@ -162,6 +162,11 @@ static const uint8_t ucDNSServerAddress[4] = {
     configDNS_SERVER_ADDR3
 };
 
+extern void vStartSimpleTCPServerTasks( uint16_t usStackSize,
+        UBaseType_t uxPriority );
+
+uint8_t ucHeap[ configTOTAL_HEAP_SIZE ]; // the heap.
+
 int main(void)
 {
 	/* initialise hardware */
@@ -227,6 +232,8 @@ int main(void)
     /////////////////////////
     // END USER CODE HERE //
     ///////////////////////
+
+    vStartSimpleTCPServerTasks(1024, tskIDLE_PRIORITY);
 
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
