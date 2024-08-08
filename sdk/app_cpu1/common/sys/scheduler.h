@@ -16,11 +16,18 @@
 // Timing Threshold - 60ns
 //   Typically, the variance of the measured interval from the expected interval is
 //   no more than 20ns, but we'll use a tolerance of three times this for safety :)
+//   NOTE: this is with the default timing settings of 100 kHz PWM Carrier and
+//   a Timing Manager ratio of 10 events. For abnormal timing settings, the
+//   magnitude of the tolerance can be overridden in user_config.h
 //   The tolerance value is negative, as the target interval is subtracted from
 //   the measured interval. If the former is larger than the latter, the subtraction
 //   result will be a negative value. The check to run the task then confirms
 //   that the difference is *less-negative* than this tolerance
+#if USER_CONFIG_OVERRIDE_SCHEDULER_INTERVAL_TOLERANCE == 0
 #define SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.06)
+#else
+#define SCHEDULER_INTERVAL_TOLERANCE_USEC (USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC)
+#endif
 
 // Callback into application when task is run:
 typedef void (*task_callback_t)(void *);
