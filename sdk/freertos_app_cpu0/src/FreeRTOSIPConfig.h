@@ -31,6 +31,44 @@
 #define FREERTOS_IP_CONFIG_H
 
 /* I put these here -Ryan */
+
+/* MAC address configuration. */
+#define configMAC_ADDR0 0x00
+#define configMAC_ADDR1 0x13
+#define configMAC_ADDR2 0x14
+#define configMAC_ADDR3 0x15
+#define configMAC_ADDR4 0x15
+#define configMAC_ADDR5 0x16
+
+/* IP address configuration. */
+#define configIP_ADDR0 192
+#define configIP_ADDR1 168
+#define configIP_ADDR2 1
+#define configIP_ADDR3 10
+#define configIP_PORT 7
+
+/* Default gateway IP address configuration.  Used if ipconfigUSE_DHCP is set to
+ * 0, or ipconfigUSE_DHCP is set to 1 but a DNS server cannot be contacted. */
+#define configGATEWAY_ADDR0                  192
+#define configGATEWAY_ADDR1                  168
+#define configGATEWAY_ADDR2                  1
+#define configGATEWAY_ADDR3                  1
+
+/* Default DNS server configuration.  OpenDNS addresses are 208.67.222.222 and
+ * 208.67.220.220.  Used in ipconfigUSE_DHCP is set to 0, or ipconfigUSE_DHCP is
+ * set to 1 but a DNS server cannot be contacted.*/
+#define configDNS_SERVER_ADDR0               208
+#define configDNS_SERVER_ADDR1               67
+#define configDNS_SERVER_ADDR2               222
+#define configDNS_SERVER_ADDR3               222
+
+/* Netmask configuration. */
+#define configNET_MASK0 255
+#define configNET_MASK1 255
+#define configNET_MASK2 255
+#define configNET_MASK3 0
+
+
 #define ipconfigUSE_IPv4                  ( 1 )
 
 #define ipconfigIPv4_BACKWARD_COMPATIBLE  ( 1 )

@@ -3,6 +3,7 @@
 #include "task.h"
 /* other includes */
 #include "sys/commands.h"
+#include "ip/socket_manager.h"
 // #include "drv/encoder.h"
 #include "drv/uart.h"
 #include "sys/cmd/cmd_help.h"
@@ -67,6 +68,7 @@ typedef struct {
 
 static sm_parse_ascii_cmd_ctx_t ctx_uart;
 static sm_parse_ascii_cmd_ctx_t ctx_eth;
+Socket_t rawSocket;
 
 static int _command_handler(int argc, char **argv);
 
@@ -101,7 +103,7 @@ void cmd_resp_write(char *msg, int len)
         serial_write(msg, len);
     } else {
         for (int i = 0; i < len; i++) {
-            icc_tx_append_char_to_fifo(msg[i]);
+        	FreeRTOS_send(rawSocket, &msg[i], 1, 0);
         }
     }
 }
@@ -316,18 +318,22 @@ static void commands_eth(void *arg)
 
     for (;;) {
     	vTaskDelay(COMMANDS_INTERVAL_TICKS);
-//    	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
-//		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read);
+    	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
+		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read, &rawSocket);
 
-		// Run state machine to create pending cmds to execute
-//		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
-//
-//		// Move along in recv buffer
-//		ctx->recv_buffer_idx += num_bytes;
-//		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
-//			ctx->recv_buffer_idx = 0;
-//		}
-//		parse_commands(ctx);
+		if (num_bytes > 0) {
+			xil_printf("commands_eth received %d chars: %s\n", num_bytes, ctx->recv_buffer[ctx->recv_buffer_idx]);
+		}
+
+		 // Run state machine to create pending cmds to execute
+		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
+
+		// Move along in recv buffer
+		ctx->recv_buffer_idx += num_bytes;
+		if (ctx->recv_buffer_idx >= RECV_BUFFER_LENGTH) {
+			ctx->recv_buffer_idx = 0;
+		}
+		parse_commands(ctx);
     }
 }
 

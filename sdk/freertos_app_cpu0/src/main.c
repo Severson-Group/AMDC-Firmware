@@ -43,6 +43,7 @@
 #include "xparameters.h"
 /* Firmware includes */
 //#include "sys/icc.h"
+#include "ip/ip.h"
 #include "sys/intr.h"
 
 /* Begin User Includes */
@@ -64,17 +65,13 @@
  * the following application callback function must be provided to supply the RAM that will
  * get used for the Idle task data structures and stack.
  */
-void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
-                                   StackType_t **ppxIdleTaskStackBuffer,
-                                   uint32_t *pulIdleTaskStackSize);
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize);
 
 /* This project has configSUPPORT_STATIC_ALLOCATION set to 1 (for Inter-Core Communication)
  * and configUSE_TIMERS set to 1 so the following application callback function must be
  * provided to supply the RAM that will get used for the Timer task data structures and stack.
  */
-void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
-                                    StackType_t **ppxTimerTaskStackBuffer,
-                                    uint32_t *pulTimerTaskStackSize);
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize);
 
 /*
  * The Xilinx projects use a BSP that do not allow the start up code to be
@@ -91,81 +88,7 @@ extern void vPortInstallFreeRTOSVectorTable(void);
 #define QUEUE_LENGTH 10
 #define ITEM_SIZE    sizeof(uint32_t)
 
-/* needed for FreeRTOS-Plus-TCP */
-
-static UBaseType_t ulNextRand;
-
-UBaseType_t uxRand(void) {
-    const uint32_t ulMultiplier = 0x015a4e35UL, ulIncrement = 1UL;
-    /* Utility function to generate a pseudo random number. */
-    ulNextRand = (ulMultiplier * ulNextRand) + ulIncrement;
-    return((int) (ulNextRand) & 0x7fffUL );
-}
-
-BaseType_t xApplicationGetRandomNumber(uint32_t *pulNumber) {
-    *pulNumber = (uint32_t) uxRand();
-    return pdTRUE;
-}
-
-uint32_t ulApplicationGetNextSequenceNumber(uint32_t ulSourceAddress, uint16_t usSourcePort, uint32_t ulDestinationAddress, uint16_t usDestinationPort) {
-    return ( uint32_t ) uxRand();
-}
-
-void vApplicationIPNetworkEventHook(eIPCallbackEvent_t eNetworkEvent) {
-    static BaseType_t xTasksAlreadyCreated = pdFALSE;
-    /* If the network has just come up...*/
-    if ((eNetworkEvent == eNetworkUp) && (xTasksAlreadyCreated == pdFALSE)) {
-        /* Do nothing. Just a stub. */
-        xTasksAlreadyCreated = pdTRUE;
-    }
-}
-
-/* Default MAC address configuration.  The demo creates a virtual network
- * connection that uses this MAC address by accessing the raw Ethernet data
- * to and from a real network connection on the host PC.  See the
- * configNETWORK_INTERFACE_TO_USE definition for information on how to configure
- * the real network connection to use. */
-const uint8_t ucMACAddress[6] =
-{
-    configMAC_ADDR0,
-    configMAC_ADDR1,
-    configMAC_ADDR2,
-    configMAC_ADDR3,
-    configMAC_ADDR4,
-    configMAC_ADDR5
-};
-
-/* The default IP and MAC address used by the code. It is used as a place holder.
- */
-static const uint8_t ucIPAddress[4] = {
-    configIP_ADDR0,
-    configIP_ADDR1,
-    configIP_ADDR2,
-    configIP_ADDR3
-};
-static const uint8_t ucNetMask[4] = {
-    configNET_MASK0,
-    configNET_MASK1,
-    configNET_MASK2,
-    configNET_MASK3
-};
-static const uint8_t ucGatewayAddress[4] = {
-    configGATEWAY_ADDR0,
-    configGATEWAY_ADDR1,
-    configGATEWAY_ADDR2,
-    configGATEWAY_ADDR3
-};
-static const uint8_t ucDNSServerAddress[4] = {
-    configDNS_SERVER_ADDR0,
-    configDNS_SERVER_ADDR1,
-    configDNS_SERVER_ADDR2,
-    configDNS_SERVER_ADDR3
-};
-
-extern void vStartSimpleTCPServerTasks( uint16_t usStackSize,
-        UBaseType_t uxPriority );
-
-uint8_t ucHeap[ configTOTAL_HEAP_SIZE ]; // the heap.
+uint8_t ucHeap[configTOTAL_HEAP_SIZE]; // the heap.
 
 int main(void)
 {
@@ -210,8 +133,7 @@ int main(void)
     // BEGIN USER CODE HERE //
     /////////////////////////
 
-    FreeRTOS_printf(("FreeRTOS_IPInit\n"));
-	FreeRTOS_IPInit(ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress);
+    start_tcp(1024, tskIDLE_PRIORITY);
 
 	commands_start_msg();
 
@@ -233,8 +155,6 @@ int main(void)
     // END USER CODE HERE //
     ///////////////////////
 
-    vStartSimpleTCPServerTasks(1024, tskIDLE_PRIORITY);
-
     /* Start the tasks and timer running. */
     vTaskStartScheduler();
 
@@ -251,10 +171,7 @@ int main(void)
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
  * implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
  * used by the Idle task. */
-void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
-                                   StackType_t **ppxIdleTaskStackBuffer,
-                                   uint32_t *pulIdleTaskStackSize)
-{
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize) {
     /* If the buffers to be provided to the Idle task are declared inside this
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
@@ -278,10 +195,7 @@ void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer,
 /* configUSE_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
  * application must provide an implementation of vApplicationGetTimerTaskMemory()
  * to provide the memory that is used by the Timer service task. */
-void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer,
-                                    StackType_t **ppxTimerTaskStackBuffer,
-                                    uint32_t *pulTimerTaskStackSize)
-{
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize) {
     /* If the buffers to be provided to the Timer task are declared inside this
      * function then they must be declared static - otherwise they will be allocated on
      * the stack and so not exists after this function exits. */
