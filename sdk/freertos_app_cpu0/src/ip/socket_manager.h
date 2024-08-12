@@ -25,7 +25,6 @@ void socket_manager_rx_data(Socket_t raw_socket, uint8_t *data, uint16_t len);
 void socket_manager_tx_data(Socket_t raw_socket, uint8_t *data, uint16_t len);
 
 // This is to be called in the application main loop.
-//
 int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet);
 
 void socket_manager_log_socket_send(int socket_id, char c);

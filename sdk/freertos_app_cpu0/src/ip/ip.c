@@ -242,9 +242,6 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 					break;
 				}
 				socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
-
-				// Indicate that the packet has been received
-//				tcp_recved(tpcb, p->len);
             }
         }
 

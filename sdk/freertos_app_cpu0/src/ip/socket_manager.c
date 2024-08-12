@@ -219,8 +219,6 @@ int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
                     // I might be wrong and it could be stuck in some pipeline...
                     // Just to be safe, we'll insert a DMB instruction.
                     dmb();
-
-                    // Increment produce count
                 }
                 return j;
                 break;

@@ -20,7 +20,7 @@
 
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_LOGGING (0)
+#define USER_CONFIG_ENABLE_LOGGING (1)
 
 // Override default number of available logging variables
 // when defined, this takes precedence over system default of 32
@@ -32,7 +32,7 @@
 
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_INJECTION (0)
+#define USER_CONFIG_ENABLE_INJECTION (1)
 
 // Enable SensorCard platform motherboard support
 // set to 1 for enabled, 0 for disabled
