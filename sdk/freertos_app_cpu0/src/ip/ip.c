@@ -145,7 +145,7 @@ static const uint8_t ucDNSServerAddress[4] = {
 void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 	socket_manager_init();
 
-	FreeRTOS_printf(("FreeRTOS_IPInit\n"));
+	xil_printf("Ethernet Init with address: %d.%d.%d.%d\n", ucIPAddress[0], ucIPAddress[1], ucIPAddress[2], ucIPAddress[3]);
 	FreeRTOS_IPInit(ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress);
 
 	/* Create the TCP echo server. */
