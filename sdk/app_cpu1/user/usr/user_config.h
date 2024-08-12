@@ -53,12 +53,8 @@
 // as of AMDC Firmware v1.3, all timing variables for tasks (runtime, loop time, etc)
 // are stored as double-precision floating point values, which have precision errors
 // that require a margin of tolerance. sometimes non-default PWM frequency and/or
-// timing manager ratios may necessitate using the below defines to override the
-// default tolerance in common/sys/scheduler.h
-#define USER_CONFIG_OVERRIDE_SCHEDULER_INTERVAL_TOLERANCE (0)
-
-#if USER_CONFIG_OVERRIDE_SCHEDULER_INTERVAL_TOLERANCE == 1
-#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.15)
-#endif
+// timing manager ratios may necessitate un-commenting the following define to override
+// the default tolerance in common/sys/scheduler.h
+//#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.15)
 
 #endif // USER_CONFIG_H

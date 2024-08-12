@@ -23,7 +23,7 @@
 //   the measured interval. If the former is larger than the latter, the subtraction
 //   result will be a negative value. The check to run the task then confirms
 //   that the difference is *less-negative* than this tolerance
-#if USER_CONFIG_OVERRIDE_SCHEDULER_INTERVAL_TOLERANCE == 0
+#ifndef USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC
 #define SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.06)
 #else
 #define SCHEDULER_INTERVAL_TOLERANCE_USEC (USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC)
