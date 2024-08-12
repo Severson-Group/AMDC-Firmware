@@ -110,7 +110,7 @@ int socket_manager_remove(Socket_t raw_socket)
         if (socket_list[i].raw_socket == raw_socket) {
             reset_socket(&socket_list[i]);
 
-            printf("Remove socket: %d\n", i);
+            xil_printf("Remove socket: %d\n", i);
 
             err = XST_SUCCESS;
             break;

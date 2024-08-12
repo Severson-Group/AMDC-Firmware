@@ -204,7 +204,7 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
             configASSERT(xConnectedSocket != FREERTOS_INVALID_SOCKET);
 
             /* Spawn a task to handle the connection. */
-            xTaskCreateStatic(prvServerConnectionInstance, "EchoServer", configMINIMAL_STACK_SIZE, (void *) xConnectedSocket, tskIDLE_PRIORITY, echoServerTaskStack, &echoServerTaskBuffer);
+            xTaskCreateStatic(prvServerConnectionInstance, "ip", configMINIMAL_STACK_SIZE, (void *) xConnectedSocket, tskIDLE_PRIORITY, echoServerTaskStack, &echoServerTaskBuffer);
         }
     }
 /*-----------------------------------------------------------*/
@@ -229,7 +229,6 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
         if (rxBuffer != NULL) {
             FreeRTOS_setsockopt(xConnectedSocket, 0, FREERTOS_SO_RCVTIMEO, &xReceiveTimeOut, sizeof(xReceiveTimeOut));
             FreeRTOS_setsockopt(xConnectedSocket, 0, FREERTOS_SO_SNDTIMEO, &xSendTimeOut, sizeof(xReceiveTimeOut));
-            uint32_t iter = 0;
             for (;;) {
             	// Do not read the packet if we are not in ESTABLISHED state
 				// Also, abort connection if socket has never been registered
@@ -242,8 +241,6 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 				if (recvBytes <= 0) {
 					break;
 				}
-				xil_printf("iter %d\n", iter);
-				iter++;
 				socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
 
 				// Indicate that the packet has been received
@@ -251,9 +248,8 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(100.0));
+        vTaskDelay(pdMS_TO_TICKS(10.0)); // keep socket open for 10 ms to allow response (without going out of scope)
 
-        xil_printf("socket closed\n");
         socket_manager_remove(xConnectedSocket);
 
         /* Initiate a shutdown in case it has not already been initiated. */

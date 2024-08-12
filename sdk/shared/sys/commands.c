@@ -321,9 +321,9 @@ static void commands_eth(void *arg)
     	int try_to_read = MIN(UART_RX_FIFO_LENGTH, RECV_BUFFER_LENGTH - ctx->recv_buffer_idx);
 		int num_bytes = socket_recv(&ctx->recv_buffer[ctx->recv_buffer_idx], try_to_read, &rawSocket);
 
-		if (num_bytes > 0) {
-			xil_printf("commands_eth received %d chars: %s\n", num_bytes, ctx->recv_buffer[ctx->recv_buffer_idx]);
-		}
+//		if (num_bytes > 0) {
+//			xil_printf("commands_eth received %d chars: %s\n", num_bytes, &ctx->recv_buffer[ctx->recv_buffer_idx]);
+//		}
 
 		 // Run state machine to create pending cmds to execute
 		_create_pending_cmds(ctx, &ctx->recv_buffer[ctx->recv_buffer_idx], num_bytes);
