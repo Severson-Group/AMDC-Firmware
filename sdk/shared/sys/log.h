@@ -47,8 +47,8 @@
 #error "Max number of logging variables too large to meet timing! Please reduce."
 #endif
 
-#define LOG_UPDATES_PER_SEC (configTICK_RATE_HZ)
-#define TASK_LOG_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / LOG_UPDATES_PER_SEC))
+#define TASK_LOG_UPDATES_PER_SEC (configTICK_RATE_HZ)
+#define TASK_LOG_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_LOG_UPDATES_PER_SEC))
 
 typedef enum var_type_e {
     LOG_INT = 1,

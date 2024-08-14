@@ -167,7 +167,6 @@ bool socket_manager_is_registered(void *raw_socket)
 int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         socket_t *socket = &socket_list[i];
-        *rawSocketRet = socket_list[i].raw_socket;
         ringbuf_t rb = &socket->rx_ring_buffer;
 
         size_t data_len = ringbuf_bytes_used(rb);
@@ -220,13 +219,14 @@ int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
                     // Just to be safe, we'll insert a DMB instruction.
                     dmb();
                 }
+                *rawSocketRet = socket->raw_socket;
                 return j;
                 break;
             }
 
             case SOCKET_TYPE_LOG_VAR:
             {
-                // TODO: unsupported as of now, do nothing!
+                // TODO: unsupported as of now, do nothing! No data gets received in logging mode.
                 break;
             }
 

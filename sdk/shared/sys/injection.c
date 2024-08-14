@@ -409,32 +409,34 @@ typedef struct sm_ctx_list_t {
 } sm_ctx_list_t;
 
 #define TASK_SM_LIST_UPDATES_PER_SEC (10000)
-#define TASK_SM_LIST_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / SM_LIST_UPDATES_PER_SEC))
+#define TASK_SM_LIST_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_SM_LIST_UPDATES_PER_SEC))
 
 void state_machine_list_callback(void *arg)
 {
     sm_ctx_list_t *ctx = (sm_ctx_list_t *) arg;
+    for (;;) {
+    	vTaskDelay(TASK_SM_LIST_INTERVAL_TICKS);
+		switch (ctx->state) {
+		case LISTING:
+			// Print entry
+			cmd_resp_printf("%s\r\n", ctx->curr->name);
 
-    switch (ctx->state) {
-    case LISTING:
-        // Print entry
-        cmd_resp_printf("%s\r\n", ctx->curr->name);
+			// Move to next entry
+			ctx->curr = ctx->curr->next;
+			if (ctx->curr == NULL)
+				ctx->state = REMOVE_TASK;
+			break;
 
-        // Move to next entry
-        ctx->curr = ctx->curr->next;
-        if (ctx->curr == NULL)
-            ctx->state = REMOVE_TASK;
-        break;
+		case REMOVE_TASK:
+			cmd_resp_printf("SUCCESS\r\n\n");
+			vTaskDelete(ctx->tcb);
+			break;
 
-    case REMOVE_TASK:
-        cmd_resp_printf("SUCCESS\r\n\n");
-        vTaskDelete(ctx->tcb);
-        break;
-
-    default:
-        // Can't happen
-        HANG;
-        break;
+		default:
+			// Can't happen
+			HANG;
+			break;
+		}
     }
 }
 

@@ -9,8 +9,6 @@
 #include "sys/cmd/cmd_help.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
-#include "sys/icc.h"
- #include "sys/icc_tx.h"
 // #include "sys/log.h"
 #include "sys/serial.h"
 #include "sys/util.h"
@@ -68,7 +66,7 @@ typedef struct {
 
 static sm_parse_ascii_cmd_ctx_t ctx_uart;
 static sm_parse_ascii_cmd_ctx_t ctx_eth;
-Socket_t rawSocket;
+static Socket_t rawSocket;
 
 static int _command_handler(int argc, char **argv);
 
@@ -133,14 +131,14 @@ void commands_init(void)
     printf("CMD:\tInitializing command tasks...\n");
     // Command parse & exec task (UART)
     if (uartTaskExists == 0) {
-        xTaskCreate(commands_uart, (const char *) "command_uart", configMINIMAL_STACK_SIZE,
+        xTaskCreate(commands_uart, (const char *) "command_uart", 1024,
 				    NULL, tskIDLE_PRIORITY, &tcb_uart);
         uartTaskExists = 1;
 	}
 
     // Command parse task (ETH)
     if (ethTaskExists == 0) {
-        xTaskCreate(commands_eth, (const char *) "command_eth", configMINIMAL_STACK_SIZE,
+        xTaskCreate(commands_eth, (const char *) "command_eth", 1024,
                     NULL, tskIDLE_PRIORITY, &tcb_eth);
         ethTaskExists = 1;
     }
@@ -194,8 +192,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
             if (ctx == &ctx_uart) {
                 debug_print("\r\n");
             } else {
-                icc_tx_append_char_to_fifo('\r');
-                icc_tx_append_char_to_fifo('\n');
+            	FreeRTOS_send(rawSocket, "\r\n", 2, 0);
             }
 #endif
 
@@ -219,7 +216,7 @@ static void _create_pending_cmds(sm_parse_ascii_cmd_ctx_t *ctx, char *buffer, in
         if (ctx == &ctx_uart) {
             serial_write(&c, 1);
         } else {
-            icc_tx_append_char_to_fifo(c);
+        	FreeRTOS_send(rawSocket, &c, 1, 0);
         }
 #endif
 

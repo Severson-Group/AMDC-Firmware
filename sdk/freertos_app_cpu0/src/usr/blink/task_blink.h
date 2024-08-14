@@ -1,10 +1,6 @@
 #ifndef TASK_BLINK_H
 #define TASK_BLINK_H
 
-/* FreeRTOS includes */
-#include "FreeRTOS.h"
-#include "task.h"
-
 // Frequency that this task is called (in Hz)
 //
 // Must be less than or equal to scheduler updates per second

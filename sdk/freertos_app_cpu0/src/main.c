@@ -55,6 +55,8 @@
 #include "sys/cmd/cmd_counter.h"
 #include "sys/cmd/cmd_hw.h"
 #include "usr/user_apps.h"
+#include "sys/injection.h"
+#include "sys/log.h"
 /* End User Includes */
 
 #define DELAY_1_SECOND        1000UL
@@ -102,6 +104,14 @@ int main(void)
     // Both CPUs: Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
     Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
+
+#if USER_CONFIG_ENABLE_LOGGING == 1
+    log_init();
+#endif
+
+#if USER_CONFIG_ENABLE_INJECTION == 1
+    injection_init();
+#endif
 
 #if 1
     // This code is required to start CPU1 from CPU0 during boot.

@@ -187,11 +187,14 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
 void log_callback(void *arg)
 {
-//    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
-	uint32_t elapsed_usec = 0;
+	for (;;) {
+		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
+	//    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
+		uint32_t elapsed_usec = 0;
 
-    _do_log_to_buffer(elapsed_usec);
-    _do_log_to_stream(elapsed_usec);
+		_do_log_to_buffer(elapsed_usec);
+		_do_log_to_stream(elapsed_usec);
+	}
 }
 
 void log_start(void)
@@ -323,64 +326,66 @@ void state_machine_dump_ascii_callback(void *arg)
 
     log_var_t *v = &vars[ctx->var_idx];
     buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+    for (;;) {
+    	vTaskDelay(TASK_SM_DUMP_ASCII_INTERVAL_TICKS);
+		switch (ctx->state) {
+		case DUMP_ASCII_TITLE:
+			cmd_resp_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
+			ctx->state = DUMP_ASCII_NUM_SAMPLES;
+			break;
 
-    switch (ctx->state) {
-    case DUMP_ASCII_TITLE:
-        cmd_resp_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
-        ctx->state = DUMP_ASCII_NUM_SAMPLES;
-        break;
+		case DUMP_ASCII_NUM_SAMPLES:
+			cmd_resp_printf("NUM SAMPLES: %d\r\n", v->num_samples);
+			ctx->state = DUMP_ASCII_HEADER;
+			break;
 
-    case DUMP_ASCII_NUM_SAMPLES:
-        cmd_resp_printf("NUM SAMPLES: %d\r\n", v->num_samples);
-        ctx->state = DUMP_ASCII_HEADER;
-        break;
+		case DUMP_ASCII_HEADER:
+			cmd_resp_printf("-------START-------\r\n");
 
-    case DUMP_ASCII_HEADER:
-        cmd_resp_printf("-------START-------\r\n");
+			if (v->num_samples == 0) {
+				// Nothing to dump!
+				ctx->state = DUMP_ASCII_FOOTER;
+			} else {
+				ctx->state = DUMP_ASCII_VARIABLES_TS;
+			}
+			break;
 
-        if (v->num_samples == 0) {
-            // Nothing to dump!
-            ctx->state = DUMP_ASCII_FOOTER;
-        } else {
-            ctx->state = DUMP_ASCII_VARIABLES_TS;
-        }
-        break;
+		case DUMP_ASCII_VARIABLES_TS:
+			// Print just the timestamp
+			cmd_resp_printf("> %ld\t\t", e->timestamp);
 
-    case DUMP_ASCII_VARIABLES_TS:
-        // Print just the timestamp
-        cmd_resp_printf("> %ld\t\t", e->timestamp);
+			ctx->state = DUMP_ASCII_VARIABLES_VALUE;
+			break;
 
-        ctx->state = DUMP_ASCII_VARIABLES_VALUE;
-        break;
+		case DUMP_ASCII_VARIABLES_VALUE:
+			// Print just the value
+			if (v->type == LOG_INT) {
+				cmd_resp_printf("%ld\r\n", e->value);
+			} else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+				float *f = (float *) &(e->value);
+				cmd_resp_printf("%f\r\n", *f);
+			}
 
-    case DUMP_ASCII_VARIABLES_VALUE:
-        // Print just the value
-        if (v->type == LOG_INT) {
-            cmd_resp_printf("%ld\r\n", e->value);
-        } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
-            float *f = (float *) &(e->value);
-            cmd_resp_printf("%f\r\n", *f);
-        }
+			ctx->sample_idx++;
 
-        ctx->sample_idx++;
+			if (ctx->sample_idx >= v->num_samples) {
+				ctx->state = DUMP_ASCII_FOOTER;
+			} else {
+				ctx->state = DUMP_ASCII_VARIABLES_TS;
+			}
+			break;
 
-        if (ctx->sample_idx >= v->num_samples) {
-            ctx->state = DUMP_ASCII_FOOTER;
-        } else {
-            ctx->state = DUMP_ASCII_VARIABLES_TS;
-        }
-        break;
+		case DUMP_ASCII_FOOTER:
+			cmd_resp_printf("-------END-------\r\n\r\n");
 
-    case DUMP_ASCII_FOOTER:
-        cmd_resp_printf("-------END-------\r\n\r\n");
+			ctx->state = DUMP_ASCII_REMOVE_TASK;
+			break;
 
-        ctx->state = DUMP_ASCII_REMOVE_TASK;
-        break;
-
-    default:
-    case DUMP_ASCII_REMOVE_TASK:
-    	vTaskDelete(ctx->tcb);
-        break;
+		default:
+		case DUMP_ASCII_REMOVE_TASK:
+			vTaskDelete(ctx->tcb);
+			break;
+		}
     }
 }
 
@@ -404,7 +409,7 @@ int log_var_dump_ascii(int log_var_idx, int dump_method)
 
     // Initialize the state machine callback tcb
     xTaskCreate(state_machine_dump_ascii_callback, (const char *) "logdascii", configMINIMAL_STACK_SIZE,
-    				NULL, tskIDLE_PRIORITY, &ctx_dump_ascii.tcb);
+    				&ctx_dump_ascii, tskIDLE_PRIORITY, &ctx_dump_ascii.tcb);
     return SUCCESS;
 }
 
@@ -450,165 +455,171 @@ void state_machine_dump_binary_callback(void *arg)
     sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
 
     log_var_t *v = &vars[ctx->var_idx];
+    for (;;) {
+    	if (ctx -> dump_method == 2) {
+    		// Means Ethernet ==> run state machine at 10 kHz
+    		vTaskDelay(pdMS_TO_TICKS(1000000 / 10e3));
+    	} else {
+    		vTaskDelay(TASK_SM_DUMP_BINARY_INTERVAL_TICKS);
+    	}
+		switch (ctx->state) {
+		case DUMP_BINARY_MAGIC_HEADER:
+		{
+			// Write to data stream output (UART)
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
 
-    switch (ctx->state) {
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
 
-    case DUMP_BINARY_MAGIC_HEADER:
-    {
-        // Write to data stream output (UART)
-        cmd_resp_write((char *) &MAGIC_HEADER, 4);
-        cmd_resp_write((char *) &MAGIC_HEADER, 4);
-        cmd_resp_write((char *) &MAGIC_HEADER, 4);
-        cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			ctx->state = DUMP_BINARY_NUM_SAMPLES;
+			break;
+		}
 
-        // Run data through CRC
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+		case DUMP_BINARY_NUM_SAMPLES:
+		{
+			uint32_t out = (uint32_t) v->num_samples;
 
-        ctx->state = DUMP_BINARY_NUM_SAMPLES;
-        break;
-    }
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &out, 4);
 
-    case DUMP_BINARY_NUM_SAMPLES:
-    {
-        uint32_t out = (uint32_t) v->num_samples;
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
 
-        // Write to output data stream (UART)
-        cmd_resp_write((char *) &out, 4);
+			ctx->state = DUMP_BINARY_SAMPLE_INTERVAL_USEC;
+			break;
+		}
 
-        // Run data through CRC
-        ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+		case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
+		{
+			uint32_t interval_usec = (uint32_t) v->log_interval_usec;
 
-        ctx->state = DUMP_BINARY_SAMPLE_INTERVAL_USEC;
-        break;
-    }
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &interval_usec, 4);
 
-    case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
-    {
-        uint32_t interval_usec = (uint32_t) v->log_interval_usec;
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &interval_usec, 4, ctx->crc);
 
-        // Write to output data stream (UART)
-        cmd_resp_write((char *) &interval_usec, 4);
+			ctx->state = DUMP_BINARY_DATA_TYPE;
+			break;
+		}
 
-        // Run data through CRC
-        ctx->crc = crc32_calc_part((uint8_t *) &interval_usec, 4, ctx->crc);
+		case DUMP_BINARY_DATA_TYPE:
+		{
+			uint32_t var_type = (uint32_t) v->type;
 
-        ctx->state = DUMP_BINARY_DATA_TYPE;
-        break;
-    }
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &var_type, 4);
 
-    case DUMP_BINARY_DATA_TYPE:
-    {
-        uint32_t var_type = (uint32_t) v->type;
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &var_type, 4, ctx->crc);
 
-        // Write to output data stream (UART)
-        cmd_resp_write((char *) &var_type, 4);
+			if (v->num_samples == 0) {
+				// Nothing to dump!
+				ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+			} else {
+				ctx->state = DUMP_BINARY_SAMPLE_VALUE;
+			}
+			break;
+		}
 
-        // Run data through CRC
-        ctx->crc = crc32_calc_part((uint8_t *) &var_type, 4, ctx->crc);
+		case DUMP_BINARY_SAMPLE_VALUE:
+		{
+			int max_num_samples = 1;
+			if (ctx->dump_method == 2) {
+				// Means Ethernet
+				max_num_samples = 20;
 
-        if (v->num_samples == 0) {
-            // Nothing to dump!
-            ctx->state = DUMP_BINARY_MAGIC_FOOTER;
-        } else {
-            ctx->state = DUMP_BINARY_SAMPLE_VALUE;
-        }
-        break;
-    }
+				// To compute network load:
+				// Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
+				//
+				// 20 ==> 6.1 Mbps
+				//
+				// This is the upper limit; might stop early
+				// due to buffer getting full!
+			}
 
-    case DUMP_BINARY_SAMPLE_VALUE:
-    {
-        int max_num_samples = 1;
-        if (ctx->dump_method == 2) {
-            // Means Ethernet
-            max_num_samples = 20;
+			for (int i = 0; i < max_num_samples; i++) {
+				buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 
-            // To compute network load:
-            // Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
-            //
-            // 20 ==> 6.1 Mbps
-            //
-            // This is the upper limit; might stop early
-            // due to buffer getting full!
-        }
+				// Stop when the buffer gets full
+				// Leave a few bytes of extra space free
+				if (task_icc_tx_get_buffer_space_available() < 10) {
+					// Break out of this local for loop
+					break;
+				}
 
-        for (int i = 0; i < max_num_samples; i++) {
-            buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+				// Dump the sampled value
+				if (v->type == LOG_INT) {
+					int32_t out = (int32_t) e->value;
+					cmd_resp_write((char *) &out, 4);
+					ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+				} else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+					// During the sampling, the distinction between float and double variable types
+					// was accounted for. The data is stored in the log array in the float format.
+					float out = *((float *) &(e->value));
+					cmd_resp_write((char *) &out, 4);
+					ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+				}
 
-            // Stop when the buffer gets full
-            // Leave a few bytes of extra space free
-            if (task_icc_tx_get_buffer_space_available() < 10) {
-                // Break out of this local for loop
-                break;
-            }
+				ctx->sample_idx++;
 
-            // Dump the sampled value
-            if (v->type == LOG_INT) {
-                int32_t out = (int32_t) e->value;
-                cmd_resp_write((char *) &out, 4);
-                ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
-            } else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
-                // During the sampling, the distinction between float and double variable types
-                // was accounted for. The data is stored in the log array in the float format.
-                float out = *((float *) &(e->value));
-                cmd_resp_write((char *) &out, 4);
-                ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
-            }
+				// Stay in the current state until we have dumped enough samples
+				if (ctx->sample_idx >= v->num_samples) {
+					ctx->state = DUMP_BINARY_MAGIC_FOOTER;
 
-            ctx->sample_idx++;
+					// Break out of this local for loop
+					break;
+				}
+			}
 
-            // Stay in the current state until we have dumped enough samples
-            if (ctx->sample_idx >= v->num_samples) {
-                ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+			break;
+		}
 
-                // Break out of this local for loop
-                break;
-            }
-        }
+		case DUMP_BINARY_MAGIC_FOOTER:
+		{
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
 
-        break;
-    }
+			// Calculate CRC across footer bytes
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
 
-    case DUMP_BINARY_MAGIC_FOOTER:
-    {
-        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
-        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
-        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
-        cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			// After we are done calculating the CRC, we must
+			// invert it to match the Python implementation.
+			ctx->crc = ~(ctx->crc);
 
-        // Calculate CRC across footer bytes
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
-        ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			// The CRC includes the footer, so the client must
+			// read an extra 4 bytes (the CRC bytes!)
+			cmd_resp_write((char *) &(ctx->crc), 4);
 
-        // After we are done calculating the CRC, we must
-        // invert it to match the Python implementation.
-        ctx->crc = ~(ctx->crc);
+			ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
+			break;
+		}
 
-        // The CRC includes the footer, so the client must
-        // read an extra 4 bytes (the CRC bytes!)
-        cmd_resp_write((char *) &(ctx->crc), 4);
+		case DUMP_BINARY_PRINT_FOOTER_SPACE:
+		{
+			cmd_resp_print("\r\n\r\n");
+			ctx->state = DUMP_BINARY_REMOVE_TASK;
+			break;
+		}
 
-        ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
-        break;
-    }
-
-    case DUMP_BINARY_PRINT_FOOTER_SPACE:
-    {
-        cmd_resp_print("\r\n\r\n");
-        ctx->state = DUMP_BINARY_REMOVE_TASK;
-        break;
-    }
-
-    case DUMP_BINARY_REMOVE_TASK:
-    default:
-    {
-    	vTaskDelete(ctx->tcb);
-        break;
-    }
+		case DUMP_BINARY_REMOVE_TASK:
+		default:
+		{
+			vTaskDelete(ctx->tcb);
+			break;
+		}
+		}
     }
 }
 
@@ -631,18 +642,12 @@ int log_var_dump_binary(int log_var_idx, int dump_method)
     ctx_dump_binary.sample_idx = 0;
     ctx_dump_binary.dump_method = dump_method;
 
-    uint32_t INTERVAL_TICKS = TASK_SM_DUMP_BINARY_INTERVAL_TICKS;
-    if (dump_method == 2) {
-        // Means Ethernet ==> run state machine at 10 kHz
-        INTERVAL_TICKS = pdMS_TO_TICKS(1000000 / 10e3);
-    }
-
     // CRC-32 must be seeded as follows:
     ctx_dump_binary.crc = CRC32_DEFAULT_INIT;
 
     // Initialize the state machine callback tcb
     xTaskCreate(state_machine_dump_binary_callback, (const char *) "logdbin", configMINIMAL_STACK_SIZE,
-        				NULL, tskIDLE_PRIORITY, &ctx_dump_binary.tcb);
+        				&ctx_dump_binary, tskIDLE_PRIORITY, &ctx_dump_binary.tcb);
     return SUCCESS;
 }
 
@@ -676,120 +681,122 @@ typedef struct sm_ctx_info_t {
 } sm_ctx_info_t;
 
 #define TASK_SM_INFO_UPDATES_PER_SEC    configTICK_RATE_HZ
-#define TASK_SM_INFO_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_BLINK_UPDATES_PER_SEC))
+#define TASK_SM_INFO_INTERVAL_TICKS     (pdMS_TO_TICKS(1000.0 / TASK_SM_INFO_UPDATES_PER_SEC))
+
+static sm_ctx_info_t ctx_info;
+static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 void state_machine_info_callback(void *arg)
 {
     sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
+    for (;;) {
+    	log_var_t *v = &vars[ctx->var_idx];
+    	vTaskDelay(TASK_SM_INFO_INTERVAL_TICKS);
+    	switch (ctx->state) {
+		case INFO_HEAD:
+		{
+			cmd_resp_printf("Log Info\r\n");
+			cmd_resp_printf("--------\r\n");
+			ctx->state = INFO_MAX_SLOTS;
+			break;
+		}
 
-    log_var_t *v = &vars[ctx->var_idx];
+		case INFO_MAX_SLOTS:
+		{
+			cmd_resp_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
+			ctx->state = INFO_MAX_DEPTH;
+			break;
+		}
 
-    switch (ctx->state) {
-    case INFO_HEAD:
-    {
-        cmd_resp_printf("Log Info\r\n");
-        cmd_resp_printf("--------\r\n");
-        ctx->state = INFO_MAX_SLOTS;
-        break;
-    }
+		case INFO_MAX_DEPTH:
+		{
+			cmd_resp_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
+			ctx->state = INFO_MAX_SAMPLE_RATE;
+			break;
+		}
 
-    case INFO_MAX_SLOTS:
-    {
-        cmd_resp_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
-        ctx->state = INFO_MAX_DEPTH;
-        break;
-    }
+		case INFO_MAX_SAMPLE_RATE:
+		{
+			cmd_resp_printf("Max sample rate: %d Hz\r\n", TASK_LOG_UPDATES_PER_SEC);
+			cmd_resp_printf("--------\r\n");
+			ctx->state = INFO_VAR_TITLE;
+			break;
+		}
 
-    case INFO_MAX_DEPTH:
-    {
-        cmd_resp_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
-        ctx->state = INFO_MAX_SAMPLE_RATE;
-        break;
-    }
+		case INFO_VAR_TITLE:
+		{
+			if (v->is_registered) {
+				cmd_resp_printf("Slot %d:\r\n", ctx->var_idx);
+				ctx->state = INFO_VAR_DATA1;
+			} else {
+				cmd_resp_printf("Slot %d: unused\r\n", ctx->var_idx);
+				ctx->state = INFO_NEXT_VAR;
+			}
+			break;
+		}
 
-    case INFO_MAX_SAMPLE_RATE:
-    {
-        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
-        cmd_resp_printf("--------\r\n");
-        ctx->state = INFO_VAR_TITLE;
-        break;
-    }
+		case INFO_VAR_DATA1:
+		{
+			cmd_resp_printf("  Name: %s\r\n", v->name);
+			ctx->state = INFO_VAR_DATA2;
+			break;
+		}
 
-    case INFO_VAR_TITLE:
-    {
-        if (v->is_registered) {
-            cmd_resp_printf("Slot %d:\r\n", ctx->var_idx);
-            ctx->state = INFO_VAR_DATA1;
-        } else {
-            cmd_resp_printf("Slot %d: unused\r\n", ctx->var_idx);
-            ctx->state = INFO_NEXT_VAR;
-        }
-        break;
-    }
+		case INFO_VAR_DATA2:
+		{
+			if (v->type == LOG_INT) {
+				cmd_resp_printf("  Type: int\r\n");
+			} else if (v->type == LOG_FLOAT) {
+				cmd_resp_printf("  Type: float\r\n");
+			} else {
+				cmd_resp_printf("  Type: double\r\n");
+			}
+			ctx->state = INFO_VAR_DATA3;
+			break;
+		}
 
-    case INFO_VAR_DATA1:
-    {
-        cmd_resp_printf("  Name: %s\r\n", v->name);
-        ctx->state = INFO_VAR_DATA2;
-        break;
-    }
+		case INFO_VAR_DATA3:
+		{
+			cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
+			ctx->state = INFO_VAR_DATA4;
+			break;
+		}
 
-    case INFO_VAR_DATA2:
-    {
-        if (v->type == LOG_INT) {
-            cmd_resp_printf("  Type: int\r\n");
-        } else if (v->type == LOG_FLOAT) {
-            cmd_resp_printf("  Type: float\r\n");
-        } else {
-            cmd_resp_printf("  Type: double\r\n");
-        }
-        ctx->state = INFO_VAR_DATA3;
-        break;
-    }
+		case INFO_VAR_DATA4:
+		{
+			cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
+			ctx->state = INFO_VAR_DATA5;
+			break;
+		}
 
-    case INFO_VAR_DATA3:
-    {
-        cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
-        ctx->state = INFO_VAR_DATA4;
-        break;
-    }
+		case INFO_VAR_DATA5:
+		{
+			cmd_resp_printf("  Num samples: %d\r\n", v->num_samples);
+			ctx->state = INFO_NEXT_VAR;
+			break;
+		}
 
-    case INFO_VAR_DATA4:
-    {
-        cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
-        ctx->state = INFO_VAR_DATA5;
-        break;
-    }
+		case INFO_NEXT_VAR:
+		{
+			ctx->var_idx++;
+			if (ctx->var_idx >= LOG_MAX_NUM_VARIABLES) {
+				cmd_resp_printf("\r\n");
+				ctx->state = INFO_REMOVE_TASK;
+			} else {
+				ctx->state = INFO_VAR_TITLE;
+			}
+			break;
+		}
 
-    case INFO_VAR_DATA5:
-    {
-        cmd_resp_printf("  Num samples: %d\r\n", v->num_samples);
-        ctx->state = INFO_NEXT_VAR;
-        break;
-    }
-
-    case INFO_NEXT_VAR:
-    {
-        ctx->var_idx++;
-        if (ctx->var_idx >= LOG_MAX_NUM_VARIABLES) {
-            cmd_resp_printf("\r\n");
-            ctx->state = INFO_REMOVE_TASK;
-        } else {
-            ctx->state = INFO_VAR_TITLE;
-        }
-        break;
-    }
-
-    case INFO_REMOVE_TASK:
-    default:
-        cmd_resp_printf("SUCCESS\r\n\n");
-        vTaskDelete(ctx->tcb);
-        break;
+		case INFO_REMOVE_TASK:
+		default:
+			cmd_resp_printf("SUCCESS\r\n\n");
+			taskExists = 0;
+			vTaskDelete(ctx->tcb);
+			break;
+		}
     }
 }
-
-static sm_ctx_info_t ctx_info;
-static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 int log_print_info(void)
 {
@@ -803,9 +810,9 @@ int log_print_info(void)
     ctx_info.var_idx = 0;
 
     // Initialize the state machine callback tcb
+    taskExists = 1;
     xTaskCreate(state_machine_info_callback, (const char *) "loginfo", configMINIMAL_STACK_SIZE,
-    				NULL, tskIDLE_PRIORITY, &ctx_info.tcb);
-	taskExists = 1;
+    				&ctx_info, tskIDLE_PRIORITY, &ctx_info.tcb);
     return SUCCESS;
 }
 
