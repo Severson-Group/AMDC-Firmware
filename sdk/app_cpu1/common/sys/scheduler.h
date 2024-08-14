@@ -14,17 +14,21 @@
 #define USEC_TO_SEC(usec) (usec / USEC_IN_SEC)
 
 // Timing Threshold - 60ns
-//   Typically, the variance of the measured interval from the expected interval is
-//   no more than 20ns, but we'll use a tolerance of three times this for safety :)
+//   When the scheduler checks to see if a task should be scheduled in scheduler_run(),
+//   the task's measured loop time is subtracted from the target loop time. If the former
+//   is larger than the latter, the result will be negative and obviously the task should be
+//   scheduled. However, it is possible with floating point numbers that the measured loop
+//   time will be *just less* than the target loop time, in which case the subtraction
+//   result will be a very small positive number. We still want the task to be run in this
+//   case, so instead of checking if the subtraction result is less than 0, we check that
+//   it is less than a very small positive variance value. Typically, this variance of the
+//   measured interval from the expected interval is no more than 20ns, but we'll use a
+//   tolerance of three times this for safety :)
 //   NOTE: this is with the default timing settings of 100 kHz PWM Carrier and
 //   a Timing Manager ratio of 10 events. For abnormal timing settings, the
 //   magnitude of the tolerance can be overridden in user_config.h
-//   The tolerance value is negative, as the target interval is subtracted from
-//   the measured interval. If the former is larger than the latter, the subtraction
-//   result will be a negative value. The check to run the task then confirms
-//   that the difference is *less-negative* than this tolerance
 #ifndef USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC
-#define SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.06)
+#define SCHEDULER_INTERVAL_TOLERANCE_USEC (0.06)
 #else
 #define SCHEDULER_INTERVAL_TOLERANCE_USEC (USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC)
 #endif

@@ -198,7 +198,7 @@ void scheduler_run(void)
             // due to the imprecision of converting FPGA time to double values in the C code.
             // Therefore, we will schedule the task if the difference between the
             // usec_since_last_run and the target interval is within the defined tolerance.
-            if ((usec_since_last_run - t->interval_usec) >= SCHEDULER_INTERVAL_TOLERANCE_USEC) {
+            if ((t->interval_usec - usec_since_last_run) <= SCHEDULER_INTERVAL_TOLERANCE_USEC) {
 
                 // Time to run this task!
                 task_stats_pre_task(&t->stats);

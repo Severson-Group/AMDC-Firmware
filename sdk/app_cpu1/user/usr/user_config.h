@@ -55,6 +55,6 @@
 // that require a margin of tolerance. sometimes non-default PWM frequency and/or
 // timing manager ratios may necessitate un-commenting the following define to override
 // the default tolerance in common/sys/scheduler.h
-//#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (-0.15)
+//#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (0.15)
 
 #endif // USER_CONFIG_H
