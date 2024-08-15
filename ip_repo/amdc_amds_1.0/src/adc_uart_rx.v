@@ -18,9 +18,9 @@ module adc_uart_rx(
     output reg [15:0] adc_dout2,
     output reg [15:0] adc_dout3,
     
-    output reg [15:0] counter_data_valid,
-    output reg [15:0] counter_data_corrupt,
-    output reg inc_counter_timeout
+    output reg [15:0] counter_bytes_valid,
+    output reg [15:0] counter_bytes_corrupt,
+    output reg [15:0] counter_bytes_timed_out
 );
 
 // ==============
@@ -89,28 +89,40 @@ end
 assign is_dout_valid = {is_dout3_valid, is_dout2_valid, is_dout1_valid, is_dout0_valid};
 
 
-// ==============
-// Data Valid Counter
-// ==============
+// ===================
+// Valid Bytes Counter
+// ===================
 
-reg inc_counter_data_valid;
+reg inc_counter_bytes_valid;
 always @(posedge clk, negedge rst_n) begin
     if (~rst_n)
-        counter_data_valid <= 16'b0;
-    else if (inc_counter_data_valid)
-        counter_data_valid <= counter_data_valid + 1;
+        counter_bytes_valid <= 16'b0;
+    else if (inc_counter_bytes_valid)
+        counter_bytes_valid <= counter_bytes_valid + 1;
 end
 
-// ==============
-// Data Corrupt Counter
-// ==============
+// =====================
+// Corrupt Bytes Counter
+// =====================
 
-reg inc_counter_data_corrupt;
+reg inc_counter_bytes_corrupt;
 always @(posedge clk, negedge rst_n) begin
     if (~rst_n)
-        counter_data_corrupt <= 16'b0;
-    else if (inc_counter_data_corrupt)
-        counter_data_corrupt <= counter_data_corrupt + 1;
+        counter_bytes_corrupt <= 16'b0;
+    else if (inc_counter_bytes_corrupt)
+        counter_bytes_corrupt <= counter_bytes_corrupt + 1;
+end
+
+// =======================
+// Timed-out Bytes Counter
+// =======================
+
+reg inc_counter_bytes_timed_out;
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        counter_bytes_timed_out <= 16'b0;
+    else if (inc_counter_bytes_timed_out)
+        counter_bytes_timed_out <= counter_bytes_timed_out + 1;
 end
 
 // ==============
@@ -137,7 +149,7 @@ end
 
 wire uart_is_byte_valid;
 wire uart_is_byte_corrupt;
-wire uart_is_rx_timeout;
+wire uart_byte_timed_out;
 
 reg uart_start_rx;
 wire [7:0] uart_data_byte;
@@ -149,7 +161,7 @@ uart_rx iUART_RX(
     .start_rx(uart_start_rx),
     .is_byte_valid(uart_is_byte_valid),
     .is_byte_corrupt(uart_is_byte_corrupt),
-    .is_rx_timeout(uart_is_rx_timeout),
+    .byte_timed_out(uart_byte_timed_out),
     .dout(uart_data_byte)
 );
 
@@ -286,9 +298,9 @@ always @(*) begin
     load_doutN_LSB = 0;
     load_doutN_MSB = 0;
     
-    inc_counter_data_valid = 0;
-    inc_counter_data_corrupt = 0;
-    inc_counter_timeout = 0;
+    inc_counter_bytes_valid = 0;
+    inc_counter_bytes_corrupt = 0;
+    inc_counter_bytes_timed_out = 0;
     
     case (state)
         `SM_IDLE: begin
@@ -314,7 +326,7 @@ always @(*) begin
                 if ((uart_data_byte[7:4] == 4'h9) & (uart_data_byte[3:0] == packet_counter)) begin
                     // Ideally we make it to here: parity check passed and header byte was what we expected it to be
                     assert_header_good = 1;
-                    inc_counter_data_valid = 1;
+                    inc_counter_bytes_valid = 1;
                 end
                 else begin
                     // Uh oh... parity check passed, but header was not what we expected
@@ -328,15 +340,15 @@ always @(*) begin
             else if (uart_is_byte_corrupt) begin
                 // Uh oh... parity check for header failed, increment the corrupt counter
                 // again, we still need to proceed through the full SM
-                inc_counter_data_corrupt = 1;
+                inc_counter_bytes_corrupt = 1;
                 next_state = `SM_WAIT_FOR_DATA_MSB;
                 uart_start_rx = 1; // start the receiver again so that we keep getting the UART receiver results
             end
-            else if (uart_is_rx_timeout) begin
+            else if (uart_byte_timed_out) begin
                 // Uh oh... never received start bit for header byte
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_timeout = 1;
+                inc_counter_bytes_timed_out = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end
@@ -345,7 +357,7 @@ always @(*) begin
         `SM_WAIT_FOR_DATA_MSB: begin
             if (uart_is_byte_valid) begin
                 // Hooray! MSB passed the parity check! We will capture the data and assert everything here was valid!
-                inc_counter_data_valid = 1;
+                inc_counter_bytes_valid = 1;
                 load_doutN_MSB = 1;
                 assert_MSB_good = 1;
                 next_state = `SM_WAIT_FOR_DATA_LSB;
@@ -355,15 +367,15 @@ always @(*) begin
                 // Uh oh... parity check for MSB failed, increment the corrupt counter
                 // do NOT assert the MSB was good
                 // again, we still need to proceed through the full SM
-                inc_counter_data_corrupt = 1;
+                inc_counter_bytes_corrupt = 1;
                 next_state = `SM_WAIT_FOR_DATA_LSB;
                 uart_start_rx = 1; // start the receiver again so that we keep getting the UART receiver results
             end
-            else if (uart_is_rx_timeout) begin
+            else if (uart_byte_timed_out) begin
                 // Uh oh... never received start bit for MSB
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_timeout = 1;
+                inc_counter_bytes_timed_out = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end
@@ -372,7 +384,7 @@ always @(*) begin
         `SM_WAIT_FOR_DATA_LSB: begin
             if (uart_is_byte_valid) begin
                 // Hooray! LSB passed the parity check! We will capture the data and assert everything here was valid!
-                inc_counter_data_valid = 1;
+                inc_counter_bytes_valid = 1;
                 load_doutN_LSB = 1;
                 assert_LSB_good = 1;
                 next_state = `SM_DONE;
@@ -380,14 +392,14 @@ always @(*) begin
             else if (uart_is_byte_corrupt) begin
                 // Uh oh... parity check for LSB failed, increment the corrupt counter
                 // again, we still need to proceed through the full SM
-                inc_counter_data_corrupt = 1;
+                inc_counter_bytes_corrupt = 1;
                 next_state = `SM_DONE;
             end
-            else if (uart_is_rx_timeout) begin
+            else if (uart_byte_timed_out) begin
                 // Uh oh... never received start bit for LSB
                 // In the event of timeout, we really should just give up 
                 // and return to IDLE... there's probably no data coming anyway
-                inc_counter_timeout = 1;
+                inc_counter_bytes_timed_out = 1;
                 assert_done = 1;
                 next_state = `SM_IDLE;
             end

@@ -31,12 +31,12 @@ This IP has no build-time configuration parameters. It expects a 200 MHz clock i
 | 0x14 | AMDS_ADC_CH6  | R  | Raw ADC channel 6 data register |
 | 0x18 | AMDS_ADC_CH7  | R  | Raw ADC channel 7 data register |
 | 0x1C | AMDS_ADC_CH8  | R  | Raw ADC channel 8 data register |
-| 0x20 | UNUSED1       | RW | Unused register |
-| 0x24 | AMDS_CH_VALID | R  | Channel Valid register |
-| 0x28 | AMDS_COUNT_VALID   | R | Number of valid data recieved over UART |
-| 0x2C | AMDS_COUNT_CORRUPT | R | Number of corrupt data recieved over UART |
-| 0x30 | AMDS_COUNT_TIMEOUT | R | Number of timeout data recieved over UART |
-| 0x34 | UNUSED2 | RW | Unused register |
+| 0x20 | AMDS_DELAY_TIMER | R | Trigger to data delay timer |
+| 0x24 | AMDS_CH_VALID    | R | Channel Valid register |
+| 0x28 | AMDS_BYTES_VALID   | R | Number of valid bytes received over UART |
+| 0x2C | AMDS_BYTES_CORRUPT | R | Number of corrupt bytes received over UART |
+| 0x30 | AMDS_BYTES_TIMED_OUT | R | Number of bytes timed out over UART |
+| 0x34 | AMDS_DATA_TIMED_OUT  | R | Number of data streams timed out over UART |
 | 0x38 | UNUSED3 | RW | Unused register |
 | 0x3C | UNUSED4 | RW | Unused register |
 
@@ -46,32 +46,46 @@ This IP has no build-time configuration parameters. It expects a 200 MHz clock i
 | -- | -- | -- |
 | 31:0 | DATA | Sign-extended, 2's complement, raw data from ADCs on AMDS daughtercards |
 
+### Register: `AMDS_DELAY_TIMER`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 31:16 | TRIGGER_TO_EDGE1 | FPGA cycle count from the trigger to the first falling edge on data line 1 |
+| 15:0  | TRIGGER_TO_EDGE0 | FPGA cycle count from the trigger to the first falling edge on data line 0 |
+
 ### Register: `AMDS_CH_VALID`
 
 | Bits | Name | Description |
 | -- | -- | -- |
 | 7:0 | CH_VALID | Indicates that the raw ADC data contained in a channel's data register is valid. For example, bits[7:0] == '11001101' means that the data registers for channels 1, 3, 4, 7, and 8 contain valid data, while the data registers for channels 2, 5, and 6 contain invalid data |
 
-### Register: `AMDS_COUNT_VALID`
+### Register: `AMDS_BYTES_VALID`
 
 | Bits | Name | Description |
 | -- | -- | -- |
 | 31:16 | VALID_RX1 | Unsigned count of valid bytes received over UART1 from AMDS |
 | 15:0  | VALID_RX0 | Unsigned count of valid bytes received over UART0 from AMDS |
 
-### Register: `AMDS_COUNT_CORRUPT`
+### Register: `AMDS_BYTES_CORRUPT`
 
 | Bits | Name | Description |
 | -- | -- | -- |
 | 31:16 | CORRUPT_RX1 | Unsigned count of corrupt bytes received over UART1 from AMDS |
 | 15:0  | CORRUPT_RX0 | Unsigned count of corrupt bytes received over UART0 from AMDS |
 
-### Register: `AMDS_COUNT_TIMEOUT`
+### Register: `AMDS_BYTES_TIMED_OUT`
 
 | Bits | Name | Description |
 | -- | -- | -- |
-| 31:16 | TIMEOUT_RX1 | Unsigned count of timeout bytes received over UART1 from AMDS |
-| 15:0  | TIMEOUT_RX0 | Unsigned count of timeout bytes received over UART0 from AMDS |
+| 31:16 | TIMEOUT_RX1 | Unsigned count of timed out bytes over UART1 from AMDS |
+| 15:0  | TIMEOUT_RX0 | Unsigned count of timed out bytes over UART0 from AMDS |
+
+### Register: `AMDS_DATA_TIMED_OUT`
+
+| Bits | Name | Description |
+| -- | -- | -- |
+| 31:16 | TIMEOUT_RX1 | Unsigned count of timed out data streams over UART1 from AMDS |
+| 15:0  | TIMEOUT_RX0 | Unsigned count of timed out data streams over UART0 from AMDS |
 
 ## Testing
 

@@ -23,19 +23,20 @@
 #endif
 
 // Offsets for relevant slave registers, to be added to one of the AMDS_N_BASE_ADDR
-#define AMDS_CH_1_DATA_REG_OFFSET     (0)
-#define AMDS_CH_2_DATA_REG_OFFSET     (1 * sizeof(uint32_t))
-#define AMDS_CH_3_DATA_REG_OFFSET     (2 * sizeof(uint32_t))
-#define AMDS_CH_4_DATA_REG_OFFSET     (3 * sizeof(uint32_t))
-#define AMDS_CH_5_DATA_REG_OFFSET     (4 * sizeof(uint32_t))
-#define AMDS_CH_6_DATA_REG_OFFSET     (5 * sizeof(uint32_t))
-#define AMDS_CH_7_DATA_REG_OFFSET     (6 * sizeof(uint32_t))
-#define AMDS_CH_8_DATA_REG_OFFSET     (7 * sizeof(uint32_t))
-#define AMDS_DELAY_TIMER_REG_OFFSET   (8 * sizeof(uint32_t))
-#define AMDS_CH_VALID_REG_OFFSET      (9 * sizeof(uint32_t))
-#define AMDS_COUNT_VALID_REG_OFFSET   (10 * sizeof(uint32_t))
-#define AMDS_COUNT_CORRUPT_REG_OFFSET (11 * sizeof(uint32_t))
-#define AMDS_COUNT_TIMEOUT_REG_OFFSET (12 * sizeof(uint32_t))
+#define AMDS_CH_1_DATA_REG_OFFSET       (0)
+#define AMDS_CH_2_DATA_REG_OFFSET       (1 * sizeof(uint32_t))
+#define AMDS_CH_3_DATA_REG_OFFSET       (2 * sizeof(uint32_t))
+#define AMDS_CH_4_DATA_REG_OFFSET       (3 * sizeof(uint32_t))
+#define AMDS_CH_5_DATA_REG_OFFSET       (4 * sizeof(uint32_t))
+#define AMDS_CH_6_DATA_REG_OFFSET       (5 * sizeof(uint32_t))
+#define AMDS_CH_7_DATA_REG_OFFSET       (6 * sizeof(uint32_t))
+#define AMDS_CH_8_DATA_REG_OFFSET       (7 * sizeof(uint32_t))
+#define AMDS_DELAY_TIMER_REG_OFFSET     (8 * sizeof(uint32_t))
+#define AMDS_CH_VALID_REG_OFFSET        (9 * sizeof(uint32_t))
+#define AMDS_BYTES_VALID_REG_OFFSET     (10 * sizeof(uint32_t))
+#define AMDS_BYTES_CORRUPT_REG_OFFSET   (11 * sizeof(uint32_t))
+#define AMDS_BYTES_TIMED_OUT_REG_OFFSET (12 * sizeof(uint32_t))
+#define AMDS_DATA_TIMED_OUT_REG_OFFSET  (13 * sizeof(uint32_t))
 
 // Bit masks for use with amds_check_data_validity()
 #define AMDS_CH_1_VALID_MASK 0x01

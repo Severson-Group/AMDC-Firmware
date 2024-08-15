@@ -96,9 +96,10 @@ void amds_print_counters(uint8_t port)
         // This means an invalid port argument was passed
         cmd_resp_printf("AMDS: Invalid Port Argument\r\n");
     } else {
-        cmd_resp_printf("Valid: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_VALID_REG_OFFSET));
-        cmd_resp_printf("Corrupt: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_CORRUPT_REG_OFFSET));
-        cmd_resp_printf("Timeout: %08X\r\n", Xil_In32(base_addr + AMDS_COUNT_TIMEOUT_REG_OFFSET));
+        cmd_resp_printf("Valid: %08X\r\n", Xil_In32(base_addr + AMDS_BYTES_VALID_REG_OFFSET));
+        cmd_resp_printf("Corrupt: %08X\r\n", Xil_In32(base_addr + AMDS_BYTES_CORRUPT_REG_OFFSET));
+        cmd_resp_printf("Timed out bytes: %08X\r\n", Xil_In32(base_addr + AMDS_BYTES_TIMED_OUT_REG_OFFSET));
+        cmd_resp_printf("Timed out data: %08X\r\n", Xil_In32(base_addr + AMDS_DATA_TIMED_OUT_REG_OFFSET));
     }
 }
 
@@ -110,19 +111,24 @@ void amds_get_counters(uint8_t port, uint32_t *V, uint32_t *C, uint32_t *T)
         // This means an invalid port argument was passed
         cmd_resp_printf("AMDS: Invalid Port Argument\r\n");
     } else {
-        // Read V counter if user requested it
+        // Read valid bytes counter if user requested it
         if (V != NULL) {
-            *V = Xil_In32(base_addr + AMDS_COUNT_VALID_REG_OFFSET);
+            *V = Xil_In32(base_addr + AMDS_BYTES_VALID_REG_OFFSET);
         }
 
-        // Read C counter if user requested it
+        // Read corrupt bytes counter if user requested it
         if (C != NULL) {
-            *C = Xil_In32(base_addr + AMDS_COUNT_CORRUPT_REG_OFFSET);
+            *C = Xil_In32(base_addr + AMDS_BYTES_CORRUPT_REG_OFFSET);
         }
 
-        // Read T counter if user requested it
+        // Read bytes timed out counter if user requested it
         if (T != NULL) {
-            *T = Xil_In32(base_addr + AMDS_COUNT_TIMEOUT_REG_OFFSET);
+            *T = Xil_In32(base_addr + AMDS_BYTES_TIMED_OUT_REG_OFFSET);
+        }
+
+        // Read data timed out counter if user requested it
+        if (T != NULL) {
+            *T = Xil_In32(base_addr + AMDS_DATA_TIMED_OUT_REG_OFFSET);
         }
     }
 }
