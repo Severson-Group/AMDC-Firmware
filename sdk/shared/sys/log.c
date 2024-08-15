@@ -60,8 +60,8 @@ void log_init(void)
     // Register task which samples variables etc
     // NOTE: this runs at the base scheduler time quantum,
     //       or as fast as possible!
-	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
-					NULL, tskIDLE_PRIORITY, &tcb);
+//	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
+//					NULL, tskIDLE_PRIORITY, &tcb);
 
     // Initialize all the variables to NULL address,
     // which indicates they aren't active
@@ -187,14 +187,14 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
 void log_callback(void *arg)
 {
-	for (;;) {
-		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
+//	for (;;) {
+//		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
 	//    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
-		uint32_t elapsed_usec = 0;
+		uint32_t elapsed_usec = *(uint32_t *) arg;
 
 		_do_log_to_buffer(elapsed_usec);
 		_do_log_to_stream(elapsed_usec);
-	}
+//	}
 }
 
 void log_start(void)
@@ -324,10 +324,10 @@ void state_machine_dump_ascii_callback(void *arg)
 {
     sm_ctx_dump_ascii_t *ctx = (sm_ctx_dump_ascii_t *) arg;
 
-    log_var_t *v = &vars[ctx->var_idx];
-    buffer_entry_t *e = &v->buffer[ctx->sample_idx];
     for (;;) {
     	vTaskDelay(TASK_SM_DUMP_ASCII_INTERVAL_TICKS);
+    	log_var_t *v = &vars[ctx->var_idx];
+		buffer_entry_t *e = &v->buffer[ctx->sample_idx];
 		switch (ctx->state) {
 		case DUMP_ASCII_TITLE:
 			cmd_resp_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
@@ -454,7 +454,6 @@ void state_machine_dump_binary_callback(void *arg)
 {
     sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
 
-    log_var_t *v = &vars[ctx->var_idx];
     for (;;) {
     	if (ctx -> dump_method == 2) {
     		// Means Ethernet ==> run state machine at 10 kHz
@@ -462,6 +461,7 @@ void state_machine_dump_binary_callback(void *arg)
     	} else {
     		vTaskDelay(TASK_SM_DUMP_BINARY_INTERVAL_TICKS);
     	}
+    	log_var_t *v = &vars[ctx->var_idx];
 		switch (ctx->state) {
 		case DUMP_BINARY_MAGIC_HEADER:
 		{
@@ -546,13 +546,6 @@ void state_machine_dump_binary_callback(void *arg)
 
 			for (int i = 0; i < max_num_samples; i++) {
 				buffer_entry_t *e = &v->buffer[ctx->sample_idx];
-
-				// Stop when the buffer gets full
-				// Leave a few bytes of extra space free
-				if (task_icc_tx_get_buffer_space_available() < 10) {
-					// Break out of this local for loop
-					break;
-				}
 
 				// Dump the sampled value
 				if (v->type == LOG_INT) {
@@ -690,8 +683,8 @@ void state_machine_info_callback(void *arg)
 {
     sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
     for (;;) {
-    	log_var_t *v = &vars[ctx->var_idx];
     	vTaskDelay(TASK_SM_INFO_INTERVAL_TICKS);
+    	log_var_t *v = &vars[ctx->var_idx];
     	switch (ctx->state) {
 		case INFO_HEAD:
 		{

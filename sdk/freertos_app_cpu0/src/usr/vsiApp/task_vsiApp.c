@@ -11,6 +11,7 @@
 #include "drv/pwm.h"
 #include "drv/analog.h"
 #include "sys/defines.h"
+#include "sys/log.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -67,6 +68,7 @@ int task_vsiApp_deinit(void)
 
 void task_vsiApp(void *arg)
 {
+	uint32_t tick = 0;
 	for (;;) {
 		vTaskDelay(TASK_VSIAPP_INTERVAL_TICKS);
 		// Update theta
@@ -106,6 +108,8 @@ void task_vsiApp(void *arg)
 		LOG_voltage_b = (duty_b - 0.5) * 20;
 		LOG_voltage_c = (duty_c - 0.5) * 20;
 
+		log_callback(&tick);
+		tick++;
 
 		// delay(50us)
 	//	uint32_t startDelay = cpu_timer_now();
