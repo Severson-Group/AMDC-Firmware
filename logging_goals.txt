@@ -1,0 +1,36 @@
+Goals:
+1. Ensure no logging opportunities are "missed" (where the logging tasks skips a control task execution)
+2. Retain ability to change logs/second (per variable)
+3. Make it possible to change what variables are logged without changing the C code
+
+
+Idea 1: "synced" logging. Control task runs X times per second. Logging function
+runs synced with a control task and logs variables associated with that task.
+The user calls logVariables(task_id) at the end of each task loop, this will do a log cycle
+for all variables in that specific task.
+
+A prescalar is used to determine how often the logging function actually logs each of the variables.
+
+Requires each logged variable to have an associated task, which would require extra overhead for each logged variable.
+
+
+
+Idea 2: "synced" user-dictated logging. Logged variables are logged at the end
+of a control task sequence. This would require the user to pass a variable into a function
+to log it.
+
+Does not satisfy Goal #3
+
+Bonus: Allows the user to log non-global variables and does not require a mapfile.
+
+
+
+Idea 3: configTICK_RATE_HZ log task. Logging task runs at max frequency (configTICK_RATE_HZ).
+Each variable is logged at a prescalar frequency from the configTICK_RATE_HZ.
+
+Does not satisfy Goal #1
+
+
+
+
+Idea 4:
