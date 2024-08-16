@@ -65,7 +65,7 @@ void log_init(void)
     // NOTE: this runs at the base scheduler time quantum,
     //       or as fast as possible!
 	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
-					NULL, tskIDLE_PRIORITY, &tcb);
+					NULL, 1, &tcb);
 
     // Initialize all the variables to NULL address,
     // which indicates they aren't active
@@ -466,7 +466,7 @@ void state_machine_dump_binary_callback(void *arg)
     for (;;) {
     	if (ctx -> dump_method == 2) {
     		// Means Ethernet ==> run state machine at 10 kHz
-//    		vTaskDelay(pdMS_TO_TICKS(0.1));
+    		vTaskDelay(pdMS_TO_TICKS(0.1));
     	} else {
     		vTaskDelay(TASK_SM_DUMP_BINARY_INTERVAL_TICKS);
     	}
@@ -654,7 +654,7 @@ int log_var_dump_binary(int log_var_idx, int dump_method)
     // Initialize the state machine callback tcb
     task_dbin_exists = 1;
     xTaskCreate(state_machine_dump_binary_callback, (const char *) "logdbin", 1024,
-        				&ctx_dump_binary, tskIDLE_PRIORITY, &ctx_dump_binary.tcb);
+        				&ctx_dump_binary, 1, &ctx_dump_binary.tcb);
     return SUCCESS;
 }
 
