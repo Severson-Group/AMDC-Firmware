@@ -46,12 +46,17 @@ int task_vsiApp_init(void)
 		return FAILURE;
 	}
 
-    pwm_enable();
+    if (pwm_enable_hw(true) != SUCCESS) {
+    	return FAILURE;
+    }
+    if (pwm_enable() != SUCCESS) {
+		return FAILURE;
+	}
 
     // Fill TCB with parameters
+    taskExists = 1;
 	xTaskCreate(task_vsiApp, (const char *) "vsiApp", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
-	taskExists = 1;
 	return SUCCESS;
 }
 
@@ -60,7 +65,12 @@ int task_vsiApp_deinit(void)
 	if (taskExists == 0) {
 		return FAILURE;
 	}
-	pwm_disable();
+	if (pwm_disable() != SUCCESS) {
+		return FAILURE;
+	}
+	if (pwm_enable_hw(false) != SUCCESS) {
+		return FAILURE;
+	}
 	vTaskDelete(tcb);
 	taskExists = 0;
 	return SUCCESS;
@@ -108,8 +118,8 @@ void task_vsiApp(void *arg)
 		LOG_voltage_b = (duty_b - 0.5) * 20;
 		LOG_voltage_c = (duty_c - 0.5) * 20;
 
-		log_callback(&tick);
-		tick++;
+//		log_callback(&tick);
+//		tick++;
 
 		// delay(50us)
 	//	uint32_t startDelay = cpu_timer_now();

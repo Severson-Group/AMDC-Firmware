@@ -35,6 +35,7 @@
 #include "FreeRTOS_IP.h"
 #include "FreeRTOS_Sockets.h"
 /* Xilinx includes. */
+#include "drv/bsp.h"
 #include "platform.h"
 #include "xil_cache.h"
 #include "xil_io.h"
@@ -95,11 +96,9 @@ uint8_t ucHeap[configTOTAL_HEAP_SIZE]; // the heap.
 int main(void)
 {
 	/* initialise hardware */
-	led_init();
-	uart_init();
-	pwm_init();
 	serial_init();
 	commands_init();
+	bsp_init();
 	init_platform();
     // Both CPUs: Disable cache on OCM
     // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
@@ -149,7 +148,6 @@ int main(void)
 
     /* command sets */
     cmd_counter_register();
-    cmd_hw_register();
 
     /* user apps */
     user_apps_init();

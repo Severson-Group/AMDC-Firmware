@@ -36,8 +36,8 @@ typedef struct log_var_t {
     void *addr;
     var_type_e type;
 
-    uint32_t log_interval_usec;
-    uint32_t last_logged_usec;
+    uint32_t log_interval_ticks;
+    uint32_t last_logged_tick;
 
     int num_samples;
     buffer_entry_t buffer[LOG_SAMPLE_DEPTH_PER_VARIABLE];
@@ -55,13 +55,17 @@ static bool is_log_running = false;
 
 static TaskHandle_t tcb;
 
+static uint8_t task_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
+static uint8_t task_dbin_exists = 0;
+static uint8_t task_dasc_exists = 0;
+
 void log_init(void)
 {
     // Register task which samples variables etc
     // NOTE: this runs at the base scheduler time quantum,
     //       or as fast as possible!
-//	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
-//					NULL, tskIDLE_PRIORITY, &tcb);
+	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
+					NULL, tskIDLE_PRIORITY, &tcb);
 
     // Initialize all the variables to NULL address,
     // which indicates they aren't active
@@ -112,11 +116,11 @@ static void _do_log_to_buffer(uint32_t elapsed_usec)
             continue;
         }
 
-        uint32_t usec_since_last_run = elapsed_usec - v->last_logged_usec;
+        uint32_t usec_since_last_run = elapsed_usec - v->last_logged_tick;
 
-        if (usec_since_last_run >= v->log_interval_usec) {
+        if (usec_since_last_run >= v->log_interval_ticks) {
             // Time to log this variable!
-            v->last_logged_usec = elapsed_usec;
+            v->last_logged_tick = elapsed_usec;
 
             v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
 
@@ -160,7 +164,7 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
         uint32_t usec_since_last_streamed = elapsed_usec - v->last_streamed_usec;
 
-        if (usec_since_last_streamed >= v->log_interval_usec) {
+        if (usec_since_last_streamed >= v->log_interval_ticks) {
             // Time to stream this variable!
             v->last_streamed_usec = elapsed_usec;
 
@@ -187,14 +191,14 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
 void log_callback(void *arg)
 {
-//	for (;;) {
-//		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
-	//    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
-		uint32_t elapsed_usec = *(uint32_t *) arg;
-
+	uint32_t iter = 0;
+	for (;;) {
+		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
+		uint32_t elapsed_usec = iter;
 		_do_log_to_buffer(elapsed_usec);
 		_do_log_to_stream(elapsed_usec);
-//	}
+		iter++;
+	}
 }
 
 void log_start(void)
@@ -225,8 +229,8 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
     vars[idx].type = type;
 
     // Calculate 'log_interval_usec' from samples per second
-    vars[idx].log_interval_usec = 1000000 / samples_per_sec;
-    vars[idx].last_logged_usec = 0;
+    vars[idx].log_interval_ticks = configTICK_RATE_HZ / samples_per_sec;
+    vars[idx].last_logged_tick = 0;
 
     // Mark as registered
     vars[idx].is_registered = true;
@@ -273,7 +277,7 @@ int log_var_empty(int idx)
 
     // Result metadata
     vars[idx].buffer_idx = 0;
-    vars[idx].last_logged_usec = 0;
+    vars[idx].last_logged_tick = 0;
     vars[idx].num_samples = 0;
 
     // Note: we don't have to actually clear the memory buffer since we only dump
@@ -287,7 +291,7 @@ int log_var_empty_all(void)
 {
     for (int idx = 0; idx < LOG_MAX_NUM_VARIABLES; idx++) {
         vars[idx].buffer_idx = 0;
-        vars[idx].last_logged_usec = 0;
+        vars[idx].last_logged_tick = 0;
         vars[idx].num_samples = 0;
     }
 
@@ -383,6 +387,7 @@ void state_machine_dump_ascii_callback(void *arg)
 
 		default:
 		case DUMP_ASCII_REMOVE_TASK:
+			task_dasc_exists = 0;
 			vTaskDelete(ctx->tcb);
 			break;
 		}
@@ -393,6 +398,9 @@ static sm_ctx_dump_ascii_t ctx_dump_ascii;
 
 int log_var_dump_ascii(int log_var_idx, int dump_method)
 {
+	if (task_dasc_exists) {
+		return FAILURE;
+	}
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
@@ -408,7 +416,8 @@ int log_var_dump_ascii(int log_var_idx, int dump_method)
     ctx_dump_ascii.sample_idx = 0;
 
     // Initialize the state machine callback tcb
-    xTaskCreate(state_machine_dump_ascii_callback, (const char *) "logdascii", configMINIMAL_STACK_SIZE,
+    task_dasc_exists = 1;
+    xTaskCreate(state_machine_dump_ascii_callback, (const char *) "logdascii", 1024,
     				&ctx_dump_ascii, tskIDLE_PRIORITY, &ctx_dump_ascii.tcb);
     return SUCCESS;
 }
@@ -457,7 +466,7 @@ void state_machine_dump_binary_callback(void *arg)
     for (;;) {
     	if (ctx -> dump_method == 2) {
     		// Means Ethernet ==> run state machine at 10 kHz
-    		vTaskDelay(pdMS_TO_TICKS(1000000 / 10e3));
+//    		vTaskDelay(pdMS_TO_TICKS(0.1));
     	} else {
     		vTaskDelay(TASK_SM_DUMP_BINARY_INTERVAL_TICKS);
     	}
@@ -497,7 +506,7 @@ void state_machine_dump_binary_callback(void *arg)
 
 		case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
 		{
-			uint32_t interval_usec = (uint32_t) v->log_interval_usec;
+			uint32_t interval_usec = (uint32_t) v->log_interval_ticks;
 
 			// Write to output data stream (UART)
 			cmd_resp_write((char *) &interval_usec, 4);
@@ -609,6 +618,7 @@ void state_machine_dump_binary_callback(void *arg)
 		case DUMP_BINARY_REMOVE_TASK:
 		default:
 		{
+			task_dbin_exists = 0;
 			vTaskDelete(ctx->tcb);
 			break;
 		}
@@ -620,6 +630,9 @@ static sm_ctx_dump_binary_t ctx_dump_binary;
 
 int log_var_dump_binary(int log_var_idx, int dump_method)
 {
+	if (task_dbin_exists) {
+		return FAILURE;
+	}
     // Sanity check variable idx
     if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
         return FAILURE;
@@ -639,7 +652,8 @@ int log_var_dump_binary(int log_var_idx, int dump_method)
     ctx_dump_binary.crc = CRC32_DEFAULT_INIT;
 
     // Initialize the state machine callback tcb
-    xTaskCreate(state_machine_dump_binary_callback, (const char *) "logdbin", configMINIMAL_STACK_SIZE,
+    task_dbin_exists = 1;
+    xTaskCreate(state_machine_dump_binary_callback, (const char *) "logdbin", 1024,
         				&ctx_dump_binary, tskIDLE_PRIORITY, &ctx_dump_binary.tcb);
     return SUCCESS;
 }
@@ -675,9 +689,6 @@ typedef struct sm_ctx_info_t {
 
 #define TASK_SM_INFO_UPDATES_PER_SEC    configTICK_RATE_HZ
 #define TASK_SM_INFO_INTERVAL_TICKS     (pdMS_TO_TICKS(1000.0 / TASK_SM_INFO_UPDATES_PER_SEC))
-
-static sm_ctx_info_t ctx_info;
-static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
 void state_machine_info_callback(void *arg)
 {
@@ -757,7 +768,7 @@ void state_machine_info_callback(void *arg)
 
 		case INFO_VAR_DATA4:
 		{
-			cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_usec);
+			cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_ticks);
 			ctx->state = INFO_VAR_DATA5;
 			break;
 		}
@@ -784,16 +795,18 @@ void state_machine_info_callback(void *arg)
 		case INFO_REMOVE_TASK:
 		default:
 			cmd_resp_printf("SUCCESS\r\n\n");
-			taskExists = 0;
+			task_exists = 0;
 			vTaskDelete(ctx->tcb);
 			break;
 		}
     }
 }
 
+static sm_ctx_info_t ctx_info;
+
 int log_print_info(void)
 {
-    if (taskExists) {
+    if (task_exists) {
         // Already in process of printing something!!
         return FAILURE;
     }
@@ -803,7 +816,7 @@ int log_print_info(void)
     ctx_info.var_idx = 0;
 
     // Initialize the state machine callback tcb
-    taskExists = 1;
+    task_exists = 1;
     xTaskCreate(state_machine_info_callback, (const char *) "loginfo", configMINIMAL_STACK_SIZE,
     				&ctx_info, tskIDLE_PRIORITY, &ctx_info.tcb);
     return SUCCESS;
