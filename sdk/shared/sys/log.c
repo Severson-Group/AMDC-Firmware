@@ -11,10 +11,10 @@
 #include "sys/crc32.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
-#include "sys/icc_tx.h"
 #include "sys/log.h"
 #include "sys/serial.h"
 #include "sys/util.h"
+#include "ip/socket_manager.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -147,6 +147,8 @@ static void _do_log_to_buffer(uint32_t elapsed_usec)
     }
 }
 
+extern socket_t *socket_list;
+
 static void _do_log_to_stream(uint32_t elapsed_usec)
 {
     for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
@@ -161,6 +163,7 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
             // Variable not streaming
             continue;
         }
+        xil_printf("log stream\n");
 
         uint32_t usec_since_last_streamed = elapsed_usec - v->last_streamed_usec;
 
@@ -183,8 +186,22 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
                 *f = (float) value;
             }
 
-            // Pass to streaming utility
-            icc_tx_log_stream(v->socket_id, i, stream_obj_ts, stream_obj_data);
+            // Pass through socket
+            static const int packet_len = 20;
+			uint8_t bytes_to_send[20] = {0};
+
+			uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];
+			uint32_t *ptr_var_slot = (uint32_t *) &bytes_to_send[4];
+			uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[8];
+			uint32_t *ptr_data = (uint32_t *) &bytes_to_send[12];
+			uint32_t *ptr_footer = (uint32_t *) &bytes_to_send[16];
+
+			*ptr_header = 0x11111111;
+			*ptr_var_slot = i;
+			*ptr_ts = stream_obj_ts;
+			*ptr_data = stream_obj_data;
+			*ptr_footer = 0x22222222;
+            FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
         }
     }
 }

@@ -1,5 +1,4 @@
 #include "socket_manager.h"
-#include "ringbuf.h"
 #include "xil_io.h"
 #include "xil_printf.h"
 #include "xstatus.h"
@@ -8,27 +7,7 @@
 #include "FreeRTOS_IP.h"
 #include "FreeRTOS_Sockets.h"
 
-// Communications
-#define MAX_NUM_SOCKETS         (8)
-#define MAX_RX_RING_BUFFER_DATA (1024 * 1024)
-
-typedef enum {
-    SOCKET_TYPE_UNUSED = 0,
-    SOCKET_TYPE_IDLE,
-    SOCKET_TYPE_ASCII_CMD,
-    SOCKET_TYPE_LOG_VAR,
-} socket_type_e;
-
-typedef struct socket {
-    Socket_t raw_socket; // this is a freertos+tcp Socket_t type
-    socket_type_e type;
-
-    // Rx stuff
-    struct ringbuf_t rx_ring_buffer;
-    uint8_t rx_ring_buffer_data[MAX_RX_RING_BUFFER_DATA];
-} socket_t; // could change the name
-
-static socket_t socket_list[MAX_NUM_SOCKETS];
+socket_t socket_list[MAX_NUM_SOCKETS];
 
 static void reset_socket(socket_t *socket_ptr)
 {
@@ -181,8 +160,10 @@ int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
 
                 if (d[0] == 12 && d[1] == 34) {
                     socket->type = SOCKET_TYPE_ASCII_CMD;
+                    xil_printf("ascii socket\n");
                 } else if (d[0] == 56 && d[1] == 78) {
                     socket->type = SOCKET_TYPE_LOG_VAR;
+                    xil_printf("log socket\n");
                 } else {
                     // User specified bogus type.
                     // Keep as IDLE and wait for user to try again

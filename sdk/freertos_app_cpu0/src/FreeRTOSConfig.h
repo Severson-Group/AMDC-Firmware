@@ -88,8 +88,8 @@
 #define configUSE_IDLE_HOOK                     0 // TODO: For low-power, set 1 and implement vApplicationIdleHook()
 #define configUSE_TICK_HOOK                     0 // TODO: Set as 1 if we want to run function every tick
 #define configMAX_PRIORITIES                    (7)
-#define configTOTAL_HEAP_SIZE                   (125 * 1024)
-#define configMAX_TASK_NAME_LEN                 (10)
+#define configTOTAL_HEAP_SIZE                   (250 * 1024)
+#define configMAX_TASK_NAME_LEN                 (32)
 #define configUSE_TRACE_FACILITY                1
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1

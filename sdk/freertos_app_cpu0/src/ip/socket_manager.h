@@ -7,6 +7,27 @@
 /* FreeRTOS+TCP includes. */
 #include "FreeRTOS_IP.h"
 #include "FreeRTOS_Sockets.h"
+#include "ringbuf.h"
+
+// Communications
+#define MAX_NUM_SOCKETS         (8)
+#define MAX_RX_RING_BUFFER_DATA (1024 * 1024)
+
+typedef enum {
+    SOCKET_TYPE_UNUSED = 0,
+    SOCKET_TYPE_IDLE,
+    SOCKET_TYPE_ASCII_CMD,
+    SOCKET_TYPE_LOG_VAR,
+} socket_type_e;
+
+typedef struct socket {
+    Socket_t raw_socket; // this is a freertos+tcp Socket_t type
+    socket_type_e type;
+
+    // Rx stuff
+    struct ringbuf_t rx_ring_buffer;
+    uint8_t rx_ring_buffer_data[MAX_RX_RING_BUFFER_DATA];
+} socket_t; // could change the name
 
 void socket_manager_init(void);
 

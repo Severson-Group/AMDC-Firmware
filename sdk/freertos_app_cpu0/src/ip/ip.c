@@ -204,6 +204,7 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
             configASSERT(xConnectedSocket != FREERTOS_INVALID_SOCKET);
 
             /* Spawn a task to handle the connection. */
+            xil_printf("create task\n");
             xTaskCreateStatic(prvServerConnectionInstance, "ip", configMINIMAL_STACK_SIZE, (void *) xConnectedSocket, tskIDLE_PRIORITY, echoServerTaskStack, &echoServerTaskBuffer);
         }
     }
@@ -236,8 +237,11 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 					socket_manager_remove(xConnectedSocket);
 					break; // abort socket
 				}
+				xil_printf("before memset\n");
 				memset(rxBuffer, 0x00, ipconfigTCP_MSS);
+				xil_printf("after memset\n");
 				recvBytes = FreeRTOS_recv(xConnectedSocket, rxBuffer, ipconfigTCP_MSS, 0);
+				xil_printf("recv_data\n");
 				if (recvBytes <= 0) {
 					break;
 				}
