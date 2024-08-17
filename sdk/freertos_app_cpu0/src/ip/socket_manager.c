@@ -45,15 +45,14 @@ void socket_manager_init(void)
 // socket: unique pointer to the socket (doesn't need to point
 // 	to the socket, just needs to be unique to the socket)
 //
-// Returns: error code
+// Returns: socket_id
 //
 int socket_manager_put(Socket_t raw_socket)
 {
-    int err = XST_FAILURE; // default to overflow error
-
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         if ((socket_list[i].raw_socket == NULL) || (socket_list[i].raw_socket == raw_socket)) {
             socket_list[i].raw_socket = raw_socket;
+            socket_list[i].time_alive = 5000;
             socket_list[i].type = SOCKET_TYPE_IDLE;
 
             xil_printf("Alloc new socket: %d\n", i);
@@ -62,13 +61,11 @@ int socket_manager_put(Socket_t raw_socket)
             uint8_t d = (uint8_t) i;
             uint32_t sent = FreeRTOS_send(raw_socket, &d, 1, 0);
             if (sent == 1) {
-            	err = XST_SUCCESS;
+            	return i;
             }
-            break;
+            return -1;
         }
     }
-
-    return err;
 }
 
 // socket_manager_remove()
@@ -243,4 +240,12 @@ void socket_manager_broadcast_ascii_cmd_byte(char c)
         	FreeRTOS_send(raw, &c, 1, 0);
         }
     }
+}
+
+void socket_manager_set_time(int socket_id, uint32_t time) {
+	socket_list[socket_id].time_alive = time;
+}
+
+int socket_manager_time_alive(int socket_id) {
+	return socket_list[socket_id].time_alive;
 }

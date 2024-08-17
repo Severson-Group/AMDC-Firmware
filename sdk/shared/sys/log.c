@@ -200,7 +200,8 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 			*ptr_ts = stream_obj_ts;
 			*ptr_data = stream_obj_data;
 			*ptr_footer = 0x22222222;
-            uint32_t bytes_sent = FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
+            FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
+            socket_manager_set_time(v->socket_id, 5000);
         }
     }
 }

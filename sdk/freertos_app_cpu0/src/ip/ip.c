@@ -205,26 +205,28 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
     }
 /*-----------------------------------------------------------*/
 
+    extern socket_t socket_list[MAX_NUM_SOCKETS];
+
     void prvServerConnectionInstance(void * pvParameters)
     {
         int32_t recvBytes;
         Socket_t xConnectedSocket;
-        static const TickType_t xReceiveTimeOut = pdMS_TO_TICKS(5000);
-        static const TickType_t xSendTimeOut = pdMS_TO_TICKS(5000);
         uint8_t *rxBuffer;
 
         xConnectedSocket = (Socket_t) pvParameters;
 
         /* add to socket manager */
-        socket_manager_put(xConnectedSocket);
+        int socket_id = socket_manager_put(xConnectedSocket);
 
         /* Create receive buffer */
         rxBuffer = (uint8_t *) pvPortMalloc(ipconfigTCP_MSS);
 
         if (rxBuffer != NULL) {
-            FreeRTOS_setsockopt(xConnectedSocket, 0, FREERTOS_SO_RCVTIMEO, &xReceiveTimeOut, sizeof(xReceiveTimeOut));
-            FreeRTOS_setsockopt(xConnectedSocket, 0, FREERTOS_SO_SNDTIMEO, &xSendTimeOut, sizeof(xReceiveTimeOut));
             for (;;) {
+            	vTaskDelay(pdMS_TO_TICKS(1));
+            	if (socket_list[socket_id].time_alive > 0) {
+            		socket_list[socket_id].time_alive--;
+            	}
             	// Do not read the packet if we are not in ESTABLISHED state
 				// Also, abort connection if socket has never been registered
 				if (!socket_manager_is_registered(xConnectedSocket)) {
@@ -233,10 +235,13 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 				}
 				memset(rxBuffer, 0x00, ipconfigTCP_MSS);
 				recvBytes = FreeRTOS_recv(xConnectedSocket, rxBuffer, ipconfigTCP_MSS, 0);
-				if (recvBytes <= 0) {
+				if (recvBytes > 0) {
+					socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
+					socket_manager_set_time(socket_id, 5000);
+				}
+				if (socket_manager_time_alive(socket_id) < 1) {
 					break;
 				}
-				socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
             }
         }
         socket_manager_remove(xConnectedSocket);

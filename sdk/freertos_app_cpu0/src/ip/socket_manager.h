@@ -23,6 +23,7 @@ typedef enum {
 typedef struct socket {
     Socket_t raw_socket; // this is a freertos+tcp Socket_t type
     socket_type_e type;
+    uint32_t time_alive; // time (ms) of how long this socket has to last before automatically closing
 
     // Rx stuff
     struct ringbuf_t rx_ring_buffer;
@@ -53,5 +54,8 @@ void socket_manager_broadcast_ascii_cmd_byte(char c);
 
 void socket_manager_flush_log_socket(int socket_id);
 void socket_manager_flush_ascii_cmd_sockets(void);
+
+void socket_manager_set_time(int socket_id, uint32_t time);
+int socket_manager_time_alive(int socket_id);
 
 #endif // SOCKET_MANAGER_H
