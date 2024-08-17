@@ -55,7 +55,8 @@
 /*
  * Created by the connection listening task to handle a single connection.
  */
-    static void prvServerConnectionInstance(void *pvParameters);
+    TaskHandle_t connectTCB;
+    void prvServerConnectionInstance(void *pvParameters);
 
 /*-----------------------------------------------------------*/
 
@@ -66,10 +67,6 @@
 /* Create task stack and buffers for use in the Listening and Server connection tasks */
     static StaticTask_t listenerTaskBuffer;
     static StackType_t listenerTaskStack[configMINIMAL_STACK_SIZE];
-
-    static StaticTask_t echoServerTaskBuffer;
-    static StackType_t echoServerTaskStack[configMINIMAL_STACK_SIZE];
-
 /*-----------------------------------------------------------*/
 
 /* needed for FreeRTOS-Plus-TCP */
@@ -160,7 +157,8 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
     static void prvConnectionListeningTask(void * pvParameters)
     {
         struct freertos_sockaddr xClient, xBindAddress;
-        Socket_t xListeningSocket, xConnectedSocket;
+        Socket_t xListeningSocket;
+        Socket_t xConnectedSocket;
         socklen_t xSize = sizeof(xClient);
         static const TickType_t xReceiveTimeOut = portMAX_DELAY;
         const BaseType_t xBacklog = 20;
@@ -197,26 +195,22 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
         xBindAddress.sin_family = FREERTOS_AF_INET;
         FreeRTOS_bind( xListeningSocket, &xBindAddress, sizeof(xBindAddress));
         FreeRTOS_listen(xListeningSocket, xBacklog);
-
-        for(;;) {
+        for (;;) {
             /* Wait for a client to connect. */
-            xConnectedSocket = FreeRTOS_accept(xListeningSocket, &xClient, &xSize);
-            configASSERT(xConnectedSocket != FREERTOS_INVALID_SOCKET);
-
-            /* Spawn a task to handle the connection. */
-            xil_printf("create task\n");
-            xTaskCreateStatic(prvServerConnectionInstance, "ip", configMINIMAL_STACK_SIZE, (void *) xConnectedSocket, tskIDLE_PRIORITY, echoServerTaskStack, &echoServerTaskBuffer);
+			xConnectedSocket = FreeRTOS_accept(xListeningSocket, &xClient, &xSize);
+			configASSERT(xConnectedSocket != FREERTOS_INVALID_SOCKET);
+			/* Spawn a task to handle the connection. */
+			xTaskCreate(prvServerConnectionInstance, "ip", configMINIMAL_STACK_SIZE, (void *) xConnectedSocket, tskIDLE_PRIORITY, &connectTCB);
         }
     }
 /*-----------------------------------------------------------*/
 
-    static void prvServerConnectionInstance(void * pvParameters)
+    void prvServerConnectionInstance(void * pvParameters)
     {
         int32_t recvBytes;
         Socket_t xConnectedSocket;
         static const TickType_t xReceiveTimeOut = pdMS_TO_TICKS(5000);
         static const TickType_t xSendTimeOut = pdMS_TO_TICKS(5000);
-        TickType_t xTimeOnShutdown;
         uint8_t *rxBuffer;
 
         xConnectedSocket = (Socket_t) pvParameters;
@@ -237,38 +231,22 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 					socket_manager_remove(xConnectedSocket);
 					break; // abort socket
 				}
-				xil_printf("before memset\n");
 				memset(rxBuffer, 0x00, ipconfigTCP_MSS);
-				xil_printf("after memset\n");
 				recvBytes = FreeRTOS_recv(xConnectedSocket, rxBuffer, ipconfigTCP_MSS, 0);
-				xil_printf("recv_data\n");
 				if (recvBytes <= 0) {
 					break;
 				}
 				socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
             }
         }
-
-        vTaskDelay(pdMS_TO_TICKS(10.0)); // keep socket open for 10 ms to allow response (without going out of scope)
-
         socket_manager_remove(xConnectedSocket);
 
         /* Initiate a shutdown in case it has not already been initiated. */
         FreeRTOS_shutdown(xConnectedSocket, FREERTOS_SHUT_RDWR);
 
-        /* Wait for the shutdown to take effect, indicated by FreeRTOS_recv() returning an error. */
-        xTimeOnShutdown = xTaskGetTickCount();
-
-        do {
-            if (FreeRTOS_recv(xConnectedSocket, rxBuffer, ipconfigTCP_MSS, 0) < 0) {
-                break;
-            }
-        } while ((xTaskGetTickCount() - xTimeOnShutdown) < tcpechoSHUTDOWN_DELAY);
-
         /* Finished with the socket, buffer, the task. */
         vPortFree(rxBuffer);
         FreeRTOS_closesocket(xConnectedSocket);
-
         vTaskDelete(NULL);
     }
 

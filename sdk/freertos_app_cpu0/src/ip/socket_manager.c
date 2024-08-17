@@ -160,10 +160,8 @@ int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
 
                 if (d[0] == 12 && d[1] == 34) {
                     socket->type = SOCKET_TYPE_ASCII_CMD;
-                    xil_printf("ascii socket\n");
                 } else if (d[0] == 56 && d[1] == 78) {
                     socket->type = SOCKET_TYPE_LOG_VAR;
-                    xil_printf("log socket\n");
                 } else {
                     // User specified bogus type.
                     // Keep as IDLE and wait for user to try again

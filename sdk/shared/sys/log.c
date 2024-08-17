@@ -147,7 +147,7 @@ static void _do_log_to_buffer(uint32_t elapsed_usec)
     }
 }
 
-extern socket_t *socket_list;
+extern socket_t socket_list[MAX_NUM_SOCKETS];
 
 static void _do_log_to_stream(uint32_t elapsed_usec)
 {
@@ -163,7 +163,6 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
             // Variable not streaming
             continue;
         }
-        xil_printf("log stream\n");
 
         uint32_t usec_since_last_streamed = elapsed_usec - v->last_streamed_usec;
 
@@ -201,7 +200,7 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 			*ptr_ts = stream_obj_ts;
 			*ptr_data = stream_obj_data;
 			*ptr_footer = 0x22222222;
-            FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
+            uint32_t bytes_sent = FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
         }
     }
 }
@@ -405,7 +404,7 @@ void state_machine_dump_ascii_callback(void *arg)
 		default:
 		case DUMP_ASCII_REMOVE_TASK:
 			task_dasc_exists = 0;
-			vTaskDelete(ctx->tcb);
+			vTaskDelete(NULL);
 			break;
 		}
     }
@@ -636,7 +635,7 @@ void state_machine_dump_binary_callback(void *arg)
 		default:
 		{
 			task_dbin_exists = 0;
-			vTaskDelete(ctx->tcb);
+			vTaskDelete(NULL);
 			break;
 		}
 		}
@@ -813,7 +812,7 @@ void state_machine_info_callback(void *arg)
 		default:
 			cmd_resp_printf("SUCCESS\r\n\n");
 			task_exists = 0;
-			vTaskDelete(ctx->tcb);
+			vTaskDelete(NULL);
 			break;
 		}
     }

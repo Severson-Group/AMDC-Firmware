@@ -34,3 +34,26 @@ Does not satisfy Goal #1
 
 
 Idea 4:
+
+
+
+Problems:
+Multiple sockets at once straight up doesn't work. We get stuck inside xEventGroupWaitBits
+which is in prvRecvWait which is called by FreeRTOS_recv inside the prvServerConnectionInstance task
+
+This is only the case for the second socket made (when the first one still exists)
+No idea why.
+
+Okay this ALSO happens if a socket closes due to timeout?
+
+It happens if the prvServerConnectionInstance has an instance running
+oh my fucking god, is it because prvServerConnectionInstance is static?
+No, that wasn't why
+
+Okay but I've confirmed, it breaks when more than one prvServerConnectionInstance
+task is running.
+
+This even happens if the prvServerConnectionInstance is just sitting there doing nothing
+
+THE MEMORY WAS STATIC
+I hate everything
