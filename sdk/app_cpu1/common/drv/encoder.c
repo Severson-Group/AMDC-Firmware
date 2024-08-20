@@ -3,8 +3,6 @@
 #include "sys/scheduler.h"
 #include "xil_io.h"
 
-#define ENCODER_BASE_ADDR (0x43C10000)
-
 void encoder_init(void)
 {
     printf("ENC:\tInitializing...\n");

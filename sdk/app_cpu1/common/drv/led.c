@@ -2,8 +2,6 @@
 #include "xil_io.h"
 #include <stdint.h>
 
-#define LED_BASE_ADDR (0x43C30000)
-
 // Color Data Bit Format
 // =====================
 //
