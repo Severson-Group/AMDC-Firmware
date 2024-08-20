@@ -140,6 +140,15 @@ bool socket_manager_is_registered(void *raw_socket)
     return is_active;
 }
 
+int get_socket_id(Socket_t raw_socket) {
+	for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
+		if (socket_list[i].raw_socket == raw_socket) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 int socket_recv(char *buffer, uint32_t length, Socket_t *rawSocketRet) {
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         socket_t *socket = &socket_list[i];

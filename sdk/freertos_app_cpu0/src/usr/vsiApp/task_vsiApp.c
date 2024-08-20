@@ -26,19 +26,9 @@ static double theta = 0.0;                 // [rad]
 static double omega = 10.0 * 2 * PI;       // [rad/s]
 static double Do = 0.3;                    // [--]
 
-// Logging variables
-float LOG_current_a = 0.0;
-float LOG_current_b = 0.0;
-float LOG_current_c = 0.0;
-
 /* trying this out */
 #include "xil_io.h"
 #define PWM_MUX_ADDR_LOGGING (0x43C40000)
-
-float LOG_voltage_a = 0.0;
-float LOG_voltage_b = 0.0;
-float LOG_voltage_c = 0.0;
-
 
 int task_vsiApp_init(void)
 {
@@ -78,7 +68,12 @@ int task_vsiApp_deinit(void)
 
 void task_vsiApp(void *arg)
 {
-	uint32_t tick = 0;
+	float current_a = 0.0;
+	float current_b = 0.0;
+	float current_c = 0.0;
+	float voltage_a = 0.0;
+	float voltage_b = 0.0;
+	float voltage_c = 0.0;
 	for (;;) {
 		vTaskDelay(TASK_VSIAPP_INTERVAL_TICKS);
 		// Update theta
@@ -96,12 +91,12 @@ void task_vsiApp(void *arg)
 		pwm_set_duty(2, duty_c); // Set HB3 duty ratio (INV1, PWM5 and PWM6)
 
 		// Update logging variables
-		analog_getf(ANALOG_IN5, &LOG_current_a);
-		analog_getf(ANALOG_IN6, &LOG_current_b);
-		analog_getf(ANALOG_IN7, &LOG_current_c);
-		LOG_current_a *= 0.5;
-		LOG_current_b *= 0.5;
-		LOG_current_c *= 0.5;
+		analog_getf(ANALOG_IN5, &current_a);
+		analog_getf(ANALOG_IN6, &current_b);
+		analog_getf(ANALOG_IN7, &current_c);
+		current_a *= 0.5;
+		current_b *= 0.5;
+		current_c *= 0.5;
 	//	LOG_current_a = (duty_a - 0.5) * 13.3333333;
 	//	LOG_current_b = (duty_b - 0.5) * 13.3333333;
 	//	LOG_current_c = (duty_c - 0.5) * 13.3333333;
@@ -114,12 +109,16 @@ void task_vsiApp(void *arg)
 	//	LOG_voltage_b = ((float) rand() / RAND_MAX <= (duty_b - deadtimePercentage)) * 5.0;
 	//	LOG_voltage_c = ((float) rand() / RAND_MAX <= (duty_c - deadtimePercentage)) * 5.0;
 
-		LOG_voltage_a = (duty_a - 0.5) * 20;
-		LOG_voltage_b = (duty_b - 0.5) * 20;
-		LOG_voltage_c = (duty_c - 0.5) * 20;
+		voltage_a = (duty_a - 0.5) * 20;
+		voltage_b = (duty_b - 0.5) * 20;
+		voltage_c = (duty_c - 0.5) * 20;
 
-//		log_callback(&tick);
-//		tick++;
+		log_callback(&current_a, LOG_FLOAT, "current_a");
+		log_callback(&current_b, LOG_FLOAT, "current_b");
+		log_callback(&current_c, LOG_FLOAT, "current_c");
+		log_callback(&voltage_a, LOG_FLOAT, "voltage_a");
+		log_callback(&voltage_b, LOG_FLOAT, "voltage_b");
+		log_callback(&voltage_c, LOG_FLOAT, "voltage_c");
 
 		// delay(50us)
 	//	uint32_t startDelay = cpu_timer_now();

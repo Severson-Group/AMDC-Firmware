@@ -50,6 +50,21 @@
 #define TASK_LOG_UPDATES_PER_SEC (configTICK_RATE_HZ)
 #define TASK_LOG_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_LOG_UPDATES_PER_SEC))
 
+//typedef enum var_type_e {
+//	LOG_INT8 = 0,
+//	LOG_UINT8,
+//	LOG_INT16,
+//	LOG_UINT16,
+//	LOG_INT32,
+//	LOG_UINT32,
+//  LOG_INT,
+//	LOG_UINT,
+//	LOG_INT64,
+//	LOG_UINT64,
+//  LOG_FLOAT,
+//  LOG_DOUBLE,
+//} var_type_e;
+
 typedef enum var_type_e {
     LOG_INT = 1,
     LOG_FLOAT,
@@ -57,13 +72,13 @@ typedef enum var_type_e {
 } var_type_e;
 
 void log_init(void);
-void log_callback(void *arg);
+void log_callback(void *addr, var_type_e type, char *name);
 
 void log_start(void);
 void log_stop(void);
 bool log_is_logging(void);
 
-int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type);
+int log_var_register(int idx, char *name, uint32_t interval_ticks, var_type_e type);
 
 int log_var_empty(int idx);
 int log_var_empty_all(void);

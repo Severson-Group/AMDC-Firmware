@@ -100,6 +100,14 @@ void cmd_resp_write(char *msg, int len)
     if (current_cmd_source == CMD_SRC_UART) {
         serial_write(msg, len);
     } else {
+    	if (len > 0) {
+    		int socket_id = get_socket_id(rawSocket);
+    		if (socket_id == -1) {
+    			xil_printf("BAD\n");
+    		} else {
+    			socket_manager_set_time(socket_id, 5000);
+    		}
+    	}
         for (int i = 0; i < len; i++) {
         	FreeRTOS_send(rawSocket, &msg[i], 1, 0);
         }

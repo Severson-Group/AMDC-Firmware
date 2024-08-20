@@ -33,6 +33,7 @@ typedef struct socket {
 void socket_manager_init(void);
 
 bool socket_manager_is_registered(void *raw_socket);
+int get_socket_id(Socket_t raw_socket);
 
 int socket_manager_put(Socket_t raw_socket);
 int socket_manager_remove(Socket_t raw_socket);
@@ -55,7 +56,7 @@ void socket_manager_broadcast_ascii_cmd_byte(char c);
 void socket_manager_flush_log_socket(int socket_id);
 void socket_manager_flush_ascii_cmd_sockets(void);
 
-void socket_manager_set_time(int socket_id, uint32_t time);
+void socket_manager_set_time(int socket_id, uint32_t time); // set timeAlive (ms) of this socket
 int socket_manager_time_alive(int socket_id);
 
 #endif // SOCKET_MANAGER_H

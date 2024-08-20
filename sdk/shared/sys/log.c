@@ -33,9 +33,9 @@ typedef struct buffer_entry_t {
 typedef struct log_var_t {
     bool is_registered;
     char name[LOG_VAR_NAME_MAX_CHARS];
-    void *addr;
     var_type_e type;
 
+    uint32_t current_tick;
     uint32_t log_interval_ticks;
     uint32_t last_logged_tick;
 
@@ -46,33 +46,19 @@ typedef struct log_var_t {
     // Streaming:
     bool is_streaming;
     int socket_id;
-    uint32_t last_streamed_usec;
+    uint32_t last_streamed_tick;
 } log_var_t;
 
-static log_var_t vars[LOG_MAX_NUM_VARIABLES] = { 0 };
+static log_var_t vars[LOG_MAX_NUM_VARIABLES] = {0};
 
 static bool is_log_running = false;
 
-static TaskHandle_t tcb;
-
-static uint8_t task_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
-static uint8_t task_dbin_exists = 0;
+static uint8_t task_info_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
+static uint8_t task_dbin_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 static uint8_t task_dasc_exists = 0;
 
 void log_init(void)
 {
-    // Register task which samples variables etc
-    // NOTE: this runs at the base scheduler time quantum,
-    //       or as fast as possible!
-	xTaskCreate(log_callback, (const char *) "log", configMINIMAL_STACK_SIZE,
-					NULL, 1, &tcb);
-
-    // Initialize all the variables to NULL address,
-    // which indicates they aren't active
-    for (int i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
-        vars[i].addr = NULL;
-    }
-
     // Start with logging disabled
     log_stop();
 
@@ -102,119 +88,120 @@ void log_init(void)
 #endif // LOG_DEBUG_ENABLE_PRELOAD_SLOT
 }
 
-static void _do_log_to_buffer(uint32_t elapsed_usec)
+static void _do_log_to_buffer(uint32_t index, void *addr)
 {
     if (!is_log_running) {
         return;
     }
 
-    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
-        log_var_t *v = &vars[i];
+	log_var_t *v = &vars[index];
 
-        if (!v->is_registered) {
-            // Variable not active for logging, so skip
-            continue;
-        }
+	if (!v->is_registered) {
+		// Variable not active for logging, so skip
+		return;
+	}
 
-        uint32_t usec_since_last_run = elapsed_usec - v->last_logged_tick;
+	v->current_tick++;
+	uint32_t tick_since_last_run = v->current_tick - v->last_logged_tick;
 
-        if (usec_since_last_run >= v->log_interval_ticks) {
-            // Time to log this variable!
-            v->last_logged_tick = elapsed_usec;
+	if (tick_since_last_run >= v->log_interval_ticks) {
+		// Time to log this variable!
+		v->last_logged_tick = v->current_tick;
 
-            v->buffer[v->buffer_idx].timestamp = (uint32_t) elapsed_usec;
+		v->buffer[v->buffer_idx].timestamp = v->current_tick;
 
-            if (v->type == LOG_INT) {
-                v->buffer[v->buffer_idx].value = *((uint32_t *) v->addr);
-            } else if (v->type == LOG_FLOAT) {
-                float *f = (float *) &(v->buffer[v->buffer_idx].value);
-                *f = *((float *) v->addr);
-            } else if (v->type == LOG_DOUBLE) {
-                float *f = (float *) &(v->buffer[v->buffer_idx].value);
-                double value = *((double *) v->addr);
-                *f = (float) value;
-            }
+		if (v->type == LOG_INT) {
+			v->buffer[v->buffer_idx].value = *((uint32_t *) addr);
+		} else if (v->type == LOG_FLOAT) {
+			float *f = (float *) &(v->buffer[v->buffer_idx].value);
+			*f = *((float *) addr);
+		} else if (v->type == LOG_DOUBLE) {
+			float *f = (float *) &(v->buffer[v->buffer_idx].value);
+			double value = *((double *) addr);
+			*f = (float) value;
+		}
 
-            v->buffer_idx++;
-            if (v->buffer_idx >= LOG_SAMPLE_DEPTH_PER_VARIABLE) {
-                v->buffer_idx = 0;
-            }
+		v->buffer_idx++;
+		if (v->buffer_idx >= LOG_SAMPLE_DEPTH_PER_VARIABLE) {
+			v->buffer_idx = 0;
+		}
 
-            if (v->num_samples < LOG_SAMPLE_DEPTH_PER_VARIABLE) {
-                v->num_samples++;
-            }
-        }
+		if (v->num_samples < LOG_SAMPLE_DEPTH_PER_VARIABLE) {
+			v->num_samples++;
+		}
     }
 }
 
 extern socket_t socket_list[MAX_NUM_SOCKETS];
 
-static void _do_log_to_stream(uint32_t elapsed_usec)
+static void _do_log_to_stream(uint32_t index, void *addr)
 {
-    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
-        log_var_t *v = &vars[i];
+	log_var_t *v = &vars[index];
 
-        if (!v->is_registered) {
-            // Variable not active for logging, so skip
-            continue;
-        }
+	if (!v->is_registered) {
+		// Variable not active for logging, so skip
+		return;
+	}
 
-        if (!v->is_streaming) {
-            // Variable not streaming
-            continue;
-        }
+	if (!v->is_streaming) {
+		// Variable not streaming
+		return;
+	}
 
-        uint32_t usec_since_last_streamed = elapsed_usec - v->last_streamed_usec;
+	v->current_tick++;
+	uint32_t tick_since_last_streamed = v->current_tick - v->last_streamed_tick;
 
-        if (usec_since_last_streamed >= v->log_interval_ticks) {
-            // Time to stream this variable!
-            v->last_streamed_usec = elapsed_usec;
+	if (tick_since_last_streamed >= v->log_interval_ticks) {
+		// Time to stream this variable!
+		v->last_streamed_tick = v->current_tick;
 
-            // Build object to stream out
-            uint32_t stream_obj_ts = elapsed_usec;
-            uint32_t stream_obj_data = 0;
+		// Build object to stream out
+		uint32_t stream_obj_ts = v->current_tick;
+		uint32_t stream_obj_data = 0;
 
-            if (v->type == LOG_INT) {
-                stream_obj_data = *((uint32_t *) v->addr);
-            } else if (v->type == LOG_FLOAT) {
-                float *f = (float *) &(stream_obj_data);
-                *f = *((float *) v->addr);
-            } else if (v->type == LOG_DOUBLE) {
-                float *f = (float *) &(stream_obj_data);
-                double value = *((double *) v->addr);
-                *f = (float) value;
-            }
+		if (v->type == LOG_INT) {
+			stream_obj_data = *((uint32_t *) addr);
+		} else if (v->type == LOG_FLOAT) {
+			float *f = (float *) &(stream_obj_data);
+			*f = *((float *) addr);
+		} else if (v->type == LOG_DOUBLE) {
+			float *f = (float *) &(stream_obj_data);
+			double value = *((double *) addr);
+			*f = (float) value;
+		}
 
-            // Pass through socket
-            static const int packet_len = 20;
-			uint8_t bytes_to_send[20] = {0};
+		// Pass through socket
+		static const int packet_len = 20;
+		uint8_t bytes_to_send[20] = {0};
 
-			uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];
-			uint32_t *ptr_var_slot = (uint32_t *) &bytes_to_send[4];
-			uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[8];
-			uint32_t *ptr_data = (uint32_t *) &bytes_to_send[12];
-			uint32_t *ptr_footer = (uint32_t *) &bytes_to_send[16];
+		uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];
+		uint32_t *ptr_var_slot = (uint32_t *) &bytes_to_send[4];
+		uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[8];
+		uint32_t *ptr_data = (uint32_t *) &bytes_to_send[12];
+		uint32_t *ptr_footer = (uint32_t *) &bytes_to_send[16];
 
-			*ptr_header = 0x11111111;
-			*ptr_var_slot = i;
-			*ptr_ts = stream_obj_ts;
-			*ptr_data = stream_obj_data;
-			*ptr_footer = 0x22222222;
-            FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
-            socket_manager_set_time(v->socket_id, 5000);
-        }
+		*ptr_header = 0x11111111;
+		*ptr_var_slot = index;
+		*ptr_ts = stream_obj_ts;
+		*ptr_data = stream_obj_data;
+		*ptr_footer = 0x22222222;
+		FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
+		socket_manager_set_time(v->socket_id, 5000);
     }
 }
 
-void log_callback(void *arg)
+void log_callback(void *addr, var_type_e type, char *name)
 {
-	uint32_t iter = 0;
-	for (;;) {
-		vTaskDelay(TASK_LOG_INTERVAL_TICKS);
-		uint32_t elapsed_usec = iter;
-		_do_log_to_buffer(elapsed_usec);
-		_do_log_to_stream(elapsed_usec);
-		iter++;
+	/* this is slowwwww */
+	uint32_t index = 0;
+	for (; index < LOG_MAX_NUM_VARIABLES; index++) {
+		if (STREQ(vars[index].name, name)) {
+			break;
+		}
+	}
+	if (index != LOG_MAX_NUM_VARIABLES) {
+		_do_log_to_buffer(index, addr);
+		_do_log_to_stream(index, addr);
 	}
 }
 
@@ -233,7 +220,7 @@ bool log_is_logging(void)
     return is_log_running;
 }
 
-int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, var_type_e type)
+int log_var_register(int idx, char *name, uint32_t interval_ticks, var_type_e type)
 {
     // Sanity check variable idx
     if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
@@ -242,11 +229,10 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
 
     // Populate variable entry...
     strncpy(vars[idx].name, name, LOG_VAR_NAME_MAX_CHARS);
-    vars[idx].addr = addr;
     vars[idx].type = type;
 
-    // Calculate 'log_interval_usec' from samples per second
-    vars[idx].log_interval_ticks = configTICK_RATE_HZ / samples_per_sec;
+    // interval_ticks is how many ticks between logging
+    vars[idx].log_interval_ticks = interval_ticks;
     vars[idx].last_logged_tick = 0;
 
     // Mark as registered
@@ -778,7 +764,7 @@ void state_machine_info_callback(void *arg)
 
 		case INFO_VAR_DATA3:
 		{
-			cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
+//			cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
 			ctx->state = INFO_VAR_DATA4;
 			break;
 		}
@@ -812,7 +798,7 @@ void state_machine_info_callback(void *arg)
 		case INFO_REMOVE_TASK:
 		default:
 			cmd_resp_printf("SUCCESS\r\n\n");
-			task_exists = 0;
+			task_info_exists = 0;
 			vTaskDelete(NULL);
 			break;
 		}
@@ -823,7 +809,7 @@ static sm_ctx_info_t ctx_info;
 
 int log_print_info(void)
 {
-    if (task_exists) {
+    if (task_info_exists) {
         // Already in process of printing something!!
         return FAILURE;
     }
@@ -833,7 +819,7 @@ int log_print_info(void)
     ctx_info.var_idx = 0;
 
     // Initialize the state machine callback tcb
-    task_exists = 1;
+    task_info_exists = 1;
     xTaskCreate(state_machine_info_callback, (const char *) "loginfo", configMINIMAL_STACK_SIZE,
     				&ctx_info, tskIDLE_PRIORITY, &ctx_info.tcb);
     return SUCCESS;
@@ -855,7 +841,7 @@ int log_stream(bool enable, int idx, int socket_id)
     }
 
     vars[idx].is_streaming = enable;
-    vars[idx].last_streamed_usec = 0;
+    vars[idx].last_streamed_tick = 0;
     vars[idx].socket_id = socket_id;
 
     return SUCCESS;
@@ -876,7 +862,7 @@ void log_stream_synctime(void)
             continue;
         }
 
-        v->last_streamed_usec = 0;
+        v->last_streamed_tick = 0;
     }
 }
 
