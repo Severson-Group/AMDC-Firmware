@@ -25,7 +25,7 @@ module uart_rx(
 	output reg is_byte_corrupt,
 	
 	// Asserted when the user has started a rx, but we never saw a start bit!
-	output reg is_rx_timeout,
+	output reg byte_timed_out,
 	
 	// Holds the contents of what we received over the UART line
 	output wire [7:0] dout
@@ -116,21 +116,21 @@ always @(posedge clk, negedge rst_n) begin
 end
 
 // =======================
-// S/R flop: is_rx_timeout
+// S/R flop: byte_timed_out
 // =======================
 
-reg deassert_is_rx_timeout;
-reg assert_is_rx_timeout;
+reg deassert_byte_timed_out;
+reg assert_byte_timed_out;
 
 always @(posedge clk, negedge rst_n) begin
 	if (~rst_n)
-		is_rx_timeout <= 1'b0;
-	else if (deassert_is_rx_timeout)
-		is_rx_timeout <= 1'b0;
-	else if (assert_is_rx_timeout)
-		is_rx_timeout <= 1'b1;
+		byte_timed_out <= 1'b0;
+	else if (deassert_byte_timed_out)
+		byte_timed_out <= 1'b0;
+	else if (assert_byte_timed_out)
+		byte_timed_out <= 1'b1;
 	else
-		is_rx_timeout <= is_rx_timeout;
+		byte_timed_out <= byte_timed_out;
 end
 
 // ==============
@@ -168,31 +168,31 @@ always @(posedge clk, negedge rst_n) begin
 		bit_counter <= bit_counter;
 end
 
-// ==============
-// Timeout Counter
-// ==============
+// ==================
+// Byte Timeout Timer
+// ==================
 
 // Wait for a max of 2.5us for the start bit
-// after adc_uart_rx
+// after adc_uart_rx tells us to expect it
 //
 // 2.5us = 2500ns = 500 clock cycles
 //
 // Let's have max of 512, so 9 bit.
 
-reg [8:0] timeout_counter;
-reg reset_timeout_counter;
+reg [8:0] byte_timeout_timer;
+reg reset_byte_timeout_timer;
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		timeout_counter <= 9'b0;
-	else if (reset_timeout_counter)
-		timeout_counter <= 9'b0;
+		byte_timeout_timer <= 9'b0;
+	else if (reset_byte_timeout_timer)
+		byte_timeout_timer <= 9'b0;
 	else
-		timeout_counter <= timeout_counter + 1;
+		byte_timeout_timer <= byte_timeout_timer + 1;
 end
 
 // Detect when timer = max value (i.e., about 2.5us)
-wire max_timeout_counter;
-assign max_timeout_counter = &timeout_counter;
+wire max_byte_timeout_timer;
+assign max_byte_timeout_timer = &byte_timeout_timer;
 
 // =============
 // State Machine
@@ -223,12 +223,12 @@ always @(*) begin
 	inc_bit_counter = 0;
 	rst_bit_counter = 0;
 	rst_baud_timer = 0;
-	reset_timeout_counter = 0;
+	reset_byte_timeout_timer = 0;
 	
 	deassert_is_byte_valid = 0;
 	assert_is_byte_valid = 0;
-	deassert_is_rx_timeout = 0;
-	assert_is_rx_timeout = 0;
+	deassert_byte_timed_out = 0;
+	assert_byte_timed_out = 0;
 	deassert_is_byte_corrupt = 0;
 	assert_is_byte_corrupt = 0;
 	
@@ -237,9 +237,9 @@ always @(*) begin
 			if (start_rx) begin
 			    reset_reg_shift = 1;
 				rst_bit_counter = 1;
-				reset_timeout_counter = 1;
+				reset_byte_timeout_timer = 1;
 				deassert_is_byte_valid = 1;
-				deassert_is_rx_timeout = 1;
+				deassert_byte_timed_out = 1;
 				deassert_is_byte_corrupt = 1;
 				next_state = `SM_WAIT_START_BIT;
 			end
@@ -252,10 +252,10 @@ always @(*) begin
 				next_state = `SM_WAIT_HALF_BAUD;
 			end
 			
-			else if (max_timeout_counter) begin
+			else if (max_byte_timeout_timer) begin
 				// TIMEOUT! Abort...
 				next_state = `SM_IDLE;
-				assert_is_rx_timeout = 1;
+				assert_byte_timed_out = 1;
 			end
 		end
 		
