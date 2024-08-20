@@ -108,7 +108,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
 
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);
-void amds_get_counters(uint8_t port, uint32_t *V, uint32_t *C, uint32_t *T);
+void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, uint32_t *DT);
 
 int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out);
 

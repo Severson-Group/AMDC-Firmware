@@ -120,22 +120,22 @@ void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, u
         cmd_resp_printf("AMDS: Invalid Port Argument\r\n");
     } else {
         // Read valid bytes counter if user requested it
-        if (V != NULL) {
+        if (BV != NULL) {
             *BV = Xil_In32(base_addr + AMDS_BYTES_VALID_REG_OFFSET);
         }
 
         // Read corrupt bytes counter if user requested it
-        if (C != NULL) {
+        if (BC != NULL) {
             *BC = Xil_In32(base_addr + AMDS_BYTES_CORRUPT_REG_OFFSET);
         }
 
         // Read bytes timed out counter if user requested it
-        if (T != NULL) {
+        if (BT != NULL) {
             *BT = Xil_In32(base_addr + AMDS_BYTES_TIMED_OUT_REG_OFFSET);
         }
 
         // Read data timed out counter if user requested it
-        if (T != NULL) {
+        if (DT != NULL) {
             *DT = Xil_In32(base_addr + AMDS_DATA_TIMED_OUT_REG_OFFSET);
         }
     }
