@@ -52,7 +52,7 @@ int socket_manager_put(Socket_t raw_socket)
     for (int i = 0; i < MAX_NUM_SOCKETS; i++) {
         if ((socket_list[i].raw_socket == NULL) || (socket_list[i].raw_socket == raw_socket)) {
             socket_list[i].raw_socket = raw_socket;
-            socket_list[i].time_alive = 5000;
+            socket_list[i].time_alive = 1000;
             socket_list[i].type = SOCKET_TYPE_IDLE;
 
             xil_printf("Alloc new socket: %d\n", i);

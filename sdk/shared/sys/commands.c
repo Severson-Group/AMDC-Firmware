@@ -105,7 +105,7 @@ void cmd_resp_write(char *msg, int len)
     		if (socket_id == -1) {
     			xil_printf("BAD\n");
     		} else {
-    			socket_manager_set_time(socket_id, 5000);
+    			socket_manager_set_time(socket_id, 1000);
     		}
     	}
         for (int i = 0; i < len; i++) {

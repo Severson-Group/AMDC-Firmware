@@ -108,7 +108,7 @@ static void _do_log_to_buffer(uint32_t index, void *addr)
 		// Time to log this variable!
 		v->last_logged_tick = v->current_tick;
 
-		v->buffer[v->buffer_idx].timestamp = v->current_tick;
+		v->buffer[v->buffer_idx].timestamp = v->current_tick * 100;
 
 		if (v->type == LOG_INT) {
 			v->buffer[v->buffer_idx].value = *((uint32_t *) addr);
@@ -156,7 +156,7 @@ static void _do_log_to_stream(uint32_t index, void *addr)
 		v->last_streamed_tick = v->current_tick;
 
 		// Build object to stream out
-		uint32_t stream_obj_ts = v->current_tick;
+		uint32_t stream_obj_ts = v->current_tick * 100;
 		uint32_t stream_obj_data = 0;
 
 		if (v->type == LOG_INT) {
@@ -186,7 +186,7 @@ static void _do_log_to_stream(uint32_t index, void *addr)
 		*ptr_data = stream_obj_data;
 		*ptr_footer = 0x22222222;
 		FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
-		socket_manager_set_time(v->socket_id, 5000);
+		socket_manager_set_time(v->socket_id, 1000);
     }
 }
 

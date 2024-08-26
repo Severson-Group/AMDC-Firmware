@@ -237,7 +237,7 @@ void start_tcp(uint16_t usStackSize, UBaseType_t uxPriority) {
 				recvBytes = FreeRTOS_recv(xConnectedSocket, rxBuffer, ipconfigTCP_MSS, 0);
 				if (recvBytes > 0) {
 					socket_manager_rx_data(xConnectedSocket, rxBuffer, recvBytes);
-					socket_manager_set_time(socket_id, 5000);
+					socket_manager_set_time(socket_id, 1000);
 				}
 				if (socket_manager_time_alive(socket_id) < 1) {
 					break;
