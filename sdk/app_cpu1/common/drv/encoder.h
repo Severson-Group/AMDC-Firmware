@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#include "xparameters.h"
+
+#define ENCODER_BASE_ADDR (XPAR_AMDC_ENCODER_0_S00_AXI_BASEADDR)
+
 #define ENCODER_PULSES_PER_REV_BITS (14)
 #define ENCODER_PULSES_PER_REV      (1 << ENCODER_PULSES_PER_REV_BITS)
 

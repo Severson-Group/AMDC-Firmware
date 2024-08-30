@@ -7,6 +7,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "xparameters.h"
+
+#define GPIO_MUX_BASE_ADDR (XPAR_AMDC_GPIO_MUX_0_S00_AXI_BASEADDR)
+
 typedef enum {
     GPIO_MUX_UNUSED = 0,
     GPIO_MUX_DEVICE1 = 1,

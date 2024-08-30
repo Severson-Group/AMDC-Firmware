@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define DAC_BASE_ADDR (0x43C60000)
-
 void dac_init(void)
 {
     printf("DAC:\tInitializing...\n");
