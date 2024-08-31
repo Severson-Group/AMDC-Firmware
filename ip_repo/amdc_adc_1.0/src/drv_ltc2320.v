@@ -32,7 +32,7 @@ module drv_ltc2320(
 	CNV_n, SCK, SDO, CLKOUT,
 	data_valid,
 	clkdiv,
-	trigger, adc_done,
+	trigger, adc_done, load_latest_data,
 	data1, data2, data3, data4,
 	data5, data6, data7, data8
 );
@@ -51,6 +51,7 @@ input [7:0] SDO;
 
 output reg data_valid;
 output reg adc_done;
+output wire load_latest_data;
 output wire [14:0] data1;
 output wire [14:0] data2;
 output wire [14:0] data3;
@@ -83,6 +84,7 @@ reg assert_data_valid;
 reg assert_adc_done;
 reg deassert_adc_done;
 
+assign load_latest_data = assert_adc_done;
 
 // *****************************
 // *****************************

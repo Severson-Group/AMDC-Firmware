@@ -482,6 +482,7 @@
 
 	// Add user logic here
     wire adc_data_valid;
+    wire load_latest_data;
     
     wire [14:0] adc_data1;
     wire [14:0] adc_data2;
@@ -491,20 +492,10 @@
     wire [14:0] adc_data6;
     wire [14:0] adc_data7;
     wire [14:0] adc_data8;
-	
-	wire [1:0] clkdiv;
-	assign clkdiv = slv_reg8[1:0];
-	
-	wire pwm_sync_high;
-	wire pwm_sync_low;
-	assign pwm_sync_high = slv_reg8[2];
-	assign pwm_sync_low  = slv_reg8[3];
-	
-	// Load the latest data based on the pwm carrier high or low,
-	// from the trigger based in the timing manager, and only when
-	// the data is valid so as not to overlap a current conversion.
-	wire load_latest_data = adc_data_valid & trigger;
-	
+
+    wire [1:0] clkdiv;
+    assign clkdiv = slv_reg8[1:0];
+
     drv_ltc2320 iADC1(
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
@@ -516,6 +507,7 @@
         .data_valid(adc_data_valid),
         .clkdiv(clkdiv),
         .adc_done(adc_done),
+        .load_latest_data(load_latest_data),
         .data1(adc_data1),
         .data2(adc_data2),
         .data3(adc_data3),
@@ -539,6 +531,7 @@
         end
 
 		else if (load_latest_data) begin
+            // load_latest_data is asserted by the SM in the drv_ltc2320 module when the ADC conversion is done
 			// Sign extend the 14-bit ADC data into the 32-bit reg
 			anlg1_out <= {{17{adc_data1[14]}}, adc_data1};
 			anlg2_out <= {{17{adc_data2[14]}}, adc_data2};
