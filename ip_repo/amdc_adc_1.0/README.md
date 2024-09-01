@@ -46,8 +46,6 @@ This IP has no build-time configuration parameters. It expects a 200 MHz clock i
 
 | Bits | Name | Description |
 | -- | -- | -- |
-| 3 | PWM_SYNC_LOW | Enables sync of ADC samples to PWM carrier low point |
-| 2 | PWM_SYNC_HIGH | Enables sync of ADC samples to PWM carrier high point |
 | 1:0 | CLKDIV | Clock divisor for SCLK generation from 200 MHz main clock (0: DIV2, 1: DIV4, 2: DIV8, 3: DIV16) |
 
 ## Testing
