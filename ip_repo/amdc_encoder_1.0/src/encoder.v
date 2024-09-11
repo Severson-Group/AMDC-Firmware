@@ -11,10 +11,10 @@
 // Z is used to provide single revolution position via `position` output
 // `position` ranges between 0 and pulses_per_rev_bits - 1
 //
-module encoder(clk, rst_n, A, B, Z, pwm_carrier_low, pwm_carrier_high, counter, position, pulses_per_rev, steps_synced, position_synced);
+module encoder(clk, rst_n, A, B, Z, trigger, counter, position, pulses_per_rev, steps_synced, position_synced, done);
 
 input A, B, Z;
-input pwm_carrier_high, pwm_carrier_low;
+input trigger;
 input clk;
 input rst_n;
 
@@ -24,6 +24,7 @@ output wire [31:0] counter;
 output wire [31:0] position;
 output reg [31:0] steps_synced;
 output reg [31:0] position_synced;
+output reg done;
 
 // State machine signals that indicate
 // when steps increment or decrement
@@ -238,24 +239,37 @@ assign position = know_pos ? my_pos : 32'hFFFFFFFF;
 // **************************************************
 // Synchronizes the register updates to the control
 // code by making the register updates (steps and
-// position) relative to the ADMC-Firmware timing
+// position) relative to the ADMC-Firmware timing.
+// Asserts done once the steps have been updated.
 // **************************************************
 
+reg set_done;
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n) begin
         steps_synced <= 32'b0;
         position_synced <= 32'hFFFFFFFF;
+        set_done <= 0;
     end
     
-    else if (pwm_carrier_low || pwm_carrier_high) begin
+    else if (trigger) begin
         steps_synced <= counter;
         position_synced <= position;
+        set_done <= 1;
     end              
     
     else begin
         steps_synced <= steps_synced;
         position_synced <= position_synced;
+        set_done <= 0;
     end
+end
+
+// Generate 'done' signal. Assert signal by default to prevent trigger
+// signal in higher level code from hanging
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) done <= 1;
+    else if (trigger) done <= 0;
+    else if (set_done) done <= 1;
 end
 
 endmodule

@@ -9,9 +9,12 @@
 // Specify hardware revision (i.e. REV E, REV F, etc)
 #define USER_CONFIG_HARDWARE_TARGET (AMDC_REV_F)
 
-// Override the default scheduler elementary frequency by defining SYS_TICK_FREQ here.
-// System uses 10kHz by default
-//#define SYS_TICK_FREQ (20000) // Hz
+// Specify the source of the scheduler ISR
+// Mode 0: legacy mode - scheduler is triggered based on the PWM carrier events and ratio
+//         of carrier frequency to desired control frequency
+// Mode 1: new mode - scheduler is triggered when all the enabled sensors are done
+//         acquiring their data
+#define USER_CONFIG_ISR_SOURCE (0)
 
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
@@ -42,12 +45,16 @@
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_INJECTION (0)
 
-// Enable SensorCard platform motherboard support
+// Enable support for AMDS (Advanced Motor Drive Sensing) platform
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT (0)
+#define USER_CONFIG_ENABLE_AMDS_SUPPORT (0)
 
-// Enable SensorCard platform motherboard auto request new ADC sample data
-// set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX (0)
+// Scheduler Interval Tolerance Override
+// as of AMDC Firmware v1.3, all timing variables for tasks (runtime, loop time, etc)
+// are stored as double-precision floating point values, which have precision errors
+// that require a margin of tolerance. sometimes non-default PWM frequency and/or
+// timing manager ratios may necessitate un-commenting the following define to override
+// the default tolerance in common/sys/scheduler.h
+//#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (0.15)
 
 #endif // USER_CONFIG_H

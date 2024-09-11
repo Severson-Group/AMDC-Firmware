@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define STS_MUX_BASE_ADDR (0x43C50000)
-
 static int ports[] = {
     INVERTER_PORT1, INVERTER_PORT2, INVERTER_PORT3, INVERTER_PORT4,
     INVERTER_PORT5, INVERTER_PORT6, INVERTER_PORT7, INVERTER_PORT8,

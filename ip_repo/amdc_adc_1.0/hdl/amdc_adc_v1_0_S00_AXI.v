@@ -16,11 +16,12 @@
 	(
 		// Users to add ports here
         input  wire [7:0] adc_sdo,
+        input  wire trigger,
+		input  wire enable,
         output wire adc_sck,
         output wire adc_cnv,
+        output wire adc_done,
         input  wire adc_clkout,
-        input  wire pwm_carrier_high,
-        input  wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -481,6 +482,8 @@
 
 	// Add user logic here
     wire adc_data_valid;
+    wire load_latest_data;
+    
     wire [14:0] adc_data1;
     wire [14:0] adc_data2;
     wire [14:0] adc_data3;
@@ -489,32 +492,22 @@
     wire [14:0] adc_data6;
     wire [14:0] adc_data7;
     wire [14:0] adc_data8;
-	
-	wire [1:0] clkdiv;
-	assign clkdiv = slv_reg8[1:0];
-	
-	wire pwm_sync_high;
-	wire pwm_sync_low;
-	assign pwm_sync_high = slv_reg8[2];
-	assign pwm_sync_low  = slv_reg8[3];
-	
-	// Load data from ADC shift regs only at certain times
-	wire load_latest_data = adc_data_valid &
-							(
-								(pwm_sync_low & pwm_carrier_low) |
-								(pwm_sync_high & pwm_carrier_high) |
-								(~pwm_sync_high & ~pwm_sync_low)
-							);
-	
+
+    wire [1:0] clkdiv;
+    assign clkdiv = slv_reg8[1:0];
+
     drv_ltc2320 iADC1(
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
         .CNV_n(adc_cnv),
+        .trigger(trigger & enable),
         .SCK(adc_sck),
         .SDO(adc_sdo),
         .CLKOUT(adc_clkout),
         .data_valid(adc_data_valid),
         .clkdiv(clkdiv),
+        .adc_done(adc_done),
+        .load_latest_data(load_latest_data),
         .data1(adc_data1),
         .data2(adc_data2),
         .data3(adc_data3),
@@ -538,6 +531,7 @@
         end
 
 		else if (load_latest_data) begin
+            // load_latest_data is asserted by the SM in the drv_ltc2320 module when the ADC conversion is done
 			// Sign extend the 14-bit ADC data into the 32-bit reg
 			anlg1_out <= {{17{adc_data1[14]}}, adc_data1};
 			anlg2_out <= {{17{adc_data2[14]}}, adc_data2};

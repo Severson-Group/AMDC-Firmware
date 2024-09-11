@@ -16,6 +16,7 @@
 // NOTE: UART uses 115200 baud
 
 #include "drv/bsp.h"
+#include "drv/timing_manager.h"
 #include "sys/cmd/cmd_counter.h"
 #include "sys/commands.h"
 #include "sys/defines.h"
@@ -29,8 +30,8 @@
 #include "usr/user_config.h"
 #include <stdio.h>
 
-#if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
-#include "drv/motherboard.h"
+#if USER_CONFIG_ENABLE_AMDS_SUPPORT == 1
+#include "drv/amds.h"
 #endif
 
 #include "xil_exception.h"
@@ -71,6 +72,10 @@ int main()
     serial_init();
     commands_init();
     icc_tx_init();
+
+    // Initialize timing manager
+    timing_manager_init();
+
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif
@@ -79,9 +84,9 @@ int main()
     injection_init();
 #endif
 
-#if USER_CONFIG_ENABLE_MOTHERBOARD_SUPPORT == 1
-    // Initialize motherboard driver and register command
-    motherboard_init();
+#if USER_CONFIG_ENABLE_AMDS_SUPPORT == 1
+    // Initialize AMDS driver and register command
+    amds_init();
 #endif
 
     // Register the "cnt" command
@@ -92,9 +97,6 @@ int main()
 
     // Show start message to user, asking for cmds
     commands_start_msg();
-
-    // Initialize scheduler (sets up h/w timer, interrupt, etc)
-    scheduler_init();
 
     // Run scheduler => this takes over the system and never returns!
     scheduler_run();

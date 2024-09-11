@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#include "xparameters.h"
+
+#define DAC_BASE_ADDR (XPAR_AMDC_DAC_0_S00_AXI_BASEADDR)
+
 typedef enum {
     DAC_REG_SYNC = 2,
     DAC_REG_CONFIG = 3,
