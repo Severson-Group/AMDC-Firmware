@@ -247,9 +247,11 @@ module amdc_spi_master(
     //   Set and cleared by SM
     //   'done' goes back out of the eddy current IP block signaling that a whole 
     //   CONVERT/RECIEVE cycle has completed and the data is valid
+    // Assert 'done' signal by default to prevent trigger signal in higher level
+    // code from hanging
     always @(posedge clk, negedge rst_n) begin
         if(!rst_n)
-            done <= 1'b0;
+            done <= 1'b1;
         else if(clr_done)
             done <= 1'b0;
         else if(set_done)
@@ -383,7 +385,7 @@ module amdc_spi_master(
             shift_debug <= ~shift_debug;
     end
 
-    assign debug[0] = shift_debug;
+    assign debug[0] = trigger;
     assign debug[1] = 1'b1;
     assign debug[2] = 1'b1;
 

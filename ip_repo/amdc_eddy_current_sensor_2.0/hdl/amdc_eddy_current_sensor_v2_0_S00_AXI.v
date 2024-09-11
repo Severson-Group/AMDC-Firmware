@@ -18,8 +18,7 @@
         input wire miso_x,
         input wire miso_y,
         input wire enable,
-        input wire pwm_carrier_high,
-        input wire pwm_carrier_low,
+        input wire trigger,
 
         output wire sclk,
         output wire cnv,
@@ -423,9 +422,9 @@
           case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
             3'h0   : reg_data_out <= data_x_out;
             3'h1   : reg_data_out <= data_y_out;
-            3'h2   : reg_data_out <= slv_reg2;
-            3'h3   : reg_data_out <= slv_reg3;
-            3'h4   : reg_data_out <= slv_reg4;
+            3'h2   : reg_data_out <= slv_reg2; // SPI_DIVIDER (sclk_cnt)
+            3'h3   : reg_data_out <= slv_reg3; // Unused
+            3'h4   : reg_data_out <= slv_reg4; // shift_index
             3'h5   : reg_data_out <= slv_reg5;
             3'h6   : reg_data_out <= slv_reg6;
             3'h7   : reg_data_out <= slv_reg7;
@@ -453,27 +452,6 @@
     end    
 
     // Add user logic here
-    reg [7:0] sclk_cnt, shift_index;
-    reg trigger_on_high, trigger_on_low;
-    
-    always @(posedge S_AXI_ACLK, negedge S_AXI_ARESETN) begin
-      if(!S_AXI_ARESETN) begin
-        sclk_cnt <= 8'b0;
-        trigger_on_high <= 1'b0;
-        trigger_on_low <= 1'b0;
-        shift_index <= 8'b0;
-      end
-      else if(pwm_carrier_high | pwm_carrier_low) begin
-        sclk_cnt <= slv_reg2[7:0];
-        trigger_on_high <= slv_reg3[0];
-        trigger_on_low <= slv_reg3[1];
-        shift_index <= slv_reg4[7:0];
-      end
-    end
-
-    // Synchronize SPI master ADC driver to start with the PWM carrier
-    wire trigger;
-    assign trigger = (pwm_carrier_high & trigger_on_high) | (pwm_carrier_low & trigger_on_low);
 
     // These are used to capture the output of the SPI Master (shift registers) and put 
     // in the AXI memory-mapped registers (see below) to be read by C driver
@@ -496,10 +474,10 @@
         .miso_y(miso_y),
 
         // SCLK frequency parameter configured by C driver 
-        .sclk_cnt(sclk_cnt),
+        .sclk_cnt(slv_reg2[7:0]),
 
         // How long to delay shift signal (depends on RC filter on adapter board)
-        .shift_index(shift_index),
+        .shift_index(slv_reg4[7:0]),
 
         //////////////////
         // OUTPUTS

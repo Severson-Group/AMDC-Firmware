@@ -8,7 +8,7 @@
 
 <!--![check-format-shield][check-format-shield]-->
 
-*The Advanced Motor Drive Controller (AMDC) is an open-source project from the [Severson Research Group](https://severson.wempec.wisc.edu/) at [UW-Madison](http://www.engr.wisc.edu/department/electrical-computer-engineering/), affiliated with [Wisconsin Electric Machines and Power Electronics Consortium (WEMPEC)](https://wempec.wisc.edu/).*
+*The Advanced Motor Drive Controller (AMDC) is an open-source project from the [Severson Research Group](https://elev.umn.edu/).*
 
 Learn more at [docs.amdc.dev](https://docs.amdc.dev/).
 
@@ -34,7 +34,7 @@ This project is licensed under the BSD-3-Clause License - see the [LICENSE.md](L
 
 ## Contribute
 
-Want to help build the open-source motor drive platform of choice? Join the people below -- **[Contribute today!](./CONTRIBUTING.md)**
+Want to help build the leading open-source advanced motor drive platform? Join the people below -- **[Contribute today!](./CONTRIBUTING.md)**
 
 <a href="https://github.com/Severson-Group/AMDC-Firmware/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Severson-Group/AMDC-Firmware" />
@@ -43,7 +43,7 @@ Want to help build the open-source motor drive platform of choice? Join the peop
 [releases-shield]: https://img.shields.io/github/release/Severson-Group/AMDC-Firmware.svg
 [license-shield]: https://img.shields.io/github/license/Severson-Group/AMDC-Firmware.svg
 [check-format-shield]: https://github.com/Severson-Group/AMDC-Firmware/actions/workflows/check-format.yml/badge.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2023.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
 [commits-shield]: https://img.shields.io/github/commit-activity/y/Severson-Group/AMDC-Firmware/develop.svg
 
 [releases]: https://github.com/Severson-Group/AMDC-Firmware/releases

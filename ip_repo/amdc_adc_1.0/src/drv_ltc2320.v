@@ -19,7 +19,7 @@
 // Assume clk = 200MHz, period = 5ns
 `define CYCLES_TO_ASSERT_CNV	(7'd6)  // 30ns
 `define CYCLES_TO_WAIT_SAMPLING	(7'd90) // 450ns
-`define CYCLES_TO_HANG			(7'd200) // 1000ns
+`define CYCLES_TO_HANG			(8'd200) // 1000ns
 
 // Set SCK divisor from system clock (200MHz)
 `define SCK_DIV2  (2'b00) // 100   MHz
@@ -32,6 +32,7 @@ module drv_ltc2320(
 	CNV_n, SCK, SDO, CLKOUT,
 	data_valid,
 	clkdiv,
+	trigger, adc_done, load_latest_data,
 	data1, data2, data3, data4,
 	data5, data6, data7, data8
 );
@@ -40,7 +41,7 @@ module drv_ltc2320(
 input clk, rst_n;
 
 input CLKOUT;
-
+input trigger;
 input wire [1:0] clkdiv;
 
 // ADC signals
@@ -49,6 +50,8 @@ output SCK;
 input [7:0] SDO;
 
 output reg data_valid;
+output reg adc_done;
+output wire load_latest_data;
 output wire [14:0] data1;
 output wire [14:0] data2;
 output wire [14:0] data3;
@@ -78,7 +81,10 @@ reg deassert_cnv_n;
 reg assert_cnv_n;
 reg deassert_data_valid;
 reg assert_data_valid;
+reg assert_adc_done;
+reg deassert_adc_done;
 
+assign load_latest_data = assert_adc_done;
 
 // *****************************
 // *****************************
@@ -111,6 +117,24 @@ always @(posedge clk, negedge rst_n) begin
 		data_valid <= 1'b1;
 	else
 		data_valid <= data_valid;
+end
+
+// *****************************
+// *****************************
+//    adc_done set/reset flop
+// *****************************
+// *****************************
+// Assert 'done' signal by default to prevent trigger
+// signal in higher level code from hanging
+always @(posedge clk, negedge rst_n) begin
+	if (!rst_n)
+		adc_done <= 1'b1;
+	else if (deassert_adc_done)
+		adc_done <= 1'b0;
+	else if (assert_adc_done)
+		adc_done <= 1'b1;
+	else
+		adc_done <= adc_done;
 end
 
 
@@ -217,15 +241,15 @@ end
 // *****************************
 
 // 7-bit counter: up to 128
-// Need to count max 450ns, so at 200MHz clk => 90 cycles (< 128)
+// Need to count max 1000ns, so at 200MHz clk => 200 cycles (< 255)
 
-reg [6:0] delay_counter;
+reg [7:0] delay_counter;
 
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		delay_counter <= 7'b0;
+		delay_counter <= 8'b0;
 	else if (reset_delay_counter)
-		delay_counter <= 7'b0;
+		delay_counter <= 8'b0;
 	else
 		delay_counter <= delay_counter + 1;
 end
@@ -237,11 +261,12 @@ end
 // *****************************
 // *****************************
 
-`define SM_CNV				(3'b000)
-`define SM_WAIT_CNV			(3'b001)
-`define SM_WAIT_SAMPLE		(3'b010)
-`define SM_RECV				(3'b011)
-`define SM_HANG				(3'b100)
+`define SM_IDLE             (3'b000)
+`define SM_CNV              (3'b001)
+`define SM_WAIT_CNV         (3'b010)
+`define SM_WAIT_SAMPLE      (3'b011)
+`define SM_RECV				(3'b100)
+`define SM_HANG				(3'b101)
 
 // Infer state registers
 reg [2:0] state;
@@ -249,7 +274,7 @@ reg [2:0] next_state;
 
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		state <= `SM_CNV;
+		state <= `SM_IDLE;    // Default state is IDLE
 	else
 		state <= next_state;
 end
@@ -267,11 +292,21 @@ always @(*) begin
 	assert_cnv_n = 0;
 	deassert_data_valid = 0;
 	assert_data_valid = 0;
+	assert_adc_done = 0;
+	deassert_adc_done = 0;
 	
 	case (state)
-		`SM_CNV: begin
+        `SM_IDLE: begin
+            // Wait for trigger signal to actually start the conversion
+            if (trigger) begin
+                deassert_adc_done = 1;
+                next_state = `SM_CNV;
+            end
+        end
+	    
+        `SM_CNV: begin
 			// Start conversion!
-			assert_cnv_n = 1;
+            assert_cnv_n = 1;
 			reset_delay_counter = 1;
 			
 			next_state = `SM_WAIT_CNV;
@@ -315,6 +350,7 @@ always @(*) begin
 			if (bit_counter >= 5'd16) begin
 				reset_delay_counter = 1;
 				assert_data_valid = 1;
+				assert_adc_done = 1;
 				next_state = `SM_HANG;
 			end
 		end
@@ -322,7 +358,7 @@ always @(*) begin
 		`SM_HANG: begin
 			// Wait for a bit of dead time between conversions
 			if (delay_counter >= `CYCLES_TO_HANG) begin
-				next_state = `SM_CNV;
+				next_state = `SM_IDLE;
 			end
 		end
 	endcase

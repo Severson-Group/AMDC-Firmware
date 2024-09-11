@@ -184,7 +184,16 @@ static void _do_log_to_stream(uint32_t elapsed_usec)
 
 void log_callback(void *arg)
 {
-    uint32_t elapsed_usec = scheduler_get_elapsed_usec();
+    // scheduler_get_elapsed_usec() returns a double value of the real-time usec
+    // between calls to scheduler_tick(). This double value is truncated down to its
+    // integer portion. For example, if the scheduler were to run at a frequency of 22 kHz,
+    // the real-time between calls should be around 45.4545 usec, which would be truncated
+    // down to 45 usec here.
+    //
+    // Because this integer truncation happens the same way here as it does in
+    // log_var_register(), we do not expect any samples to get missed when logging
+    // even when running at not-nice frequencies.
+    uint32_t elapsed_usec = (uint32_t) scheduler_get_elapsed_usec();
 
     _do_log_to_buffer(elapsed_usec);
     _do_log_to_stream(elapsed_usec);
@@ -218,6 +227,14 @@ int log_var_register(int idx, char *name, void *addr, uint32_t samples_per_sec, 
     vars[idx].type = type;
 
     // Calculate 'log_interval_usec' from samples per second
+    //
+    // This calculation of log_interval_usec may result in the integer truncation of
+    // a decimal value, ie for samples_per_sec = 3000,
+    // log_interval_usec = (1,000,000 / 3,000) = 333.333 which becomes 333 usec
+    //
+    // Because this integer truncation happens the same way here as it does in
+    // log_callback(), we do not expect any samples to get missed when logging
+    // even when running at not-nice frequencies.
     vars[idx].log_interval_usec = USEC_IN_SEC / samples_per_sec;
     vars[idx].last_logged_usec = 0;
 
@@ -440,8 +457,8 @@ typedef struct sm_ctx_dump_binary_t {
 // NOTE: the state machine runs at full 10kHz when
 // dumping over Ethernet and binary format!
 //
-#define SM_DUMP_BIANRY_UPDATES_PER_SEC (2000)
-#define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BIANRY_UPDATES_PER_SEC)
+#define SM_DUMP_BINARY_UPDATES_PER_SEC (2000)
+#define SM_DUMP_BINARY_INTERVAL_USEC   (USEC_IN_SEC / SM_DUMP_BINARY_UPDATES_PER_SEC)
 
 static const uint32_t MAGIC_HEADER = 0x12345678;
 static const uint32_t MAGIC_FOOTER = 0x11223344;
@@ -488,6 +505,10 @@ void state_machine_dump_binary_callback(void *arg)
 
     case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
     {
+        // WARNING: A control frequency that results in a non-integer time interval period (example: 22 kHz / 45.45 us)
+        //          will have that interval truncated (example, to 45 us) here. The host PC will have an incorrect time
+        //          vector for any logged data in this case!!
+        //          See https://docs.amdc.dev/getting-started/user-guide/logging/
         uint32_t interval_usec = (uint32_t) v->log_interval_usec;
 
         // Write to output data stream (UART)
@@ -678,8 +699,8 @@ typedef struct sm_ctx_info_t {
     int var_idx;
 } sm_ctx_info_t;
 
-#define SM_INFO_UPDATES_PER_SEC SYS_TICK_FREQ
-#define SM_INFO_INTERVAL_USEC   (USEC_IN_SEC / SM_INFO_UPDATES_PER_SEC)
+// Set to 0 to ensure this task runs as fast as possible
+#define SM_INFO_INTERVAL_USEC 0
 
 void state_machine_info_callback(void *arg)
 {
@@ -712,7 +733,7 @@ void state_machine_info_callback(void *arg)
 
     case INFO_MAX_SAMPLE_RATE:
     {
-        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATES_PER_SEC);
+        cmd_resp_printf("Max sample rate: %d Hz\r\n", LOG_UPDATE_FREQ);
         cmd_resp_printf("--------\r\n");
         ctx->state = INFO_VAR_TITLE;
         break;

@@ -25,7 +25,7 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | 0x00 | SENSOR_DATA_X | R   | IP Data Register |
 | 0x04 | SENSOR_DATA_Y | R   | IP Data Register |
 | 0x08 | SPI_DIVIDER   | R/W | IP Configuration Register |
-| 0x0C | PWM_TRIGGERS  | R/W | IP Configuration Register |
+| 0x0C | UNUSED        | R/W | Unused Register  |
 | 0x10 | SHIFT_INDEX   | R/W | IP Configuration Register |
 
 
@@ -45,12 +45,6 @@ The IP is accessed via the AXI4-Lite register-based interface from the DSP. This
 | Bits | Name | Description |
 | -- | -- | -- |
 | 7:0 | DIVIDER | SCLK will toggle after a number of FPGA CLK cycles equal to this register value. <br /> The default is 50: since the FPGA CLK period is 5ns, this will be 250ns high/250ns low, or 2 MHz for SCLK |
-
-### PWM_TRIGGERS
-| Bits | Name | Description |
-| -- | -- | -- |
-| 0 | PWM_HIGH_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its max value (default 1) |
-| 1 | PWM_LOW_TRIGGER | If this bit is 1, a conversion/acquistion cycle will be triggered when the PWM carrier hits its min value (default 1) |
 
 ### SHIFT_INDEX
 | Bits | Name | Description |

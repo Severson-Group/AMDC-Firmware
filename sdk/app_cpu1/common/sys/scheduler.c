@@ -1,8 +1,7 @@
 #include "sys/scheduler.h"
 #include "drv/hardware_targets.h"
 #include "drv/led.h"
-#include "drv/motherboard.h"
-#include "drv/timer.h"
+#include "drv/timing_manager.h"
 #include "drv/watchdog.h"
 #include "xil_printf.h"
 #include <stdbool.h>
@@ -18,24 +17,32 @@ static task_control_block_t *tasks = NULL;
 // at the currently running task
 static task_control_block_t *running_task = NULL;
 
-// Incremented every SysTick interrupt to track time
-static volatile uint32_t elapsed_usec = 0;
+// Incremented every timing manager interrupt to track time
+static volatile double elapsed_usec = 0;
 
 static bool tasks_running = false;
 static volatile bool scheduler_idle = false;
 
-void scheduler_timer_isr(void *arg)
+/*
+ * This function is called only from the timing manager ISR, and thus only
+ * runs in the context of the ISR.
+ *
+ * The elapsed time since the last ISR call is recorded and the state of the
+ * the scheduler is moved out of idle to run the tasks.
+ */
+void scheduler_tick(void)
 {
 #if USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING == 1
     // We should be done running tasks in a time slice before this fires,
     // so if tasks are still running, we consumed too many cycles per slice
     if (tasks_running) {
-        // Per AMDC-Firmware Issue #265, during start-up, the overrun check
-        // seems to falsely trigger, or at least, we do not care about the trigger.
+        // For the first callback after enabling the sensors in the timing manager,
+        // the overrun check will occur due to the fast speed of the sensor quickly
+        // calling the ISR before it aligns with the normal trigger rate
         //
-        // To fix this, wait until at least 100 time slices have elapsed
-        // before allowing it to trigger.
-        if (elapsed_usec > 100 * SYS_TICK_USEC) {
+        // Thus, we will make sure to only check this when the elapsed time
+        // since the last call is larger than twice the maximum sensor time
+        if (timing_manager_get_tick_delta() >= (2 * TM_MAX_DEFAULT_SENSOR_TIME)) {
             // Use raw printf so this goes directly to the UART device
             xil_printf("ERROR: OVERRUN SCHEDULER TIME QUANTUM!\r\n");
             xil_printf("ERROR: CURRENT TASK IS %s\n", running_task->name);
@@ -52,27 +59,17 @@ void scheduler_timer_isr(void *arg)
         }
     }
 #endif // USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING
-
-    elapsed_usec += SYS_TICK_USEC;
-    scheduler_idle = false;
+    elapsed_usec += timing_manager_get_tick_delta();
+    scheduler_idle = false; // run task
 }
 
-uint32_t scheduler_get_elapsed_usec(void)
+double scheduler_get_elapsed_usec(void)
 {
     return elapsed_usec;
 }
 
-void scheduler_init(void)
-{
-    printf("SCHED:\tInitializing scheduler...\n");
-
-    // Start system timer for periodic interrupts
-    timer_init(scheduler_timer_isr, SYS_TICK_USEC);
-    printf("SCHED:\tTasks per second: %d\n", SYS_TICK_FREQ);
-}
-
 void scheduler_tcb_init(
-    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, uint32_t interval_usec)
+    task_control_block_t *tcb, task_callback_t callback, void *callback_arg, const char *name, double interval_usec)
 {
     tcb->id = next_tcb_id++;
     tcb->name = name;
@@ -190,14 +187,19 @@ void scheduler_run(void)
 
     // This is the main event loop that runs the device
     while (1) {
-        uint32_t my_elapsed_usec = elapsed_usec;
+        double my_elapsed_usec = elapsed_usec;
         tasks_running = true;
 
         task_control_block_t *t = tasks;
         while (t != NULL) {
-            uint32_t usec_since_last_run = my_elapsed_usec - t->last_run_usec;
+            double usec_since_last_run = my_elapsed_usec - t->last_run_usec;
 
-            if (usec_since_last_run >= t->interval_usec) {
+            // The task's usec_since_last_run may not be EXACTLY equal to the target interval
+            // due to the imprecision of converting FPGA time to double values in the C code.
+            // Therefore, we will schedule the task if the difference between the
+            // usec_since_last_run and the target interval is within the defined tolerance.
+            if ((t->interval_usec - usec_since_last_run) <= SCHEDULER_INTERVAL_TOLERANCE_USEC) {
+
                 // Time to run this task!
                 task_stats_pre_task(&t->stats);
                 running_task = t;
@@ -214,27 +216,13 @@ void scheduler_run(void)
 
         tasks_running = false;
 
-#if USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX == 1
-        // Request motherboard to send its latest ADC sample data back to the AMDC
-        //
-        // NOTE: this is specifically before the while loop below so that the new
-        // data arrives before it is needed in the next control loop.
-        motherboard_request_new_data(MOTHERBOARD_1_BASE_ADDR);
-
-#if (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
-        motherboard_request_new_data(MOTHERBOARD_2_BASE_ADDR);
-        motherboard_request_new_data(MOTHERBOARD_3_BASE_ADDR);
-        motherboard_request_new_data(MOTHERBOARD_4_BASE_ADDR);
-#endif
-#endif
-
-        // Wait here until unpaused (i.e. when SysTick fires)
+        // Wait here until unpaused
         scheduler_idle = true;
         while (scheduler_idle) {
         }
 
 #if USER_CONFIG_ENABLE_WATCHDOG == 1
-        // Reset the watchdog timer after SysTick fires
+        // Reset the watchdog timer after timer fires
         watchdog_reset();
 #endif
     }

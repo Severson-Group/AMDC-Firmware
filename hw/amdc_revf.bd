@@ -9,11 +9,9 @@
       "validated": "true"
     },
     "design_tree": {
-      "amdc_encoder_0": "",
       "xlconstant_2": "",
       "xlconstant_4": "",
       "amdc_leds_0": "",
-      "amdc_adc_0": "",
       "amdc_dac_0": "",
       "hier_ps": {
         "processing_system7_0": "",
@@ -66,22 +64,21 @@
           "m29_couplers": {},
           "m30_couplers": {},
           "m31_couplers": {},
-          "m32_couplers": {}
+          "m32_couplers": {},
+          "m33_couplers": {},
+          "m34_couplers": {},
+          "m35_couplers": {},
+          "m36_couplers": {},
+          "m37_couplers": {}
         }
       },
       "hier_powerstack": {
-        "amdc_inverters_0": "",
         "amdc_pwm_mux_0": "",
         "amdc_inv_status_mux_0": "",
-        "xlconstant_3": ""
+        "xlconstant_3": "",
+        "amdc_inverters_0": ""
       },
       "hier_gpio_0": {
-        "hier_amds_0": {
-          "xlslice_0": "",
-          "xlconcat_2": "",
-          "amdc_motherboard_0": "",
-          "xlslice_1": ""
-        },
         "hier_ild1420_0": {
           "xlslice_0": "",
           "xlslice_1": "",
@@ -89,31 +86,19 @@
           "amdc_ild1420_1": ""
         },
         "xlconstant_0": "",
-        "xlconcat_0": "",
-        "xlconstant_1": "",
         "xlconcat_1": "",
         "xlslice_0": "",
         "xlslice_1": "",
         "xlslice_2": "",
         "amdc_gp3io_mux_0": "",
         "amdc_gpio_direct_0": "",
-        "xlconstant_3": "",
         "xlslice_3": "",
-        "amdc_eddy_current_se_0": ""
-      },
-      "hier_timers": {
-        "control_timer_0": "",
-        "control_timer_1": "",
-        "xlconstant_1": "",
-        "xlconcat_0": ""
+        "xlconcat_2": "",
+        "xlconstant_3": "",
+        "amdc_eddy_current_se_0": "",
+        "amdc_amds_0": ""
       },
       "hier_gpio_1": {
-        "hier_amds_0": {
-          "xlslice_0": "",
-          "xlconcat_2": "",
-          "amdc_motherboard_0": "",
-          "xlslice_1": ""
-        },
         "hier_ild1420_0": {
           "xlslice_0": "",
           "xlslice_1": "",
@@ -121,25 +106,19 @@
           "amdc_ild1420_1": ""
         },
         "xlconstant_0": "",
-        "xlconcat_0": "",
-        "xlconstant_1": "",
         "xlconcat_1": "",
         "xlslice_0": "",
         "xlslice_1": "",
         "xlslice_2": "",
         "amdc_gp3io_mux_0": "",
         "amdc_gpio_direct_0": "",
-        "xlconstant_3": "",
         "xlslice_3": "",
-        "amdc_eddy_current_se_0": ""
+        "xlconcat_2": "",
+        "xlconstant_3": "",
+        "amdc_eddy_current_se_0": "",
+        "amdc_amds_0": ""
       },
       "hier_gpio_2": {
-        "hier_amds_0": {
-          "xlslice_0": "",
-          "xlconcat_2": "",
-          "amdc_motherboard_0": "",
-          "xlslice_1": ""
-        },
         "hier_ild1420_0": {
           "xlslice_0": "",
           "xlslice_1": "",
@@ -147,25 +126,19 @@
           "amdc_ild1420_1": ""
         },
         "xlconstant_0": "",
-        "xlconcat_0": "",
-        "xlconstant_1": "",
+        "xlconstant_3": "",
         "xlconcat_1": "",
         "xlslice_0": "",
         "xlslice_1": "",
         "xlslice_2": "",
         "amdc_gp3io_mux_0": "",
         "amdc_gpio_direct_0": "",
-        "xlconstant_3": "",
         "xlslice_3": "",
-        "amdc_eddy_current_se_0": ""
+        "xlconcat_2": "",
+        "amdc_eddy_current_se_0": "",
+        "amdc_amds_0": ""
       },
       "hier_gpio_3": {
-        "hier_amds_0": {
-          "xlslice_0": "",
-          "xlconcat_2": "",
-          "amdc_motherboard_0": "",
-          "xlslice_1": ""
-        },
         "hier_ild1420_0": {
           "xlslice_0": "",
           "xlslice_1": "",
@@ -173,18 +146,23 @@
           "amdc_ild1420_1": ""
         },
         "xlconstant_0": "",
-        "xlconcat_0": "",
-        "xlconstant_1": "",
         "xlconcat_1": "",
         "xlslice_0": "",
         "xlslice_1": "",
         "xlslice_2": "",
         "amdc_gp3io_mux_0": "",
         "amdc_gpio_direct_0": "",
-        "xlconstant_3": "",
         "xlslice_3": "",
-        "amdc_eddy_current_se_0": ""
-      }
+        "xlconcat_2": "",
+        "xlconstant_3": "",
+        "amdc_eddy_current_se_0": "",
+        "amdc_amds_0": ""
+      },
+      "xlconcat_0": "",
+      "xlconstant_0": "",
+      "amdc_encoder_0": "",
+      "amdc_timing_manager_0": "",
+      "amdc_adc_0": ""
     },
     "interface_ports": {
       "DDR": {
@@ -581,10 +559,6 @@
       }
     },
     "components": {
-      "amdc_encoder_0": {
-        "vlnv": "wisc.edu:user:amdc_encoder:1.0",
-        "xci_name": "amdc_revf_amdc_encoder_0_0"
-      },
       "xlconstant_2": {
         "vlnv": "xilinx.com:ip:xlconstant:1.1",
         "xci_name": "amdc_revf_xlconstant_2_0",
@@ -606,10 +580,6 @@
       "amdc_leds_0": {
         "vlnv": "wisc.edu:user:amdc_leds:1.0",
         "xci_name": "amdc_revf_amdc_leds_0_0"
-      },
-      "amdc_adc_0": {
-        "vlnv": "wisc.edu:user:amdc_adc:1.0",
-        "xci_name": "amdc_revf_amdc_adc_0_0"
       },
       "amdc_dac_0": {
         "vlnv": "wisc.edu:user:amdc_dac:2.0",
@@ -756,6 +726,26 @@
           "M32_AXI": {
             "mode": "Master",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "M33_AXI": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "M34_AXI": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "M35_AXI": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "M36_AXI": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "M37_AXI": {
+            "mode": "Master",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           }
         },
         "ports": {
@@ -772,7 +762,7 @@
           "IRQ_F2P": {
             "type": "intr",
             "direction": "I",
-            "left": "1",
+            "left": "15",
             "right": "0"
           }
         },
@@ -1761,7 +1751,7 @@
             "xci_name": "amdc_revf_ps7_0_axi_periph_0",
             "parameters": {
               "NUM_MI": {
-                "value": "33"
+                "value": "38"
               },
               "S00_HAS_DATA_FIFO": {
                 "value": "2"
@@ -1904,6 +1894,26 @@
                 "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
               },
               "M32_AXI": {
+                "mode": "Master",
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+              },
+              "M33_AXI": {
+                "mode": "Master",
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+              },
+              "M34_AXI": {
+                "mode": "Master",
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+              },
+              "M35_AXI": {
+                "mode": "Master",
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+              },
+              "M36_AXI": {
+                "mode": "Master",
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+              },
+              "M37_AXI": {
                 "mode": "Master",
                 "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
               }
@@ -2465,6 +2475,86 @@
               "M32_ARESETN": {
                 "type": "rst",
                 "direction": "I"
+              },
+              "M33_ACLK": {
+                "type": "clk",
+                "direction": "I",
+                "parameters": {
+                  "ASSOCIATED_BUSIF": {
+                    "value": "M33_AXI"
+                  },
+                  "ASSOCIATED_RESET": {
+                    "value": "M33_ARESETN"
+                  }
+                }
+              },
+              "M33_ARESETN": {
+                "type": "rst",
+                "direction": "I"
+              },
+              "M34_ACLK": {
+                "type": "clk",
+                "direction": "I",
+                "parameters": {
+                  "ASSOCIATED_BUSIF": {
+                    "value": "M34_AXI"
+                  },
+                  "ASSOCIATED_RESET": {
+                    "value": "M34_ARESETN"
+                  }
+                }
+              },
+              "M34_ARESETN": {
+                "type": "rst",
+                "direction": "I"
+              },
+              "M35_ACLK": {
+                "type": "clk",
+                "direction": "I",
+                "parameters": {
+                  "ASSOCIATED_BUSIF": {
+                    "value": "M35_AXI"
+                  },
+                  "ASSOCIATED_RESET": {
+                    "value": "M35_ARESETN"
+                  }
+                }
+              },
+              "M35_ARESETN": {
+                "type": "rst",
+                "direction": "I"
+              },
+              "M36_ACLK": {
+                "type": "clk",
+                "direction": "I",
+                "parameters": {
+                  "ASSOCIATED_BUSIF": {
+                    "value": "M36_AXI"
+                  },
+                  "ASSOCIATED_RESET": {
+                    "value": "M36_ARESETN"
+                  }
+                }
+              },
+              "M36_ARESETN": {
+                "type": "rst",
+                "direction": "I"
+              },
+              "M37_ACLK": {
+                "type": "clk",
+                "direction": "I",
+                "parameters": {
+                  "ASSOCIATED_BUSIF": {
+                    "value": "M37_AXI"
+                  },
+                  "ASSOCIATED_RESET": {
+                    "value": "M37_ARESETN"
+                  }
+                }
+              },
+              "M37_ARESETN": {
+                "type": "rst",
+                "direction": "I"
               }
             },
             "components": {
@@ -2524,7 +2614,7 @@
                 "xci_name": "amdc_revf_tier2_xbar_3_0",
                 "parameters": {
                   "NUM_MI": {
-                    "value": "7"
+                    "value": "8"
                   },
                   "NUM_SI": {
                     "value": "1"
@@ -2536,7 +2626,7 @@
                 "xci_name": "amdc_revf_tier2_xbar_4_0",
                 "parameters": {
                   "NUM_MI": {
-                    "value": "2"
+                    "value": "6"
                   },
                   "NUM_SI": {
                     "value": "1"
@@ -4704,19 +4794,391 @@
                     ]
                   }
                 }
+              },
+              "m33_couplers": {
+                "interface_ports": {
+                  "M_AXI": {
+                    "mode": "Master",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  },
+                  "S_AXI": {
+                    "mode": "Slave",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  }
+                },
+                "ports": {
+                  "M_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "M_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "M_ARESETN"
+                      }
+                    }
+                  },
+                  "M_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  },
+                  "S_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "S_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "S_ARESETN"
+                      }
+                    }
+                  },
+                  "S_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  }
+                },
+                "interface_nets": {
+                  "m33_couplers_to_m33_couplers": {
+                    "interface_ports": [
+                      "S_AXI",
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
+              "m34_couplers": {
+                "interface_ports": {
+                  "M_AXI": {
+                    "mode": "Master",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  },
+                  "S_AXI": {
+                    "mode": "Slave",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  }
+                },
+                "ports": {
+                  "M_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "M_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "M_ARESETN"
+                      }
+                    }
+                  },
+                  "M_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  },
+                  "S_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "S_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "S_ARESETN"
+                      }
+                    }
+                  },
+                  "S_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  }
+                },
+                "interface_nets": {
+                  "m34_couplers_to_m34_couplers": {
+                    "interface_ports": [
+                      "S_AXI",
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
+              "m35_couplers": {
+                "interface_ports": {
+                  "M_AXI": {
+                    "mode": "Master",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  },
+                  "S_AXI": {
+                    "mode": "Slave",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  }
+                },
+                "ports": {
+                  "M_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "M_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "M_ARESETN"
+                      }
+                    }
+                  },
+                  "M_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  },
+                  "S_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "S_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "S_ARESETN"
+                      }
+                    }
+                  },
+                  "S_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  }
+                },
+                "interface_nets": {
+                  "m35_couplers_to_m35_couplers": {
+                    "interface_ports": [
+                      "S_AXI",
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
+              "m36_couplers": {
+                "interface_ports": {
+                  "M_AXI": {
+                    "mode": "Master",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  },
+                  "S_AXI": {
+                    "mode": "Slave",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  }
+                },
+                "ports": {
+                  "M_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "M_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "M_ARESETN"
+                      }
+                    }
+                  },
+                  "M_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  },
+                  "S_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "S_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "S_ARESETN"
+                      }
+                    }
+                  },
+                  "S_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  }
+                },
+                "interface_nets": {
+                  "m36_couplers_to_m36_couplers": {
+                    "interface_ports": [
+                      "S_AXI",
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
+              "m37_couplers": {
+                "interface_ports": {
+                  "M_AXI": {
+                    "mode": "Master",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  },
+                  "S_AXI": {
+                    "mode": "Slave",
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+                  }
+                },
+                "ports": {
+                  "M_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "M_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "M_ARESETN"
+                      }
+                    }
+                  },
+                  "M_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  },
+                  "S_ACLK": {
+                    "type": "clk",
+                    "direction": "I",
+                    "parameters": {
+                      "ASSOCIATED_BUSIF": {
+                        "value": "S_AXI"
+                      },
+                      "ASSOCIATED_RESET": {
+                        "value": "S_ARESETN"
+                      }
+                    }
+                  },
+                  "S_ARESETN": {
+                    "type": "rst",
+                    "direction": "I"
+                  }
+                },
+                "interface_nets": {
+                  "m37_couplers_to_m37_couplers": {
+                    "interface_ports": [
+                      "S_AXI",
+                      "M_AXI"
+                    ]
+                  }
+                }
               }
             },
             "interface_nets": {
-              "m13_couplers_to_ps7_0_axi_periph": {
+              "xbar_to_i00_couplers": {
                 "interface_ports": [
-                  "M13_AXI",
-                  "m13_couplers/M_AXI"
+                  "xbar/M00_AXI",
+                  "i00_couplers/S_AXI"
+                ]
+              },
+              "xbar_to_i01_couplers": {
+                "interface_ports": [
+                  "xbar/M01_AXI",
+                  "i01_couplers/S_AXI"
+                ]
+              },
+              "i00_couplers_to_tier2_xbar_0": {
+                "interface_ports": [
+                  "i00_couplers/M_AXI",
+                  "tier2_xbar_0/S00_AXI"
+                ]
+              },
+              "i01_couplers_to_tier2_xbar_1": {
+                "interface_ports": [
+                  "i01_couplers/M_AXI",
+                  "tier2_xbar_1/S00_AXI"
+                ]
+              },
+              "xbar_to_i02_couplers": {
+                "interface_ports": [
+                  "xbar/M02_AXI",
+                  "i02_couplers/S_AXI"
+                ]
+              },
+              "i02_couplers_to_tier2_xbar_2": {
+                "interface_ports": [
+                  "i02_couplers/M_AXI",
+                  "tier2_xbar_2/S00_AXI"
+                ]
+              },
+              "m33_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M33_AXI",
+                  "m33_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m33_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M01_AXI",
+                  "m33_couplers/S_AXI"
+                ]
+              },
+              "m34_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M34_AXI",
+                  "m34_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m34_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M02_AXI",
+                  "m34_couplers/S_AXI"
+                ]
+              },
+              "m35_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M35_AXI",
+                  "m35_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m35_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M03_AXI",
+                  "m35_couplers/S_AXI"
+                ]
+              },
+              "m36_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M36_AXI",
+                  "m36_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m36_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M04_AXI",
+                  "m36_couplers/S_AXI"
+                ]
+              },
+              "m37_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M37_AXI",
+                  "m37_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m37_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M05_AXI",
+                  "m37_couplers/S_AXI"
+                ]
+              },
+              "m12_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M12_AXI",
+                  "m12_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_1_to_m12_couplers": {
                 "interface_ports": [
                   "tier2_xbar_1/M04_AXI",
                   "m12_couplers/S_AXI"
+                ]
+              },
+              "m13_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M13_AXI",
+                  "m13_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_1_to_m13_couplers": {
@@ -4755,16 +5217,16 @@
                   "m16_couplers/M_AXI"
                 ]
               },
-              "m17_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M17_AXI",
-                  "m17_couplers/M_AXI"
-                ]
-              },
               "tier2_xbar_2_to_m16_couplers": {
                 "interface_ports": [
                   "tier2_xbar_2/M00_AXI",
                   "m16_couplers/S_AXI"
+                ]
+              },
+              "m17_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M17_AXI",
+                  "m17_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_2_to_m17_couplers": {
@@ -4803,16 +5265,22 @@
                   "m20_couplers/M_AXI"
                 ]
               },
+              "tier2_xbar_2_to_m20_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_2/M04_AXI",
+                  "m20_couplers/S_AXI"
+                ]
+              },
               "m21_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
                   "M21_AXI",
                   "m21_couplers/M_AXI"
                 ]
               },
-              "tier2_xbar_2_to_m20_couplers": {
+              "m22_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "tier2_xbar_2/M04_AXI",
-                  "m20_couplers/S_AXI"
+                  "M22_AXI",
+                  "m22_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_2_to_m21_couplers": {
@@ -4833,136 +5301,16 @@
                   "m23_couplers/M_AXI"
                 ]
               },
-              "ps7_0_axi_periph_to_s00_couplers": {
+              "m24_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "S00_AXI",
-                  "s00_couplers/S_AXI"
-                ]
-              },
-              "s00_couplers_to_xbar": {
-                "interface_ports": [
-                  "s00_couplers/M_AXI",
-                  "xbar/S00_AXI"
-                ]
-              },
-              "m00_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M00_AXI",
-                  "m00_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m00_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M00_AXI",
-                  "m00_couplers/S_AXI"
-                ]
-              },
-              "m01_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M01_AXI",
-                  "m01_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m01_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M01_AXI",
-                  "m01_couplers/S_AXI"
-                ]
-              },
-              "m02_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M02_AXI",
-                  "m02_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m02_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M02_AXI",
-                  "m02_couplers/S_AXI"
-                ]
-              },
-              "m03_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M03_AXI",
-                  "m03_couplers/M_AXI"
-                ]
-              },
-              "m04_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M04_AXI",
-                  "m04_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m03_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M03_AXI",
-                  "m03_couplers/S_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m04_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M04_AXI",
-                  "m04_couplers/S_AXI"
-                ]
-              },
-              "m22_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M22_AXI",
-                  "m22_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_3_to_m30_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_3/M06_AXI",
-                  "m30_couplers/S_AXI"
-                ]
-              },
-              "m31_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M31_AXI",
-                  "m31_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_4_to_m31_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_4/M00_AXI",
-                  "m31_couplers/S_AXI"
-                ]
-              },
-              "m32_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M32_AXI",
-                  "m32_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_4_to_m32_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_4/M01_AXI",
-                  "m32_couplers/S_AXI"
-                ]
-              },
-              "m30_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M30_AXI",
-                  "m30_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_3_to_m29_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_3/M05_AXI",
-                  "m29_couplers/S_AXI"
+                  "M24_AXI",
+                  "m24_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_2_to_m23_couplers": {
                 "interface_ports": [
                   "tier2_xbar_2/M07_AXI",
                   "m23_couplers/S_AXI"
-                ]
-              },
-              "m24_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M24_AXI",
-                  "m24_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_3_to_m24_couplers": {
@@ -4977,22 +5325,16 @@
                   "m25_couplers/M_AXI"
                 ]
               },
-              "tier2_xbar_3_to_m25_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_3/M01_AXI",
-                  "m25_couplers/S_AXI"
-                ]
-              },
               "m26_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
                   "M26_AXI",
                   "m26_couplers/M_AXI"
                 ]
               },
-              "m27_couplers_to_ps7_0_axi_periph": {
+              "tier2_xbar_3_to_m25_couplers": {
                 "interface_ports": [
-                  "M27_AXI",
-                  "m27_couplers/M_AXI"
+                  "tier2_xbar_3/M01_AXI",
+                  "m25_couplers/S_AXI"
                 ]
               },
               "tier2_xbar_3_to_m26_couplers": {
@@ -5001,10 +5343,10 @@
                   "m26_couplers/S_AXI"
                 ]
               },
-              "m28_couplers_to_ps7_0_axi_periph": {
+              "m27_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "M28_AXI",
-                  "m28_couplers/M_AXI"
+                  "M27_AXI",
+                  "m27_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_3_to_m27_couplers": {
@@ -5013,10 +5355,10 @@
                   "m27_couplers/S_AXI"
                 ]
               },
-              "m29_couplers_to_ps7_0_axi_periph": {
+              "m28_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "M29_AXI",
-                  "m29_couplers/M_AXI"
+                  "M28_AXI",
+                  "m28_couplers/M_AXI"
                 ]
               },
               "tier2_xbar_3_to_m28_couplers": {
@@ -5025,34 +5367,52 @@
                   "m28_couplers/S_AXI"
                 ]
               },
-              "i00_couplers_to_tier2_xbar_0": {
+              "m29_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "i00_couplers/M_AXI",
-                  "tier2_xbar_0/S00_AXI"
+                  "M29_AXI",
+                  "m29_couplers/M_AXI"
                 ]
               },
-              "xbar_to_i01_couplers": {
+              "m30_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "xbar/M01_AXI",
-                  "i01_couplers/S_AXI"
+                  "M30_AXI",
+                  "m30_couplers/M_AXI"
                 ]
               },
-              "xbar_to_i02_couplers": {
+              "tier2_xbar_3_to_m29_couplers": {
                 "interface_ports": [
-                  "xbar/M02_AXI",
-                  "i02_couplers/S_AXI"
+                  "tier2_xbar_3/M05_AXI",
+                  "m29_couplers/S_AXI"
                 ]
               },
-              "i01_couplers_to_tier2_xbar_1": {
+              "tier2_xbar_3_to_m30_couplers": {
                 "interface_ports": [
-                  "i01_couplers/M_AXI",
-                  "tier2_xbar_1/S00_AXI"
+                  "tier2_xbar_3/M06_AXI",
+                  "m30_couplers/S_AXI"
                 ]
               },
-              "i02_couplers_to_tier2_xbar_2": {
+              "m31_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "i02_couplers/M_AXI",
-                  "tier2_xbar_2/S00_AXI"
+                  "M31_AXI",
+                  "m31_couplers/M_AXI"
+                ]
+              },
+              "m32_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M32_AXI",
+                  "m32_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_3_to_m31_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_3/M07_AXI",
+                  "m31_couplers/S_AXI"
+                ]
+              },
+              "tier2_xbar_4_to_m32_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_4/M00_AXI",
+                  "m32_couplers/S_AXI"
                 ]
               },
               "xbar_to_i03_couplers": {
@@ -5079,22 +5439,130 @@
                   "tier2_xbar_4/S00_AXI"
                 ]
               },
-              "xbar_to_i00_couplers": {
+              "m00_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
-                  "xbar/M00_AXI",
-                  "i00_couplers/S_AXI"
+                  "M00_AXI",
+                  "m00_couplers/M_AXI"
                 ]
               },
-              "tier2_xbar_1_to_m08_couplers": {
+              "ps7_0_axi_periph_to_s00_couplers": {
                 "interface_ports": [
-                  "tier2_xbar_1/M00_AXI",
-                  "m08_couplers/S_AXI"
+                  "S00_AXI",
+                  "s00_couplers/S_AXI"
+                ]
+              },
+              "s00_couplers_to_xbar": {
+                "interface_ports": [
+                  "s00_couplers/M_AXI",
+                  "xbar/S00_AXI"
+                ]
+              },
+              "m01_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M01_AXI",
+                  "m01_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m00_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M00_AXI",
+                  "m00_couplers/S_AXI"
+                ]
+              },
+              "m02_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M02_AXI",
+                  "m02_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m01_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M01_AXI",
+                  "m01_couplers/S_AXI"
+                ]
+              },
+              "m03_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M03_AXI",
+                  "m03_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m02_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M02_AXI",
+                  "m02_couplers/S_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m03_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M03_AXI",
+                  "m03_couplers/S_AXI"
+                ]
+              },
+              "m04_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M04_AXI",
+                  "m04_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m04_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M04_AXI",
+                  "m04_couplers/S_AXI"
+                ]
+              },
+              "m05_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M05_AXI",
+                  "m05_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m05_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M05_AXI",
+                  "m05_couplers/S_AXI"
+                ]
+              },
+              "m06_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M06_AXI",
+                  "m06_couplers/M_AXI"
+                ]
+              },
+              "m07_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M07_AXI",
+                  "m07_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m06_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M06_AXI",
+                  "m06_couplers/S_AXI"
+                ]
+              },
+              "tier2_xbar_0_to_m07_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_0/M07_AXI",
+                  "m07_couplers/S_AXI"
+                ]
+              },
+              "m08_couplers_to_ps7_0_axi_periph": {
+                "interface_ports": [
+                  "M08_AXI",
+                  "m08_couplers/M_AXI"
                 ]
               },
               "m09_couplers_to_ps7_0_axi_periph": {
                 "interface_ports": [
                   "M09_AXI",
                   "m09_couplers/M_AXI"
+                ]
+              },
+              "tier2_xbar_1_to_m08_couplers": {
+                "interface_ports": [
+                  "tier2_xbar_1/M00_AXI",
+                  "m08_couplers/S_AXI"
                 ]
               },
               "tier2_xbar_1_to_m09_couplers": {
@@ -5125,54 +5593,6 @@
                 "interface_ports": [
                   "tier2_xbar_1/M03_AXI",
                   "m11_couplers/S_AXI"
-                ]
-              },
-              "m12_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M12_AXI",
-                  "m12_couplers/M_AXI"
-                ]
-              },
-              "m05_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M05_AXI",
-                  "m05_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m05_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M05_AXI",
-                  "m05_couplers/S_AXI"
-                ]
-              },
-              "m06_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M06_AXI",
-                  "m06_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m06_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M06_AXI",
-                  "m06_couplers/S_AXI"
-                ]
-              },
-              "m07_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M07_AXI",
-                  "m07_couplers/M_AXI"
-                ]
-              },
-              "tier2_xbar_0_to_m07_couplers": {
-                "interface_ports": [
-                  "tier2_xbar_0/M07_AXI",
-                  "m07_couplers/S_AXI"
-                ]
-              },
-              "m08_couplers_to_ps7_0_axi_periph": {
-                "interface_ports": [
-                  "M08_AXI",
-                  "m08_couplers/M_AXI"
                 ]
               }
             },
@@ -5229,7 +5649,12 @@
                   "m29_couplers/S_ACLK",
                   "m30_couplers/S_ACLK",
                   "m31_couplers/S_ACLK",
-                  "m32_couplers/S_ACLK"
+                  "m32_couplers/S_ACLK",
+                  "m33_couplers/S_ACLK",
+                  "m34_couplers/S_ACLK",
+                  "m35_couplers/S_ACLK",
+                  "m36_couplers/S_ACLK",
+                  "m37_couplers/S_ACLK"
                 ]
               },
               "ps7_0_axi_periph_ARESETN_net": {
@@ -5284,7 +5709,12 @@
                   "m29_couplers/S_ARESETN",
                   "m30_couplers/S_ARESETN",
                   "m31_couplers/S_ARESETN",
-                  "m32_couplers/S_ARESETN"
+                  "m32_couplers/S_ARESETN",
+                  "m33_couplers/S_ARESETN",
+                  "m34_couplers/S_ARESETN",
+                  "m35_couplers/S_ARESETN",
+                  "m36_couplers/S_ARESETN",
+                  "m37_couplers/S_ARESETN"
                 ]
               },
               "S00_ACLK_1": {
@@ -5694,141 +6124,75 @@
                   "M32_ARESETN",
                   "m32_couplers/M_ARESETN"
                 ]
+              },
+              "M33_ACLK_1": {
+                "ports": [
+                  "M33_ACLK",
+                  "m33_couplers/M_ACLK"
+                ]
+              },
+              "M33_ARESETN_1": {
+                "ports": [
+                  "M33_ARESETN",
+                  "m33_couplers/M_ARESETN"
+                ]
+              },
+              "M34_ACLK_1": {
+                "ports": [
+                  "M34_ACLK",
+                  "m34_couplers/M_ACLK"
+                ]
+              },
+              "M34_ARESETN_1": {
+                "ports": [
+                  "M34_ARESETN",
+                  "m34_couplers/M_ARESETN"
+                ]
+              },
+              "M35_ACLK_1": {
+                "ports": [
+                  "M35_ACLK",
+                  "m35_couplers/M_ACLK"
+                ]
+              },
+              "M35_ARESETN_1": {
+                "ports": [
+                  "M35_ARESETN",
+                  "m35_couplers/M_ARESETN"
+                ]
+              },
+              "M36_ACLK_1": {
+                "ports": [
+                  "M36_ACLK",
+                  "m36_couplers/M_ACLK"
+                ]
+              },
+              "M36_ARESETN_1": {
+                "ports": [
+                  "M36_ARESETN",
+                  "m36_couplers/M_ARESETN"
+                ]
+              },
+              "M37_ACLK_1": {
+                "ports": [
+                  "M37_ACLK",
+                  "m37_couplers/M_ACLK"
+                ]
+              },
+              "M37_ARESETN_1": {
+                "ports": [
+                  "M37_ARESETN",
+                  "m37_couplers/M_ARESETN"
+                ]
               }
             }
           }
         },
         "interface_nets": {
-          "Conn2": {
-            "interface_ports": [
-              "M01_AXI",
-              "ps7_0_axi_periph/M01_AXI"
-            ]
-          },
-          "processing_system7_0_M_AXI_GP0": {
-            "interface_ports": [
-              "processing_system7_0/M_AXI_GP0",
-              "ps7_0_axi_periph/S00_AXI"
-            ]
-          },
-          "Conn13": {
-            "interface_ports": [
-              "M12_AXI",
-              "ps7_0_axi_periph/M12_AXI"
-            ]
-          },
-          "Conn9": {
-            "interface_ports": [
-              "M08_AXI",
-              "ps7_0_axi_periph/M08_AXI"
-            ]
-          },
-          "Conn3": {
-            "interface_ports": [
-              "M02_AXI",
-              "ps7_0_axi_periph/M02_AXI"
-            ]
-          },
-          "Conn19": {
-            "interface_ports": [
-              "M19_AXI",
-              "ps7_0_axi_periph/M19_AXI"
-            ]
-          },
-          "Conn15": {
-            "interface_ports": [
-              "M15_AXI",
-              "ps7_0_axi_periph/M15_AXI"
-            ]
-          },
-          "Conn6": {
-            "interface_ports": [
-              "M05_AXI",
-              "ps7_0_axi_periph/M05_AXI"
-            ]
-          },
-          "Conn27": {
-            "interface_ports": [
-              "M27_AXI",
-              "ps7_0_axi_periph/M27_AXI"
-            ]
-          },
-          "Conn1": {
-            "interface_ports": [
-              "M00_AXI",
-              "ps7_0_axi_periph/M00_AXI"
-            ]
-          },
-          "ps7_0_axi_periph_M30_AXI": {
-            "interface_ports": [
-              "M30_AXI",
-              "ps7_0_axi_periph/M30_AXI"
-            ]
-          },
-          "Conn18": {
-            "interface_ports": [
-              "M18_AXI",
-              "ps7_0_axi_periph/M18_AXI"
-            ]
-          },
-          "processing_system7_0_FIXED_IO": {
-            "interface_ports": [
-              "FIXED_IO",
-              "processing_system7_0/FIXED_IO"
-            ]
-          },
-          "Conn12": {
-            "interface_ports": [
-              "M11_AXI",
-              "ps7_0_axi_periph/M11_AXI"
-            ]
-          },
-          "Conn14": {
-            "interface_ports": [
-              "M14_AXI",
-              "ps7_0_axi_periph/M14_AXI"
-            ]
-          },
           "Conn22": {
             "interface_ports": [
               "M22_AXI",
               "ps7_0_axi_periph/M22_AXI"
-            ]
-          },
-          "Conn17": {
-            "interface_ports": [
-              "M17_AXI",
-              "ps7_0_axi_periph/M17_AXI"
-            ]
-          },
-          "processing_system7_0_DDR": {
-            "interface_ports": [
-              "DDR",
-              "processing_system7_0/DDR"
-            ]
-          },
-          "Conn11": {
-            "interface_ports": [
-              "M10_AXI",
-              "ps7_0_axi_periph/M10_AXI"
-            ]
-          },
-          "Conn8": {
-            "interface_ports": [
-              "M07_AXI",
-              "ps7_0_axi_periph/M07_AXI"
-            ]
-          },
-          "ps7_0_axi_periph_M32_AXI": {
-            "interface_ports": [
-              "M32_AXI",
-              "ps7_0_axi_periph/M32_AXI"
-            ]
-          },
-          "Conn25": {
-            "interface_ports": [
-              "M25_AXI",
-              "ps7_0_axi_periph/M25_AXI"
             ]
           },
           "Conn28": {
@@ -5837,64 +6201,46 @@
               "ps7_0_axi_periph/M28_AXI"
             ]
           },
-          "Conn21": {
-            "interface_ports": [
-              "M21_AXI",
-              "ps7_0_axi_periph/M21_AXI"
-            ]
-          },
-          "Conn26": {
-            "interface_ports": [
-              "M26_AXI",
-              "ps7_0_axi_periph/M26_AXI"
-            ]
-          },
-          "Conn10": {
-            "interface_ports": [
-              "M09_AXI",
-              "ps7_0_axi_periph/M09_AXI"
-            ]
-          },
-          "Conn24": {
-            "interface_ports": [
-              "M24_AXI",
-              "ps7_0_axi_periph/M24_AXI"
-            ]
-          },
-          "ps7_0_axi_periph_M13_AXI": {
-            "interface_ports": [
-              "M13_AXI",
-              "ps7_0_axi_periph/M13_AXI"
-            ]
-          },
           "Conn23": {
             "interface_ports": [
               "M23_AXI",
               "ps7_0_axi_periph/M23_AXI"
             ]
           },
-          "Conn4": {
+          "processing_system7_0_M_AXI_GP0": {
             "interface_ports": [
-              "M03_AXI",
-              "ps7_0_axi_periph/M03_AXI"
+              "processing_system7_0/M_AXI_GP0",
+              "ps7_0_axi_periph/S00_AXI"
             ]
           },
-          "Conn5": {
+          "Conn6": {
             "interface_ports": [
-              "M04_AXI",
-              "ps7_0_axi_periph/M04_AXI"
+              "M05_AXI",
+              "ps7_0_axi_periph/M05_AXI"
             ]
           },
-          "Conn20": {
+          "Conn29": {
             "interface_ports": [
-              "M20_AXI",
-              "ps7_0_axi_periph/M20_AXI"
+              "M33_AXI",
+              "ps7_0_axi_periph/M33_AXI"
             ]
           },
-          "ps7_0_axi_periph_M29_AXI": {
+          "Conn19": {
             "interface_ports": [
-              "M29_AXI",
-              "ps7_0_axi_periph/M29_AXI"
+              "M19_AXI",
+              "ps7_0_axi_periph/M19_AXI"
+            ]
+          },
+          "Conn9": {
+            "interface_ports": [
+              "M08_AXI",
+              "ps7_0_axi_periph/M08_AXI"
+            ]
+          },
+          "Conn13": {
+            "interface_ports": [
+              "M12_AXI",
+              "ps7_0_axi_periph/M12_AXI"
             ]
           },
           "Conn16": {
@@ -5903,16 +6249,190 @@
               "ps7_0_axi_periph/M16_AXI"
             ]
           },
-          "ps7_0_axi_periph_M31_AXI": {
+          "Conn27": {
             "interface_ports": [
-              "M31_AXI",
-              "ps7_0_axi_periph/M31_AXI"
+              "M27_AXI",
+              "ps7_0_axi_periph/M27_AXI"
+            ]
+          },
+          "Conn15": {
+            "interface_ports": [
+              "M15_AXI",
+              "ps7_0_axi_periph/M15_AXI"
+            ]
+          },
+          "Conn12": {
+            "interface_ports": [
+              "M11_AXI",
+              "ps7_0_axi_periph/M11_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M36_AXI": {
+            "interface_ports": [
+              "M36_AXI",
+              "ps7_0_axi_periph/M36_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M37_AXI": {
+            "interface_ports": [
+              "M37_AXI",
+              "ps7_0_axi_periph/M37_AXI"
+            ]
+          },
+          "Conn17": {
+            "interface_ports": [
+              "M17_AXI",
+              "ps7_0_axi_periph/M17_AXI"
+            ]
+          },
+          "Conn1": {
+            "interface_ports": [
+              "M00_AXI",
+              "ps7_0_axi_periph/M00_AXI"
+            ]
+          },
+          "processing_system7_0_DDR": {
+            "interface_ports": [
+              "DDR",
+              "processing_system7_0/DDR"
+            ]
+          },
+          "Conn18": {
+            "interface_ports": [
+              "M18_AXI",
+              "ps7_0_axi_periph/M18_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M32_AXI": {
+            "interface_ports": [
+              "M32_AXI",
+              "ps7_0_axi_periph/M32_AXI"
+            ]
+          },
+          "Conn10": {
+            "interface_ports": [
+              "M09_AXI",
+              "ps7_0_axi_periph/M09_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M30_AXI": {
+            "interface_ports": [
+              "M30_AXI",
+              "ps7_0_axi_periph/M30_AXI"
+            ]
+          },
+          "Conn21": {
+            "interface_ports": [
+              "M21_AXI",
+              "ps7_0_axi_periph/M21_AXI"
+            ]
+          },
+          "processing_system7_0_FIXED_IO": {
+            "interface_ports": [
+              "FIXED_IO",
+              "processing_system7_0/FIXED_IO"
+            ]
+          },
+          "Conn2": {
+            "interface_ports": [
+              "M01_AXI",
+              "ps7_0_axi_periph/M01_AXI"
+            ]
+          },
+          "Conn3": {
+            "interface_ports": [
+              "M02_AXI",
+              "ps7_0_axi_periph/M02_AXI"
+            ]
+          },
+          "Conn8": {
+            "interface_ports": [
+              "M07_AXI",
+              "ps7_0_axi_periph/M07_AXI"
+            ]
+          },
+          "Conn14": {
+            "interface_ports": [
+              "M14_AXI",
+              "ps7_0_axi_periph/M14_AXI"
+            ]
+          },
+          "Conn11": {
+            "interface_ports": [
+              "M10_AXI",
+              "ps7_0_axi_periph/M10_AXI"
+            ]
+          },
+          "Conn25": {
+            "interface_ports": [
+              "M25_AXI",
+              "ps7_0_axi_periph/M25_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M13_AXI": {
+            "interface_ports": [
+              "M13_AXI",
+              "ps7_0_axi_periph/M13_AXI"
+            ]
+          },
+          "Conn20": {
+            "interface_ports": [
+              "M20_AXI",
+              "ps7_0_axi_periph/M20_AXI"
+            ]
+          },
+          "Conn24": {
+            "interface_ports": [
+              "M24_AXI",
+              "ps7_0_axi_periph/M24_AXI"
             ]
           },
           "Conn7": {
             "interface_ports": [
               "M06_AXI",
               "ps7_0_axi_periph/M06_AXI"
+            ]
+          },
+          "Conn26": {
+            "interface_ports": [
+              "M26_AXI",
+              "ps7_0_axi_periph/M26_AXI"
+            ]
+          },
+          "Conn5": {
+            "interface_ports": [
+              "M04_AXI",
+              "ps7_0_axi_periph/M04_AXI"
+            ]
+          },
+          "Conn4": {
+            "interface_ports": [
+              "M03_AXI",
+              "ps7_0_axi_periph/M03_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M29_AXI": {
+            "interface_ports": [
+              "M29_AXI",
+              "ps7_0_axi_periph/M29_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M31_AXI": {
+            "interface_ports": [
+              "M31_AXI",
+              "ps7_0_axi_periph/M31_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M35_AXI": {
+            "interface_ports": [
+              "M35_AXI",
+              "ps7_0_axi_periph/M35_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M34_AXI": {
+            "interface_ports": [
+              "M34_AXI",
+              "ps7_0_axi_periph/M34_AXI"
             ]
           }
         },
@@ -5963,7 +6483,12 @@
               "ps7_0_axi_periph/M29_ACLK",
               "ps7_0_axi_periph/M30_ACLK",
               "ps7_0_axi_periph/M31_ACLK",
-              "ps7_0_axi_periph/M32_ACLK"
+              "ps7_0_axi_periph/M32_ACLK",
+              "ps7_0_axi_periph/M33_ACLK",
+              "ps7_0_axi_periph/M34_ACLK",
+              "ps7_0_axi_periph/M35_ACLK",
+              "ps7_0_axi_periph/M36_ACLK",
+              "ps7_0_axi_periph/M37_ACLK"
             ]
           },
           "rst_ps7_0_100M_peripheral_aresetn": {
@@ -6003,7 +6528,12 @@
               "ps7_0_axi_periph/M29_ARESETN",
               "ps7_0_axi_periph/M30_ARESETN",
               "ps7_0_axi_periph/M31_ARESETN",
-              "ps7_0_axi_periph/M32_ARESETN"
+              "ps7_0_axi_periph/M32_ARESETN",
+              "ps7_0_axi_periph/M33_ARESETN",
+              "ps7_0_axi_periph/M34_ARESETN",
+              "ps7_0_axi_periph/M35_ARESETN",
+              "ps7_0_axi_periph/M36_ARESETN",
+              "ps7_0_axi_periph/M37_ARESETN"
             ]
           },
           "rst_ps7_0_100M_interconnect_aresetn": {
@@ -6114,13 +6644,12 @@
             "direction": "IO",
             "left": "7",
             "right": "0"
+          },
+          "trigger": {
+            "direction": "I"
           }
         },
         "components": {
-          "amdc_inverters_0": {
-            "vlnv": "wisc.edu:user:amdc_inverters:1.0",
-            "xci_name": "amdc_revf_amdc_inverters_0_0"
-          },
           "amdc_pwm_mux_0": {
             "vlnv": "wisc.edu:user:amdc_pwm_mux:1.0",
             "xci_name": "amdc_revf_amdc_pwm_mux_0_0"
@@ -6140,15 +6669,13 @@
                 "value": "4"
               }
             }
+          },
+          "amdc_inverters_0": {
+            "vlnv": "wisc.edu:user:amdc_inverters:1.0",
+            "xci_name": "amdc_revf_amdc_inverters_0_0"
           }
         },
         "interface_nets": {
-          "ps7_0_axi_periph_M06_AXI": {
-            "interface_ports": [
-              "S00_AXI1",
-              "amdc_pwm_mux_0/S00_AXI"
-            ]
-          },
           "Conn1": {
             "interface_ports": [
               "S00_AXI2",
@@ -6159,6 +6686,12 @@
             "interface_ports": [
               "S00_AXI",
               "amdc_inverters_0/S00_AXI"
+            ]
+          },
+          "ps7_0_axi_periph_M06_AXI": {
+            "interface_ports": [
+              "S00_AXI1",
+              "amdc_pwm_mux_0/S00_AXI"
             ]
           }
         },
@@ -6215,9 +6748,9 @@
             "ports": [
               "s00_axi_aclk",
               "amdc_pwm_mux_0/s00_axi_aclk",
-              "amdc_inverters_0/s00_axi_aclk",
+              "amdc_inv_status_mux_0/s00_axi_aclk",
               "amdc_inverters_0/CLK_PWM",
-              "amdc_inv_status_mux_0/s00_axi_aclk"
+              "amdc_inverters_0/s00_axi_aclk"
             ]
           },
           "amdc_inverters_0_carrier_high": {
@@ -6236,8 +6769,8 @@
             "ports": [
               "s00_axi_aresetn",
               "amdc_pwm_mux_0/s00_axi_aresetn",
-              "amdc_inverters_0/s00_axi_aresetn",
-              "amdc_inv_status_mux_0/s00_axi_aresetn"
+              "amdc_inv_status_mux_0/s00_axi_aresetn",
+              "amdc_inverters_0/s00_axi_aresetn"
             ]
           },
           "amdc_pwm_mux_0_o_INV1_PWM": {
@@ -6353,16 +6886,18 @@
               "amdc_inv_status_mux_0/device8_out",
               "amdc_inv_status_mux_0/device2_out"
             ]
+          },
+          "trigger_1": {
+            "ports": [
+              "trigger",
+              "amdc_inverters_0/trigger"
+            ]
           }
         }
       },
       "hier_gpio_0": {
         "interface_ports": {
           "S00_AXI": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-          },
-          "S00_AXI2": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
@@ -6379,6 +6914,10 @@
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
           "S00_AXI5": {
+            "mode": "Slave",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "S00_AXI6": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           }
@@ -6402,162 +6941,23 @@
             "type": "rst",
             "direction": "I"
           },
-          "pwm_carrier_low": {
+          "eddy_done": {
+            "direction": "O"
+          },
+          "eddy_enable": {
             "direction": "I"
           },
-          "pwm_carrier_high": {
+          "trigger": {
+            "direction": "I"
+          },
+          "amds_done": {
+            "direction": "O"
+          },
+          "amds_enable": {
             "direction": "I"
           }
         },
         "components": {
-          "hier_amds_0": {
-            "interface_ports": {
-              "S00_AXI": {
-                "mode": "Slave",
-                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-              }
-            },
-            "ports": {
-              "Din": {
-                "direction": "I",
-                "left": "1",
-                "right": "0"
-              },
-              "dout": {
-                "direction": "O",
-                "left": "1",
-                "right": "0"
-              },
-              "pwm_carrier_low": {
-                "direction": "I"
-              },
-              "pwm_carrier_high": {
-                "direction": "I"
-              },
-              "s00_axi_aclk": {
-                "type": "clk",
-                "direction": "I"
-              },
-              "s00_axi_aresetn": {
-                "type": "rst",
-                "direction": "I"
-              }
-            },
-            "components": {
-              "xlslice_0": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_0_0",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "0"
-                  },
-                  "DIN_TO": {
-                    "value": "0"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  }
-                }
-              },
-              "xlconcat_2": {
-                "vlnv": "xilinx.com:ip:xlconcat:2.1",
-                "xci_name": "amdc_revf_xlconcat_2_0"
-              },
-              "amdc_motherboard_0": {
-                "vlnv": "wisc.edu:user:amdc_motherboard:1.0",
-                "xci_name": "amdc_revf_amdc_motherboard_0_0"
-              },
-              "xlslice_1": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_1_0",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "1"
-                  },
-                  "DIN_TO": {
-                    "value": "1"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  },
-                  "DOUT_WIDTH": {
-                    "value": "1"
-                  }
-                }
-              }
-            },
-            "interface_nets": {
-              "ps7_0_axi_periph_M10_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_motherboard_0/S00_AXI"
-                ]
-              }
-            },
-            "nets": {
-              "xlslice_0_Dout": {
-                "ports": [
-                  "xlslice_0/Dout",
-                  "amdc_motherboard_0/motherboard_dout1"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_adc": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_adc",
-                  "xlconcat_2/In0"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_tx": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_tx",
-                  "xlconcat_2/In1"
-                ]
-              },
-              "xlslice_1_Dout": {
-                "ports": [
-                  "xlslice_1/Dout",
-                  "amdc_motherboard_0/motherboard_dout2"
-                ]
-              },
-              "amdc_gpio_mux_0_device_in_2": {
-                "ports": [
-                  "Din",
-                  "xlslice_1/Din",
-                  "xlslice_0/Din"
-                ]
-              },
-              "xlconcat_2_dout": {
-                "ports": [
-                  "xlconcat_2/dout",
-                  "dout"
-                ]
-              },
-              "amdc_inverters_0_carrier_low": {
-                "ports": [
-                  "pwm_carrier_low",
-                  "amdc_motherboard_0/pwm_carrier_low"
-                ]
-              },
-              "amdc_inverters_0_carrier_high": {
-                "ports": [
-                  "pwm_carrier_high",
-                  "amdc_motherboard_0/pwm_carrier_high"
-                ]
-              },
-              "processing_system7_0_FCLK_CLK0": {
-                "ports": [
-                  "s00_axi_aclk",
-                  "amdc_motherboard_0/s00_axi_aclk"
-                ]
-              },
-              "rst_ps7_0_100M_peripheral_aresetn": {
-                "ports": [
-                  "s00_axi_aresetn",
-                  "amdc_motherboard_0/s00_axi_aresetn"
-                ]
-              }
-            }
-          },
           "hier_ild1420_0": {
             "interface_ports": {
               "S00_AXI": {
@@ -6631,16 +7031,16 @@
               }
             },
             "interface_nets": {
-              "hier_ps_M12_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_ild1420_0/S00_AXI"
-                ]
-              },
               "hier_ps_M13_AXI": {
                 "interface_ports": [
                   "S00_AXI1",
                   "amdc_ild1420_1/S00_AXI"
+                ]
+              },
+              "hier_ps_M12_AXI": {
+                "interface_ports": [
+                  "S00_AXI",
+                  "amdc_ild1420_0/S00_AXI"
                 ]
               }
             },
@@ -6689,27 +7089,6 @@
               },
               "CONST_WIDTH": {
                 "value": "3"
-              }
-            }
-          },
-          "xlconcat_0": {
-            "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "amdc_revf_xlconcat_0_0",
-            "parameters": {
-              "IN0_WIDTH": {
-                "value": "2"
-              },
-              "IN1_WIDTH": {
-                "value": "1"
-              }
-            }
-          },
-          "xlconstant_1": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_1_0",
-            "parameters": {
-              "CONST_VAL": {
-                "value": "0"
               }
             }
           },
@@ -6787,10 +7166,6 @@
             "vlnv": "xilinx.com:user:amdc_gpio_direct:1.0",
             "xci_name": "amdc_revf_amdc_gpio_direct_0_0"
           },
-          "xlconstant_3": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_3_1"
-          },
           "xlslice_3": {
             "vlnv": "xilinx.com:ip:xlslice:1.0",
             "xci_name": "amdc_revf_xlslice_3_0",
@@ -6806,34 +7181,44 @@
               }
             }
           },
+          "xlconcat_2": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "amdc_revf_xlconcat_2_6",
+            "parameters": {
+              "IN1_WIDTH": {
+                "value": "2"
+              },
+              "NUM_PORTS": {
+                "value": "2"
+              }
+            }
+          },
+          "xlconstant_3": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "amdc_revf_xlconstant_1_7",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              },
+              "CONST_WIDTH": {
+                "value": "2"
+              }
+            }
+          },
           "amdc_eddy_current_se_0": {
             "vlnv": "xilinx.com:user:amdc_eddy_current_sensor:2.0",
             "xci_name": "amdc_revf_amdc_eddy_current_se_0_0"
+          },
+          "amdc_amds_0": {
+            "vlnv": "xilinx.com:user:amdc_amds:1.0",
+            "xci_name": "amdc_revf_amdc_amds_0_3"
           }
         },
         "interface_nets": {
-          "S00_AXI2_1": {
+          "S00_AXI6_1": {
             "interface_ports": [
-              "S00_AXI2",
-              "hier_amds_0/S00_AXI"
-            ]
-          },
-          "S00_AXI3_1": {
-            "interface_ports": [
-              "S00_AXI3",
-              "hier_ild1420_0/S00_AXI"
-            ]
-          },
-          "S00_AXI1_1": {
-            "interface_ports": [
-              "S00_AXI1",
-              "amdc_eddy_current_se_0/S00_AXI"
-            ]
-          },
-          "S00_AXI5_1": {
-            "interface_ports": [
-              "S00_AXI5",
-              "amdc_gpio_direct_0/S00_AXI"
+              "S00_AXI6",
+              "amdc_amds_0/S00_AXI"
             ]
           },
           "hier_ps_M48_AXI": {
@@ -6842,10 +7227,28 @@
               "amdc_gp3io_mux_0/S00_AXI"
             ]
           },
+          "S00_AXI1_1": {
+            "interface_ports": [
+              "S00_AXI1",
+              "amdc_eddy_current_se_0/S00_AXI"
+            ]
+          },
           "S00_AXI4_1": {
             "interface_ports": [
               "S00_AXI4",
               "hier_ild1420_0/S00_AXI1"
+            ]
+          },
+          "S00_AXI3_1": {
+            "interface_ports": [
+              "S00_AXI3",
+              "hier_ild1420_0/S00_AXI"
+            ]
+          },
+          "S00_AXI5_1": {
+            "interface_ports": [
+              "S00_AXI5",
+              "amdc_gpio_direct_0/S00_AXI"
             ]
           }
         },
@@ -6865,35 +7268,21 @@
           "processing_system7_0_FCLK_CLK0": {
             "ports": [
               "s00_axi_aclk",
-              "hier_amds_0/s00_axi_aclk",
               "hier_ild1420_0/s00_axi_aclk",
               "amdc_gp3io_mux_0/s00_axi_aclk",
               "amdc_gpio_direct_0/s00_axi_aclk",
-              "amdc_eddy_current_se_0/s00_axi_aclk"
+              "amdc_eddy_current_se_0/s00_axi_aclk",
+              "amdc_amds_0/s00_axi_aclk"
             ]
           },
           "rst_ps7_0_100M_peripheral_aresetn": {
             "ports": [
               "s00_axi_aresetn",
-              "hier_amds_0/s00_axi_aresetn",
               "hier_ild1420_0/s00_axi_aresetn",
               "amdc_gp3io_mux_0/s00_axi_aresetn",
               "amdc_gpio_direct_0/s00_axi_aresetn",
-              "amdc_eddy_current_se_0/s00_axi_aresetn"
-            ]
-          },
-          "pwm_carrier_low_1": {
-            "ports": [
-              "pwm_carrier_low",
-              "hier_amds_0/pwm_carrier_low",
-              "amdc_eddy_current_se_0/pwm_carrier_low"
-            ]
-          },
-          "pwm_carrier_high_1": {
-            "ports": [
-              "pwm_carrier_high",
-              "hier_amds_0/pwm_carrier_high",
-              "amdc_eddy_current_se_0/pwm_carrier_high"
+              "amdc_eddy_current_se_0/s00_axi_aresetn",
+              "amdc_amds_0/s00_axi_aresetn"
             ]
           },
           "xlconstant_0_dout": {
@@ -6904,24 +7293,6 @@
               "amdc_gp3io_mux_0/device6_out",
               "amdc_gp3io_mux_0/device7_out",
               "amdc_gp3io_mux_0/device8_out"
-            ]
-          },
-          "hier_amds_0_dout": {
-            "ports": [
-              "hier_amds_0/dout",
-              "xlconcat_0/In0"
-            ]
-          },
-          "xlconcat_0_dout": {
-            "ports": [
-              "xlconcat_0/dout",
-              "amdc_gp3io_mux_0/device1_out"
-            ]
-          },
-          "xlconstant_1_dout": {
-            "ports": [
-              "xlconstant_1/dout",
-              "xlconcat_0/In1"
             ]
           },
           "amdc_eddy_current_se_0_sensor_control_out": {
@@ -6940,12 +7311,6 @@
             "ports": [
               "amdc_gp3io_mux_0/device1_in",
               "xlslice_0/Din"
-            ]
-          },
-          "xlslice_0_Dout": {
-            "ports": [
-              "xlslice_0/Dout",
-              "hier_amds_0/Din"
             ]
           },
           "amdc_gp3io_mux_0_device2_in": {
@@ -6984,12 +7349,6 @@
               "amdc_gpio_direct_0/din"
             ]
           },
-          "xlconstant_3_dout": {
-            "ports": [
-              "xlconstant_3/dout",
-              "amdc_eddy_current_se_0/enable"
-            ]
-          },
           "amdc_eddy_current_se_0_debug": {
             "ports": [
               "amdc_eddy_current_se_0/debug",
@@ -7001,116 +7360,60 @@
               "xlslice_3/Dout",
               "xlconcat_1/In1"
             ]
-          }
-        }
-      },
-      "hier_timers": {
-        "interface_ports": {
-          "S_AXI": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
-          "S_AXI1": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-          }
-        },
-        "ports": {
-          "s_axi_aclk": {
-            "type": "clk",
-            "direction": "I"
-          },
-          "s_axi_aresetn": {
-            "type": "rst",
-            "direction": "I"
-          },
-          "dout": {
-            "type": "intr",
-            "direction": "O",
-            "left": "1",
-            "right": "0"
-          }
-        },
-        "components": {
-          "control_timer_0": {
-            "vlnv": "xilinx.com:ip:axi_timer:2.0",
-            "xci_name": "amdc_revf_control_timer_0_0"
-          },
-          "control_timer_1": {
-            "vlnv": "xilinx.com:ip:axi_timer:2.0",
-            "xci_name": "amdc_revf_control_timer_1_0"
-          },
-          "xlconstant_1": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_1_1",
-            "parameters": {
-              "CONST_VAL": {
-                "value": "0"
-              }
-            }
-          },
-          "xlconcat_0": {
-            "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "amdc_revf_xlconcat_0_1",
-            "parameters": {
-              "NUM_PORTS": {
-                "value": "2"
-              }
-            }
-          }
-        },
-        "interface_nets": {
-          "hier_ps_M33_AXI": {
-            "interface_ports": [
-              "S_AXI1",
-              "control_timer_1/S_AXI"
-            ]
-          },
-          "hier_ps_M32_AXI": {
-            "interface_ports": [
-              "S_AXI",
-              "control_timer_0/S_AXI"
-            ]
-          }
-        },
-        "nets": {
-          "xlconstant_1_dout": {
+          "amdc_eddy_current_se_0_done": {
             "ports": [
-              "xlconstant_1/dout",
-              "control_timer_1/freeze",
-              "control_timer_0/freeze"
+              "amdc_eddy_current_se_0/done",
+              "eddy_done"
             ]
           },
-          "processing_system7_0_FCLK_CLK0": {
+          "enable_1": {
             "ports": [
-              "s_axi_aclk",
-              "control_timer_1/s_axi_aclk",
-              "control_timer_0/s_axi_aclk"
+              "eddy_enable",
+              "amdc_eddy_current_se_0/enable"
             ]
           },
-          "rst_ps7_0_100M_peripheral_aresetn": {
+          "trigger_1": {
             "ports": [
-              "s_axi_aresetn",
-              "control_timer_1/s_axi_aresetn",
-              "control_timer_0/s_axi_aresetn"
+              "trigger",
+              "amdc_eddy_current_se_0/trigger",
+              "amdc_amds_0/trigger"
             ]
           },
-          "control_timer_1_interrupt": {
+          "xlslice_0_Dout": {
             "ports": [
-              "control_timer_1/interrupt",
-              "xlconcat_0/In1"
+              "xlslice_0/Dout",
+              "amdc_amds_0/amds_data"
             ]
           },
-          "control_timer_0_interrupt": {
+          "xlconcat_2_dout": {
             "ports": [
-              "control_timer_0/interrupt",
-              "xlconcat_0/In0"
+              "xlconcat_2/dout",
+              "amdc_gp3io_mux_0/device1_out"
             ]
           },
-          "xlconcat_0_dout": {
+          "amdc_amds_0_done": {
             "ports": [
-              "xlconcat_0/dout",
-              "dout"
+              "amdc_amds_0/done",
+              "amds_done"
+            ]
+          },
+          "enable1_1": {
+            "ports": [
+              "amds_enable",
+              "amdc_amds_0/enable"
+            ]
+          },
+          "xlconstant_3_dout": {
+            "ports": [
+              "xlconstant_3/dout",
+              "xlconcat_2/In1"
+            ]
+          },
+          "amdc_amds_0_sync_adc": {
+            "ports": [
+              "amdc_amds_0/sync_adc",
+              "xlconcat_2/In0"
             ]
           }
         }
@@ -7118,10 +7421,6 @@
       "hier_gpio_1": {
         "interface_ports": {
           "S00_AXI": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-          },
-          "S00_AXI2": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
@@ -7138,6 +7437,10 @@
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
           "S00_AXI5": {
+            "mode": "Slave",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "S00_AXI6": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           }
@@ -7161,162 +7464,23 @@
             "type": "rst",
             "direction": "I"
           },
-          "pwm_carrier_low": {
+          "eddy_done": {
+            "direction": "O"
+          },
+          "eddy_enable": {
             "direction": "I"
           },
-          "pwm_carrier_high": {
+          "trigger": {
+            "direction": "I"
+          },
+          "amds_done": {
+            "direction": "O"
+          },
+          "amds_enable": {
             "direction": "I"
           }
         },
         "components": {
-          "hier_amds_0": {
-            "interface_ports": {
-              "S00_AXI": {
-                "mode": "Slave",
-                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-              }
-            },
-            "ports": {
-              "Din": {
-                "direction": "I",
-                "left": "1",
-                "right": "0"
-              },
-              "dout": {
-                "direction": "O",
-                "left": "1",
-                "right": "0"
-              },
-              "pwm_carrier_low": {
-                "direction": "I"
-              },
-              "pwm_carrier_high": {
-                "direction": "I"
-              },
-              "s00_axi_aclk": {
-                "type": "clk",
-                "direction": "I"
-              },
-              "s00_axi_aresetn": {
-                "type": "rst",
-                "direction": "I"
-              }
-            },
-            "components": {
-              "xlslice_0": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_0_3",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "0"
-                  },
-                  "DIN_TO": {
-                    "value": "0"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  }
-                }
-              },
-              "xlconcat_2": {
-                "vlnv": "xilinx.com:ip:xlconcat:2.1",
-                "xci_name": "amdc_revf_xlconcat_2_1"
-              },
-              "amdc_motherboard_0": {
-                "vlnv": "wisc.edu:user:amdc_motherboard:1.0",
-                "xci_name": "amdc_revf_amdc_motherboard_0_1"
-              },
-              "xlslice_1": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_1_3",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "1"
-                  },
-                  "DIN_TO": {
-                    "value": "1"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  },
-                  "DOUT_WIDTH": {
-                    "value": "1"
-                  }
-                }
-              }
-            },
-            "interface_nets": {
-              "ps7_0_axi_periph_M10_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_motherboard_0/S00_AXI"
-                ]
-              }
-            },
-            "nets": {
-              "xlslice_0_Dout": {
-                "ports": [
-                  "xlslice_0/Dout",
-                  "amdc_motherboard_0/motherboard_dout1"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_adc": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_adc",
-                  "xlconcat_2/In0"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_tx": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_tx",
-                  "xlconcat_2/In1"
-                ]
-              },
-              "xlslice_1_Dout": {
-                "ports": [
-                  "xlslice_1/Dout",
-                  "amdc_motherboard_0/motherboard_dout2"
-                ]
-              },
-              "amdc_gpio_mux_0_device_in_2": {
-                "ports": [
-                  "Din",
-                  "xlslice_1/Din",
-                  "xlslice_0/Din"
-                ]
-              },
-              "xlconcat_2_dout": {
-                "ports": [
-                  "xlconcat_2/dout",
-                  "dout"
-                ]
-              },
-              "amdc_inverters_0_carrier_low": {
-                "ports": [
-                  "pwm_carrier_low",
-                  "amdc_motherboard_0/pwm_carrier_low"
-                ]
-              },
-              "amdc_inverters_0_carrier_high": {
-                "ports": [
-                  "pwm_carrier_high",
-                  "amdc_motherboard_0/pwm_carrier_high"
-                ]
-              },
-              "processing_system7_0_FCLK_CLK0": {
-                "ports": [
-                  "s00_axi_aclk",
-                  "amdc_motherboard_0/s00_axi_aclk"
-                ]
-              },
-              "rst_ps7_0_100M_peripheral_aresetn": {
-                "ports": [
-                  "s00_axi_aresetn",
-                  "amdc_motherboard_0/s00_axi_aresetn"
-                ]
-              }
-            }
-          },
           "hier_ild1420_0": {
             "interface_ports": {
               "S00_AXI": {
@@ -7451,27 +7615,6 @@
               }
             }
           },
-          "xlconcat_0": {
-            "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "amdc_revf_xlconcat_0_2",
-            "parameters": {
-              "IN0_WIDTH": {
-                "value": "2"
-              },
-              "IN1_WIDTH": {
-                "value": "1"
-              }
-            }
-          },
-          "xlconstant_1": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_1_2",
-            "parameters": {
-              "CONST_VAL": {
-                "value": "0"
-              }
-            }
-          },
           "xlconcat_1": {
             "vlnv": "xilinx.com:ip:xlconcat:2.1",
             "xci_name": "amdc_revf_xlconcat_1_1",
@@ -7546,10 +7689,6 @@
             "vlnv": "xilinx.com:user:amdc_gpio_direct:1.0",
             "xci_name": "amdc_revf_amdc_gpio_direct_0_1"
           },
-          "xlconstant_3": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_3_2"
-          },
           "xlslice_3": {
             "vlnv": "xilinx.com:ip:xlslice:1.0",
             "xci_name": "amdc_revf_xlslice_3_1",
@@ -7565,34 +7704,44 @@
               }
             }
           },
+          "xlconcat_2": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "amdc_revf_xlconcat_2_5",
+            "parameters": {
+              "IN1_WIDTH": {
+                "value": "2"
+              },
+              "NUM_PORTS": {
+                "value": "2"
+              }
+            }
+          },
+          "xlconstant_3": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "amdc_revf_xlconstant_1_6",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              },
+              "CONST_WIDTH": {
+                "value": "2"
+              }
+            }
+          },
           "amdc_eddy_current_se_0": {
             "vlnv": "xilinx.com:user:amdc_eddy_current_sensor:2.0",
             "xci_name": "amdc_revf_amdc_eddy_current_se_0_1"
+          },
+          "amdc_amds_0": {
+            "vlnv": "xilinx.com:user:amdc_amds:1.0",
+            "xci_name": "amdc_revf_amdc_amds_0_2"
           }
         },
         "interface_nets": {
-          "S00_AXI5_1": {
+          "S00_AXI6_1": {
             "interface_ports": [
-              "S00_AXI5",
-              "amdc_gpio_direct_0/S00_AXI"
-            ]
-          },
-          "S00_AXI2_1": {
-            "interface_ports": [
-              "S00_AXI2",
-              "hier_amds_0/S00_AXI"
-            ]
-          },
-          "hier_ps_M48_AXI": {
-            "interface_ports": [
-              "S00_AXI",
-              "amdc_gp3io_mux_0/S00_AXI"
-            ]
-          },
-          "S00_AXI3_1": {
-            "interface_ports": [
-              "S00_AXI3",
-              "hier_ild1420_0/S00_AXI"
+              "S00_AXI6",
+              "amdc_amds_0/S00_AXI"
             ]
           },
           "S00_AXI1_1": {
@@ -7601,10 +7750,28 @@
               "amdc_eddy_current_se_0/S00_AXI"
             ]
           },
+          "S00_AXI3_1": {
+            "interface_ports": [
+              "S00_AXI3",
+              "hier_ild1420_0/S00_AXI"
+            ]
+          },
           "S00_AXI4_1": {
             "interface_ports": [
               "S00_AXI4",
               "hier_ild1420_0/S00_AXI1"
+            ]
+          },
+          "S00_AXI5_1": {
+            "interface_ports": [
+              "S00_AXI5",
+              "amdc_gpio_direct_0/S00_AXI"
+            ]
+          },
+          "hier_ps_M48_AXI": {
+            "interface_ports": [
+              "S00_AXI",
+              "amdc_gp3io_mux_0/S00_AXI"
             ]
           }
         },
@@ -7624,35 +7791,21 @@
           "processing_system7_0_FCLK_CLK0": {
             "ports": [
               "s00_axi_aclk",
-              "hier_amds_0/s00_axi_aclk",
               "hier_ild1420_0/s00_axi_aclk",
               "amdc_gp3io_mux_0/s00_axi_aclk",
               "amdc_gpio_direct_0/s00_axi_aclk",
-              "amdc_eddy_current_se_0/s00_axi_aclk"
+              "amdc_eddy_current_se_0/s00_axi_aclk",
+              "amdc_amds_0/s00_axi_aclk"
             ]
           },
           "rst_ps7_0_100M_peripheral_aresetn": {
             "ports": [
               "s00_axi_aresetn",
-              "hier_amds_0/s00_axi_aresetn",
               "hier_ild1420_0/s00_axi_aresetn",
               "amdc_gp3io_mux_0/s00_axi_aresetn",
               "amdc_gpio_direct_0/s00_axi_aresetn",
-              "amdc_eddy_current_se_0/s00_axi_aresetn"
-            ]
-          },
-          "pwm_carrier_low_1": {
-            "ports": [
-              "pwm_carrier_low",
-              "hier_amds_0/pwm_carrier_low",
-              "amdc_eddy_current_se_0/pwm_carrier_low"
-            ]
-          },
-          "pwm_carrier_high_1": {
-            "ports": [
-              "pwm_carrier_high",
-              "hier_amds_0/pwm_carrier_high",
-              "amdc_eddy_current_se_0/pwm_carrier_high"
+              "amdc_eddy_current_se_0/s00_axi_aresetn",
+              "amdc_amds_0/s00_axi_aresetn"
             ]
           },
           "xlconstant_0_dout": {
@@ -7663,24 +7816,6 @@
               "amdc_gp3io_mux_0/device6_out",
               "amdc_gp3io_mux_0/device7_out",
               "amdc_gp3io_mux_0/device8_out"
-            ]
-          },
-          "hier_amds_0_dout": {
-            "ports": [
-              "hier_amds_0/dout",
-              "xlconcat_0/In0"
-            ]
-          },
-          "xlconcat_0_dout": {
-            "ports": [
-              "xlconcat_0/dout",
-              "amdc_gp3io_mux_0/device1_out"
-            ]
-          },
-          "xlconstant_1_dout": {
-            "ports": [
-              "xlconstant_1/dout",
-              "xlconcat_0/In1"
             ]
           },
           "amdc_eddy_current_se_0_sensor_control_out": {
@@ -7699,12 +7834,6 @@
             "ports": [
               "amdc_gp3io_mux_0/device1_in",
               "xlslice_0/Din"
-            ]
-          },
-          "xlslice_0_Dout": {
-            "ports": [
-              "xlslice_0/Dout",
-              "hier_amds_0/Din"
             ]
           },
           "amdc_gp3io_mux_0_device2_in": {
@@ -7743,12 +7872,6 @@
               "amdc_gpio_direct_0/din"
             ]
           },
-          "xlconstant_3_dout": {
-            "ports": [
-              "xlconstant_3/dout",
-              "amdc_eddy_current_se_0/enable"
-            ]
-          },
           "xlslice_3_Dout": {
             "ports": [
               "xlslice_3/Dout",
@@ -7760,16 +7883,67 @@
               "amdc_eddy_current_se_0/debug",
               "xlslice_3/Din"
             ]
+          },
+          "amdc_eddy_current_se_0_done": {
+            "ports": [
+              "amdc_eddy_current_se_0/done",
+              "eddy_done"
+            ]
+          },
+          "enable_1": {
+            "ports": [
+              "eddy_enable",
+              "amdc_eddy_current_se_0/enable"
+            ]
+          },
+          "trigger_1": {
+            "ports": [
+              "trigger",
+              "amdc_eddy_current_se_0/trigger",
+              "amdc_amds_0/trigger"
+            ]
+          },
+          "xlconcat_2_dout": {
+            "ports": [
+              "xlconcat_2/dout",
+              "amdc_gp3io_mux_0/device1_out"
+            ]
+          },
+          "xlslice_0_Dout": {
+            "ports": [
+              "xlslice_0/Dout",
+              "amdc_amds_0/amds_data"
+            ]
+          },
+          "amdc_amds_0_done": {
+            "ports": [
+              "amdc_amds_0/done",
+              "amds_done"
+            ]
+          },
+          "enable1_1": {
+            "ports": [
+              "amds_enable",
+              "amdc_amds_0/enable"
+            ]
+          },
+          "xlconstant_3_dout": {
+            "ports": [
+              "xlconstant_3/dout",
+              "xlconcat_2/In1"
+            ]
+          },
+          "amdc_amds_0_sync_adc": {
+            "ports": [
+              "amdc_amds_0/sync_adc",
+              "xlconcat_2/In0"
+            ]
           }
         }
       },
       "hier_gpio_2": {
         "interface_ports": {
           "S00_AXI": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-          },
-          "S00_AXI2": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
@@ -7786,6 +7960,10 @@
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
           "S00_AXI5": {
+            "mode": "Slave",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "S00_AXI6": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           }
@@ -7809,162 +7987,23 @@
             "type": "rst",
             "direction": "I"
           },
-          "pwm_carrier_low": {
+          "eddy_done": {
+            "direction": "O"
+          },
+          "eddy_enable": {
             "direction": "I"
           },
-          "pwm_carrier_high": {
+          "trigger": {
             "direction": "I"
+          },
+          "amds_enable": {
+            "direction": "I"
+          },
+          "amds_done": {
+            "direction": "O"
           }
         },
         "components": {
-          "hier_amds_0": {
-            "interface_ports": {
-              "S00_AXI": {
-                "mode": "Slave",
-                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-              }
-            },
-            "ports": {
-              "Din": {
-                "direction": "I",
-                "left": "1",
-                "right": "0"
-              },
-              "dout": {
-                "direction": "O",
-                "left": "1",
-                "right": "0"
-              },
-              "pwm_carrier_low": {
-                "direction": "I"
-              },
-              "pwm_carrier_high": {
-                "direction": "I"
-              },
-              "s00_axi_aclk": {
-                "type": "clk",
-                "direction": "I"
-              },
-              "s00_axi_aresetn": {
-                "type": "rst",
-                "direction": "I"
-              }
-            },
-            "components": {
-              "xlslice_0": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_0_6",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "0"
-                  },
-                  "DIN_TO": {
-                    "value": "0"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  }
-                }
-              },
-              "xlconcat_2": {
-                "vlnv": "xilinx.com:ip:xlconcat:2.1",
-                "xci_name": "amdc_revf_xlconcat_2_2"
-              },
-              "amdc_motherboard_0": {
-                "vlnv": "wisc.edu:user:amdc_motherboard:1.0",
-                "xci_name": "amdc_revf_amdc_motherboard_0_2"
-              },
-              "xlslice_1": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_1_6",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "1"
-                  },
-                  "DIN_TO": {
-                    "value": "1"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  },
-                  "DOUT_WIDTH": {
-                    "value": "1"
-                  }
-                }
-              }
-            },
-            "interface_nets": {
-              "ps7_0_axi_periph_M10_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_motherboard_0/S00_AXI"
-                ]
-              }
-            },
-            "nets": {
-              "xlslice_0_Dout": {
-                "ports": [
-                  "xlslice_0/Dout",
-                  "amdc_motherboard_0/motherboard_dout1"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_adc": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_adc",
-                  "xlconcat_2/In0"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_tx": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_tx",
-                  "xlconcat_2/In1"
-                ]
-              },
-              "xlslice_1_Dout": {
-                "ports": [
-                  "xlslice_1/Dout",
-                  "amdc_motherboard_0/motherboard_dout2"
-                ]
-              },
-              "amdc_gpio_mux_0_device_in_2": {
-                "ports": [
-                  "Din",
-                  "xlslice_1/Din",
-                  "xlslice_0/Din"
-                ]
-              },
-              "xlconcat_2_dout": {
-                "ports": [
-                  "xlconcat_2/dout",
-                  "dout"
-                ]
-              },
-              "amdc_inverters_0_carrier_low": {
-                "ports": [
-                  "pwm_carrier_low",
-                  "amdc_motherboard_0/pwm_carrier_low"
-                ]
-              },
-              "amdc_inverters_0_carrier_high": {
-                "ports": [
-                  "pwm_carrier_high",
-                  "amdc_motherboard_0/pwm_carrier_high"
-                ]
-              },
-              "processing_system7_0_FCLK_CLK0": {
-                "ports": [
-                  "s00_axi_aclk",
-                  "amdc_motherboard_0/s00_axi_aclk"
-                ]
-              },
-              "rst_ps7_0_100M_peripheral_aresetn": {
-                "ports": [
-                  "s00_axi_aresetn",
-                  "amdc_motherboard_0/s00_axi_aresetn"
-                ]
-              }
-            }
-          },
           "hier_ild1420_0": {
             "interface_ports": {
               "S00_AXI": {
@@ -8038,16 +8077,16 @@
               }
             },
             "interface_nets": {
-              "hier_ps_M12_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_ild1420_0/S00_AXI"
-                ]
-              },
               "hier_ps_M13_AXI": {
                 "interface_ports": [
                   "S00_AXI1",
                   "amdc_ild1420_1/S00_AXI"
+                ]
+              },
+              "hier_ps_M12_AXI": {
+                "interface_ports": [
+                  "S00_AXI",
+                  "amdc_ild1420_0/S00_AXI"
                 ]
               }
             },
@@ -8099,24 +8138,15 @@
               }
             }
           },
-          "xlconcat_0": {
-            "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "amdc_revf_xlconcat_0_3",
-            "parameters": {
-              "IN0_WIDTH": {
-                "value": "2"
-              },
-              "IN1_WIDTH": {
-                "value": "1"
-              }
-            }
-          },
-          "xlconstant_1": {
+          "xlconstant_3": {
             "vlnv": "xilinx.com:ip:xlconstant:1.1",
             "xci_name": "amdc_revf_xlconstant_1_3",
             "parameters": {
               "CONST_VAL": {
                 "value": "0"
+              },
+              "CONST_WIDTH": {
+                "value": "2"
               }
             }
           },
@@ -8194,10 +8224,6 @@
             "vlnv": "xilinx.com:user:amdc_gpio_direct:1.0",
             "xci_name": "amdc_revf_amdc_gpio_direct_0_2"
           },
-          "xlconstant_3": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_3_3"
-          },
           "xlslice_3": {
             "vlnv": "xilinx.com:ip:xlslice:1.0",
             "xci_name": "amdc_revf_xlslice_3_2",
@@ -8213,22 +8239,32 @@
               }
             }
           },
+          "xlconcat_2": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "amdc_revf_xlconcat_0_5",
+            "parameters": {
+              "IN1_WIDTH": {
+                "value": "2"
+              },
+              "NUM_PORTS": {
+                "value": "2"
+              }
+            }
+          },
           "amdc_eddy_current_se_0": {
             "vlnv": "xilinx.com:user:amdc_eddy_current_sensor:2.0",
             "xci_name": "amdc_revf_amdc_eddy_current_se_0_2"
+          },
+          "amdc_amds_0": {
+            "vlnv": "xilinx.com:user:amdc_amds:1.0",
+            "xci_name": "amdc_revf_amdc_amds_0_0"
           }
         },
         "interface_nets": {
-          "S00_AXI1_1": {
+          "S00_AXI6_1": {
             "interface_ports": [
-              "S00_AXI1",
-              "amdc_eddy_current_se_0/S00_AXI"
-            ]
-          },
-          "hier_ps_M48_AXI": {
-            "interface_ports": [
-              "S00_AXI",
-              "amdc_gp3io_mux_0/S00_AXI"
+              "S00_AXI6",
+              "amdc_amds_0/S00_AXI"
             ]
           },
           "S00_AXI4_1": {
@@ -8237,22 +8273,28 @@
               "hier_ild1420_0/S00_AXI1"
             ]
           },
-          "S00_AXI2_1": {
+          "hier_ps_M48_AXI": {
             "interface_ports": [
-              "S00_AXI2",
-              "hier_amds_0/S00_AXI"
-            ]
-          },
-          "S00_AXI3_1": {
-            "interface_ports": [
-              "S00_AXI3",
-              "hier_ild1420_0/S00_AXI"
+              "S00_AXI",
+              "amdc_gp3io_mux_0/S00_AXI"
             ]
           },
           "S00_AXI5_1": {
             "interface_ports": [
               "S00_AXI5",
               "amdc_gpio_direct_0/S00_AXI"
+            ]
+          },
+          "S00_AXI1_1": {
+            "interface_ports": [
+              "S00_AXI1",
+              "amdc_eddy_current_se_0/S00_AXI"
+            ]
+          },
+          "S00_AXI3_1": {
+            "interface_ports": [
+              "S00_AXI3",
+              "hier_ild1420_0/S00_AXI"
             ]
           }
         },
@@ -8272,35 +8314,21 @@
           "processing_system7_0_FCLK_CLK0": {
             "ports": [
               "s00_axi_aclk",
-              "hier_amds_0/s00_axi_aclk",
               "hier_ild1420_0/s00_axi_aclk",
               "amdc_gp3io_mux_0/s00_axi_aclk",
               "amdc_gpio_direct_0/s00_axi_aclk",
-              "amdc_eddy_current_se_0/s00_axi_aclk"
+              "amdc_eddy_current_se_0/s00_axi_aclk",
+              "amdc_amds_0/s00_axi_aclk"
             ]
           },
           "rst_ps7_0_100M_peripheral_aresetn": {
             "ports": [
               "s00_axi_aresetn",
-              "hier_amds_0/s00_axi_aresetn",
               "hier_ild1420_0/s00_axi_aresetn",
               "amdc_gp3io_mux_0/s00_axi_aresetn",
               "amdc_gpio_direct_0/s00_axi_aresetn",
-              "amdc_eddy_current_se_0/s00_axi_aresetn"
-            ]
-          },
-          "pwm_carrier_low_1": {
-            "ports": [
-              "pwm_carrier_low",
-              "hier_amds_0/pwm_carrier_low",
-              "amdc_eddy_current_se_0/pwm_carrier_low"
-            ]
-          },
-          "pwm_carrier_high_1": {
-            "ports": [
-              "pwm_carrier_high",
-              "hier_amds_0/pwm_carrier_high",
-              "amdc_eddy_current_se_0/pwm_carrier_high"
+              "amdc_eddy_current_se_0/s00_axi_aresetn",
+              "amdc_amds_0/s00_axi_aresetn"
             ]
           },
           "xlconstant_0_dout": {
@@ -8311,24 +8339,6 @@
               "amdc_gp3io_mux_0/device6_out",
               "amdc_gp3io_mux_0/device7_out",
               "amdc_gp3io_mux_0/device8_out"
-            ]
-          },
-          "hier_amds_0_dout": {
-            "ports": [
-              "hier_amds_0/dout",
-              "xlconcat_0/In0"
-            ]
-          },
-          "xlconcat_0_dout": {
-            "ports": [
-              "xlconcat_0/dout",
-              "amdc_gp3io_mux_0/device1_out"
-            ]
-          },
-          "xlconstant_1_dout": {
-            "ports": [
-              "xlconstant_1/dout",
-              "xlconcat_0/In1"
             ]
           },
           "amdc_eddy_current_se_0_sensor_control_out": {
@@ -8352,7 +8362,7 @@
           "xlslice_0_Dout": {
             "ports": [
               "xlslice_0/Dout",
-              "hier_amds_0/Din"
+              "amdc_amds_0/amds_data"
             ]
           },
           "amdc_gp3io_mux_0_device2_in": {
@@ -8391,12 +8401,6 @@
               "amdc_gpio_direct_0/din"
             ]
           },
-          "xlconstant_3_dout": {
-            "ports": [
-              "xlconstant_3/dout",
-              "amdc_eddy_current_se_0/enable"
-            ]
-          },
           "amdc_eddy_current_se_0_debug": {
             "ports": [
               "amdc_eddy_current_se_0/debug",
@@ -8408,16 +8412,61 @@
               "xlslice_3/Dout",
               "xlconcat_1/In1"
             ]
+          },
+          "amdc_eddy_current_se_0_done": {
+            "ports": [
+              "amdc_eddy_current_se_0/done",
+              "eddy_done"
+            ]
+          },
+          "enable_1": {
+            "ports": [
+              "eddy_enable",
+              "amdc_eddy_current_se_0/enable"
+            ]
+          },
+          "xlconcat_2_dout": {
+            "ports": [
+              "xlconcat_2/dout",
+              "amdc_gp3io_mux_0/device1_out"
+            ]
+          },
+          "trigger_1": {
+            "ports": [
+              "trigger",
+              "amdc_eddy_current_se_0/trigger",
+              "amdc_amds_0/trigger"
+            ]
+          },
+          "enable1_1": {
+            "ports": [
+              "amds_enable",
+              "amdc_amds_0/enable"
+            ]
+          },
+          "amdc_amds_0_done": {
+            "ports": [
+              "amdc_amds_0/done",
+              "amds_done"
+            ]
+          },
+          "xlconstant_3_dout": {
+            "ports": [
+              "xlconstant_3/dout",
+              "xlconcat_2/In1"
+            ]
+          },
+          "amdc_amds_0_sync_adc": {
+            "ports": [
+              "amdc_amds_0/sync_adc",
+              "xlconcat_2/In0"
+            ]
           }
         }
       },
       "hier_gpio_3": {
         "interface_ports": {
           "S00_AXI": {
-            "mode": "Slave",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-          },
-          "S00_AXI2": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
@@ -8434,6 +8483,10 @@
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           },
           "S00_AXI5": {
+            "mode": "Slave",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
+          },
+          "S00_AXI6": {
             "mode": "Slave",
             "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
           }
@@ -8457,162 +8510,23 @@
             "type": "rst",
             "direction": "I"
           },
-          "pwm_carrier_low": {
+          "eddy_done": {
+            "direction": "O"
+          },
+          "eddy_enable": {
             "direction": "I"
           },
-          "pwm_carrier_high": {
+          "trigger": {
             "direction": "I"
+          },
+          "amds_enable": {
+            "direction": "I"
+          },
+          "amds_done": {
+            "direction": "O"
           }
         },
         "components": {
-          "hier_amds_0": {
-            "interface_ports": {
-              "S00_AXI": {
-                "mode": "Slave",
-                "vlnv": "xilinx.com:interface:aximm_rtl:1.0"
-              }
-            },
-            "ports": {
-              "Din": {
-                "direction": "I",
-                "left": "1",
-                "right": "0"
-              },
-              "dout": {
-                "direction": "O",
-                "left": "1",
-                "right": "0"
-              },
-              "pwm_carrier_low": {
-                "direction": "I"
-              },
-              "pwm_carrier_high": {
-                "direction": "I"
-              },
-              "s00_axi_aclk": {
-                "type": "clk",
-                "direction": "I"
-              },
-              "s00_axi_aresetn": {
-                "type": "rst",
-                "direction": "I"
-              }
-            },
-            "components": {
-              "xlslice_0": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_0_9",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "0"
-                  },
-                  "DIN_TO": {
-                    "value": "0"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  }
-                }
-              },
-              "xlconcat_2": {
-                "vlnv": "xilinx.com:ip:xlconcat:2.1",
-                "xci_name": "amdc_revf_xlconcat_2_3"
-              },
-              "amdc_motherboard_0": {
-                "vlnv": "wisc.edu:user:amdc_motherboard:1.0",
-                "xci_name": "amdc_revf_amdc_motherboard_0_3"
-              },
-              "xlslice_1": {
-                "vlnv": "xilinx.com:ip:xlslice:1.0",
-                "xci_name": "amdc_revf_xlslice_1_9",
-                "parameters": {
-                  "DIN_FROM": {
-                    "value": "1"
-                  },
-                  "DIN_TO": {
-                    "value": "1"
-                  },
-                  "DIN_WIDTH": {
-                    "value": "2"
-                  },
-                  "DOUT_WIDTH": {
-                    "value": "1"
-                  }
-                }
-              }
-            },
-            "interface_nets": {
-              "ps7_0_axi_periph_M10_AXI": {
-                "interface_ports": [
-                  "S00_AXI",
-                  "amdc_motherboard_0/S00_AXI"
-                ]
-              }
-            },
-            "nets": {
-              "xlslice_0_Dout": {
-                "ports": [
-                  "xlslice_0/Dout",
-                  "amdc_motherboard_0/motherboard_dout1"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_adc": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_adc",
-                  "xlconcat_2/In0"
-                ]
-              },
-              "amdc_motherboard_0_motherboard_sync_tx": {
-                "ports": [
-                  "amdc_motherboard_0/motherboard_sync_tx",
-                  "xlconcat_2/In1"
-                ]
-              },
-              "xlslice_1_Dout": {
-                "ports": [
-                  "xlslice_1/Dout",
-                  "amdc_motherboard_0/motherboard_dout2"
-                ]
-              },
-              "amdc_gpio_mux_0_device_in_2": {
-                "ports": [
-                  "Din",
-                  "xlslice_1/Din",
-                  "xlslice_0/Din"
-                ]
-              },
-              "xlconcat_2_dout": {
-                "ports": [
-                  "xlconcat_2/dout",
-                  "dout"
-                ]
-              },
-              "amdc_inverters_0_carrier_low": {
-                "ports": [
-                  "pwm_carrier_low",
-                  "amdc_motherboard_0/pwm_carrier_low"
-                ]
-              },
-              "amdc_inverters_0_carrier_high": {
-                "ports": [
-                  "pwm_carrier_high",
-                  "amdc_motherboard_0/pwm_carrier_high"
-                ]
-              },
-              "processing_system7_0_FCLK_CLK0": {
-                "ports": [
-                  "s00_axi_aclk",
-                  "amdc_motherboard_0/s00_axi_aclk"
-                ]
-              },
-              "rst_ps7_0_100M_peripheral_aresetn": {
-                "ports": [
-                  "s00_axi_aresetn",
-                  "amdc_motherboard_0/s00_axi_aresetn"
-                ]
-              }
-            }
-          },
           "hier_ild1420_0": {
             "interface_ports": {
               "S00_AXI": {
@@ -8747,27 +8661,6 @@
               }
             }
           },
-          "xlconcat_0": {
-            "vlnv": "xilinx.com:ip:xlconcat:2.1",
-            "xci_name": "amdc_revf_xlconcat_0_4",
-            "parameters": {
-              "IN0_WIDTH": {
-                "value": "2"
-              },
-              "IN1_WIDTH": {
-                "value": "1"
-              }
-            }
-          },
-          "xlconstant_1": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_1_4",
-            "parameters": {
-              "CONST_VAL": {
-                "value": "0"
-              }
-            }
-          },
           "xlconcat_1": {
             "vlnv": "xilinx.com:ip:xlconcat:2.1",
             "xci_name": "amdc_revf_xlconcat_1_3",
@@ -8842,10 +8735,6 @@
             "vlnv": "xilinx.com:user:amdc_gpio_direct:1.0",
             "xci_name": "amdc_revf_amdc_gpio_direct_0_3"
           },
-          "xlconstant_3": {
-            "vlnv": "xilinx.com:ip:xlconstant:1.1",
-            "xci_name": "amdc_revf_xlconstant_3_4"
-          },
           "xlslice_3": {
             "vlnv": "xilinx.com:ip:xlslice:1.0",
             "xci_name": "amdc_revf_xlslice_3_3",
@@ -8861,34 +8750,44 @@
               }
             }
           },
+          "xlconcat_2": {
+            "vlnv": "xilinx.com:ip:xlconcat:2.1",
+            "xci_name": "amdc_revf_xlconcat_2_4",
+            "parameters": {
+              "IN1_WIDTH": {
+                "value": "2"
+              },
+              "NUM_PORTS": {
+                "value": "2"
+              }
+            }
+          },
+          "xlconstant_3": {
+            "vlnv": "xilinx.com:ip:xlconstant:1.1",
+            "xci_name": "amdc_revf_xlconstant_1_5",
+            "parameters": {
+              "CONST_VAL": {
+                "value": "0"
+              },
+              "CONST_WIDTH": {
+                "value": "2"
+              }
+            }
+          },
           "amdc_eddy_current_se_0": {
             "vlnv": "xilinx.com:user:amdc_eddy_current_sensor:2.0",
             "xci_name": "amdc_revf_amdc_eddy_current_se_0_3"
+          },
+          "amdc_amds_0": {
+            "vlnv": "xilinx.com:user:amdc_amds:1.0",
+            "xci_name": "amdc_revf_amdc_amds_0_1"
           }
         },
         "interface_nets": {
-          "S00_AXI1_1": {
+          "S00_AXI6_1": {
             "interface_ports": [
-              "S00_AXI1",
-              "amdc_eddy_current_se_0/S00_AXI"
-            ]
-          },
-          "hier_ps_M48_AXI": {
-            "interface_ports": [
-              "S00_AXI",
-              "amdc_gp3io_mux_0/S00_AXI"
-            ]
-          },
-          "S00_AXI4_1": {
-            "interface_ports": [
-              "S00_AXI4",
-              "hier_ild1420_0/S00_AXI1"
-            ]
-          },
-          "S00_AXI2_1": {
-            "interface_ports": [
-              "S00_AXI2",
-              "hier_amds_0/S00_AXI"
+              "S00_AXI6",
+              "amdc_amds_0/S00_AXI"
             ]
           },
           "S00_AXI5_1": {
@@ -8897,10 +8796,28 @@
               "amdc_gpio_direct_0/S00_AXI"
             ]
           },
+          "hier_ps_M48_AXI": {
+            "interface_ports": [
+              "S00_AXI",
+              "amdc_gp3io_mux_0/S00_AXI"
+            ]
+          },
           "S00_AXI3_1": {
             "interface_ports": [
               "S00_AXI3",
               "hier_ild1420_0/S00_AXI"
+            ]
+          },
+          "S00_AXI4_1": {
+            "interface_ports": [
+              "S00_AXI4",
+              "hier_ild1420_0/S00_AXI1"
+            ]
+          },
+          "S00_AXI1_1": {
+            "interface_ports": [
+              "S00_AXI1",
+              "amdc_eddy_current_se_0/S00_AXI"
             ]
           }
         },
@@ -8920,35 +8837,21 @@
           "processing_system7_0_FCLK_CLK0": {
             "ports": [
               "s00_axi_aclk",
-              "hier_amds_0/s00_axi_aclk",
               "hier_ild1420_0/s00_axi_aclk",
               "amdc_gp3io_mux_0/s00_axi_aclk",
               "amdc_gpio_direct_0/s00_axi_aclk",
-              "amdc_eddy_current_se_0/s00_axi_aclk"
+              "amdc_eddy_current_se_0/s00_axi_aclk",
+              "amdc_amds_0/s00_axi_aclk"
             ]
           },
           "rst_ps7_0_100M_peripheral_aresetn": {
             "ports": [
               "s00_axi_aresetn",
-              "hier_amds_0/s00_axi_aresetn",
               "hier_ild1420_0/s00_axi_aresetn",
               "amdc_gp3io_mux_0/s00_axi_aresetn",
               "amdc_gpio_direct_0/s00_axi_aresetn",
-              "amdc_eddy_current_se_0/s00_axi_aresetn"
-            ]
-          },
-          "pwm_carrier_low_1": {
-            "ports": [
-              "pwm_carrier_low",
-              "hier_amds_0/pwm_carrier_low",
-              "amdc_eddy_current_se_0/pwm_carrier_low"
-            ]
-          },
-          "pwm_carrier_high_1": {
-            "ports": [
-              "pwm_carrier_high",
-              "hier_amds_0/pwm_carrier_high",
-              "amdc_eddy_current_se_0/pwm_carrier_high"
+              "amdc_eddy_current_se_0/s00_axi_aresetn",
+              "amdc_amds_0/s00_axi_aresetn"
             ]
           },
           "xlconstant_0_dout": {
@@ -8959,24 +8862,6 @@
               "amdc_gp3io_mux_0/device6_out",
               "amdc_gp3io_mux_0/device7_out",
               "amdc_gp3io_mux_0/device8_out"
-            ]
-          },
-          "hier_amds_0_dout": {
-            "ports": [
-              "hier_amds_0/dout",
-              "xlconcat_0/In0"
-            ]
-          },
-          "xlconcat_0_dout": {
-            "ports": [
-              "xlconcat_0/dout",
-              "amdc_gp3io_mux_0/device1_out"
-            ]
-          },
-          "xlconstant_1_dout": {
-            "ports": [
-              "xlconstant_1/dout",
-              "xlconcat_0/In1"
             ]
           },
           "amdc_eddy_current_se_0_sensor_control_out": {
@@ -8995,12 +8880,6 @@
             "ports": [
               "amdc_gp3io_mux_0/device1_in",
               "xlslice_0/Din"
-            ]
-          },
-          "xlslice_0_Dout": {
-            "ports": [
-              "xlslice_0/Dout",
-              "hier_amds_0/Din"
             ]
           },
           "amdc_gp3io_mux_0_device2_in": {
@@ -9039,12 +8918,6 @@
               "amdc_gpio_direct_0/din"
             ]
           },
-          "xlconstant_3_dout": {
-            "ports": [
-              "xlconstant_3/dout",
-              "amdc_eddy_current_se_0/enable"
-            ]
-          },
           "amdc_eddy_current_se_0_debug": {
             "ports": [
               "amdc_eddy_current_se_0/debug",
@@ -9056,11 +8929,243 @@
               "xlslice_3/Dout",
               "xlconcat_1/In1"
             ]
+          },
+          "amdc_eddy_current_se_0_done": {
+            "ports": [
+              "amdc_eddy_current_se_0/done",
+              "eddy_done"
+            ]
+          },
+          "enable_1": {
+            "ports": [
+              "eddy_enable",
+              "amdc_eddy_current_se_0/enable"
+            ]
+          },
+          "trigger_1": {
+            "ports": [
+              "trigger",
+              "amdc_eddy_current_se_0/trigger",
+              "amdc_amds_0/trigger"
+            ]
+          },
+          "xlconcat_2_dout": {
+            "ports": [
+              "xlconcat_2/dout",
+              "amdc_gp3io_mux_0/device1_out"
+            ]
+          },
+          "xlslice_0_Dout": {
+            "ports": [
+              "xlslice_0/Dout",
+              "amdc_amds_0/amds_data"
+            ]
+          },
+          "enable1_1": {
+            "ports": [
+              "amds_enable",
+              "amdc_amds_0/enable"
+            ]
+          },
+          "amdc_amds_0_done": {
+            "ports": [
+              "amdc_amds_0/done",
+              "amds_done"
+            ]
+          },
+          "xlconstant_3_dout": {
+            "ports": [
+              "xlconstant_3/dout",
+              "xlconcat_2/In1"
+            ]
+          },
+          "amdc_amds_0_sync_adc": {
+            "ports": [
+              "amdc_amds_0/sync_adc",
+              "xlconcat_2/In0"
+            ]
           }
         }
+      },
+      "xlconcat_0": {
+        "vlnv": "xilinx.com:ip:xlconcat:2.1",
+        "xci_name": "amdc_revf_xlconcat_0_6",
+        "parameters": {
+          "IN1_WIDTH": {
+            "value": "15"
+          }
+        }
+      },
+      "xlconstant_0": {
+        "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "xci_name": "amdc_revf_xlconstant_0_4",
+        "parameters": {
+          "CONST_VAL": {
+            "value": "0"
+          },
+          "CONST_WIDTH": {
+            "value": "15"
+          }
+        }
+      },
+      "amdc_encoder_0": {
+        "vlnv": "wisc.edu:user:amdc_encoder:1.0",
+        "xci_name": "amdc_revf_amdc_encoder_0_0"
+      },
+      "amdc_timing_manager_0": {
+        "vlnv": "wisc.edu:user:amdc_timing_manager:1.0",
+        "xci_name": "amdc_revf_amdc_timing_manager_0_0"
+      },
+      "amdc_adc_0": {
+        "vlnv": "wisc.edu:user:amdc_adc:1.0",
+        "xci_name": "amdc_revf_amdc_adc_0_0"
       }
     },
     "interface_nets": {
+      "S00_AXI2_1": {
+        "interface_ports": [
+          "hier_powerstack/S00_AXI2",
+          "hier_ps/M08_AXI"
+        ]
+      },
+      "processing_system7_0_FIXED_IO": {
+        "interface_ports": [
+          "FIXED_IO",
+          "hier_ps/FIXED_IO"
+        ]
+      },
+      "S00_AXI_2": {
+        "interface_ports": [
+          "hier_gpio_0/S00_AXI",
+          "hier_ps/M09_AXI"
+        ]
+      },
+      "hier_ps_M36_AXI1": {
+        "interface_ports": [
+          "hier_ps/M36_AXI",
+          "hier_gpio_1/S00_AXI6"
+        ]
+      },
+      "S00_AXI_4": {
+        "interface_ports": [
+          "hier_gpio_2/S00_AXI",
+          "hier_ps/M19_AXI"
+        ]
+      },
+      "S00_AXI1_3": {
+        "interface_ports": [
+          "hier_gpio_1/S00_AXI1",
+          "hier_ps/M16_AXI"
+        ]
+      },
+      "S00_AXI1_2": {
+        "interface_ports": [
+          "hier_gpio_0/S00_AXI1",
+          "hier_ps/M11_AXI"
+        ]
+      },
+      "hier_ps_M35_AXI": {
+        "interface_ports": [
+          "amdc_leds_0/S00_AXI",
+          "hier_ps/M03_AXI"
+        ]
+      },
+      "hier_ps_M35_AXI1": {
+        "interface_ports": [
+          "hier_ps/M35_AXI",
+          "hier_gpio_0/S00_AXI6"
+        ]
+      },
+      "S00_AXI_1": {
+        "interface_ports": [
+          "hier_powerstack/S00_AXI",
+          "hier_ps/M06_AXI"
+        ]
+      },
+      "S00_AXI3_3": {
+        "interface_ports": [
+          "hier_gpio_2/S00_AXI3",
+          "hier_ps/M22_AXI"
+        ]
+      },
+      "S00_AXI1_4": {
+        "interface_ports": [
+          "hier_gpio_2/S00_AXI1",
+          "hier_ps/M21_AXI"
+        ]
+      },
+      "S00_AXI_5": {
+        "interface_ports": [
+          "hier_gpio_3/S00_AXI",
+          "hier_ps/M24_AXI"
+        ]
+      },
+      "hier_ps_M34_AXI1": {
+        "interface_ports": [
+          "hier_ps/M34_AXI",
+          "hier_gpio_2/S00_AXI6"
+        ]
+      },
+      "S00_AXI1_1": {
+        "interface_ports": [
+          "hier_powerstack/S00_AXI1",
+          "hier_ps/M07_AXI"
+        ]
+      },
+      "hier_ps_M30_AXI": {
+        "interface_ports": [
+          "hier_ps/M30_AXI",
+          "hier_gpio_1/S00_AXI5"
+        ]
+      },
+      "S00_AXI4_4": {
+        "interface_ports": [
+          "hier_gpio_3/S00_AXI4",
+          "hier_ps/M28_AXI"
+        ]
+      },
+      "S00_AXI4_2": {
+        "interface_ports": [
+          "hier_gpio_1/S00_AXI4",
+          "hier_ps/M18_AXI"
+        ]
+      },
+      "hier_ps_M33_AXI1": {
+        "interface_ports": [
+          "amdc_timing_manager_0/S00_AXI",
+          "hier_ps/M33_AXI"
+        ]
+      },
+      "S00_AXI3_4": {
+        "interface_ports": [
+          "hier_gpio_3/S00_AXI3",
+          "hier_ps/M27_AXI"
+        ]
+      },
+      "S00_AXI3_1": {
+        "interface_ports": [
+          "hier_gpio_0/S00_AXI3",
+          "hier_ps/M12_AXI"
+        ]
+      },
+      "processing_system7_0_DDR": {
+        "interface_ports": [
+          "DDR",
+          "hier_ps/DDR"
+        ]
+      },
+      "S00_AXI4_1": {
+        "interface_ports": [
+          "hier_gpio_0/S00_AXI4",
+          "hier_ps/M13_AXI"
+        ]
+      },
+      "hier_ps_M29_AXI": {
+        "interface_ports": [
+          "hier_ps/M29_AXI",
+          "hier_gpio_0/S00_AXI5"
+        ]
+      },
       "S00_AXI_3": {
         "interface_ports": [
           "hier_gpio_1/S00_AXI",
@@ -9073,22 +9178,22 @@
           "hier_gpio_3/S00_AXI5"
         ]
       },
-      "S00_AXI4_4": {
+      "hier_ps_M36_AXI": {
         "interface_ports": [
-          "hier_gpio_3/S00_AXI4",
-          "hier_ps/M28_AXI"
+          "amdc_adc_0/S00_AXI",
+          "hier_ps/M04_AXI"
         ]
       },
-      "processing_system7_0_DDR": {
+      "S00_AXI4_3": {
         "interface_ports": [
-          "DDR",
-          "hier_ps/DDR"
+          "hier_gpio_2/S00_AXI4",
+          "hier_ps/M23_AXI"
         ]
       },
-      "S00_AXI_5": {
+      "hier_ps_M37_AXI": {
         "interface_ports": [
-          "hier_gpio_3/S00_AXI",
-          "hier_ps/M24_AXI"
+          "amdc_dac_0/S00_AXI",
+          "hier_ps/M05_AXI"
         ]
       },
       "S00_AXI3_2": {
@@ -9097,10 +9202,10 @@
           "hier_ps/M17_AXI"
         ]
       },
-      "S00_AXI2_1": {
+      "hier_ps_M31_AXI": {
         "interface_ports": [
-          "hier_powerstack/S00_AXI2",
-          "hier_ps/M08_AXI"
+          "hier_ps/M31_AXI",
+          "hier_gpio_2/S00_AXI5"
         ]
       },
       "hier_ps_M34_AXI": {
@@ -9115,160 +9220,10 @@
           "hier_ps/M26_AXI"
         ]
       },
-      "hier_ps_M32_AXI": {
+      "hier_ps_M37_AXI1": {
         "interface_ports": [
-          "hier_timers/S_AXI",
-          "hier_ps/M00_AXI"
-        ]
-      },
-      "S00_AXI3_3": {
-        "interface_ports": [
-          "hier_gpio_2/S00_AXI3",
-          "hier_ps/M22_AXI"
-        ]
-      },
-      "hier_ps_M29_AXI": {
-        "interface_ports": [
-          "hier_ps/M29_AXI",
-          "hier_gpio_0/S00_AXI5"
-        ]
-      },
-      "S00_AXI_4": {
-        "interface_ports": [
-          "hier_gpio_2/S00_AXI",
-          "hier_ps/M19_AXI"
-        ]
-      },
-      "S00_AXI2_3": {
-        "interface_ports": [
-          "hier_gpio_1/S00_AXI2",
-          "hier_ps/M15_AXI"
-        ]
-      },
-      "S00_AXI4_1": {
-        "interface_ports": [
-          "hier_gpio_0/S00_AXI4",
-          "hier_ps/M13_AXI"
-        ]
-      },
-      "hier_ps_M30_AXI": {
-        "interface_ports": [
-          "hier_ps/M30_AXI",
-          "hier_gpio_1/S00_AXI5"
-        ]
-      },
-      "S00_AXI1_3": {
-        "interface_ports": [
-          "hier_gpio_1/S00_AXI1",
-          "hier_ps/M16_AXI"
-        ]
-      },
-      "hier_ps_M36_AXI": {
-        "interface_ports": [
-          "amdc_adc_0/S00_AXI",
-          "hier_ps/M04_AXI"
-        ]
-      },
-      "S00_AXI_2": {
-        "interface_ports": [
-          "hier_gpio_0/S00_AXI",
-          "hier_ps/M09_AXI"
-        ]
-      },
-      "hier_ps_M35_AXI": {
-        "interface_ports": [
-          "amdc_leds_0/S00_AXI",
-          "hier_ps/M03_AXI"
-        ]
-      },
-      "S00_AXI4_2": {
-        "interface_ports": [
-          "hier_gpio_1/S00_AXI4",
-          "hier_ps/M18_AXI"
-        ]
-      },
-      "hier_ps_M31_AXI": {
-        "interface_ports": [
-          "hier_ps/M31_AXI",
-          "hier_gpio_2/S00_AXI5"
-        ]
-      },
-      "hier_ps_M33_AXI": {
-        "interface_ports": [
-          "hier_timers/S_AXI1",
-          "hier_ps/M01_AXI"
-        ]
-      },
-      "S00_AXI2_4": {
-        "interface_ports": [
-          "hier_gpio_2/S00_AXI2",
-          "hier_ps/M20_AXI"
-        ]
-      },
-      "processing_system7_0_FIXED_IO": {
-        "interface_ports": [
-          "FIXED_IO",
-          "hier_ps/FIXED_IO"
-        ]
-      },
-      "S00_AXI4_3": {
-        "interface_ports": [
-          "hier_gpio_2/S00_AXI4",
-          "hier_ps/M23_AXI"
-        ]
-      },
-      "S00_AXI1_2": {
-        "interface_ports": [
-          "hier_gpio_0/S00_AXI1",
-          "hier_ps/M11_AXI"
-        ]
-      },
-      "S00_AXI1_1": {
-        "interface_ports": [
-          "hier_powerstack/S00_AXI1",
-          "hier_ps/M07_AXI"
-        ]
-      },
-      "S00_AXI1_4": {
-        "interface_ports": [
-          "hier_gpio_2/S00_AXI1",
-          "hier_ps/M21_AXI"
-        ]
-      },
-      "S00_AXI3_4": {
-        "interface_ports": [
-          "hier_gpio_3/S00_AXI3",
-          "hier_ps/M27_AXI"
-        ]
-      },
-      "hier_ps_M37_AXI": {
-        "interface_ports": [
-          "amdc_dac_0/S00_AXI",
-          "hier_ps/M05_AXI"
-        ]
-      },
-      "S00_AXI_1": {
-        "interface_ports": [
-          "hier_powerstack/S00_AXI",
-          "hier_ps/M06_AXI"
-        ]
-      },
-      "S00_AXI2_5": {
-        "interface_ports": [
-          "hier_gpio_3/S00_AXI2",
-          "hier_ps/M25_AXI"
-        ]
-      },
-      "S00_AXI2_2": {
-        "interface_ports": [
-          "hier_gpio_0/S00_AXI2",
-          "hier_ps/M10_AXI"
-        ]
-      },
-      "S00_AXI3_1": {
-        "interface_ports": [
-          "hier_gpio_0/S00_AXI3",
-          "hier_ps/M12_AXI"
+          "hier_ps/M37_AXI",
+          "hier_gpio_3/S00_AXI6"
         ]
       }
     },
@@ -9276,31 +9231,31 @@
       "processing_system7_0_FCLK_CLK0": {
         "ports": [
           "hier_ps/FCLK_CLK0",
-          "amdc_encoder_0/s00_axi_aclk",
           "amdc_leds_0/s00_axi_aclk",
-          "amdc_adc_0/s00_axi_aclk",
           "amdc_dac_0/s00_axi_aclk",
           "hier_powerstack/s00_axi_aclk",
           "hier_gpio_0/s00_axi_aclk",
-          "hier_timers/s_axi_aclk",
           "hier_gpio_1/s00_axi_aclk",
           "hier_gpio_2/s00_axi_aclk",
-          "hier_gpio_3/s00_axi_aclk"
+          "hier_gpio_3/s00_axi_aclk",
+          "amdc_encoder_0/s00_axi_aclk",
+          "amdc_timing_manager_0/s00_axi_aclk",
+          "amdc_adc_0/s00_axi_aclk"
         ]
       },
       "rst_ps7_0_100M_peripheral_aresetn": {
         "ports": [
           "hier_ps/S00_ARESETN",
-          "amdc_encoder_0/s00_axi_aresetn",
           "amdc_leds_0/s00_axi_aresetn",
-          "amdc_adc_0/s00_axi_aresetn",
           "amdc_dac_0/s00_axi_aresetn",
           "hier_powerstack/s00_axi_aresetn",
           "hier_gpio_0/s00_axi_aresetn",
-          "hier_timers/s_axi_aresetn",
           "hier_gpio_1/s00_axi_aresetn",
           "hier_gpio_2/s00_axi_aresetn",
-          "hier_gpio_3/s00_axi_aresetn"
+          "hier_gpio_3/s00_axi_aresetn",
+          "amdc_encoder_0/s00_axi_aresetn",
+          "amdc_timing_manager_0/s00_axi_aresetn",
+          "amdc_adc_0/s00_axi_aresetn"
         ]
       },
       "adc1_sdo_1": {
@@ -9354,23 +9309,13 @@
       "amdc_inverters_0_carrier_low": {
         "ports": [
           "hier_powerstack/carrier_low",
-          "amdc_adc_0/pwm_carrier_low",
-          "hier_gpio_0/pwm_carrier_low",
-          "hier_gpio_1/pwm_carrier_low",
-          "hier_gpio_2/pwm_carrier_low",
-          "hier_gpio_3/pwm_carrier_low",
-          "amdc_encoder_0/pwm_carrier_low"
+          "amdc_timing_manager_0/pwm_carrier_low"
         ]
       },
       "amdc_inverters_0_carrier_high": {
         "ports": [
           "hier_powerstack/carrier_high",
-          "amdc_adc_0/pwm_carrier_high",
-          "hier_gpio_0/pwm_carrier_high",
-          "hier_gpio_1/pwm_carrier_high",
-          "hier_gpio_2/pwm_carrier_high",
-          "hier_gpio_3/pwm_carrier_high",
-          "amdc_encoder_0/pwm_carrier_high"
+          "amdc_timing_manager_0/pwm_carrier_high"
         ]
       },
       "xlconstant_4_dout": {
@@ -9493,12 +9438,6 @@
           "gpio1_out"
         ]
       },
-      "IRQ_F2P_1": {
-        "ports": [
-          "hier_timers/dout",
-          "hier_ps/IRQ_F2P"
-        ]
-      },
       "gpio2_in_1": {
         "ports": [
           "gpio2_in",
@@ -9534,6 +9473,156 @@
           "gpio4_in",
           "hier_gpio_3/gpio_in"
         ]
+      },
+      "amdc_adc_0_adc_done": {
+        "ports": [
+          "amdc_adc_0/adc_done",
+          "amdc_timing_manager_0/adc_done"
+        ]
+      },
+      "amdc_encoder_0_done": {
+        "ports": [
+          "amdc_encoder_0/done",
+          "amdc_timing_manager_0/encoder_done"
+        ]
+      },
+      "amdc_timing_manager_0_en_encoder": {
+        "ports": [
+          "amdc_timing_manager_0/en_encoder",
+          "amdc_encoder_0/enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_adc": {
+        "ports": [
+          "amdc_timing_manager_0/en_adc",
+          "amdc_adc_0/enable"
+        ]
+      },
+      "amdc_timing_manager_0_trigger": {
+        "ports": [
+          "amdc_timing_manager_0/trigger",
+          "hier_gpio_0/trigger",
+          "hier_gpio_1/trigger",
+          "hier_gpio_3/trigger",
+          "hier_gpio_2/trigger",
+          "amdc_encoder_0/trigger",
+          "hier_powerstack/trigger",
+          "amdc_adc_0/trigger"
+        ]
+      },
+      "hier_gpio_3_done": {
+        "ports": [
+          "hier_gpio_3/eddy_done",
+          "amdc_timing_manager_0/eddy_3_done"
+        ]
+      },
+      "hier_gpio_2_done": {
+        "ports": [
+          "hier_gpio_2/eddy_done",
+          "amdc_timing_manager_0/eddy_2_done"
+        ]
+      },
+      "hier_gpio_1_done": {
+        "ports": [
+          "hier_gpio_1/eddy_done",
+          "amdc_timing_manager_0/eddy_1_done"
+        ]
+      },
+      "hier_gpio_0_done": {
+        "ports": [
+          "hier_gpio_0/eddy_done",
+          "amdc_timing_manager_0/eddy_0_done"
+        ]
+      },
+      "amdc_timing_manager_0_en_eddy_1": {
+        "ports": [
+          "amdc_timing_manager_0/en_eddy_1",
+          "hier_gpio_1/eddy_enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_eddy_3": {
+        "ports": [
+          "amdc_timing_manager_0/en_eddy_3",
+          "hier_gpio_3/eddy_enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_eddy_0": {
+        "ports": [
+          "amdc_timing_manager_0/en_eddy_0",
+          "hier_gpio_0/eddy_enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_eddy_2": {
+        "ports": [
+          "amdc_timing_manager_0/en_eddy_2",
+          "hier_gpio_2/eddy_enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_amds_2": {
+        "ports": [
+          "amdc_timing_manager_0/en_amds_2",
+          "hier_gpio_2/amds_enable"
+        ]
+      },
+      "hier_gpio_2_done1": {
+        "ports": [
+          "hier_gpio_2/amds_done",
+          "amdc_timing_manager_0/amds_2_done"
+        ]
+      },
+      "hier_gpio_0_done1": {
+        "ports": [
+          "hier_gpio_0/amds_done",
+          "amdc_timing_manager_0/amds_0_done"
+        ]
+      },
+      "amdc_timing_manager_0_en_amds_0": {
+        "ports": [
+          "amdc_timing_manager_0/en_amds_0",
+          "hier_gpio_0/amds_enable"
+        ]
+      },
+      "hier_gpio_1_done1": {
+        "ports": [
+          "hier_gpio_1/amds_done",
+          "amdc_timing_manager_0/amds_1_done"
+        ]
+      },
+      "amdc_timing_manager_0_en_amds_1": {
+        "ports": [
+          "amdc_timing_manager_0/en_amds_1",
+          "hier_gpio_1/amds_enable"
+        ]
+      },
+      "amdc_timing_manager_0_en_amds_3": {
+        "ports": [
+          "amdc_timing_manager_0/en_amds_3",
+          "hier_gpio_3/amds_enable"
+        ]
+      },
+      "hier_gpio_3_done1": {
+        "ports": [
+          "hier_gpio_3/amds_done",
+          "amdc_timing_manager_0/amds_3_done"
+        ]
+      },
+      "amdc_timing_manager_0_sched_isr": {
+        "ports": [
+          "amdc_timing_manager_0/sched_isr",
+          "xlconcat_0/In0"
+        ]
+      },
+      "xlconstant_0_dout": {
+        "ports": [
+          "xlconstant_0/dout",
+          "xlconcat_0/In1"
+        ]
+      },
+      "xlconcat_0_dout": {
+        "ports": [
+          "xlconcat_0/dout",
+          "hier_ps/IRQ_F2P"
+        ]
       }
     },
     "comments": {
@@ -9553,6 +9642,26 @@
               "SEG_amdc_adc_1_S00_AXI_reg": {
                 "address_block": "/amdc_adc_0/S00_AXI/S00_AXI_reg",
                 "offset": "0x43C00000",
+                "range": "64K"
+              },
+              "SEG_amdc_amds_0_S00_AXI_reg": {
+                "address_block": "/hier_gpio_2/amdc_amds_0/S00_AXI/S00_AXI_reg",
+                "offset": "0x43CD0000",
+                "range": "64K"
+              },
+              "SEG_amdc_amds_0_S00_AXI_reg1": {
+                "address_block": "/hier_gpio_0/amdc_amds_0/S00_AXI/S00_AXI_reg",
+                "offset": "0x43C80000",
+                "range": "64K"
+              },
+              "SEG_amdc_amds_0_S00_AXI_reg2": {
+                "address_block": "/hier_gpio_1/amdc_amds_0/S00_AXI/S00_AXI_reg",
+                "offset": "0x43CF0000",
+                "range": "64K"
+              },
+              "SEG_amdc_amds_0_S00_AXI_reg3": {
+                "address_block": "/hier_gpio_3/amdc_amds_0/S00_AXI/S00_AXI_reg",
+                "offset": "0x43D60000",
                 "range": "64K"
               },
               "SEG_amdc_dac_0_S00_AXI_reg": {
@@ -9680,39 +9789,14 @@
                 "offset": "0x43C30000",
                 "range": "64K"
               },
-              "SEG_amdc_motherboard_0_S00_AXI_reg": {
-                "address_block": "/hier_gpio_1/hier_amds_0/amdc_motherboard_0/S00_AXI/S00_AXI_reg",
-                "offset": "0x43C80000",
-                "range": "64K"
-              },
-              "SEG_amdc_motherboard_0_S00_AXI_reg1": {
-                "address_block": "/hier_gpio_0/hier_amds_0/amdc_motherboard_0/S00_AXI/S00_AXI_reg",
-                "offset": "0x43CF0000",
-                "range": "64K"
-              },
-              "SEG_amdc_motherboard_0_S00_AXI_reg2": {
-                "address_block": "/hier_gpio_2/hier_amds_0/amdc_motherboard_0/S00_AXI/S00_AXI_reg",
-                "offset": "0x43CD0000",
-                "range": "64K"
-              },
-              "SEG_amdc_motherboard_0_S00_AXI_reg3": {
-                "address_block": "/hier_gpio_3/hier_amds_0/amdc_motherboard_0/S00_AXI/S00_AXI_reg",
-                "offset": "0x43D60000",
-                "range": "64K"
-              },
               "SEG_amdc_pwm_mux_0_S00_AXI_reg": {
                 "address_block": "/hier_powerstack/amdc_pwm_mux_0/S00_AXI/S00_AXI_reg",
                 "offset": "0x43C40000",
                 "range": "64K"
               },
-              "SEG_axi_timer_0_Reg": {
-                "address_block": "/hier_timers/control_timer_0/S_AXI/Reg",
-                "offset": "0x42800000",
-                "range": "64K"
-              },
-              "SEG_axi_timer_1_Reg": {
-                "address_block": "/hier_timers/control_timer_1/S_AXI/Reg",
-                "offset": "0x42810000",
+              "SEG_amdc_timing_manager_0_S00_AXI_reg": {
+                "address_block": "/amdc_timing_manager_0/S00_AXI/S00_AXI_reg",
+                "offset": "0x43DF0000",
                 "range": "64K"
               }
             }

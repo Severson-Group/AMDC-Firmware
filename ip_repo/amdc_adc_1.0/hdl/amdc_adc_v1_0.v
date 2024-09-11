@@ -16,11 +16,12 @@
 	(
 		// Users to add ports here
         input  wire [7:0] adc_sdo,
+    	input  wire trigger,
+		input  wire enable,
         output wire adc_sck,
         output wire adc_cnv,
+        output wire adc_done,
         input  wire adc_clkout,
-        input  wire pwm_carrier_high,
-        input  wire pwm_carrier_low,
 		// User ports ends
 		// Do not modify the ports beyond this line
 
@@ -77,9 +78,10 @@
 		.adc_sdo(adc_sdo),
         .adc_sck(adc_sck),
         .adc_cnv(adc_cnv),
+        .adc_done(adc_done),
         .adc_clkout(adc_clkout),
-        .pwm_carrier_high(pwm_carrier_high),
-        .pwm_carrier_low(pwm_carrier_low)
+		.trigger(trigger),
+		.enable(enable)
 	);
 
 	// Add user logic here
