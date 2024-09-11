@@ -27,37 +27,37 @@
 		<link>
 			<name>ARM_CA9</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Kernel/portable/GCC/ARM_CA9</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Kernel/portable/GCC/ARM_CA9</location>
 		</link>
 		<link>
 			<name>FreeRTOS-Kernel</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Kernel</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Kernel</location>
 		</link>
 		<link>
 			<name>FreeRTOS-Plus-TCP</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Plus-TCP</location>
 		</link>
 		<link>
 			<name>GCC</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC</location>
 		</link>
 		<link>
 			<name>MemMang</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Kernel/portable/MemMang</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Kernel/portable/MemMang</location>
+		</link>
+		<link>
+			<name>Zynq</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/Zynq</location>
 		</link>
 		<link>
 			<name>shared</name>
 			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/shared</location>
-		</link>
-		<link>
-			<name>source</name>
-			<type>2</type>
-			<location>C:/Users/srich008/Information/gitMistakes/freertos-lwip/sdk/FreeRTOS-Plus-TCP/source</location>
+			<location>C:/Users/srich008/Information/gitMistakes/freertos-rebase/sdk/shared</location>
 		</link>
 	</linkedResources>
 </projectDescription>
