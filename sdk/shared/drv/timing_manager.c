@@ -202,7 +202,7 @@ void timing_manager_isr(void *intc_inst_ptr)
     // Push stats for each sensor
     timing_manager_sensor_stats();
     // Increment elapsed time and run tasks
-    scheduler_tick();
+    // scheduler_tick();
     // Clear the interrupt once done handling ISR
     timing_manager_clear_isr();
 }

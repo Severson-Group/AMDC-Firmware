@@ -3,7 +3,6 @@
 #include "drv/cpu_timer.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
-#include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_direct.h"
 #include "drv/gpio_mux.h"
@@ -220,6 +219,7 @@ int cmd_hw(int argc, char **argv)
 
         // hw eddy trigger <port> <HIGH | LOW | BOTH>
         if (argc == 5 && STREQ("trigger", argv[2])) {
+        	/*
             eddy_current_sensor_trigger_on_pwm_clear(base_addr);
 
             if (STREQ("HIGH", argv[4]))
@@ -230,7 +230,7 @@ int cmd_hw(int argc, char **argv)
                 eddy_current_sensor_trigger_on_pwm_both(base_addr);
             else
                 return CMD_INVALID_ARGUMENTS;
-
+            */
             return CMD_SUCCESS;
         }
 
@@ -249,12 +249,12 @@ int cmd_hw(int argc, char **argv)
     // Handle 'timer' sub-command
     if (argc >= 2 && STREQ("timer", argv[1])) {
         if (argc == 4 && STREQ("fpga", argv[2]) && STREQ("now", argv[3])) {
-            uint32_t counts1 = fpga_timer_now();
-            uint32_t counts2 = fpga_timer_now();
+            // uint32_t counts1 = fpga_timer_now();
+            // uint32_t counts2 = fpga_timer_now();
 
-            cmd_resp_printf("counts1: %lu\r\n", counts1);
-            cmd_resp_printf("counts2: %lu\r\n", counts2);
-            cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
+            // cmd_resp_printf("counts1: %lu\r\n", counts1);
+            // cmd_resp_printf("counts2: %lu\r\n", counts2);
+            // cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
 
             return CMD_SUCCESS;
         }

@@ -16,7 +16,6 @@
 #include "drv/dac.h"
 #include "drv/eddy_current_sensor.h"
 #include "drv/encoder.h"
-#include "drv/fpga_timer.h"
 #include "drv/gp3io_mux.h"
 #include "drv/gpio_mux.h"
 #include "drv/led.h"
@@ -73,7 +72,6 @@ void bsp_init(void)
     analog_init(ANALOG_BASE_ADDR);
     pwm_init();
 
-    fpga_timer_init();
     cpu_timer_init();
     led_init();
     sts_mux_init();
