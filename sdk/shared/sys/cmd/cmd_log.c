@@ -44,7 +44,7 @@ int cmd_log(int argc, char **argv)
     // Handle 'reg' sub-command
     if (strcmp("reg", argv[1]) == 0) {
         // Check correct number of arguments
-        if (argc != 7)
+        if (argc != 6)
             return CMD_INVALID_ARGUMENTS;
 
         // Parse arg1: log_var_idx
@@ -57,24 +57,20 @@ int cmd_log(int argc, char **argv)
         // Parse arg2: name
         char *name = argv[3];
 
-        // Parse arg3: memory_addr
-        void *memory_addr = (void *) atoi(argv[4]);
-
-        // Parse arg4: samples_per_sec
-        int samples_per_sec = atoi(argv[5]);
-
-        if (samples_per_sec > LOG_UPDATE_FREQ || samples_per_sec <= 0) {
+        // Parse arg3: interval_ticks
+        int interval_ticks = atoi(argv[4]);
+        if (interval_ticks <= 0) {
             // ERROR
             return CMD_INVALID_ARGUMENTS;
         }
 
-        // Parse arg5: type
+        // Parse arg4: type
         var_type_e type;
-        if (strcmp("int", argv[6]) == 0) {
+        if (strcmp("int", argv[5]) == 0) {
             type = LOG_INT;
-        } else if (strcmp("float", argv[6]) == 0) {
+        } else if (strcmp("float", argv[5]) == 0) {
             type = LOG_FLOAT;
-        } else if (strcmp("double", argv[6]) == 0) {
+        } else if (strcmp("double", argv[5]) == 0) {
             type = LOG_DOUBLE;
         } else {
             // ERROR
@@ -82,7 +78,7 @@ int cmd_log(int argc, char **argv)
         }
 
         // Register the variable with the logging engine
-        int err = log_var_register(log_var_idx, name, memory_addr, samples_per_sec, type);
+        int err = log_var_register(log_var_idx, name, interval_ticks, type);
         if (err != SUCCESS) {
             return CMD_FAILURE;
         }
