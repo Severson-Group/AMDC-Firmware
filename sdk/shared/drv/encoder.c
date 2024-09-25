@@ -1,12 +1,7 @@
-/* FreeRTOS includes */
-#include "FreeRTOS.h"
-#include "task.h"
-/* other includes */
 #include "drv/encoder.h"
 #include "sys/defines.h"
+#include "sys/scheduler.h"
 #include "xil_io.h"
-
-#define ENCODER_BASE_ADDR (0x43C10000)
 
 void encoder_init(void)
 {
@@ -62,46 +57,44 @@ typedef struct sm_ctx_t {
     double theta;
     double theta_delta;
     int counter;
-    TaskHandle_t tcb;
+    task_control_block_t tcb;
 } sm_ctx_t;
 
 #define SM_UPDATES_PER_SEC (10000)
-#define SM_INTERVAL_TICKS  (pdMS_TO_TICKS(1000.0 / SM_UPDATES_PER_SEC))
+#define SM_INTERVAL_USEC   (USEC_IN_SEC / SM_UPDATES_PER_SEC)
 
-static sm_ctx_t ctxG;
-
-static void _find_z(void *arg)
+static void _find_z_callback(void *arg)
 {
-    sm_ctx_t *ctx = &ctxG;
-    for (;;) {
-    	vTaskDelay(SM_INTERVAL_TICKS);
-		switch (ctx->state) {
-		case WAIT_UNTIL_Z:
-		{
-			uint32_t pos;
-			encoder_get_position(&pos);
-			if (pos != -1) {
-				ctx->state = REMOVE_TASK;
-			}
+    sm_ctx_t *ctx = (sm_ctx_t *) arg;
 
-			break;
-		}
+    switch (ctx->state) {
+    case WAIT_UNTIL_Z:
+    {
+        uint32_t pos;
+        encoder_get_position(&pos);
+        if (pos != -1) {
+            ctx->state = REMOVE_TASK;
+        }
 
-		case REMOVE_TASK:
-		{
-			vTaskDelete(ctx->tcb);
-			break;
-		}
-		}
+        break;
+    }
+
+    case REMOVE_TASK:
+    {
+        scheduler_tcb_unregister(&ctx->tcb);
+        break;
+    }
     }
 }
+
+static sm_ctx_t ctx;
 
 void encoder_find_z(void)
 {
     // Initialize the state machine context
-    ctxG.state = WAIT_UNTIL_Z;
+    ctx.state = WAIT_UNTIL_Z;
 
     // Initialize the state machine callback tcb
-    xTaskCreate(_find_z, (const char *) "find_z", configMINIMAL_STACK_SIZE,
-				NULL, configMAX_PRIORITIES - 1, &ctxG.tcb);
+    scheduler_tcb_init(&ctx.tcb, _find_z_callback, &ctx, "find_z", SM_INTERVAL_USEC);
+    scheduler_tcb_register(&ctx.tcb);
 }

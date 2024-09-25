@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "xparameters.h"
+
 #define LED_BASE_ADDR (XPAR_AMDC_LEDS_0_S00_AXI_BASEADDR)
 
 typedef struct led_color_t {

@@ -4,6 +4,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "xparameters.h"
+
+#define STS_MUX_BASE_ADDR (XPAR_HIER_POWERSTACK_AMDC_INV_STATUS_MUX_0_S00_AXI_BASEADDR)
+
 typedef enum {
     STS_MUX_UNUSED = 0,
     STS_MUX_DEVICE1 = 1, // DAC expansion board by default

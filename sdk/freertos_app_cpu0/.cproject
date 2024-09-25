@@ -41,6 +41,10 @@
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
 									<listOptionValue builtIn="false" value="../../shared"/>
 								</option>
+								<option id="xilinx.gnu.compiler.symbols.defined.1081512163" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="APP_BLINK"/>
+									<listOptionValue builtIn="false" value="APP_VSI"/>
+								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1832793213" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.cxx.toolchain.compiler.debug.549150520" name="ARM v7 g++ compiler" superClass="xilinx.gnu.armv7.cxx.toolchain.compiler.debug">
@@ -140,6 +144,10 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/FreeRTOS-Plus-TCP/source/portable/NetworkInterface}&quot;"/>
 									<listOptionValue builtIn="false" value="../../amdc_bsp_cpu0/ps7_cortexa9_0/include"/>
 									<listOptionValue builtIn="false" value="../../shared"/>
+								</option>
+								<option id="xilinx.gnu.compiler.symbols.defined.885465569" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="APP_BLINK"/>
+									<listOptionValue builtIn="false" value="APP_VSI"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.1368081233" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
 							</tool>
