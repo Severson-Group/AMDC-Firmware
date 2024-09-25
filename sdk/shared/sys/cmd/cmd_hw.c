@@ -10,9 +10,11 @@
 #include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/sts_mux.h"
+#include "drv/timing_manager.h"
 #include "sys/commands.h"
 #include "sys/debug.h"
 #include "sys/defines.h"
+#include "sys/statistics.h"
 #include "sys/util.h"
 #include "usr/user_config.h"
 
@@ -23,23 +25,31 @@
 static command_entry_t cmd_entry;
 
 static command_help_t cmd_help[] = {
-    { "pwm <on|off>", "Turn on/off PWM switching" },
+    { "pwm <on|off>", "Turn on/off all PWM switching" },
     { "pwm sw <freq_switching> <deadtime_ns>", "Set the PWM switching characteristics" },
     { "pwm duty <pwm_idx> <percent>", "Set a duty ratio" },
+    { "pwm leg_enable <pwm_idx> <on|off>", "Enable/disable a single PWM channel" },
+    { "pwm leg_reverse <pwm_idx> <on|off>", "Reverse/un-reverse a single PWM channel" },
     { "anlg read <chnl_idx>", "Read voltage on ADC channel" },
     { "ild read", "Read the latest packet from ILD1420 sensor" },
     { "enc steps", "Read encoder steps from power-up" },
     { "enc pos", "Read encoder position" },
     { "enc init", "Turn on blue LED until Z pulse found" },
-    { "timer <fpga|cpu> now", "Read value from hardware timer" },
+    { "timer cpu now", "Read value from hardware timer" },
     { "led set <led_idx> <r> <g> <b>", "Set LED color (color is 0..255)" },
     { "mux <gpio|sts> <port> <device>", "Map the device driver in the FPGA to the hardware port" },
     { "mux <gpio|sts> list", "List the device drivers available in the FPGA to the hardware port" },
     { "gpio <read|write|toggle> <port> <pin> <HIGH|LOW>", "Read and write digital voltages directly to GPIO pins" },
-    { "eddy trigger <port> <HIGH|LOW|BOTH>",
-      "Trigger the eddy current sensor to sample on the PWM carrier's peak, valley, or both" },
     { "eddy timing <port> <sclk_freq_khz> <prop_delay_ns>",
       "The desired SCLK frequency (kHz) and one-way delay of the adapter board (ns)" },
+    { "tm trigger_pwm <HIGH|LOW|BOTH>", "Trigger all sensors to sample on the PWM carrier's peak, valley, or both" },
+    { "tm mode <AUTO|MANUAL>", "Switch the timing manager trigger mode" },
+    { "tm send_trigger", "If in MANUAL mode, trigger all enabled sensors" },
+    { "tm ratio <count>", "Set number of PWM instances that occur in order to assert trigger" },
+    { "tm enable <adc|encoder|amds|eddy> <port [if amds/eddy]>",
+      "Enable a sensor; for AMDS or eddy, specify the port, otherwise leave blank" },
+    { "tm disable_all", "Disables all enabled sensors" },
+    { "tm time <adc|encoder|amds|eddy> <port [if amds/eddy]>", "Read acquisition time of sensor" },
 };
 
 void cmd_hw_register(void)
@@ -126,6 +136,56 @@ int cmd_hw(int argc, char **argv)
 
             return CMD_SUCCESS;
         }
+
+        // hw pwm leg_enable <pwm_idx> <on|off>
+        if (argc == 5 && STREQ("leg_enable", argv[2])) {
+            // Parse out switching pwm_idx arg
+            int pwm_idx = atoi(argv[3]);
+            int result = FAILURE;
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (STREQ("on", argv[4])) {
+                result = pwm_set_leg_enabled(pwm_idx, true);
+            } else if (STREQ("off", argv[4])) {
+                result = pwm_set_leg_enabled(pwm_idx, false);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (result == SUCCESS) {
+                return CMD_SUCCESS;
+            } else {
+                return CMD_FAILURE;
+            }
+        }
+
+        // hw pwm leg_reverse <pwm_idx> <on|off>
+        if (argc == 5 && STREQ("leg_reverse", argv[2])) {
+            // Parse out switching pwm_idx arg
+            int pwm_idx = atoi(argv[3]);
+            int result = FAILURE;
+
+            if (!pwm_is_valid_channel(pwm_idx)) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (STREQ("on", argv[4])) {
+                result = pwm_set_leg_reversed(pwm_idx, true);
+            } else if (STREQ("off", argv[4])) {
+                result = pwm_set_leg_reversed(pwm_idx, false);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+
+            if (result == SUCCESS) {
+                return CMD_SUCCESS;
+            } else {
+                return CMD_FAILURE;
+            }
+        }
     }
 
     // Handle 'anlg' sub-command
@@ -203,36 +263,18 @@ int cmd_hw(int argc, char **argv)
             return CMD_INVALID_ARGUMENTS;
         else
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-
 #elif (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_E) || (USER_CONFIG_HARDWARE_TARGET == AMDC_REV_F)
-        if (port == 1)
+        if (port == 1) {
             base_addr = EDDY_CURRENT_SENSOR_1_BASE_ADDR;
-        else if (port == 2)
+        } else if (port == 2) {
             base_addr = EDDY_CURRENT_SENSOR_2_BASE_ADDR;
-        else if (port == 3)
+        } else if (port == 3) {
             base_addr = EDDY_CURRENT_SENSOR_3_BASE_ADDR;
-        else if (port == 4)
+        } else if (port == 4) {
             base_addr = EDDY_CURRENT_SENSOR_4_BASE_ADDR;
-        else
+        } else
             return CMD_INVALID_ARGUMENTS;
 #endif
-
-        // hw eddy trigger <port> <HIGH | LOW | BOTH>
-        if (argc == 5 && STREQ("trigger", argv[2])) {
-        	/*
-            eddy_current_sensor_trigger_on_pwm_clear(base_addr);
-
-            if (STREQ("HIGH", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_high(base_addr);
-            else if (STREQ("LOW", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_low(base_addr);
-            else if (STREQ("BOTH", argv[4]))
-                eddy_current_sensor_trigger_on_pwm_both(base_addr);
-            else
-                return CMD_INVALID_ARGUMENTS;
-            */
-            return CMD_SUCCESS;
-        }
 
         // hw eddy timing <port> sclk_freq_khz prop_delay_ns
         if (argc == 6 && STREQ("timing", argv[2])) {
@@ -246,19 +288,168 @@ int cmd_hw(int argc, char **argv)
         }
     }
 
-    // Handle 'timer' sub-command
-    if (argc >= 2 && STREQ("timer", argv[1])) {
-        if (argc == 4 && STREQ("fpga", argv[2]) && STREQ("now", argv[3])) {
-            // uint32_t counts1 = fpga_timer_now();
-            // uint32_t counts2 = fpga_timer_now();
+    // Handle 'tm' sub-command
+    if (argc >= 2 && STREQ("tm", argv[1])) {
+        // hw tm trigger_pwm <HIGH|LOW|BOTH>
+        if (argc == 4 && STREQ("trigger_pwm", argv[2])) {
+            if (STREQ("HIGH", argv[3])) {
+                timing_manager_trigger_on_pwm_high();
+            } else if (STREQ("LOW", argv[3])) {
+                timing_manager_trigger_on_pwm_low();
+            } else if (STREQ("BOTH", argv[3])) {
+                timing_manager_trigger_on_pwm_both();
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+            return CMD_SUCCESS;
+        }
 
-            // cmd_resp_printf("counts1: %lu\r\n", counts1);
-            // cmd_resp_printf("counts2: %lu\r\n", counts2);
-            // cmd_resp_printf("time delta = %8.3f ns\r\n", 1e3 * fpga_timer_ticks_to_usec(counts2 - counts1));
+        // hw tm mode <AUTO|MANUAL>
+        if (argc == 4 && STREQ("mode", argv[2])) {
+            if (STREQ("AUTO", argv[3])) {
+                timing_manager_set_mode(TM_AUTOMATIC);
+            } else if (STREQ("MANUAL", argv[3])) {
+                timing_manager_set_mode(TM_MANUAL);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+            return CMD_SUCCESS;
+        }
+
+        // hw tm send_trigger
+        if (argc == 3 && STREQ("send_trigger", argv[2])) {
+            // Verify that timing manager is in manual mode
+            if (timing_manager_get_mode() == TM_MANUAL) {
+                timing_manager_send_manual_trigger();
+            } else {
+                cmd_resp_printf("Failed to send manual trigger. Is the timing manager in manual mode?\r\n");
+                return CMD_FAILURE;
+            }
 
             return CMD_SUCCESS;
         }
 
+        // hw tm trig_count
+        if (argc == 3 && STREQ("trig_count", argv[2])) {
+            uint32_t count = timing_manager_get_trigger_count();
+            cmd_resp_printf("Dec: %i\tHex:%x\r\n", count, count);
+
+            return CMD_SUCCESS;
+        }
+
+        // hw tm ratio <count>
+        else if (argc == 4 && STREQ("ratio", argv[2])) {
+            uint32_t ratio = (uint32_t)(atoi(argv[3]));
+            if (ratio < 0) {
+                return CMD_INVALID_ARGUMENTS;
+            }
+            timing_manager_set_ratio(ratio);
+            return CMD_SUCCESS;
+        }
+
+        // hw tm enable <sensor> [port if eddy/amds]
+        else if (argc >= 4 && STREQ("enable", argv[2])) {
+            if (STREQ("adc", argv[3])) {
+                timing_manager_enable_sensor(ADC);
+            } else if (STREQ("encoder", argv[3])) {
+                timing_manager_enable_sensor(ENCODER);
+#if (USER_CONFIG_ENABLE_AMDS_SUPPORT == 1)
+            } else if (argc == 5 && STREQ("amds", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // enable AMDS based on selected port
+                switch (port) {
+                case 1:
+                    timing_manager_enable_sensor(AMDS_1);
+                    break;
+                case 2:
+                    timing_manager_enable_sensor(AMDS_2);
+                    break;
+                case 3:
+                    timing_manager_enable_sensor(AMDS_3);
+                    break;
+                case 4:
+                    timing_manager_enable_sensor(AMDS_4);
+                    break;
+                default:
+                    return CMD_INVALID_ARGUMENTS;
+                }
+#endif // USER_CONFIG_ENABLE_AMDS_SUPPORT
+            } else if (argc == 5 && STREQ("eddy", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // enable eddy current sensor based on selected port
+                switch (port) {
+                case 1:
+                    timing_manager_enable_sensor(EDDY_1);
+                    break;
+                case 2:
+                    timing_manager_enable_sensor(EDDY_2);
+                    break;
+                case 3:
+                    timing_manager_enable_sensor(EDDY_3);
+                    break;
+                case 4:
+                    timing_manager_enable_sensor(EDDY_4);
+                    break;
+                default:
+                    return CMD_INVALID_ARGUMENTS;
+                }
+            }
+            return CMD_SUCCESS;
+        }
+
+        // hw tm disable_all
+        else if (argc >= 3 && STREQ("disable_all", argv[2])) {
+            timing_manager_select_sensors(0x0000);
+            return CMD_SUCCESS;
+        }
+
+        // hw tm time <sensor>
+        else if (argc >= 4 && STREQ("time", argv[2])) {
+            statistics_t *stats;
+            if (STREQ("encoder", argv[3])) {
+                stats = timing_manager_get_stats_per_sensor(ENCODER);
+#if (USER_CONFIG_ENABLE_AMDS_SUPPORT == 1)
+            } else if (STREQ("amds", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // get time for AMDS based on selected port
+                if (port == 1) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_1);
+                } else if (port == 2) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_2);
+                } else if (port == 3) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_3);
+                } else if (port == 4) {
+                    stats = timing_manager_get_stats_per_sensor(AMDS_4);
+                } else {
+                    return CMD_INVALID_ARGUMENTS;
+                }
+#endif // USER_CONFIG_ENABLE_AMDS_SUPPORT
+            } else if (STREQ("eddy", argv[3])) {
+                int32_t port = atoi(argv[4]);
+                // get time for eddy current sensor based on selected port
+                if (port == 1) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_1);
+                } else if (port == 2) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_2);
+                } else if (port == 3) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_3);
+                } else if (port == 4) {
+                    stats = timing_manager_get_stats_per_sensor(EDDY_4);
+                } else {
+                    return CMD_INVALID_ARGUMENTS;
+                }
+            } else if (STREQ("adc", argv[3])) {
+                stats = timing_manager_get_stats_per_sensor(ADC);
+            } else {
+                return CMD_INVALID_ARGUMENTS;
+            }
+            cmd_resp_printf("Time (us): %.3f\r\n", stats->value);
+            return CMD_SUCCESS;
+        }
+    }
+
+    // Handle 'timer' sub-command
+    if (argc >= 2 && STREQ("timer", argv[1])) {
         if (argc == 4 && STREQ("cpu", argv[2]) && STREQ("now", argv[3])) {
             uint32_t counts1 = cpu_timer_now();
             uint32_t counts2 = cpu_timer_now();
