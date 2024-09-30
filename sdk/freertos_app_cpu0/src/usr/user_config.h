@@ -42,4 +42,7 @@
 // set to 1 for enabled, 0 for disabled
 #define USER_CONFIG_ENABLE_MOTHERBOARD_AUTO_TX (0)
 
+// Enable AMDS
+#define USER_CONFIG_ENABLE_AMDS_SUPPORT (1)
+
 #endif // USER_CONFIG_H

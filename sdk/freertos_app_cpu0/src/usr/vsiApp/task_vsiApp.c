@@ -10,6 +10,7 @@
 #include "drv/cpu_timer.h"
 #include "drv/pwm.h"
 #include "drv/analog.h"
+#include "drv/amds.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include <math.h>
@@ -74,6 +75,7 @@ void task_vsiApp(void *arg)
 	float voltage_a = 0.0;
 	float voltage_b = 0.0;
 	float voltage_c = 0.0;
+	float amds_current_a = 0.0;
 	for (;;) {
 		vTaskDelay(TASK_VSIAPP_INTERVAL_TICKS);
 		// Update theta
@@ -113,12 +115,29 @@ void task_vsiApp(void *arg)
 		voltage_b = (duty_b - 0.5) * 20;
 		voltage_c = (duty_c - 0.5) * 20;
 
+		const uint8_t amds_port = 2;
+		int32_t out_ch_2;
+
+		// Check validity of latest data for the AMDS plugged into your GPIO port
+		uint8_t valid = amds_check_data_validity(amds_port);
+
+//		if (valid == 0xFF) {
+			// Yay! 0xFF means the bits for all channels are valid!
+			// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
+			int err;
+			err = amds_get_data(amds_port, AMDS_CH_2, &out_ch_2);
+			amds_current_a = out_ch_2;
+			// Now, "out" variables contain the sign-extended 16-bit
+			// sample value for each channel
+//		}
+
 		log_callback(&current_a, LOG_FLOAT, "current_a");
 		log_callback(&current_b, LOG_FLOAT, "current_b");
 		log_callback(&current_c, LOG_FLOAT, "current_c");
 		log_callback(&voltage_a, LOG_FLOAT, "voltage_a");
 		log_callback(&voltage_b, LOG_FLOAT, "voltage_b");
 		log_callback(&voltage_c, LOG_FLOAT, "voltage_c");
+		log_callback(&amds_current_a, LOG_FLOAT, "amds_current_a");
 
 		// delay(50us)
 	//	uint32_t startDelay = cpu_timer_now();
