@@ -51,6 +51,7 @@
 #include "drv/led.h"
 #include "drv/pwm.h"
 #include "drv/uart.h"
+#include "drv/timing_manager.h"
 #include "sys/serial.h"
 #include "sys/commands.h"
 #include "sys/cmd/cmd_counter.h"
@@ -95,14 +96,23 @@ uint8_t ucHeap[configTOTAL_HEAP_SIZE]; // the heap.
 
 int main(void)
 {
-	/* initialise hardware */
+	// Required system initialization
+	init_platform();
+
+	// Disable cache on OCM
+	// S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
+	Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
+
+	// User BSP library initialization
+	bsp_init();
+
+	// Initialize system tasks
 	serial_init();
 	commands_init();
-	bsp_init();
-	init_platform();
-    // Both CPUs: Disable cache on OCM
-    // S=b1 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
-    Xil_SetTlbAttributes(0xFFFF0000, 0x14de2);
+	// icc_tx_init();
+
+	// Initialize timing manager
+	timing_manager_init();
 
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();

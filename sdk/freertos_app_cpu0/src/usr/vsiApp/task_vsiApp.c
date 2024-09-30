@@ -91,9 +91,9 @@ void task_vsiApp(void *arg)
 		pwm_set_duty(2, duty_c); // Set HB3 duty ratio (INV1, PWM5 and PWM6)
 
 		// Update logging variables
-		analog_getf(ANALOG_IN1, &current_a);
-		analog_getf(ANALOG_IN2, &current_b);
-		analog_getf(ANALOG_IN3, &current_c);
+		analog_getf(ANALOG_IN5, &current_a);
+		analog_getf(ANALOG_IN6, &current_b);
+		analog_getf(ANALOG_IN7, &current_c);
 		current_a *= 0.5;
 		current_b *= 0.5;
 		current_c *= 0.5;

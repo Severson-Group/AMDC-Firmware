@@ -61,6 +61,8 @@ int analog_getf(analog_channel_e channel, float *out_value)
     return SUCCESS;
 }
 
+#include <string.h>
+
 int analog_geti(analog_channel_e channel, int16_t *out_value)
 {
     // Make sure channel in valid
@@ -70,6 +72,8 @@ int analog_geti(analog_channel_e channel, int16_t *out_value)
 
     // Read in ADC data register
     uint32_t reg = m_adc[channel];
+    uint32_t local_adc[ANALOG_NUM_CHANNELS];
+    memcpy(local_adc, m_adc, ANALOG_NUM_CHANNELS * sizeof(uint32_t));
 
     *out_value = (int16_t) reg;
 
