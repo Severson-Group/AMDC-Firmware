@@ -121,7 +121,7 @@ void task_vsiApp(void *arg)
 		// Check validity of latest data for the AMDS plugged into your GPIO port
 		uint8_t valid = amds_check_data_validity(amds_port);
 
-//		if (valid == 0xFF) {
+		if (valid == 0xFF) {
 			// Yay! 0xFF means the bits for all channels are valid!
 			// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
 			int err;
@@ -129,7 +129,7 @@ void task_vsiApp(void *arg)
 			amds_current_a = out_ch_2;
 			// Now, "out" variables contain the sign-extended 16-bit
 			// sample value for each channel
-//		}
+		}
 
 		log_callback(&current_a, LOG_FLOAT, "current_a");
 		log_callback(&current_b, LOG_FLOAT, "current_b");
