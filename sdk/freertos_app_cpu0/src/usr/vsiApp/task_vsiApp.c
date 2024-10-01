@@ -139,7 +139,7 @@ void task_vsiApp(void *arg)
 		log_callback(&voltage_c, LOG_FLOAT, "voltage_c");
 		log_callback(&amds_current_a, LOG_FLOAT, "amds_current_a");
 
-		// delay(50us)
+		/* delay(50us) */
 	//	uint32_t startDelay = cpu_timer_now();
 	//	while (cpu_timer_ticks_to_usec(cpu_timer_now() - startDelay) < 860) {
 	//		asm volatile("nop");
