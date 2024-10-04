@@ -116,7 +116,7 @@ void task_vsiApp(void *arg)
 		voltage_c = (duty_c - 0.5) * 20;
 
 		const uint8_t amds_port = 2;
-		int32_t out_ch_2;
+		int32_t out_ch_1;
 
 		// Check validity of latest data for the AMDS plugged into your GPIO port
 		uint8_t valid = amds_check_data_validity(amds_port);
@@ -125,8 +125,8 @@ void task_vsiApp(void *arg)
 			// Yay! 0xFF means the bits for all channels are valid!
 			// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
 			int err;
-			err = amds_get_data(amds_port, AMDS_CH_2, &out_ch_2);
-			amds_current_a = out_ch_2;
+			err = amds_get_data(amds_port, AMDS_CH_1, &out_ch_1);
+			amds_current_a = out_ch_1;
 			// Now, "out" variables contain the sign-extended 16-bit
 			// sample value for each channel
 		}
