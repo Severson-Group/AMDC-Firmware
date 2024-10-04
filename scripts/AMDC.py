@@ -191,7 +191,6 @@ class AMDC:
                 except BlockingIOError:
                     # Could not read enough data
                     pass
-
                 if len(retdata) > 0:
                     # Convert byte array into chars
                     retdata_chars = retdata.decode("utf-8").split('\r\n')

@@ -1,0 +1,869 @@
+#include "usr/user_config.h"
+
+#if USER_CONFIG_ENABLE_LOGGING == 1
+
+/* FreeRTOS includes */
+#include "FreeRTOS.h"
+#include "task.h"
+/* other includes */
+#include "sys/cmd/cmd_log.h"
+#include "sys/commands.h"
+#include "sys/crc32.h"
+#include "sys/debug.h"
+#include "sys/defines.h"
+#include "sys/log.h"
+#include "sys/serial.h"
+#include "sys/util.h"
+#include "ip/socket_manager.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+// Used for debugging the logging system (preloads last slot with known data)
+#define LOG_DEBUG_ENABLE_PRELOAD_SLOT (0)
+
+// This ought to be larger than the `sys/commands.c` max char per argument
+#define LOG_VAR_NAME_MAX_CHARS (40)
+
+typedef struct buffer_entry_t {
+    uint32_t timestamp;
+    uint32_t value;
+} buffer_entry_t;
+
+typedef struct log_var_t {
+    bool is_registered;
+    char name[LOG_VAR_NAME_MAX_CHARS];
+    var_type_e type;
+
+    uint32_t current_tick;
+    uint32_t log_interval_ticks;
+    uint32_t last_logged_tick;
+
+    int num_samples;
+    buffer_entry_t buffer[LOG_SAMPLE_DEPTH_PER_VARIABLE];
+    int buffer_idx;
+
+    // Streaming:
+    bool is_streaming;
+    int socket_id;
+    uint32_t last_streamed_tick;
+} log_var_t;
+
+static log_var_t vars[LOG_MAX_NUM_VARIABLES] = {0};
+
+static bool is_log_running = false;
+
+static uint8_t task_info_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
+static uint8_t task_dbin_exists = 0; // extra data to ensure tasks don't get duplicated or double free'd
+static uint8_t task_dasc_exists = 0;
+
+void log_init(void)
+{
+    // Start with logging disabled
+    log_stop();
+
+    // Register command
+    cmd_log_register();
+
+#if LOG_DEBUG_ENABLE_PRELOAD_SLOT == 1
+    // Initialize one log variable slot (last one) with known information to test dumping
+    log_var_register(LOG_MAX_NUM_VARS - 1, "LOG_testvar", (void *) 0x1, 1000, LOG_INT);
+
+    // Get point to slot
+    log_var_t *v = &vars[LOG_MAX_NUM_VARS - 1];
+
+    v->buffer_idx = 0;
+    v->num_samples = 0;
+
+    // Put fake sample entries into slot buffer
+    for (int i = 0; i < 100; i++) {
+        v->buffer[v->buffer_idx].timestamp = 2000 + i;
+
+        int out = 2000 + i;
+        v->buffer[v->buffer_idx].value = *((uint32_t *) &out);
+
+        v->buffer_idx++;
+        v->num_samples++;
+    }
+#endif // LOG_DEBUG_ENABLE_PRELOAD_SLOT
+}
+
+static void _do_log_to_buffer(uint32_t index, void *addr)
+{
+    if (!is_log_running) {
+        return;
+    }
+
+	log_var_t *v = &vars[index];
+
+	if (!v->is_registered) {
+		// Variable not active for logging, so skip
+		return;
+	}
+
+	v->current_tick++;
+	uint32_t tick_since_last_run = v->current_tick - v->last_logged_tick;
+
+	if (tick_since_last_run >= v->log_interval_ticks) {
+		// Time to log this variable!
+		v->last_logged_tick = v->current_tick;
+
+		v->buffer[v->buffer_idx].timestamp = v->current_tick * 100;
+
+		if (v->type == LOG_INT) {
+			v->buffer[v->buffer_idx].value = *((uint32_t *) addr);
+		} else if (v->type == LOG_FLOAT) {
+			float *f = (float *) &(v->buffer[v->buffer_idx].value);
+			*f = *((float *) addr);
+		} else if (v->type == LOG_DOUBLE) {
+			float *f = (float *) &(v->buffer[v->buffer_idx].value);
+			double value = *((double *) addr);
+			*f = (float) value;
+		}
+
+		v->buffer_idx++;
+		if (v->buffer_idx >= LOG_SAMPLE_DEPTH_PER_VARIABLE) {
+			v->buffer_idx = 0;
+		}
+
+		if (v->num_samples < LOG_SAMPLE_DEPTH_PER_VARIABLE) {
+			v->num_samples++;
+		}
+    }
+}
+
+extern socket_t socket_list[MAX_NUM_SOCKETS];
+
+static void _do_log_to_stream(uint32_t index, void *addr)
+{
+	log_var_t *v = &vars[index];
+
+	if (!v->is_registered) {
+		// Variable not active for logging, so skip
+		return;
+	}
+
+	if (!v->is_streaming) {
+		// Variable not streaming
+		return;
+	}
+
+	v->current_tick++;
+	uint32_t tick_since_last_streamed = v->current_tick - v->last_streamed_tick;
+
+	if (tick_since_last_streamed >= v->log_interval_ticks) {
+		// Time to stream this variable!
+		v->last_streamed_tick = v->current_tick;
+
+		// Build object to stream out
+		uint32_t stream_obj_ts = v->current_tick * 100;
+		uint32_t stream_obj_data = 0;
+
+		if (v->type == LOG_INT) {
+			stream_obj_data = *((uint32_t *) addr);
+		} else if (v->type == LOG_FLOAT) {
+			float *f = (float *) &(stream_obj_data);
+			*f = *((float *) addr);
+		} else if (v->type == LOG_DOUBLE) {
+			float *f = (float *) &(stream_obj_data);
+			double value = *((double *) addr);
+			*f = (float) value;
+		}
+
+		// Pass through socket
+		static const int packet_len = 20;
+		uint8_t bytes_to_send[20] = {0};
+
+		uint32_t *ptr_header = (uint32_t *) &bytes_to_send[0];
+		uint32_t *ptr_var_slot = (uint32_t *) &bytes_to_send[4];
+		uint32_t *ptr_ts = (uint32_t *) &bytes_to_send[8];
+		uint32_t *ptr_data = (uint32_t *) &bytes_to_send[12];
+		uint32_t *ptr_footer = (uint32_t *) &bytes_to_send[16];
+
+		*ptr_header = 0x11111111;
+		*ptr_var_slot = index;
+		*ptr_ts = stream_obj_ts;
+		*ptr_data = stream_obj_data;
+		*ptr_footer = 0x22222222;
+		FreeRTOS_send(socket_list[v->socket_id].raw_socket, bytes_to_send, packet_len, 0);
+		socket_manager_set_time(v->socket_id, 1000);
+    }
+}
+
+void log_callback(void *addr, var_type_e type, char *name)
+{
+	/* this is slowwwww */
+	uint32_t index = 0;
+	for (; index < LOG_MAX_NUM_VARIABLES; index++) {
+		if (STREQ(vars[index].name, name)) {
+			break;
+		}
+	}
+	if (index != LOG_MAX_NUM_VARIABLES) {
+		_do_log_to_buffer(index, addr);
+		_do_log_to_stream(index, addr);
+	}
+}
+
+void log_start(void)
+{
+    is_log_running = true;
+}
+
+void log_stop(void)
+{
+    is_log_running = false;
+}
+
+bool log_is_logging(void)
+{
+    return is_log_running;
+}
+
+int log_var_register(int idx, char *name, uint32_t interval_ticks, var_type_e type)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    // Populate variable entry...
+    strncpy(vars[idx].name, name, LOG_VAR_NAME_MAX_CHARS);
+    vars[idx].type = type;
+
+    // interval_ticks is how many ticks between logging
+    vars[idx].log_interval_ticks = interval_ticks;
+    vars[idx].last_logged_tick = 0;
+
+    // Mark as registered
+    vars[idx].is_registered = true;
+
+    return SUCCESS;
+}
+
+int log_var_unregister(int idx)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    // Mark as unregistered, this allows slot to be reused
+    vars[idx].is_registered = false;
+
+    // Also, empty slot so when variable is rereg the next time,
+    // previous samples aren't still stored.
+    log_var_empty(idx);
+
+    return SUCCESS;
+}
+
+int log_var_is_registered(int idx, bool *is_registered)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    // Set output variable
+    *is_registered = vars[idx].is_registered;
+
+    return SUCCESS;
+}
+
+int log_var_empty(int idx)
+{
+    // Sanity check variable idx
+    if (idx < 0 || idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    // Result metadata
+    vars[idx].buffer_idx = 0;
+    vars[idx].last_logged_tick = 0;
+    vars[idx].num_samples = 0;
+
+    // Note: we don't have to actually clear the memory buffer since we only dump
+    // the number of samples we recorded! So the old data can live in memory
+    // and not be an issue.
+
+    return SUCCESS;
+}
+
+int log_var_empty_all(void)
+{
+    for (int idx = 0; idx < LOG_MAX_NUM_VARIABLES; idx++) {
+        vars[idx].buffer_idx = 0;
+        vars[idx].last_logged_tick = 0;
+        vars[idx].num_samples = 0;
+    }
+
+    return SUCCESS;
+}
+
+// ***************************
+// Code for running the state machine to
+// dump the log buffers to the UART
+// using ASCII characters (human readable)
+// ***************************
+
+typedef enum sm_states_dump_ascii_e {
+    DUMP_ASCII_TITLE = 1,
+    DUMP_ASCII_NUM_SAMPLES,
+    DUMP_ASCII_HEADER,
+    DUMP_ASCII_VARIABLES_TS,
+    DUMP_ASCII_VARIABLES_VALUE,
+    DUMP_ASCII_FOOTER,
+    DUMP_ASCII_REMOVE_TASK
+} sm_states_dump_ascii_e;
+
+typedef struct sm_ctx_dump_ascii_t {
+    sm_states_dump_ascii_e state;
+    int var_idx;
+    int sample_idx;
+    TaskHandle_t tcb;
+} sm_ctx_dump_ascii_t;
+
+#define TASK_SM_DUMP_ASCII_UPDATES_PER_SEC (200)
+#define TASK_SM_DUMP_ASCII_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_SM_DUMP_ASCII_UPDATES_PER_SEC))
+
+void state_machine_dump_ascii_callback(void *arg)
+{
+    sm_ctx_dump_ascii_t *ctx = (sm_ctx_dump_ascii_t *) arg;
+
+    for (;;) {
+    	vTaskDelay(TASK_SM_DUMP_ASCII_INTERVAL_TICKS);
+    	log_var_t *v = &vars[ctx->var_idx];
+		buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+		switch (ctx->state) {
+		case DUMP_ASCII_TITLE:
+			cmd_resp_printf("LOG OF VARIABLE: '%s'\r\n", v->name);
+			ctx->state = DUMP_ASCII_NUM_SAMPLES;
+			break;
+
+		case DUMP_ASCII_NUM_SAMPLES:
+			cmd_resp_printf("NUM SAMPLES: %d\r\n", v->num_samples);
+			ctx->state = DUMP_ASCII_HEADER;
+			break;
+
+		case DUMP_ASCII_HEADER:
+			cmd_resp_printf("-------START-------\r\n");
+
+			if (v->num_samples == 0) {
+				// Nothing to dump!
+				ctx->state = DUMP_ASCII_FOOTER;
+			} else {
+				ctx->state = DUMP_ASCII_VARIABLES_TS;
+			}
+			break;
+
+		case DUMP_ASCII_VARIABLES_TS:
+			// Print just the timestamp
+			cmd_resp_printf("> %ld\t\t", e->timestamp);
+
+			ctx->state = DUMP_ASCII_VARIABLES_VALUE;
+			break;
+
+		case DUMP_ASCII_VARIABLES_VALUE:
+			// Print just the value
+			if (v->type == LOG_INT) {
+				cmd_resp_printf("%ld\r\n", e->value);
+			} else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+				float *f = (float *) &(e->value);
+				cmd_resp_printf("%f\r\n", *f);
+			}
+
+			ctx->sample_idx++;
+
+			if (ctx->sample_idx >= v->num_samples) {
+				ctx->state = DUMP_ASCII_FOOTER;
+			} else {
+				ctx->state = DUMP_ASCII_VARIABLES_TS;
+			}
+			break;
+
+		case DUMP_ASCII_FOOTER:
+			cmd_resp_printf("-------END-------\r\n\r\n");
+
+			ctx->state = DUMP_ASCII_REMOVE_TASK;
+			break;
+
+		default:
+		case DUMP_ASCII_REMOVE_TASK:
+			task_dasc_exists = 0;
+			vTaskDelete(NULL);
+			break;
+		}
+    }
+}
+
+static sm_ctx_dump_ascii_t ctx_dump_ascii;
+
+int log_var_dump_ascii(int log_var_idx, int dump_method)
+{
+	if (task_dasc_exists) {
+		return FAILURE;
+	}
+    // Sanity check variable idx
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    if (!vars[log_var_idx].is_registered) {
+        return FAILURE;
+    }
+
+    // Initialize the state machine context
+    ctx_dump_ascii.state = DUMP_ASCII_TITLE;
+    ctx_dump_ascii.var_idx = log_var_idx;
+    ctx_dump_ascii.sample_idx = 0;
+
+    // Initialize the state machine callback tcb
+    task_dasc_exists = 1;
+    xTaskCreate(state_machine_dump_ascii_callback, (const char *) "logdascii", 1024,
+    				&ctx_dump_ascii, tskIDLE_PRIORITY, &ctx_dump_ascii.tcb);
+    return SUCCESS;
+}
+
+// ***************************
+// Code for running the state machine to
+// dump the log buffers to the UART using binary
+// ***************************
+
+typedef enum sm_states_dump_binary_e {
+    DUMP_BINARY_MAGIC_HEADER = 1,
+    DUMP_BINARY_NUM_SAMPLES,
+    DUMP_BINARY_SAMPLE_INTERVAL_USEC,
+    DUMP_BINARY_DATA_TYPE,
+    DUMP_BINARY_SAMPLE_VALUE,
+    DUMP_BINARY_MAGIC_FOOTER,
+    DUMP_BINARY_PRINT_FOOTER_SPACE,
+    DUMP_BINARY_REMOVE_TASK
+} sm_states_dump_binary_e;
+
+typedef struct sm_ctx_dump_binary_t {
+    sm_states_dump_binary_e state;
+    int var_idx;
+    int sample_idx;
+    int dump_method;
+    uint32_t crc;
+    TaskHandle_t tcb;
+} sm_ctx_dump_binary_t;
+
+// State machine at 2kHz results in 2kSPS dumping,
+// which is nearly full UART bandwidth at 112500 baud
+//
+// NOTE: the state machine runs at full 10kHz when
+// dumping over Ethernet and binary format!
+//
+#define TASK_SM_DUMP_BIANRY_UPDATES_PER_SEC (2000)
+#define TASK_SM_DUMP_BINARY_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_SM_DUMP_BIANRY_UPDATES_PER_SEC))
+
+static const uint32_t MAGIC_HEADER = 0x12345678;
+static const uint32_t MAGIC_FOOTER = 0x11223344;
+
+void state_machine_dump_binary_callback(void *arg)
+{
+    sm_ctx_dump_binary_t *ctx = (sm_ctx_dump_binary_t *) arg;
+
+    for (;;) {
+    	if (ctx -> dump_method == 2) {
+    		// Means Ethernet ==> run state machine at 10 kHz
+    		vTaskDelay(pdMS_TO_TICKS(0.1));
+    	} else {
+    		vTaskDelay(TASK_SM_DUMP_BINARY_INTERVAL_TICKS);
+    	}
+    	log_var_t *v = &vars[ctx->var_idx];
+		switch (ctx->state) {
+		case DUMP_BINARY_MAGIC_HEADER:
+		{
+			// Write to data stream output (UART)
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+			cmd_resp_write((char *) &MAGIC_HEADER, 4);
+
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_HEADER, 4, ctx->crc);
+
+			ctx->state = DUMP_BINARY_NUM_SAMPLES;
+			break;
+		}
+
+		case DUMP_BINARY_NUM_SAMPLES:
+		{
+			uint32_t out = (uint32_t) v->num_samples;
+
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &out, 4);
+
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+
+			ctx->state = DUMP_BINARY_SAMPLE_INTERVAL_USEC;
+			break;
+		}
+
+		case DUMP_BINARY_SAMPLE_INTERVAL_USEC:
+		{
+			uint32_t interval_usec = (uint32_t) v->log_interval_ticks;
+
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &interval_usec, 4);
+
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &interval_usec, 4, ctx->crc);
+
+			ctx->state = DUMP_BINARY_DATA_TYPE;
+			break;
+		}
+
+		case DUMP_BINARY_DATA_TYPE:
+		{
+			uint32_t var_type = (uint32_t) v->type;
+
+			// Write to output data stream (UART)
+			cmd_resp_write((char *) &var_type, 4);
+
+			// Run data through CRC
+			ctx->crc = crc32_calc_part((uint8_t *) &var_type, 4, ctx->crc);
+
+			if (v->num_samples == 0) {
+				// Nothing to dump!
+				ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+			} else {
+				ctx->state = DUMP_BINARY_SAMPLE_VALUE;
+			}
+			break;
+		}
+
+		case DUMP_BINARY_SAMPLE_VALUE:
+		{
+			int max_num_samples = 1;
+			if (ctx->dump_method == 2) {
+				// Means Ethernet
+				max_num_samples = 20;
+
+				// To compute network load:
+				// Mbps = (max_num_samples*4*8*10e3) / (1024*1024)
+				//
+				// 20 ==> 6.1 Mbps
+				//
+				// This is the upper limit; might stop early
+				// due to buffer getting full!
+			}
+
+			for (int i = 0; i < max_num_samples; i++) {
+				buffer_entry_t *e = &v->buffer[ctx->sample_idx];
+
+				// Dump the sampled value
+				if (v->type == LOG_INT) {
+					int32_t out = (int32_t) e->value;
+					cmd_resp_write((char *) &out, 4);
+					ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+				} else if (v->type == LOG_FLOAT || v->type == LOG_DOUBLE) {
+					// During the sampling, the distinction between float and double variable types
+					// was accounted for. The data is stored in the log array in the float format.
+					float out = *((float *) &(e->value));
+					cmd_resp_write((char *) &out, 4);
+					ctx->crc = crc32_calc_part((uint8_t *) &out, 4, ctx->crc);
+				}
+
+				ctx->sample_idx++;
+
+				// Stay in the current state until we have dumped enough samples
+				if (ctx->sample_idx >= v->num_samples) {
+					ctx->state = DUMP_BINARY_MAGIC_FOOTER;
+
+					// Break out of this local for loop
+					break;
+				}
+			}
+
+			break;
+		}
+
+		case DUMP_BINARY_MAGIC_FOOTER:
+		{
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+			cmd_resp_write((char *) &MAGIC_FOOTER, 4);
+
+			// Calculate CRC across footer bytes
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+			ctx->crc = crc32_calc_part((uint8_t *) &MAGIC_FOOTER, 4, ctx->crc);
+
+			// After we are done calculating the CRC, we must
+			// invert it to match the Python implementation.
+			ctx->crc = ~(ctx->crc);
+
+			// The CRC includes the footer, so the client must
+			// read an extra 4 bytes (the CRC bytes!)
+			cmd_resp_write((char *) &(ctx->crc), 4);
+
+			ctx->state = DUMP_BINARY_PRINT_FOOTER_SPACE;
+			break;
+		}
+
+		case DUMP_BINARY_PRINT_FOOTER_SPACE:
+		{
+			cmd_resp_print("\r\n\r\n");
+			ctx->state = DUMP_BINARY_REMOVE_TASK;
+			break;
+		}
+
+		case DUMP_BINARY_REMOVE_TASK:
+		default:
+		{
+			task_dbin_exists = 0;
+			vTaskDelete(NULL);
+			break;
+		}
+		}
+    }
+}
+
+static sm_ctx_dump_binary_t ctx_dump_binary;
+
+int log_var_dump_binary(int log_var_idx, int dump_method)
+{
+	if (task_dbin_exists) {
+		return FAILURE;
+	}
+    // Sanity check variable idx
+    if (log_var_idx < 0 || log_var_idx >= LOG_MAX_NUM_VARIABLES) {
+        return FAILURE;
+    }
+
+    if (!vars[log_var_idx].is_registered) {
+        return FAILURE;
+    }
+
+    // Initialize the state machine context
+    ctx_dump_binary.state = DUMP_BINARY_MAGIC_HEADER;
+    ctx_dump_binary.var_idx = log_var_idx;
+    ctx_dump_binary.sample_idx = 0;
+    ctx_dump_binary.dump_method = dump_method;
+
+    // CRC-32 must be seeded as follows:
+    ctx_dump_binary.crc = CRC32_DEFAULT_INIT;
+
+    // Initialize the state machine callback tcb
+    task_dbin_exists = 1;
+    xTaskCreate(state_machine_dump_binary_callback, (const char *) "logdbin", 1024,
+        				&ctx_dump_binary, 1, &ctx_dump_binary.tcb);
+    return SUCCESS;
+}
+
+// ***************************
+// Code for printing log info
+// ***************************
+
+typedef enum sm_states_info_e {
+    INFO_HEAD = 1,
+    INFO_MAX_SLOTS,
+    INFO_MAX_DEPTH,
+    INFO_MAX_SAMPLE_RATE,
+
+    INFO_VAR_TITLE,
+    INFO_VAR_DATA1,
+    INFO_VAR_DATA2,
+    INFO_VAR_DATA3,
+    INFO_VAR_DATA4,
+    INFO_VAR_DATA5,
+
+    INFO_NEXT_VAR,
+
+    INFO_REMOVE_TASK
+} sm_states_info_e;
+
+typedef struct sm_ctx_info_t {
+    sm_states_info_e state;
+    TaskHandle_t tcb;
+
+    int var_idx;
+} sm_ctx_info_t;
+
+#define TASK_SM_INFO_UPDATES_PER_SEC    configTICK_RATE_HZ
+#define TASK_SM_INFO_INTERVAL_TICKS     (pdMS_TO_TICKS(1000.0 / TASK_SM_INFO_UPDATES_PER_SEC))
+
+void state_machine_info_callback(void *arg)
+{
+    sm_ctx_info_t *ctx = (sm_ctx_info_t *) arg;
+    for (;;) {
+    	vTaskDelay(TASK_SM_INFO_INTERVAL_TICKS);
+    	log_var_t *v = &vars[ctx->var_idx];
+    	switch (ctx->state) {
+		case INFO_HEAD:
+		{
+			cmd_resp_printf("Log Info\r\n");
+			cmd_resp_printf("--------\r\n");
+			ctx->state = INFO_MAX_SLOTS;
+			break;
+		}
+
+		case INFO_MAX_SLOTS:
+		{
+			cmd_resp_printf("Max slots: %d\r\n", LOG_MAX_NUM_VARIABLES);
+			ctx->state = INFO_MAX_DEPTH;
+			break;
+		}
+
+		case INFO_MAX_DEPTH:
+		{
+			cmd_resp_printf("Max sample depth: %d\r\n", LOG_SAMPLE_DEPTH_PER_VARIABLE);
+			ctx->state = INFO_MAX_SAMPLE_RATE;
+			break;
+		}
+
+		case INFO_MAX_SAMPLE_RATE:
+		{
+			cmd_resp_printf("Max sample rate: %d Hz\r\n", TASK_LOG_UPDATES_PER_SEC);
+			cmd_resp_printf("--------\r\n");
+			ctx->state = INFO_VAR_TITLE;
+			break;
+		}
+
+		case INFO_VAR_TITLE:
+		{
+			if (v->is_registered) {
+				cmd_resp_printf("Slot %d:\r\n", ctx->var_idx);
+				ctx->state = INFO_VAR_DATA1;
+			} else {
+				cmd_resp_printf("Slot %d: unused\r\n", ctx->var_idx);
+				ctx->state = INFO_NEXT_VAR;
+			}
+			break;
+		}
+
+		case INFO_VAR_DATA1:
+		{
+			cmd_resp_printf("  Name: %s\r\n", v->name);
+			ctx->state = INFO_VAR_DATA2;
+			break;
+		}
+
+		case INFO_VAR_DATA2:
+		{
+			if (v->type == LOG_INT) {
+				cmd_resp_printf("  Type: int\r\n");
+			} else if (v->type == LOG_FLOAT) {
+				cmd_resp_printf("  Type: float\r\n");
+			} else {
+				cmd_resp_printf("  Type: double\r\n");
+			}
+			ctx->state = INFO_VAR_DATA3;
+			break;
+		}
+
+		case INFO_VAR_DATA3:
+		{
+//			cmd_resp_printf("  Memory address: 0x%X\r\n", v->addr);
+			ctx->state = INFO_VAR_DATA4;
+			break;
+		}
+
+		case INFO_VAR_DATA4:
+		{
+			cmd_resp_printf("  Sampling interval (usec): %d\r\n", v->log_interval_ticks);
+			ctx->state = INFO_VAR_DATA5;
+			break;
+		}
+
+		case INFO_VAR_DATA5:
+		{
+			cmd_resp_printf("  Num samples: %d\r\n", v->num_samples);
+			ctx->state = INFO_NEXT_VAR;
+			break;
+		}
+
+		case INFO_NEXT_VAR:
+		{
+			ctx->var_idx++;
+			if (ctx->var_idx >= LOG_MAX_NUM_VARIABLES) {
+				cmd_resp_printf("\r\n");
+				ctx->state = INFO_REMOVE_TASK;
+			} else {
+				ctx->state = INFO_VAR_TITLE;
+			}
+			break;
+		}
+
+		case INFO_REMOVE_TASK:
+		default:
+			cmd_resp_printf("SUCCESS\r\n\n");
+			task_info_exists = 0;
+			vTaskDelete(NULL);
+			break;
+		}
+    }
+}
+
+static sm_ctx_info_t ctx_info;
+
+int log_print_info(void)
+{
+    if (task_info_exists) {
+        // Already in process of printing something!!
+        return FAILURE;
+    }
+
+    // Initialize the state machine context
+    ctx_info.state = INFO_HEAD;
+    ctx_info.var_idx = 0;
+
+    // Initialize the state machine callback tcb
+    task_info_exists = 1;
+    xTaskCreate(state_machine_info_callback, (const char *) "loginfo", configMINIMAL_STACK_SIZE,
+    				&ctx_info, tskIDLE_PRIORITY, &ctx_info.tcb);
+    return SUCCESS;
+}
+
+int log_stream(bool enable, int idx, int socket_id)
+{
+    bool is_registered = false;
+    if (log_var_is_registered(idx, &is_registered) != SUCCESS) {
+        return FAILURE;
+    }
+
+    if (!is_registered) {
+        return FAILURE;
+    }
+
+    if ((enable && vars[idx].is_streaming) || (!enable && !vars[idx].is_streaming)) {
+        return FAILURE;
+    }
+
+    vars[idx].is_streaming = enable;
+    vars[idx].last_streamed_tick = 0;
+    vars[idx].socket_id = socket_id;
+
+    return SUCCESS;
+}
+
+void log_stream_synctime(void)
+{
+    for (uint8_t i = 0; i < LOG_MAX_NUM_VARIABLES; i++) {
+        log_var_t *v = &vars[i];
+
+        if (!v->is_registered) {
+            // Variable not active for logging, so skip
+            continue;
+        }
+
+        if (!v->is_streaming) {
+            // Variable not streaming
+            continue;
+        }
+
+        v->last_streamed_tick = 0;
+    }
+}
+
+#endif // USER_CONFIG_ENABLE_LOGGING

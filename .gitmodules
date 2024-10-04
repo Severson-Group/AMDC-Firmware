@@ -1,0 +1,9 @@
+# Tags (such as V10.6.2) are not allowed in .gitmodules, only commit hashes
+
+[submodule "sdk/FreeRTOS-Kernel"]
+	path = sdk/FreeRTOS-Kernel
+	url = git@github.com:FreeRTOS/FreeRTOS-Kernel.git
+	branch = 18ed888
+[submodule "sdk/FreeRTOS-Plus-TCP"]
+	path = sdk/FreeRTOS-Plus-TCP
+	url = https://github.com/FreeRTOS/FreeRTOS-Plus-TCP.git
