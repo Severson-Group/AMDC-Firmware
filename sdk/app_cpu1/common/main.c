@@ -76,6 +76,9 @@ int main()
     // Initialize timing manager
     timing_manager_init();
 
+    // test - enable ADC on timing manager
+    timing_manager_enable_sensor(ADC);
+
 #if USER_CONFIG_ENABLE_LOGGING == 1
     log_init();
 #endif

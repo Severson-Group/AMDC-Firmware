@@ -23,4 +23,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>common</name>
+			<type>2</type>
+			<location>C:/Users/srich008/Information/gitMistakes/1.3/sdk/app_cpu1/common</location>
+		</link>
+	</linkedResources>
 </projectDescription>
