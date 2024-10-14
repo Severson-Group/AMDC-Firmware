@@ -106,8 +106,8 @@ void task_vsiApp_callback(void *arg)
 	if (RMS_driven) {
 		double currentRMS = calculateRMS();
 		Do += (RMS_target - currentRMS) * SQRT2 * Ts;
-		if (Do > 0.5) {
-			Do = 0.5;
+		if (Do > 1.0) {
+			Do = 1.0;
 		}
 		if (Do < 0) {
 			Do = 0;
