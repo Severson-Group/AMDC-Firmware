@@ -12,6 +12,7 @@ int task_vsiApp_deinit(void);
 void task_vsiApp_callback(void *arg);
 
 int task_vsiApp_amplitude(double amplitude);
+double task_vsiApp_get_amplitude();
 int task_vsiApp_frequency(double frequency);
 int task_vsiApp_RMS(double RMS);
 int task_vsiApp_RMS_enable();

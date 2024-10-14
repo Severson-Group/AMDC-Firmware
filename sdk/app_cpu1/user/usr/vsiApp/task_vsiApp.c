@@ -3,6 +3,7 @@
 
 #include "usr/vsiApp/task_vsiApp.h"
 #include "drv/led.h"
+#include "sys/commands.h"
 #include "drv/timing_manager.h"
 #include "sys/scheduler.h"
 #include "drv/cpu_timer.h"
@@ -35,6 +36,10 @@ float LOG_current_c = 0.0;
 float LOG_voltage_a = 0.0;
 float LOG_voltage_b = 0.0;
 float LOG_voltage_c = 0.0;
+
+#define CIRCULAR_BUFFER_LENGTH 1000
+float circularBuffer[CIRCULAR_BUFFER_LENGTH];
+uint32_t circularBufferIndex = 0;
 
 
 int task_vsiApp_init(void)
@@ -89,18 +94,34 @@ void task_vsiApp_callback(void *arg)
 	LOG_voltage_b = (duty_b - 0.5) * 20;
 	LOG_voltage_c = (duty_c - 0.5) * 20;
 
+	circularBuffer[circularBufferIndex] = LOG_current_a;
+	circularBufferIndex++;
+	if (circularBufferIndex >= CIRCULAR_BUFFER_LENGTH) {
+		circularBufferIndex = 0;
+	}
 	pwm_get_switching_freq() / timing_manager_get_ratio(); // number of samples per second
 	omega / (2.0 * M_PI); // number of periods per second
 	(pwm_get_switching_freq() / timing_manager_get_ratio()) * (2.0 * M_PI) / omega; // number of samples per period
+
 	if (RMS_driven) {
 		double currentRMS = calculateRMS();
-		Do += (RMS_target - currentRMS) * SQRT2;
+		Do += (RMS_target - currentRMS) * SQRT2 * Ts;
+		if (Do > 0.5) {
+			Do = 0.5;
+		}
+		if (Do < 0) {
+			Do = 0;
+		}
 	}
-
 }
 
 double calculateRMS() {
-	return RMS_target;
+	float average = 0.0;
+	for (int i = 0; i < CIRCULAR_BUFFER_LENGTH; i++) {
+		average += circularBuffer[i] * circularBuffer[i];
+	}
+	average /= CIRCULAR_BUFFER_LENGTH;
+	return sqrt(average);
 }
 
 int task_vsiApp_amplitude(double amplitude) {
@@ -113,13 +134,27 @@ int task_vsiApp_frequency(double frequency) {
 	return SUCCESS;
 }
 
+double task_vsiApp_get_amplitude() {
+	cmd_resp_printf("RMS_target: %lf\n", RMS_target);
+	cmd_resp_printf("RMS_driven: %d\n", RMS_driven);
+	cmd_resp_printf("currentRMS: %lf\n", calculateRMS());
+	return Do;
+}
+
 int task_vsiApp_RMS(double RMS) {
 	RMS_target = RMS;
+	cmd_resp_printf("RMS_target: %lf\n", RMS_target);
+	for (int i = 0; i < CIRCULAR_BUFFER_LENGTH; i++) {
+		circularBuffer[i] = RMS_target;
+	}
 	return SUCCESS;
 }
 
 int task_vsiApp_RMS_enable() {
 	if (RMS_driven == 0) {
+		for (int i = 0; i < CIRCULAR_BUFFER_LENGTH; i++) {
+			circularBuffer[i] = RMS_target;
+		}
 		RMS_driven = 1;
 		return SUCCESS;
 	}

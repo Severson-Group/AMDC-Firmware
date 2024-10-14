@@ -38,6 +38,10 @@ void cmd_vsiApp_register(void)
 
 int cmd_vsiApp(int argc, char **argv)
 {
+	if (argc == 3 && strcmp("get", argv[1]) == 0 && strcmp("amplitude", argv[2]) == 0) {
+		cmd_resp_printf("amplitude: %lf\n", task_vsiApp_get_amplitude());
+		return CMD_SUCCESS_QUIET;
+	}
     if (argc == 3 && strcmp("amplitude", argv[1]) == 0) {
     	double argDoub;
     	sscanf(argv[2], "%lf", &argDoub);
@@ -59,7 +63,8 @@ int cmd_vsiApp(int argc, char **argv)
     if (strcmp("RMS", argv[1]) == 0) {
     	if (argc == 4 && strcmp("set", argv[2]) == 0) {
 			double argDoub;
-			sscanf(argv[2], "%lf", &argDoub);
+			sscanf(argv[3], "%lf", &argDoub);
+			cmd_resp_printf("RMS: %lf\n", argDoub);
 			if (task_vsiApp_RMS(argDoub) != SUCCESS) {
 				return CMD_FAILURE;
 			}
@@ -72,7 +77,7 @@ int cmd_vsiApp(int argc, char **argv)
 			return CMD_SUCCESS;
     	}
     	if (argc == 3 && strcmp("disable", argv[2]) == 0) {
-			if (task_vsiApp_RMS_enable() != SUCCESS) {
+			if (task_vsiApp_RMS_disable() != SUCCESS) {
 				return CMD_FAILURE;
 			}
 			return CMD_SUCCESS;

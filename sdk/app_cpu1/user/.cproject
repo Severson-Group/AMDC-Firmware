@@ -28,7 +28,7 @@
 								<inputType id="xilinx.gnu.assembler.input.631082709" superClass="xilinx.gnu.assembler.input"/>
 							</tool>
 							<tool id="xilinx.gnu.armv7.c.toolchain.compiler.debug.172815694" name="ARM v7 gcc compiler" superClass="xilinx.gnu.armv7.c.toolchain.compiler.debug">
-								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.1946302083" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.1946302083" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
 								<option id="xilinx.gnu.compiler.option.debugging.level.1813210300" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="xilinx.gnu.compiler.inferred.swplatform.includes.1012021837" name="Software Platform Include Path" superClass="xilinx.gnu.compiler.inferred.swplatform.includes" valueType="includePath">
 									<listOptionValue builtIn="false" value="C:/Users/srich008/Information/gitMistakes/1.3/sdk/amdc_bsp_cpu1/ps7_cortexa9_1/include"/>
@@ -143,7 +143,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/app_cpu1/usr}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/app_cpu1/common}&quot;"/>
 								</option>
-								<option id="xilinx.gnu.compiler.symbols.defined.268355552" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
+								<option id="xilinx.gnu.compiler.symbols.defined.268355552" name="Defined symbols (-D)" superClass="xilinx.gnu.compiler.symbols.defined" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="APP_VSI"/>
 								</option>
 								<inputType id="xilinx.gnu.armv7.c.compiler.input.845775338" name="C source files" superClass="xilinx.gnu.armv7.c.compiler.input"/>
