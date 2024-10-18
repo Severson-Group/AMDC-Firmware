@@ -94,7 +94,7 @@ void task_vsiApp_callback(void *arg)
 	LOG_voltage_b = (duty_b - 0.5) * 20;
 	LOG_voltage_c = (duty_c - 0.5) * 20;
 
-	circularBuffer[circularBufferIndex] = LOG_current_a;
+	circularBuffer[circularBufferIndex] = LOG_current_b;
 	circularBufferIndex++;
 	if (circularBufferIndex >= CIRCULAR_BUFFER_LENGTH) {
 		circularBufferIndex = 0;
@@ -121,7 +121,7 @@ double calculateRMS() {
 		average += circularBuffer[i] * circularBuffer[i];
 	}
 	average /= CIRCULAR_BUFFER_LENGTH;
-	return sqrt(average);
+	return sqrt(average) * 2;
 }
 
 int task_vsiApp_amplitude(double amplitude) {

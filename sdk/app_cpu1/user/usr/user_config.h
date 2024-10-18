@@ -47,7 +47,7 @@
 
 // Enable support for AMDS (Advanced Motor Drive Sensing) platform
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_AMDS_SUPPORT (0)
+#define USER_CONFIG_ENABLE_AMDS_SUPPORT (1)
 
 // Scheduler Interval Tolerance Override
 // as of AMDC Firmware v1.3, all timing variables for tasks (runtime, loop time, etc)
