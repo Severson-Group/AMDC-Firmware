@@ -139,14 +139,14 @@ void commands_init(void)
     printf("CMD:\tInitializing command tasks...\n");
     // Command parse & exec task (UART)
     if (uartTaskExists == 0) {
-        xTaskCreate(commands_uart, (const char *) "command_uart", 1024,
+        xTaskCreate(commands_uart, (const char *) "command_uart", 2048,
 				    NULL, tskIDLE_PRIORITY, &tcb_uart);
         uartTaskExists = 1;
 	}
 
     // Command parse task (ETH)
     if (ethTaskExists == 0) {
-        xTaskCreate(commands_eth, (const char *) "command_eth", 1024,
+        xTaskCreate(commands_eth, (const char *) "command_eth", 2048,
                     NULL, tskIDLE_PRIORITY, &tcb_eth);
         ethTaskExists = 1;
     }

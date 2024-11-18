@@ -233,6 +233,10 @@ void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer, StackT
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
 
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char * pcTaskName) {
+	xil_printf("STACK OVERRFLOW ON TASK %s\n", pcTaskName);
+}
+
 /*******************************************************************************/
 /*              S E T U P   I N T E R R U P T   S Y S T E M                    */
 /*******************************************************************************/

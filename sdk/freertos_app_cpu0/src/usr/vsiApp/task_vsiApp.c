@@ -126,7 +126,7 @@ void task_vsiApp(void *arg)
 			// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
 			int err;
 			err = amds_get_data(amds_port, AMDS_CH_1, &out_ch_1);
-			amds_current_a = out_ch_1;
+			amds_current_a = 0.00125 * out_ch_1;
 			// Now, "out" variables contain the sign-extended 16-bit
 			// sample value for each channel
 		}
