@@ -13,6 +13,8 @@
 #include "drv/amds.h"
 #include "sys/defines.h"
 #include "sys/log.h"
+#include "sys/injection.h"
+#include "sys/util.h"
 #include <math.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -21,27 +23,34 @@
 static TaskHandle_t tcb;
 static uint8_t taskExists = 0; // extra data to ensure tasks don't get duplicated or double free'd
 
-
 static double Ts = 1.0 / 10000.0;          // [sec]
 static double theta = 0.0;                 // [rad]
 static double omega = 10.0 * 2 * PI;       // [rad/s]
 static double Do = 0.3;                    // [--]
 
-/* trying this out */
-#include "xil_io.h"
-#define PWM_MUX_ADDR_LOGGING (0x43C40000)
+/* injection */
+static inj_ctx_t inj_ctx_ctrl[3] = {0};
 
 int task_vsiApp_init(void)
 {
 	if (taskExists) {
 		return FAILURE;
 	}
-
+	/* PWM */
     if (pwm_enable_hw(true) != SUCCESS) {
     	return FAILURE;
     }
     if (pwm_enable() != SUCCESS) {
 		return FAILURE;
+	}
+    /* Initialize signal injection points */
+	injection_ctx_init(&inj_ctx_ctrl[0], "amp*");
+	injection_ctx_init(&inj_ctx_ctrl[1], "theta*");
+	injection_ctx_init(&inj_ctx_ctrl[2], "omega_m*");
+
+	/* Register all signal injection points */
+	for (int i = 0; i < ARRAY_SIZE(inj_ctx_ctrl); i++) {
+		injection_ctx_register(&inj_ctx_ctrl[i]);
 	}
 
     // Fill TCB with parameters
@@ -78,6 +87,11 @@ void task_vsiApp(void *arg)
 	float amds_current_a = 0.0;
 	for (;;) {
 		vTaskDelay(TASK_VSIAPP_INTERVAL_TICKS);
+		// Perform signal injections
+		injection_inj(&Do, &inj_ctx_ctrl[0], Ts);
+		injection_inj(&theta, &inj_ctx_ctrl[1], Ts);
+		injection_inj(&omega, &inj_ctx_ctrl[2], Ts);
+
 		// Update theta
 		theta += (Ts * omega);
 		theta = fmod(theta, 2.0 * M_PI); // Wrap to 2*pi
@@ -131,7 +145,7 @@ void task_vsiApp(void *arg)
 			// sample value for each channel
 		}
 
-		log_callback(&current_a, LOG_FLOAT, "current_a");
+		log_callback(&Do, LOG_DOUBLE, "current_a");
 		log_callback(&current_b, LOG_FLOAT, "current_b");
 		log_callback(&current_c, LOG_FLOAT, "current_c");
 		log_callback(&voltage_a, LOG_FLOAT, "voltage_a");
@@ -165,6 +179,14 @@ void task_vsiApp_stats_print(void) {
 
 void task_vsiApp_stats_reset(void) {
     /* does nothing */
+}
+
+int task_vsiApp_clear_inj(void) {
+	// Clear all injection points
+	for (int i = 0; i < ARRAY_SIZE(inj_ctx_ctrl); i++) {
+		injection_ctx_clear(&inj_ctx_ctrl[i]);
+	}
+	return SUCCESS;
 }
 
 #endif // APP_BLINK

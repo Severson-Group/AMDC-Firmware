@@ -11,6 +11,7 @@ void task_vsiApp(void *arg);
 
 int task_vsiApp_amplitude(double amplitude);
 int task_vsiApp_frequency(double frequency);
+int task_vsiApp_clear_inj(void);
 
 void task_vsiApp_stats_print(void);
 void task_vsiApp_stats_reset(void);

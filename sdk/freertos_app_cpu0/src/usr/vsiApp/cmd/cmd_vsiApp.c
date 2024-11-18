@@ -21,6 +21,7 @@ static command_help_t cmd_help[] = {
     { "deinit", "Stop task" },
 	{ "amplitude <value>", "set the analog wave to a specific amplitude" },
 	{ "frequency <value>", "set the analog wave to a specific frequency" },
+	{ "clear", "clear signal injections" },
 	{ "stats print", "Print stats to screen" },
 	{ "stats reset", "Reset the task timing stats" }
 };
@@ -51,6 +52,12 @@ int cmd_vsiApp(int argc, char **argv)
 		double argDoub;
 		sscanf(argv[2], "%lf", &argDoub);
 		if (task_vsiApp_frequency(argDoub) != SUCCESS) {
+			return CMD_FAILURE;
+		}
+		return CMD_SUCCESS;
+	}
+    if (argc == 2 && strcmp("clear", argv[1]) == 0) {
+		if (task_vsiApp_clear_inj() != SUCCESS) {
 			return CMD_FAILURE;
 		}
 		return CMD_SUCCESS;

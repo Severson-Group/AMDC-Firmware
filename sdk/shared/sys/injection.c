@@ -402,18 +402,19 @@ void injection_ramp(inj_ctx_t *ctx, inj_op_e op, double valueMin, double valueMa
 typedef enum sm_states_list_e { LISTING = 1, REMOVE_TASK } sm_states_list_e;
 
 typedef struct sm_ctx_list_t {
-    sm_states_list_e state;
-    TaskHandle_t tcb;
-
+	sm_states_list_e state;
     inj_ctx_t *curr;
+    TaskHandle_t tcb;
 } sm_ctx_list_t;
+
+static sm_ctx_list_t ctx_list;
 
 #define TASK_SM_LIST_UPDATES_PER_SEC (10000)
 #define TASK_SM_LIST_INTERVAL_TICKS (pdMS_TO_TICKS(1000.0 / TASK_SM_LIST_UPDATES_PER_SEC))
 
 void state_machine_list_callback(void *arg)
 {
-    sm_ctx_list_t *ctx = (sm_ctx_list_t *) arg;
+    sm_ctx_list_t *ctx = &ctx_list;
     for (;;) {
     	vTaskDelay(TASK_SM_LIST_INTERVAL_TICKS);
 		switch (ctx->state) {
@@ -439,8 +440,6 @@ void state_machine_list_callback(void *arg)
 		}
     }
 }
-
-static sm_ctx_list_t ctx_list;
 
 void injection_list(void)
 {
