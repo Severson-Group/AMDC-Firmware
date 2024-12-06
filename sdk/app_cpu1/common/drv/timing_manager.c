@@ -5,7 +5,7 @@
 #include "usr/user_config.h"
 #include "xil_assert.h"
 #include "xil_exception.h"
-#include "xil_io.h"
+#include "xil_io.h"s
 #include "xil_printf.h"
 #include "xil_types.h"
 #include "xscugic.h"
@@ -439,6 +439,39 @@ double timing_manager_get_time_per_sensor(sensor_e sensor)
     // Convert clock cycles to time in us using 200 MHz FPGA clock frequency
     time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
     return time;
+}
+
+/*
+ * Get the time since the sensor value was gathered for the requested sensor, in nanoseconds
+ */
+double timing_manager_get_time_since_sensor_poll(sensor_e sensor) {
+	uint32_t clock_cycles = Xil_In32(TM_BASE_ADDR + TM_INT_TIME_REG_OFFSET);
+	double time = 0;
+
+	if (sensor == ADC)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_ADC_ENC_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+	else if (sensor == ENCODER)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_ADC_ENC_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+	else if (sensor == AMDS_1)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_AMDS_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+	else if (sensor == AMDS_2)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_AMDS_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+	else if (sensor == AMDS_3)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_AMDS_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+	else if (sensor == AMDS_4)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_AMDS_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+	else if (sensor == EDDY_1)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_EDDY_01_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+	else if (sensor == EDDY_2)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_EDDY_01_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+	else if (sensor == EDDY_3)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_EDDY_23_TIME_REG_OFFSET)) & TM_LOWER_16_MASK;
+	else if (sensor == EDDY_4)
+		clock_cycles -= (Xil_In32(TM_BASE_ADDR + TM_EDDY_23_TIME_REG_OFFSET)) >> TM_UPPER_16_SHIFT;
+
+	// Convert clock cycles to time in us using 200 MHz FPGA clock frequency
+	time = (double) clock_cycles / CLOCK_FPGA_CLK_FREQ_MHZ;
+	return time;
 }
 
 /*

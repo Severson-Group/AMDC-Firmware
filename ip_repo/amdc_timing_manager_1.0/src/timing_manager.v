@@ -28,7 +28,8 @@ module timing_manager(
     amds_2_time, amds_3_time,
     eddy_0_time, eddy_1_time,
     eddy_2_time, eddy_3_time,
-    trigger, sched_tick_time
+    trigger, sched_tick_time,
+    count_time
 );
     
     ////////////
@@ -59,6 +60,7 @@ module timing_manager(
     output reg [15:0] amds_0_time, amds_1_time, amds_2_time, amds_3_time;
     output reg [15:0] eddy_0_time, eddy_1_time, eddy_2_time, eddy_3_time;
     output reg [31:0] sched_tick_time;
+    output reg [31:0] count_time;
     output wire [2:0] debug;
 
     //////////////////////
