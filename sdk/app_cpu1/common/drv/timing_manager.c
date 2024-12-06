@@ -444,7 +444,8 @@ double timing_manager_get_time_per_sensor(sensor_e sensor)
 /*
  * Get the time since the sensor value was gathered for the requested sensor, in nanoseconds
  */
-double timing_manager_get_time_since_sensor_poll(sensor_e sensor) {
+double timing_manager_get_time_since_sensor_poll(sensor_e sensor)
+{
     uint32_t clock_cycles = Xil_In32(TM_BASE_ADDR + TM_INT_TIME_REG_OFFSET);
     double time = 0;
 

@@ -62,8 +62,8 @@ typedef enum {
 
 typedef enum {
     PWM_LATCH_MODE_TIMING_MANAGER = 0, // Update duty ratios at next timing manager trigger (default)
-    PWM_LATCH_MODE_PWM, // Update duty ratios at next PWM carrier peak/valley
-    PWM_LATCH_MODE_IMMEDIATE // Update duty ratios immediately (next FPGA clock rise)
+    PWM_LATCH_MODE_PWM,                // Update duty ratios at next PWM carrier peak/valley
+    PWM_LATCH_MODE_IMMEDIATE           // Update duty ratios immediately (next FPGA clock rise)
 } pwm_latch_mode;
 
 static inline bool pwm_is_valid_channel(pwm_channel_e channel)
