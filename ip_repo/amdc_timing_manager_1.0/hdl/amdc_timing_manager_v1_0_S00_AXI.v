@@ -704,7 +704,7 @@
     .reset_sched_isr(reset_sched_isr),
     .sched_source_mode(sched_source_mode),
     .sched_tick_time(sched_tick_time),
-    .count_time(count_time)
+    .count_time(count_time),
     .debug(debug)
     );
 
