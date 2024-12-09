@@ -408,7 +408,7 @@ void timing_manager_trigger_on_pwm_low(void)
 }
 
 /*
- * Get the acquisition time for the requested sensor, in nanoseconds
+ * Get the acquisition time for the requested sensor, in microseconds
  */
 double timing_manager_get_time_per_sensor(sensor_e sensor)
 {
@@ -442,7 +442,7 @@ double timing_manager_get_time_per_sensor(sensor_e sensor)
 }
 
 /*
- * Get the time since the sensor value was gathered for the requested sensor, in nanoseconds
+ * Get the time since the sensor value was gathered for the requested sensor, in microseconds
  */
 double timing_manager_get_time_since_sensor_poll(sensor_e sensor)
 {
