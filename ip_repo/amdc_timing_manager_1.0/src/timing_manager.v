@@ -274,7 +274,6 @@ module timing_manager(
     assign eddy_3_pe = eddy_3_done & ~eddy_3_ff;
     
     // Count the time when trigger is asserted
-    reg [31:0] count_time;
     always @(posedge clk, negedge rst_n) begin
         if (!rst_n)
             count_time <= 32'h0;

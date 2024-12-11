@@ -112,7 +112,7 @@ void timing_manager_set_scheduler_source(void);
 double timing_manager_get_tick_delta(void);
 double timing_manager_expected_tick_delta(void);
 double timing_manager_get_time_per_sensor(sensor_e sensor);
-double timing_manager_get_time_since_sensor_poll(sensor_e sensor);
+double timing_manager_get_time_since_sensor_done(sensor_e sensor);
 void timing_manager_sensor_stats(void);
 statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor);
 void timing_manager_clear_isr(void);
