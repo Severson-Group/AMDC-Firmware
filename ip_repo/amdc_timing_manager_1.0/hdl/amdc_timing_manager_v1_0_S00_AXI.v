@@ -511,6 +511,7 @@
     reg [27:0] trigger_count;
     wire [31:0] sensor_done_status;
     wire [31:0] sched_tick_time;
+    wire [31:0] count_time;
     wire [31:0] adc_enc_time_reg;
     wire [31:0] amds_01_time_reg;
     wire [31:0] amds_23_time_reg;
@@ -540,7 +541,7 @@
             4'hC   : reg_data_out <= slv_reg12;
             4'hD   : reg_data_out <= slv_reg13;
             4'hE   : reg_data_out <= slv_reg14;
-            4'hF   : reg_data_out <= slv_reg15;
+            4'hF   : reg_data_out <= count_time; // FPGA ticks since Trigger time
             default : reg_data_out <= 0;
           endcase
     end
@@ -703,6 +704,7 @@
     .reset_sched_isr(reset_sched_isr),
     .sched_source_mode(sched_source_mode),
     .sched_tick_time(sched_tick_time),
+    .count_time(count_time),
     .debug(debug)
     );
 

@@ -52,6 +52,7 @@
 #define TM_AMDS_23_TIME_REG_OFFSET  (9 * sizeof(uint32_t))
 #define TM_EDDY_01_TIME_REG_OFFSET  (10 * sizeof(uint32_t))
 #define TM_EDDY_23_TIME_REG_OFFSET  (11 * sizeof(uint32_t))
+#define TM_INT_TIME_REG_OFFSET      (15 * sizeof(uint32_t))
 
 // This enumeration is used by the global "pwm_update_rate" to remember if we are triggering
 // on the high OR low (single update rate) or BOTH high and low (double update rate)
@@ -111,6 +112,7 @@ void timing_manager_set_scheduler_source(void);
 double timing_manager_get_tick_delta(void);
 double timing_manager_expected_tick_delta(void);
 double timing_manager_get_time_per_sensor(sensor_e sensor);
+double timing_manager_get_time_since_sensor_done(sensor_e sensor);
 void timing_manager_sensor_stats(void);
 statistics_t *timing_manager_get_stats_per_sensor(sensor_e sensor);
 void timing_manager_clear_isr(void);

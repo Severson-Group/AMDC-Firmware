@@ -61,9 +61,9 @@ void pwm_init(void)
     // Opens all switches...
     pwm_disable();
 
-    // Set the duty latching mode to the default mode 0,
+    // Set the duty latching mode to the default mode PWM_LATCH_MODE_TIMING_MANAGER,
     // latch at next trigger event
-    pwm_set_duty_latching_mode(0);
+    pwm_set_duty_latching_mode(PWM_LATCH_MODE_TIMING_MANAGER);
 
     pwm_toggle_reset();
 
@@ -87,9 +87,9 @@ void pwm_init(void)
 /*
  * Sets the duty latching mode based off of the value in user_config.h
  * DUTY RATIO UPDATE MODES:
- * Mode 0: Update duty ratios at next timing manager trigger (default)
- * Mode 1: Update duty ratios at next PWM carrier peak/valley
- * Mode 2: Update duty ratios immediately (next FPGA clock rise)
+ * PWM_LATCH_MODE_TIMING_MANAGER: Update duty ratios at next timing manager trigger (default)
+ * PWM_LATCH_MODE_PWM: Update duty ratios at next PWM carrier peak/valley
+ * PWM_LATCH_MODE_IMMEDIATE: Update duty ratios immediately (next FPGA clock rise)
  */
 int pwm_set_duty_latching_mode(uint8_t mode)
 {
