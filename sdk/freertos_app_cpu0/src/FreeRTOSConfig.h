@@ -230,4 +230,9 @@ line interface. */
 #define pdMS_TO_TICKS(xTimeInMs)    ((TickType_t) (((xTimeInMs) * (uint64_t) configTICK_RATE_HZ) / (uint64_t) 1000U))
 #define pdTICKS_TO_MS(xTimeInTicks)    (((xTimeInTicks) * (uint64_t) 1000U) / (double) configTICK_RATE_HZ)
 
+/* priorities */
+#define tskHIGH_PRIORITY 6
+
+#define configSTATS_BUFFER_MAX_LENGTH 1024
+
 #endif /* FREERTOS_CONFIG_H */

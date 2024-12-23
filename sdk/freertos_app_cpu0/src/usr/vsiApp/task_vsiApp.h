@@ -7,7 +7,7 @@
 int task_vsiApp_init(void);
 int task_vsiApp_deinit(void);
 
-void task_vsiApp(void *arg);
+void task_vsiApp_callback(void *arg);
 
 int task_vsiApp_amplitude(double amplitude);
 int task_vsiApp_frequency(double frequency);

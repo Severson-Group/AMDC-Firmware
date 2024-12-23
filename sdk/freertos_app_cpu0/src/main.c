@@ -182,7 +182,7 @@ int main(void)
     to be created.  See the memory management section on the FreeRTOS web site
     for more details. */
     for (;;) {
-    	xil_printf("IF YOU'RE READING THIS THEN A TERRIBLE ERROR HAS OCCURRED!\n");
+    	xil_printf("main.c line 185, you should never see this text!\n");
     }
 }
 
