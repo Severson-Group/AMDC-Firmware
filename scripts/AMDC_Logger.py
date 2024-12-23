@@ -15,19 +15,15 @@ import re
 # Date:        06/30/2020
 #########################################################
 
-LogVar = namedtuple(typename = 'LogVar', field_names = 'name index var_type samples_per_sec memory_addr')
+LogVar = namedtuple(typename = 'LogVar', field_names = 'name index var_type samples_per_sec')
 
 class AMDC_Logger():
     
     default_max_slots = 32
     
-    def __init__(self, AMDC, mapfile):
+    def __init__(self, AMDC):
         
-        if mapfile == None:
-            raise Exception("Could not find map file")
-
         self.amdc = AMDC
-        self.mapfile = Mapfile(mapfile)
         
         self.available_indices = list(range(AMDC_Logger.default_max_slots))[-1::-1]
         self.log_vars = {}
@@ -78,7 +74,7 @@ class AMDC_Logger():
                     print(e)
                 else:
                     #send command to AMDC
-                    cmd = f'log reg {LV.index} {LV.name} {LV.memory_addr} {LV.samples_per_sec} {LV.var_type}'
+                    cmd = f'log reg {LV.index} {LV.name} {LV.samples_per_sec} {LV.var_type}'
                     out = self.amdc.cmd(cmd)
                     if out[1] == 'FAILURE':
                         self._pop(LV)
@@ -280,29 +276,20 @@ class AMDC_Logger():
     
     def _create_log_var(self, name, samples_per_sec, var_type, manual_index = None):
         
-        memory_addr = int(self.mapfile.address(name), 0)
-        
-        if memory_addr == 0:
-            raise Exception(f"ERROR: couldn't find memory address for '{name}'")
-            
-        else:
-            if name not in self.log_vars.keys(): #check if variable name already registered
+        if name not in self.log_vars.keys(): #check if variable name already registered
 
-                if manual_index is None:
-                    idx = self.available_indices.pop() #extract next available index
-                else:
-                    #remove index from list of available indices
-                    loc = self.available_indices.index(manual_index)
-                    idx = self.available_indices.pop(loc)
-                
-                #create LogVar object and append it to logvars
-                LV = LogVar(name = name, index = idx, var_type = var_type, samples_per_sec = samples_per_sec, memory_addr = memory_addr)
-                self.log_vars[name] = LV
-                
-                return LV
-            
+            if manual_index is None:
+                idx = self.available_indices.pop() #extract next available index
             else:
-                raise Exception('Error: Variable already exists')
+                #remove index from list of available indices
+                loc = self.available_indices.index(manual_index)
+                idx = self.available_indices.pop(loc)
+            
+            #create LogVar object and append it to logvars
+            LV = LogVar(name = name, index = idx, var_type = var_type, samples_per_sec = samples_per_sec)
+            self.log_vars[name] = LV
+            
+            return LV
             
     def _pop(self, log_var):
         
@@ -461,6 +448,7 @@ class AMDC_Logger():
         elif data_type == 2 or data_type == 3:
             s = struct.Struct('<f')
         else:
+            print("data type " + str(data_type))
             raise Exception("ERROR: unknown data type!")
 
         samples = []
@@ -486,7 +474,7 @@ class AMDC_Logger():
         # Round all timesteps to nearest 1usec
         arr[:,0] = arr[:,0].round(6)
 
-        df = pd.DataFrame(data = arr, columns = ['t', var[4::]])
+        df = pd.DataFrame(data = arr, columns = ['t', var])
         df['t'] = df['t'] - df['t'].min()
         df.set_index('t', inplace = True)
 
@@ -535,7 +523,7 @@ class AMDC_Logger():
                 line = ""
 
         arr = np.array(samples)
-        df = pd.DataFrame(data = arr, columns = ['t', var[4::]])
+        df = pd.DataFrame(data = arr, columns = ['t', var])
         df['t'] = df['t'] - df['t'].min()
         
         df.set_index('t', inplace = True)
@@ -585,8 +573,6 @@ class AMDC_Logger():
         out = []
             
         for name in names:
-            if not ('LOG_' in name):
-                name = 'LOG_' + name
             
             out.append(name)
             
@@ -602,11 +588,11 @@ class AMDC_Logger():
         with open(file) as f:
             
             for line in f:
-                if 'LOG_' in line:
-                    lst = line.split()
-                    if lst[0] in valid_types:
-                        log_types.append(lst[0])
-                        log_vars.append(lst[1])
+                # if 'LOG_' in line:
+                lst = line.split()
+                if lst[0] in valid_types:
+                    log_types.append(lst[0])
+                    log_vars.append(lst[1])
             
         return log_vars, log_types
         
