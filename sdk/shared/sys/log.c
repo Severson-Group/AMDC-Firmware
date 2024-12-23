@@ -820,7 +820,7 @@ int log_print_info(void)
 
     // Initialize the state machine callback tcb
     task_info_exists = 1;
-    xTaskCreate(state_machine_info_callback, (const char *) "loginfo", configMINIMAL_STACK_SIZE,
+    xTaskCreate(state_machine_info_callback, (const char *) "loginfo", 512,
     				&ctx_info, tskIDLE_PRIORITY, &ctx_info.tcb);
     return SUCCESS;
 }

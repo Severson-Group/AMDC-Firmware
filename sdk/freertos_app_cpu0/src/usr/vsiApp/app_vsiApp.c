@@ -18,6 +18,8 @@ void app_vsiApp_init(void)
 	timing_manager_enable_sensor(AMDS_2);
 	// Enable ADC (timing manager)
 	timing_manager_enable_sensor(ADC);
+	// Enable Encoder (timing manager)
+	timing_manager_enable_sensor(ENCODER);
 	// Register "vsi" command with system
 	cmd_vsiApp_register();
 }

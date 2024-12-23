@@ -11,6 +11,7 @@
 #include "drv/pwm.h"
 #include "drv/analog.h"
 #include "drv/amds.h"
+#include "drv/encoder.h"
 #include "sys/defines.h"
 #include "sys/log.h"
 #include "sys/injection.h"
@@ -43,6 +44,9 @@ int task_vsiApp_init(void)
     if (pwm_enable() != SUCCESS) {
 		return FAILURE;
 	}
+
+    /* Encoder bits */
+    encoder_set_pulses_per_rev_bits(13);
     /* Initialize signal injection points */
 	injection_ctx_init(&inj_ctx_ctrl[0], "amp*");
 	injection_ctx_init(&inj_ctx_ctrl[1], "theta*");
@@ -57,6 +61,7 @@ int task_vsiApp_init(void)
     taskExists = 1;
 	xTaskCreate(task_vsiApp, (const char *) "vsiApp", configMINIMAL_STACK_SIZE,
 				NULL, tskIDLE_PRIORITY, &tcb);
+
 	return SUCCESS;
 }
 
@@ -138,20 +143,25 @@ void task_vsiApp(void *arg)
 		if (valid == 0xFF) {
 			// Yay! 0xFF means the bits for all channels are valid!
 			// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
-			int err;
-			err = amds_get_data(amds_port, AMDS_CH_1, &out_ch_1);
+			amds_get_data(amds_port, AMDS_CH_1, &out_ch_1);
 			amds_current_a = 0.00125 * out_ch_1;
 			// Now, "out" variables contain the sign-extended 16-bit
 			// sample value for each channel
 		}
 
-		log_callback(&Do, LOG_DOUBLE, "current_a");
+		log_callback(&current_a, LOG_FLOAT, "current_a");
 		log_callback(&current_b, LOG_FLOAT, "current_b");
 		log_callback(&current_c, LOG_FLOAT, "current_c");
 		log_callback(&voltage_a, LOG_FLOAT, "voltage_a");
 		log_callback(&voltage_b, LOG_FLOAT, "voltage_b");
 		log_callback(&voltage_c, LOG_FLOAT, "voltage_c");
 		log_callback(&amds_current_a, LOG_FLOAT, "amds_current_a");
+		log_callback(&Do, LOG_DOUBLE, "amplitude_internal");
+
+		uint32_t encPosition = 0;
+		encoder_get_position(&encPosition);
+		log_callback(&encPosition, LOG_INT, "encoder_position");
+		// xil_printf("encoder value: %d\n", encPosition);
 
 		/* delay(50us) */
 	//	uint32_t startDelay = cpu_timer_now();

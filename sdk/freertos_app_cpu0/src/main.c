@@ -234,7 +234,7 @@ void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer, StackT
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char * pcTaskName) {
-	xil_printf("STACK OVERRFLOW ON TASK %s\n", pcTaskName);
+	xil_printf("STACK OVERFLOW ON TASK %s\n", pcTaskName);
 }
 
 /*******************************************************************************/
