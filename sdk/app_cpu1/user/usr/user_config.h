@@ -12,7 +12,7 @@
 // Specify the source of the scheduler ISR
 // Mode 0: legacy mode - scheduler is triggered based on the PWM carrier events and ratio
 //         of carrier frequency to desired control frequency
-// Mode 1: post-sensor - scheduler is triggered when all the enabled sensors are done
+// Mode 1: post-sensor mode - scheduler is triggered when all the enabled sensors are done
 //         acquiring their data
 #define USER_CONFIG_ISR_SOURCE (0)
 
