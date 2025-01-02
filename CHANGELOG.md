@@ -2,6 +2,16 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.4.0
+
+**Timing Manager & Scheduler**
+
+- Add API function to query age of sensor data
+
+**FPGA Changes**
+
+- Add Timing Manager IP output to indicate time since last sensor trigger
+
 ## v1.3.0
 
 **Timing Manager & Scheduler**
