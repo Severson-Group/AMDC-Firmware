@@ -757,49 +757,49 @@
         if (~S_AXI_ARESETN)
             adc_dout0 <= 32'b0;
         else if (adc_uart0_done)
-            adc_dout0 <= {{16{my_adc_data0[15]}}, my_adc_data0};
+            adc_dout0 <= {16'b0, my_adc_data0};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout1 <= 32'b0;
         else if (adc_uart0_done)
-            adc_dout1 <= {{16{my_adc_data1[15]}}, my_adc_data1};
+            adc_dout1 <= {16'b0, my_adc_data1};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout2 <= 32'b0;
         else if (adc_uart0_done)
-            adc_dout2 <= {{16{my_adc_data2[15]}}, my_adc_data2};
+            adc_dout2 <= {16'b0, my_adc_data2};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout3 <= 32'b0;
         else if (adc_uart0_done)
-            adc_dout3 <= {{16{my_adc_data3[15]}}, my_adc_data3};
+            adc_dout3 <= {16'b0, my_adc_data3};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout4 <= 32'b0;
         else if (adc_uart1_done)
-            adc_dout4 <= {{16{my_adc_data4[15]}}, my_adc_data4};
+            adc_dout4 <= {16'b0, my_adc_data4};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout5 <= 32'b0;
         else if (adc_uart1_done)
-            adc_dout5 <= {{16{my_adc_data5[15]}}, my_adc_data5};
+            adc_dout5 <= {16'b0, my_adc_data5};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout6 <= 32'b0;
         else if (adc_uart1_done)
-            adc_dout6 <= {{16{my_adc_data6[15]}}, my_adc_data6};
+            adc_dout6 <= {16'b0, my_adc_data6};
     end
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)
             adc_dout7 <= 32'b0;
         else if (adc_uart1_done)
-            adc_dout7 <= {{16{my_adc_data7[15]}}, my_adc_data7};
+            adc_dout7 <= {16'b0, my_adc_data7};
     end
 
     // =============================================
