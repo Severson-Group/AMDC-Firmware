@@ -119,7 +119,8 @@ int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, dou
  *            channel's data, a separate call must be placed to amds_check_data_validity(),
  *            which reports the validity of all channels' data
  *
- * See https://docs.amdc.dev/accessories/amds/sensor-cards/current/index.html#final-primary-current-to-adc-input-voltage-relationship
+ * See
+ * https://docs.amdc.dev/accessories/amds/sensor-cards/current/index.html#final-primary-current-to-adc-input-voltage-relationship
  * for detailed conversion information
  *
  */
