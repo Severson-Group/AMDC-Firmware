@@ -70,6 +70,74 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
     }
 }
 
+/*
+ * This function gets the voltage as a double for a given AMDS port, channel, and card type
+ *
+ * port:      the GPIO port number the AMDS mainboard is connected to
+ * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
+ * card:      AMDS_CARD_TYPE, from enum amds_card_t (low voltage, high voltage, current revb, current revc)
+ * out:       a double pointer in which to place the retrieved data
+ *
+ * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
+ *            channel's data, a separate call must be placed to amds_check_data_validity(),
+ *            which reports the validity of all channels' data
+ *
+ */
+int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out) {
+	int outInt = 0;
+	int status = amds_get_data(port, channel, &outInt);
+	switch (card) {
+		case AMDS_LOW_VOLTAGE_CARD:
+			out = 5.0 / 65536 * outInt;
+			break;
+		case AMDS_HIGH_VOLTAGE_CARD:
+			out = 5.0 / 65536 * (outInt & 0x0000FFFF);
+			break;
+		case AMDS_CURRENT_CARD_REVB:
+			out = 5.0 / 65536 * (outInt & 0x0000FFFF);
+			break;
+		case AMDS_CURRENT_CARD_REVC:
+			out = 4.5 / 65536 * (outInt & 0x0000FFFF);
+			break;
+		default:
+			return status | FAILURE;
+	}
+	return status | SUCCESS;
+}
+
+/*
+ * This function gets the current as a double for a given AMDS port, channel, and card type
+ * This function only works for current card types (AMDS_CURRENT_CARD_REVB, AMDS_CURRENT_CARD_REVC)
+ *
+ * port:      the GPIO port number the AMDS mainboard is connected to
+ * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
+ * card:      AMDS_CARD_TYPE, from enum amds_card_t (current revb, current revc)
+ * out:       a double pointer in which to place the retrieved data
+ *
+ * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
+ *            channel's data, a separate call must be placed to amds_check_data_validity(),
+ *            which reports the validity of all channels' data
+ *
+ * See https://docs.amdc.dev/accessories/amds/sensor-cards/current/index.html#final-primary-current-to-adc-input-voltage-relationship
+ * for detailed conversion information
+ *
+ */
+int amds_get_current(uint8_t port, amds_channel_e channel, amds_card_t card, double *out) {
+	int status = amds_get_voltage(port, channel, out);
+	switch (card) {
+		case AMDS_CURRENT_CARD_REVB:
+			out = (out - 2.4922) / 0.0034;
+			break;
+		case AMDS_CURRENT_CARD_REVC:
+			out = (out - 2.5126) / 0.0034;
+			break;
+		default:
+			out = 0.0;
+			return status | FAILURE;
+		}
+	return status | SUCCESS;
+}
+
 void amds_print_data(uint8_t port)
 {
     uint32_t base_addr = amds_port_to_base_addr(port);
