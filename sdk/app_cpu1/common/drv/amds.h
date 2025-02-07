@@ -64,10 +64,10 @@ typedef enum {
 } amds_channel_e;
 
 typedef enum {
-	AMDS_LOW_VOLTAGE_CARD = 0,
-	AMDS_HIGH_VOLTAGE_CARD,
-	AMDS_CURRENT_CARD_REVB,
-	AMDS_CURRENT_CARD_REVC
+    AMDS_LOW_VOLTAGE_CARD = 0,
+    AMDS_HIGH_VOLTAGE_CARD,
+    AMDS_CURRENT_CARD_REVB,
+    AMDS_CURRENT_CARD_REVC
 } amds_card_t;
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
