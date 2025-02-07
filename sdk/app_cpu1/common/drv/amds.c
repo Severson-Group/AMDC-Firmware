@@ -83,7 +83,8 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
  *            which reports the validity of all channels' data
  *
  */
-int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out) {
+int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out)
+{
 	int outInt = 0;
 	int status = amds_get_data(port, channel, &outInt);
 	switch (card) {
@@ -122,7 +123,8 @@ int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, dou
  * for detailed conversion information
  *
  */
-int amds_get_current(uint8_t port, amds_channel_e channel, amds_card_t card, double *out) {
+int amds_get_current(uint8_t port, amds_channel_e channel, amds_card_t card, double *out)
+{
 	int status = amds_get_voltage(port, channel, out);
 	switch (card) {
 		case AMDS_CURRENT_CARD_REVB:
