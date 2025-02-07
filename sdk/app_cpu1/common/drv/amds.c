@@ -88,20 +88,20 @@ int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, dou
     int outInt = 0;
     int status = amds_get_data(port, channel, &outInt);
     switch (card) {
-        case AMDS_LOW_VOLTAGE_CARD:
-            out = 5.0 / 65536 * outInt;
-            break;
-        case AMDS_HIGH_VOLTAGE_CARD:
-            out = 5.0 / 65536 * (outInt & 0x0000FFFF);
-            break;
-        case AMDS_CURRENT_CARD_REVB:
-            out = 5.0 / 65536 * (outInt & 0x0000FFFF);
-            break;
-        case AMDS_CURRENT_CARD_REVC:
-            out = 4.5 / 65536 * (outInt & 0x0000FFFF);
-            break;
-        default:
-            return status | FAILURE;
+    case AMDS_LOW_VOLTAGE_CARD:
+        out = 5.0 / 65536 * outInt;
+        break;
+    case AMDS_HIGH_VOLTAGE_CARD:
+        out = 5.0 / 65536 * (outInt & 0x0000FFFF);
+        break;
+    case AMDS_CURRENT_CARD_REVB:
+        out = 5.0 / 65536 * (outInt & 0x0000FFFF);
+        break;
+    case AMDS_CURRENT_CARD_REVC:
+        out = 4.5 / 65536 * (outInt & 0x0000FFFF);
+        break;
+    default:
+        return status | FAILURE;
     }
     return status | SUCCESS;
 }
@@ -127,16 +127,16 @@ int amds_get_current(uint8_t port, amds_channel_e channel, amds_card_t card, dou
 {
     int status = amds_get_voltage(port, channel, out);
     switch (card) {
-        case AMDS_CURRENT_CARD_REVB:
-            out = (out - 2.4922) / 0.0034;
-            break;
-        case AMDS_CURRENT_CARD_REVC:
-            out = (out - 2.5126) / 0.0034;
-            break;
-        default:
-            out = 0.0;
-            return status | FAILURE;
-        }
+    case AMDS_CURRENT_CARD_REVB:
+        out = (out - 2.4922) / 0.0034;
+        break;
+    case AMDS_CURRENT_CARD_REVC:
+        out = (out - 2.5126) / 0.0034;
+        break;
+    default:
+        out = 0.0;
+        return status | FAILURE;
+    }
     return status | SUCCESS;
 }
 
