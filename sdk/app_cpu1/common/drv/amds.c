@@ -71,7 +71,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
 }
 
 /*
- * This function gets the voltage as a double for a given AMDS port, channel, and card type
+ * This function gets the voltage in volts as a double for a given AMDS port, channel, and card type
  *
  * port:      the GPIO port number the AMDS mainboard is connected to
  * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
@@ -106,7 +106,7 @@ int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, dou
 }
 
 /*
- * This function gets the current as a double for a given AMDS port, channel, and card type
+ * This function gets the current in amps as a double for a given AMDS port, channel, and card type
  * This function only works for current card types (AMDS_CURRENT_CARD_REVB, AMDS_CURRENT_CARD_REVC)
  *
  * port:      the GPIO port number the AMDS mainboard is connected to
