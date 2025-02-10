@@ -67,7 +67,7 @@ typedef enum {
     AMDS_LOW_VOLTAGE_CARD = 0,
     AMDS_HIGH_VOLTAGE_CARD,
     AMDS_CURRENT_CARD_REVB,
-    AMDS_CURRENT_CARD_REVC
+    AMDS_CURRENT_CARD
 } amds_card_t;
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
@@ -112,8 +112,8 @@ void amds_init(void);
 
 uint8_t amds_check_data_validity(uint8_t port);
 int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
-int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out);
-int amds_get_current(uint8_t port, amds_channel_e channel, amds_card_t card, double *out);
+int amds_get_raw_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, int32_t *out);
+int amds_get_measurement(double v_in, double offset, double gain, double *out);
 
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);
