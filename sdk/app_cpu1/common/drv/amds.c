@@ -84,20 +84,20 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
  */
 int amds_get_raw_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, int32_t *out)
 {
-    int outInt = 0;
+    int32_t outInt = 0;
     int status = amds_get_data(port, channel, &outInt);
     switch (card) {
     case AMDS_LOW_VOLTAGE_CARD:
-        out = outInt;
+        *out = outInt;
         break;
     case AMDS_HIGH_VOLTAGE_CARD:
-        out = outInt & 0x0000FFFF;
+        *out = outInt & 0x0000FFFF;
         break;
     case AMDS_CURRENT_CARD_REVB:
-        out = outInt & 0x0000FFFF;
+        *out = outInt & 0x0000FFFF;
         break;
     case AMDS_CURRENT_CARD:
-        out = outInt & 0x0000FFFF;
+        *out = outInt & 0x0000FFFF;
         break;
     default:
         return status | FAILURE;
