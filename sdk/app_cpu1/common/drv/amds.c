@@ -121,7 +121,8 @@ int amds_get_raw_voltage(uint8_t port, amds_channel_e channel, amds_card_t card,
  * for detailed conversion information
  *
  */
-int amds_get_measurement(double raw_voltage, double offset, double gain, double *out) {
+int amds_get_measurement(double raw_voltage, double offset, double gain, double *out)
+{
     *out = (raw_voltage - offset) * gain;
     return SUCCESS;
 }
