@@ -112,8 +112,8 @@ void amds_init(void);
 
 uint8_t amds_check_data_validity(uint8_t port);
 int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
-int amds_get_raw_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, int32_t *out);
-int amds_get_measurement(double v_in, double offset, double gain, double *out);
+int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out);
+int amds_get_calibrated_data(double raw_voltage, double offset, double gain, double *out);
 
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);
