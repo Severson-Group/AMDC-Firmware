@@ -70,12 +70,12 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
     }
 }
 
-/* This function gets the raw signed voltage for a given AMDS port, channel, and card type
+/* This function gets a converted signed voltage for a given AMDS port, channel, and card type
  *
  * port:      the GPIO port number the AMDS mainboard is connected to
  * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
  * card:      AMDS_CARD_TYPE, from enum amds_card_t (low voltage, high voltage, current revb, current revc)
- * out:       a int32_t pointer in which to place the retrieved data
+ * out:       a double pointer in which to place the retrieved data
  *
  * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
  *            channel's data, a separate call must be placed to amds_check_data_validity(),
@@ -88,10 +88,10 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
     int status = amds_get_data(port, channel, &outInt);
     switch (card) {
     case AMDS_LOW_VOLTAGE_CARD:
-        *out = (4.096 / 32768) * outInt;
+        *out = (40.96 / 32768) * outInt;
         break;
     case AMDS_HIGH_VOLTAGE_CARD:
-        *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
+        *out = (1250.0 / 65536) * (outInt & 0x0000FFFF) - 625.0;
         break;
     case AMDS_CURRENT_CARD_REVB:
         *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
@@ -105,12 +105,12 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
     return status | SUCCESS;
 }
 
-/* This function gets the measuremet in volts as a double given a raw voltage, offset, and gain
+/* This function gets the measuremet in volts or amps as a double given a converted, offset, and gain
  *
- * raw_voltage: A raw voltage sample from the AMDS
- * offset:      a constant offset to be subtracted from raw voltage
- * gain:        a gain factor to apply to measurement
- * out:         a double pointer in which to place the retrieved data
+ * converted_voltage: a voltage sample from the AMDS using the amds_get_converted_voltage function
+ * offset:            a constant offset to be subtracted from raw voltage (user calibrated)
+ * gain:              a gain factor to apply to measurement (user calibrated)
+ * out:               a double pointer in which to place the retrieved data
  *
  * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
  *            channel's data, a separate call must be placed to amds_check_data_validity(),
@@ -121,8 +121,9 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
  * for detailed conversion information
  *
  */
-int amds_get_calibrated_data(double raw_voltage, double offset, double gain, double *out) {
-    *out = (raw_voltage - offset) * gain;
+int amds_get_calibrated_data(double converted_voltage, double offset, double gain, double *out)
+{
+    *out = (converted_voltage - offset) * gain;
     return SUCCESS;
 }
 
