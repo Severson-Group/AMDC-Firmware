@@ -48,6 +48,12 @@
 #define AMDS_CH_7_VALID_MASK 0x40
 #define AMDS_CH_8_VALID_MASK 0x80
 
+// Default offset and gain values
+#define AMDS_LOW_VOLTAGE_DEFAULT_GAIN     0.1
+#define AMDS_LOW_VOLTAGE_DEFAULT_OFFSET   0
+#define AMDS_HIGH_VOLTAGE_DEFAULT_GAIN    250
+#define AMDS_HIGH_VOLTAGE_DEFAULT_OFFSET  2.5
+
 typedef enum {
     // Keep first channel index at 0!
     AMDS_CH_1 = 0,

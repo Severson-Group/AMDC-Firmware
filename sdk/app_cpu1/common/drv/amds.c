@@ -88,10 +88,10 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
     int status = amds_get_data(port, channel, &outInt);
     switch (card) {
     case AMDS_LOW_VOLTAGE_CARD:
-        *out = (40.96 / 32768) * outInt;
+        *out = (4.096 / 32768) * outInt;
         break;
     case AMDS_HIGH_VOLTAGE_CARD:
-        *out = (1250.0 / 65536) * (outInt & 0x0000FFFF) - 625.0;
+        *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
         break;
     case AMDS_CURRENT_CARD_REVB:
         *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
