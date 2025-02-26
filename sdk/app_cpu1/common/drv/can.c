@@ -190,25 +190,6 @@ int can_send(uint8_t data[8], uint32_t num_bytes)
 	for (i = 0; i < num_bytes; i++) {
 		packet.buffer[i] = data[i];
 	}
-//
-//    // Check that pointer isn't NULL
-//    if (packet == NULL) {
-//#ifdef CAN_DEBUG
-//        printf("\nPacket of data is null, please initialize it!\n");
-//        printf("%d\n", packet->message_id);
-//        printf("%d\n", packet->num_bytes);
-//        for (i = 0; i < 4; i++) {
-//        	printf("%d", i);
-//			printf("%d: %u ", i, packet->buffer[i]);
-//		}
-//        printf("\n");
-//        for (i = 0; i < packet->num_bytes; i++) {
-//			printf("%d: %u ", i, data[i]);
-//		}
-//		printf("\n");
-//#endif
-//        return FAILURE;
-//    }
 
 	printf("\n%d\n", packet.message_id);
 	printf("%d\n", packet.num_bytes);
