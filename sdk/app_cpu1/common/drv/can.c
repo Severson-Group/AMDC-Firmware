@@ -177,20 +177,45 @@ int can_init(int device_id)
 }
 
 // Send a CAN packet
-int can_send(can_packet_t *packet, uint32_t num_bytes)
+int can_send(uint8_t data[8], uint32_t num_bytes)
 {
     u8 *FramePtr;
     int i;
     int Status;
     XCanPs *CanInstPtr = CanPs;
 
-    // Check that pointer isn't NULL
-    if (packet == NULL) {
-#ifdef CAN_DEBUG
-        printf("Packet of data is null, please initialize it!\n");
-#endif
-        return FAILURE;
-    }
+    can_packet_t packet;
+    packet.message_id = 1;
+	packet.num_bytes = num_bytes;
+	for (i = 0; i < num_bytes; i++) {
+		packet.buffer[i] = data[i];
+	}
+//
+//    // Check that pointer isn't NULL
+//    if (packet == NULL) {
+//#ifdef CAN_DEBUG
+//        printf("\nPacket of data is null, please initialize it!\n");
+//        printf("%d\n", packet->message_id);
+//        printf("%d\n", packet->num_bytes);
+//        for (i = 0; i < 4; i++) {
+//        	printf("%d", i);
+//			printf("%d: %u ", i, packet->buffer[i]);
+//		}
+//        printf("\n");
+//        for (i = 0; i < packet->num_bytes; i++) {
+//			printf("%d: %u ", i, data[i]);
+//		}
+//		printf("\n");
+//#endif
+//        return FAILURE;
+//    }
+
+	printf("\n%d\n", packet.message_id);
+	printf("%d\n", packet.num_bytes);
+	for (i = 0; i < 8; i++) {
+		printf("%u ", packet.buffer[i]);
+	}
+	printf("\n");
 
     // Check number of bytes user is sending at once is between 1 to 8
     if (num_bytes <= 0 || num_bytes > 8) {
@@ -201,15 +226,16 @@ int can_send(can_packet_t *packet, uint32_t num_bytes)
     }
 
     // Populate correct values for Identifier - check Zync 700 Reference Manual for meaning of this info
-    TxFrame[0] = (u32) XCanPs_CreateIdValue((u32) packet->message_id, 0, 0, 0, 0);
+    TxFrame[0] = (u32) XCanPs_CreateIdValue((u32) packet.message_id, 0, 0, 0, 0);
 
     // Specify number of bytes of data sending
-    TxFrame[1] = (u32) XCanPs_CreateDlcValue((u32) packet->num_bytes);
+    TxFrame[1] = (u32) XCanPs_CreateDlcValue((u32) packet.num_bytes);
 
     // Populate the TX FIFO with CAN packet to send
     FramePtr = (u8 *) (&TxFrame[2]);
-    for (i = 0; i < packet->num_bytes; i++) {
-        *FramePtr++ = (u8) packet->buffer[i];
+    for (i = 0; i < packet.num_bytes; i++) {
+        *FramePtr = (u8) packet.buffer[i];
+        FramePtr++;
     }
 
     // Check if TxFIFO is full
@@ -229,7 +255,7 @@ int can_send(can_packet_t *packet, uint32_t num_bytes)
 }
 
 // Print latest can packet received
-int can_rcv(can_packet_t *packet)
+int can_rcv(uint8_t buffer[8])
 {
     u8 *FramePtr;
     int Status;
@@ -247,13 +273,17 @@ int can_rcv(can_packet_t *packet)
 
     // Receive a frame and verify its contents
     Status = XCanPs_Recv(CanInstPtr, RxFrame);
-
+    can_packet_t packet;
+    for (i = 0; i < 8; i++) {
+		packet.buffer[i] = 0;
+	}
     if (Status == XST_SUCCESS) {
-        packet->message_id = (int) (RxFrame[0] >> 21);
-        packet->num_bytes = (int) (RxFrame[1] >> 28);
+        packet.message_id = (int) (RxFrame[0] >> 21);
+        packet.num_bytes = (int) (RxFrame[1] >> 28);
         FramePtr = (u8 *) (&RxFrame[2]);
-        for (i = 0; i < packet->num_bytes; i++) {
-            packet->buffer[i] = *FramePtr;
+        for (i = 0; i < packet.num_bytes; i++) {
+            packet.buffer[i] = *FramePtr;
+            buffer[i] = packet.buffer[i];
             FramePtr++;
         }
         return SUCCESS;

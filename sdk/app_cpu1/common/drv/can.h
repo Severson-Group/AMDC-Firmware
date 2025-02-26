@@ -66,8 +66,8 @@ int can_set_peripheral(int device_id);
 int can_init(int device_id);
 
 // Send and get CAN packets
-int can_send(can_packet_t *packet, uint32_t num_bytes);
-int can_rcv(can_packet_t *packet);
+int can_send(uint8_t data[8], uint32_t num_bytes);
+int can_rcv(uint8_t buffer[8]);
 
 // Useful debugging functionality
 void can_print_mode();
