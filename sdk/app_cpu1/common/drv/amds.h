@@ -49,14 +49,14 @@
 #define AMDS_CH_8_VALID_MASK 0x80
 
 // Default offset and gain values
-#define AMDS_LOW_VOLTAGE_DEFAULT_GAIN    10
-#define AMDS_LOW_VOLTAGE_DEFAULT_OFFSET  0
+#define AMDS_LOW_VOLTAGE_DEFAULT_GAIN   10
+#define AMDS_LOW_VOLTAGE_DEFAULT_OFFSET 0
 /*
 note: high voltage default values are for 4.3kOhm resistors for R4, R6, and R8
 (not what the schematic states but all of our high voltage cards are assembled with these)
 */
 #define AMDS_HIGH_VOLTAGE_DEFAULT_GAIN   256.0223
-#define AMDS_HIGH_VOLTAGE_DEFAULT_OFFSET 2.5031 
+#define AMDS_HIGH_VOLTAGE_DEFAULT_OFFSET 2.5031
 #define AMDS_CURRENT_REVB_DEFAULT_OFFSET 2.4922
 #define AMDS_CURRENT_REVB_DEFAULT_GAIN   24.412
 #define AMDS_CURRENT_DEFAULT_OFFSET      2.5126
