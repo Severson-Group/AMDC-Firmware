@@ -105,7 +105,7 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
     return status | SUCCESS;
 }
 
-/* This function gets the measuremet in volts or amps as a double given a converted, offset, and gain
+/* This function gets the measurement in volts or amps as a double given a converted, offset, and gain
  *
  * converted_voltage: a voltage sample from the AMDS using the amds_get_converted_voltage function
  * offset:            a constant offset to be subtracted from raw voltage (user calibrated)
@@ -117,7 +117,7 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
  *            which reports the validity of all channels' data
  *
  * See
- * https://docs.amdc.dev/accessories/amds/sensor-cards/current/index.html#final-primary-current-to-adc-input-voltage-relationship
+ * https://docs.amdc.dev/accessories/amds/sensor-cards/index.html
  * for detailed conversion information
  *
  */
