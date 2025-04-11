@@ -70,7 +70,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
     }
 }
 
-/* This function gets a converted signed voltage for a given AMDS port, channel, and card type
+/* This function retrieves the raw voltage measured by the ADC for a given AMDS port, channel, and card type
  *
  * port:      the GPIO port number the AMDS mainboard is connected to
  * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
@@ -82,7 +82,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
  *            which reports the validity of all channels' data
  *
  */
-int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out)
+int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out)
 {
     int32_t outInt = 0;
     int status = amds_get_data(port, channel, &outInt);
@@ -105,25 +105,23 @@ int amds_get_converted_voltage(uint8_t port, amds_channel_e channel, amds_card_t
     return status | SUCCESS;
 }
 
-/* This function gets the measurement in volts or amps as a double given a converted, offset, and gain
+/* This function converts ADC voltage readings into a measurement of the sensed signal
  *
- * converted_voltage: a voltage sample from the AMDS using the amds_get_converted_voltage function
+ * voltage:           a voltage sample from the AMDS obtained using amds_get_voltage()
  * offset:            a constant offset to be subtracted from raw voltage (user calibrated)
  * gain:              a gain factor to apply to measurement (user calibrated)
  * out:               a double pointer in which to place the retrieved data
- *
- * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
- *            channel's data, a separate call must be placed to amds_check_data_validity(),
- *            which reports the validity of all channels' data
+ * 
+ * Default values for offset and gain for different AMDS card types can be found in the header file
  *
  * See
  * https://docs.amdc.dev/accessories/amds/sensor-cards/index.html
  * for detailed conversion information
  *
  */
-int amds_get_calibrated_data(double converted_voltage, double offset, double gain, double *out)
+int amds_convert_voltage(double voltage, double offset, double gain, double *out)
 {
-    *out = (converted_voltage - offset) * gain;
+    *out = (voltage - offset) * gain;
     return SUCCESS;
 }
 
