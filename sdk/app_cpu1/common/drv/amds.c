@@ -111,7 +111,7 @@ int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, dou
  * offset:            a constant offset to be subtracted from raw voltage (user calibrated)
  * gain:              a gain factor to apply to measurement (user calibrated)
  * out:               a double pointer in which to place the retrieved data
- * 
+ *
  * Default values for offset and gain for different AMDS card types can be found in the header file
  *
  * See
