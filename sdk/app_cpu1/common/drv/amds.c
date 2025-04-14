@@ -70,6 +70,61 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
     }
 }
 
+/* This function retrieves the raw voltage measured by the ADC for a given AMDS port, channel, and card type
+ *
+ * port:      the GPIO port number the AMDS mainboard is connected to
+ * channel:   AMDS_CH_N, where N is the channel (card number) whose data is of interest
+ * card:      AMDS_CARD_TYPE, from enum amds_card_t (low voltage, high voltage, current revb, current revc)
+ * out:       a double pointer in which to place the retrieved data
+ *
+ * IMPORTANT: data placed in 'out' is NOT guaranteed to be valid. To check the validity of a
+ *            channel's data, a separate call must be placed to amds_check_data_validity(),
+ *            which reports the validity of all channels' data
+ *
+ */
+int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out)
+{
+    int32_t outInt = 0;
+    int status = amds_get_data(port, channel, &outInt);
+    switch (card) {
+    case AMDS_LOW_VOLTAGE_CARD:
+        *out = (4.096 / 32768) * outInt;
+        break;
+    case AMDS_HIGH_VOLTAGE_CARD:
+        *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
+        break;
+    case AMDS_CURRENT_CARD_REVB:
+        *out = (5.0 / 65536) * (outInt & 0x0000FFFF);
+        break;
+    case AMDS_CURRENT_CARD:
+        *out = (4.5 / 65536) * (outInt & 0x0000FFFF);
+        break;
+    default:
+        return status | FAILURE;
+    }
+    return status | SUCCESS;
+}
+
+/* This function converts ADC voltage readings into a measurement of the sensed signal
+ *
+ * voltage:           a voltage sample from the AMDS obtained using amds_get_voltage()
+ * offset:            a constant offset to be subtracted from raw voltage (user calibrated)
+ * gain:              a gain factor to apply to measurement (user calibrated)
+ * out:               a double pointer in which to place the retrieved data
+ *
+ * Default values for offset and gain for different AMDS card types can be found in the header file
+ *
+ * See
+ * https://docs.amdc.dev/accessories/amds/sensor-cards/index.html
+ * for detailed conversion information
+ *
+ */
+int amds_convert_voltage(double voltage, double offset, double gain, double *out)
+{
+    *out = (voltage - offset) * gain;
+    return SUCCESS;
+}
+
 void amds_print_data(uint8_t port)
 {
     uint32_t base_addr = amds_port_to_base_addr(port);
