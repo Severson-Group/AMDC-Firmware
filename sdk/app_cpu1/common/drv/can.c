@@ -28,8 +28,10 @@ static XCanPs *CanPs;
 // Set the mode of the CAN device
 int can_setmode(can_mode_t mode)
 {
+	printf("gggg\n");
     XCanPs *CanInstPtr = CanPs;
     uint32_t currMode = XCanPs_GetMode(CanInstPtr);
+    printf("ffff\n");
     if (currMode == XCANPS_MODE_LOOPBACK && mode != CAN_CONFIG) {
 #ifdef CAN_DEBUG
         print("\nCAN peripheral currently in loopback mode. Can only enter config mode from here.");
@@ -42,10 +44,11 @@ int can_setmode(can_mode_t mode)
         return FAILURE;
     }
 
+    printf("exit\n");
     XCanPs_EnterMode(CanInstPtr, mode);
 
-    // Wait to reach specified mode, should happen instantaneously
-    while (XCanPs_GetMode(CanInstPtr) != mode)
+//    // Wait to reach specified mode, should happen instantaneously
+//    while (XCanPs_GetMode(CanInstPtr) != mode)
         ;
     return SUCCESS;
 }
@@ -108,9 +111,6 @@ int can_set_peripheral(int device_id)
 int can_init(int device_id)
 {
 
-    // Set GPIO Device and Port
-    gp3io_mux_set_device(GP3IO_MUX_1_BASE_ADDR, GP3IO_MUX_DEVICE1);
-
     XCanPs *CanInstPtr;
     u16 DeviceId;
 
@@ -172,8 +172,15 @@ int can_init(int device_id)
         return FAILURE;
     }
 
+    printf("rrrr\n");
+
     // Enter Normal Mode to use CAN peripheral
     return can_setmode(XCANPS_MODE_NORMAL);
+}
+
+int can_deinit() {
+	XCanPs_Reset(CanPs);
+	return SUCCESS;
 }
 
 // Send a CAN packet
@@ -191,8 +198,8 @@ int can_send(uint8_t data[8], uint32_t num_bytes)
 		packet.buffer[i] = data[i];
 	}
 
-	printf("\n%d\n", packet.message_id);
-	printf("%d\n", packet.num_bytes);
+	printf("\nID: %d\n", packet.message_id);
+	printf("Num Bytes:%d\n", packet.num_bytes);
 	for (i = 0; i < 8; i++) {
 		printf("%u ", packet.buffer[i]);
 	}

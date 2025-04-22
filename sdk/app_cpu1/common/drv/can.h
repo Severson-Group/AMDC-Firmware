@@ -37,7 +37,7 @@
  * Reference Manual, the actual value is one more than the value written to the register.
  * Thus, we write a value of 2 to the register, but the actual value is 3, which it should be.
  */
-#define DEFAULT_BAUD_PRESCALAR 2
+#define DEFAULT_BAUD_PRESCALAR 16
 #define DEFAULT_CAN_MESSAGE_ID 1
 
 // Different CAN modes
@@ -64,6 +64,7 @@ int can_set_peripheral(int device_id);
 
 // Initialize the CAN peripheral
 int can_init(int device_id);
+int can_deinit();
 
 // Send and get CAN packets
 int can_send(uint8_t data[8], uint32_t num_bytes);
