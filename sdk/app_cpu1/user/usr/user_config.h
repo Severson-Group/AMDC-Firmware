@@ -35,11 +35,11 @@
 
 // Override default number of available logging variables
 // when defined, this takes precedence over system default of 32
-//#define USER_CONFIG_LOGGING_MAX_NUM_VARIABLES (150)
+// #define USER_CONFIG_LOGGING_MAX_NUM_VARIABLES (150)
 
 // Override default logging sample depth per variable
 // when defined, this takes precedence over system default of 100k
-//#define USER_CONFIG_LOGGING_SAMPLE_DEPTH_PER_VARIABLE (50000)
+// #define USER_CONFIG_LOGGING_SAMPLE_DEPTH_PER_VARIABLE (50000)
 
 // Enable injection functionality
 // set to 1 for enabled, 0 for disabled
@@ -55,6 +55,6 @@
 // that require a margin of tolerance. sometimes non-default PWM frequency and/or
 // timing manager ratios may necessitate un-commenting the following define to override
 // the default tolerance in common/sys/scheduler.h
-//#define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (0.15)
+// #define USER_CONFIG_SCHEDULER_INTERVAL_TOLERANCE_USEC (0.15)
 
 #endif // USER_CONFIG_H

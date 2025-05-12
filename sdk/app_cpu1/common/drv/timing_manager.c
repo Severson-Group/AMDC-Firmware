@@ -142,7 +142,7 @@ trigger_mode_e timing_manager_get_mode(void)
 {
     uint32_t trigger_reg_addr = TM_BASE_ADDR + TM_TRIG_CFG_CNT_REG_OFFSET;
 
-    return (trigger_mode_e)(Xil_In32(trigger_reg_addr) & 0x1);
+    return (trigger_mode_e) (Xil_In32(trigger_reg_addr) & 0x1);
 }
 
 /* timing_manager_send_manual_trigger() can be called to trigger all enabled sensors once,

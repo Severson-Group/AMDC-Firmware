@@ -1,8 +1,8 @@
 #include "drv/cpu_timer.h"
 #include "drv/clock.h"
 #include "sys/defines.h"
-//#include "xparameters.h"
-//#include "xtmrctr.h"
+// #include "xparameters.h"
+// #include "xtmrctr.h"
 
 // Code from StackOverflow post:
 // https://stackoverflow.com/questions/3247373/3250835#3250835

@@ -339,7 +339,7 @@ int cmd_hw(int argc, char **argv)
 
         // hw tm ratio <count>
         else if (argc == 4 && STREQ("ratio", argv[2])) {
-            uint32_t ratio = (uint32_t)(atoi(argv[3]));
+            uint32_t ratio = (uint32_t) (atoi(argv[3]));
             if (ratio < 0) {
                 return CMD_INVALID_ARGUMENTS;
             }
