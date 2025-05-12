@@ -25,7 +25,9 @@ The intended work flow (using auto-formating tools) is as follows:
 
 The C code within this repository (`/sdk/bare/`) is formatted using an auto-formatting tool.  The coding style closely follows the [Webkit guidelines](https://webkit.org/code-style-guidelines/), with minor modifications. The formatting style file resides in the root of this repository (`/.clang-format`). This defines the style rules.
 
-To run the auto-formatting tool on your code, make sure you have installed version 10 or later of `clang-format`. The following scripts are designed to run on Linux. Using these on Windows or Mac will require some adjustment. 
+To run the auto-formatting tool on your code, make sure you have installed the version of `clang-format` listed in [`https://apt.llvm.org/llvm.sh`](https://apt.llvm.org/llvm.sh) as `CURRENT_LLVM_STABLE`. This can be installed by downloading the pre-built binary files found in the corresponding [LLVM GitHub release](https://github.com/llvm/llvm-project/releases). For the GitHub Workflow runner, download the binary corresponding to this naming pattern `LLVM-xx.x.x-Linux-X64.tar.xz` and copy-paste `clang-format` from the `bin/` directory into this repo's `scripts/` directory.
+
+The following scripts are designed to run on Linux. Using these on Windows or Mac will require some adjustment.
 
 #### Check Formatting
 
