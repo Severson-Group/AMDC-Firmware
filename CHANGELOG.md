@@ -2,6 +2,10 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.4.1
+
+- Add helper functions to read AMDS sensor card data
+
 ## v1.4.0
 
 **Timing Manager & Scheduler**
