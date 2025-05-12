@@ -65,7 +65,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
     if (!is_amds_channel_in_bounds(channel)) {
         return FAILURE;
     } else {
-        *out = (int32_t)(Xil_In32(base_addr + channel * sizeof(uint32_t)));
+        *out = (int32_t) (Xil_In32(base_addr + channel * sizeof(uint32_t)));
         return SUCCESS;
     }
 }
