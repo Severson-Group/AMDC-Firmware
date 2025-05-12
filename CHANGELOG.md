@@ -2,6 +2,11 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.4.1
+
+- Add helper functions to read AMDS sensor card data
+- Update `clang-format` to V19 (current stable LLVM release)
+
 ## v1.4.0
 
 **Timing Manager & Scheduler**

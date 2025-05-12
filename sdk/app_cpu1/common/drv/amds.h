@@ -48,6 +48,16 @@
 #define AMDS_CH_7_VALID_MASK 0x40
 #define AMDS_CH_8_VALID_MASK 0x80
 
+// Default offset and gain values
+#define AMDS_LOW_VOLTAGE_DEFAULT_GAIN    10
+#define AMDS_LOW_VOLTAGE_DEFAULT_OFFSET  0
+#define AMDS_HIGH_VOLTAGE_DEFAULT_GAIN   256.0223
+#define AMDS_HIGH_VOLTAGE_DEFAULT_OFFSET 2.5031
+#define AMDS_CURRENT_REVB_DEFAULT_GAIN   29.4117647059
+#define AMDS_CURRENT_REVB_DEFAULT_OFFSET 2.4922
+#define AMDS_CURRENT_DEFAULT_GAIN        29.4117647059
+#define AMDS_CURRENT_DEFAULT_OFFSET      2.5126
+
 typedef enum {
     // Keep first channel index at 0!
     AMDS_CH_1 = 0,
@@ -62,6 +72,13 @@ typedef enum {
     // Keep this as last entry!
     AMDS_NUM_CHANNELS,
 } amds_channel_e;
+
+typedef enum {
+    AMDS_LOW_VOLTAGE_CARD = 0,
+    AMDS_HIGH_VOLTAGE_CARD,
+    AMDS_CURRENT_CARD_REVB,
+    AMDS_CURRENT_CARD
+} amds_card_t;
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 {
@@ -105,6 +122,8 @@ void amds_init(void);
 
 uint8_t amds_check_data_validity(uint8_t port);
 int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out);
+int amds_get_voltage(uint8_t port, amds_channel_e channel, amds_card_t card, double *out);
+int amds_convert_voltage(double voltage, double offset, double gain, double *out);
 
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);

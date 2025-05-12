@@ -229,7 +229,7 @@ int pwm_set_switching_freq(double freq_hz)
     pwm_set_carrier_divisor(0);
 
     // Calculate what the carrier_max should be to achieve the right switching freq
-    carrier_max = (uint16_t)(((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
+    carrier_max = (uint16_t) (((200e6 / (carrier_divisor + 1)) / (freq_hz)) / 2);
     pwm_set_carrier_max(carrier_max);
 
     // Store current freq so we can access later
