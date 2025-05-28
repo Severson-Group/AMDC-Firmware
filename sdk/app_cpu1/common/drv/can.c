@@ -1,0 +1,430 @@
+#include "can.h"
+#include "drv/uart.h"
+#include "gp3io_mux.h"
+#include "sys/defines.h"
+#include "xcanps.h"
+#include "xparameters.h"
+#include <stdio.h>
+
+#define CAN0_DEVICE_ID XPAR_XCANPS_0_DEVICE_ID
+#define CAN1_DEVICE_ID XPAR_XCANPS_1_DEVICE_ID
+
+// Maximum CAN frame length in words.
+#define XCANPS_MAX_FRAME_SIZE_IN_WORDS (XCANPS_MAX_FRAME_SIZE / sizeof(u32))
+
+// Default number of bytes of data sending
+#define FRAME_DATA_LENGTH 8
+
+static u32 TxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
+static u32 RxFrame[XCANPS_MAX_FRAME_SIZE_IN_WORDS];
+
+// Two CAN peripherals
+static XCanPs CanPs0;
+static XCanPs CanPs1;
+
+// Representing device we are currently on
+static XCanPs *CanPs;
+
+// Set the mode of the CAN device
+int can_setmode(can_mode_t mode, can_peripheral_t device)
+{
+	printf("gggg\n");
+	XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    uint32_t currMode = XCanPs_GetMode(CanInstPtr);
+    printf("ffff\n");
+    if (currMode == XCANPS_MODE_LOOPBACK && mode != CAN_CONFIG) {
+#ifdef CAN_DEBUG
+        print("\nCAN peripheral currently in loopback mode. Can only enter config mode from here.");
+#endif
+        return FAILURE;
+    } else if (currMode == XCANPS_MODE_NORMAL && mode != CAN_SLEEP && mode != CAN_CONFIG) {
+#ifdef CAN_DEBUG
+        print("\nCAN peripheral currently in normal mode. Can only enter config or sleep mode from here.");
+#endif
+        return FAILURE;
+    }
+
+    printf("exit\n");
+    XCanPs_EnterMode(CanInstPtr, mode);
+
+//    // Wait to reach specified mode, should happen instantaneously
+//    while (XCanPs_GetMode(CanInstPtr) != mode)
+        ;
+    return SUCCESS;
+}
+
+// Set Baud Rate Prescalar Register (BRPR)
+int can_setbaud(int rate, can_peripheral_t device)
+{
+    int Status;
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    // Ensure CAN peripheral in config mode
+    if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
+#ifdef CAN_DEBUG
+        print("\nMust be in config mode to set baud rate prescalar register");
+#endif
+        return FAILURE;
+    }
+
+    Status = XCanPs_SetBaudRatePrescaler(CanInstPtr, rate);
+
+    if (Status != XST_SUCCESS)
+        return FAILURE;
+    return SUCCESS;
+}
+
+// Set Bit Timing Register (BTR)
+int can_set_btr(uint8_t sjw, uint8_t ts2, uint8_t ts1, can_peripheral_t device)
+{
+    int Status;
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    // Ensure CAN peripheral in config mode
+    if (XCanPs_GetMode(CanInstPtr) != XCANPS_MODE_CONFIG) {
+#ifdef CAN_DEBUG
+        print("\nMust be in config mode to set bit timing register");
+#endif
+        return FAILURE;
+    }
+
+    Status = XCanPs_SetBitTiming(CanInstPtr, sjw, ts2, ts1);
+
+    if (Status != XST_SUCCESS)
+        return FAILURE;
+    return SUCCESS;
+}
+
+// Set CAN peripheral that we are using currently
+//int can_set_peripheral(int device_id, can_peripheral_t device)
+//{
+//    if (device_id != 1 && device_id != 0)
+//        return FAILURE;
+//    else if (device_id)
+//        CanPs = &CanPs1;
+//    else
+//        CanPs = &CanPs0;
+//    return SUCCESS;
+//}
+
+// Initialize the CAN device, default settings
+int can_init(int device_id)
+{
+	can_peripheral_t device;
+    XCanPs *CanInstPtr;
+    u16 DeviceId;
+
+    // Initialize the user specified CAN peripheral
+    if (device_id != 1 && device_id != 0) {
+#ifdef CAN_DEBUG
+        printf("device_id can only be 0 or 1\n");
+#endif
+        return FAILURE;
+    } else if (!device_id) {
+        DeviceId = CAN0_DEVICE_ID;
+        device = CAN0;
+        CanInstPtr = &CanPs0;
+        CanPs = &CanPs0;
+        printf("CAN0:\tInitializing...\n");
+    } else {
+        DeviceId = CAN1_DEVICE_ID;
+        device = CAN1;
+        CanInstPtr = &CanPs1;
+        CanPs = &CanPs1;
+        printf("CAN1:\tInitializing...\n");
+    }
+
+    int Status;
+    XCanPs_Config *Config;
+
+    // Initialize the CAN driver so that it's ready to use
+    // Look up the configuration in the config table, then initialize it
+    Config = XCanPs_LookupConfig(DeviceId);
+    if (Config == NULL || CanInstPtr == NULL) {
+        return FAILURE;
+    }
+
+    Status = XCanPs_CfgInitialize(CanInstPtr, Config, Config->BaseAddr);
+    if (Status != XST_SUCCESS) {
+        return FAILURE;
+    }
+
+    // Run self-test on the device, which verifies basic sanity of the
+    // device and the driver
+    Status = XCanPs_SelfTest(CanInstPtr);
+    if (Status != XST_SUCCESS) {
+        return FAILURE;
+    }
+
+    // Enter Configuration Mode so that we can setup Baud Rate Precalar
+    // Register (BRPR) and Bit Timing Register (BTR).
+    Status = can_setmode(XCANPS_MODE_CONFIG, device);
+    if (Status != SUCCESS)
+        return FAILURE;
+
+    // Set Baud Rate Prescalar Register (BRPR) and
+    // Bit Timing Register (BTR)
+    Status = can_setbaud(DEFAULT_BAUD_PRESCALAR, device);
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+    Status = can_set_btr(DEFAULT_BTR_SYNCJUMPWIDTH, DEFAULT_BTR_SECOND_TIMESEGMENT, DEFAULT_BTR_FIRST_TIMESEGMENT, device);
+
+    if (Status != SUCCESS) {
+        return FAILURE;
+    }
+
+    printf("rrrr\n");
+
+    // Enter Normal Mode to use CAN peripheral
+    return can_setmode(XCANPS_MODE_NORMAL, device);
+}
+
+int can_deinit() {
+	XCanPs *CanInstPtr = &CanPs0;
+	XCanPs_Reset(CanInstPtr);
+	CanInstPtr = &CanPs1;
+	XCanPs_Reset(CanInstPtr);
+	return SUCCESS;
+}
+
+// Send a CAN packet
+int can_send(can_packet_t packet, uint32_t num_bytes, can_peripheral_t device)
+{
+    u8 *FramePtr;
+    int i;
+    int Status;
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    packet.message_id = 1;
+	packet.num_bytes = num_bytes;
+	printf("\nID: %d", packet.message_id);
+	printf("\nNum Bytes:%d\n", packet.num_bytes);
+	for (i = 0; i < 8; i++) {
+		printf("%u ", packet.buffer[i]);
+	}
+	printf("\n");
+
+    // Check number of bytes user is sending at once is between 1 to 8
+    if (num_bytes <= 0 || num_bytes > 8) {
+#ifdef CAN_DEBUG
+        printf("Can only send 8 bytes at once!\n");
+#endif
+        return FAILURE;
+    }
+
+    // Populate correct values for Identifier - check Zync 700 Reference Manual for meaning of this info
+    TxFrame[0] = (u32) XCanPs_CreateIdValue((u32) packet.message_id, 0, 0, 0, 0);
+
+    // Specify number of bytes of data sending
+    TxFrame[1] = (u32) XCanPs_CreateDlcValue((u32) packet.num_bytes);
+
+    // Populate the TX FIFO with CAN packet to send
+    FramePtr = (u8 *) (&TxFrame[2]);
+    for (i = 0; i < packet.num_bytes; i++) {
+        *FramePtr = (u8) packet.buffer[i];
+        FramePtr++;
+    }
+
+    // Check if TxFIFO is full
+    if (XCanPs_IsTxFifoFull(CanInstPtr) == TRUE) {
+#ifdef CAN_DEBUG
+        printf("CAN TxFIFO is full, try sending your data again in a bit!\n");
+#endif
+        return FAILURE;
+    }
+
+    // Send the frame
+    Status = XCanPs_Send(CanInstPtr, TxFrame);
+
+    if (Status != XST_SUCCESS)
+        return FAILURE;
+    return SUCCESS;
+}
+
+// Print latest can packet received
+int can_rcv(uint8_t buffer[8], can_peripheral_t device)
+{
+    u8 *FramePtr;
+    int Status;
+    int i;
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    // Check if a frame is empty
+    if (XCanPs_IsRxEmpty(CanInstPtr) == TRUE) {
+#ifdef CAN_DEBUG
+        printf("Currently there isn't a packet in the RxFIFO, try again in a bit!\n");
+#endif
+        return FAILURE;
+    }
+
+    // Receive a frame and verify its contents
+    Status = XCanPs_Recv(CanInstPtr, RxFrame);
+    can_packet_t packet;
+    for (i = 0; i < 8; i++) {
+		packet.buffer[i] = 0;
+	}
+    if (Status == XST_SUCCESS) {
+        packet.message_id = (int) (RxFrame[0] >> 21);
+        packet.num_bytes = (int) (RxFrame[1] >> 28);
+        FramePtr = (u8 *) (&RxFrame[2]);
+        for (i = 0; i < packet.num_bytes; i++) {
+            packet.buffer[i] = *FramePtr;
+            buffer[i] = packet.buffer[i];
+            FramePtr++;
+        }
+        return SUCCESS;
+    }
+    return FAILURE;
+}
+
+// Print mode the CAN peripheral is in, useful for debugging purposes
+void can_print_mode(can_peripheral_t device)
+{
+#ifdef CAN_DEBUG
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    uint32_t mode;
+    mode = XCanPs_GetMode(CanInstPtr);
+    if (mode == XCANPS_MODE_NORMAL)
+        print("\nXCANPS_MODE_NORMAL");
+    else if (mode == XCANPS_MODE_LOOPBACK)
+        print("\nXCANPS_MODE_LOOPBACK");
+    else if (mode == XCANPS_MODE_CONFIG)
+        print("\nXCANPS_MODE_CONFIG");
+    else if (mode == XCANPS_MODE_SLEEP)
+        print("\nXCANPS_MODE_SLEEP");
+    else
+        print("\nOther mode");
+#endif
+}
+
+// Print the CAN peripheral the user has set, useful for debugging purposes
+void can_print_peripheral()
+{
+#ifdef CAN_DEBUG
+    if (CanPs == &CanPs0)
+        print("\nCAN 0");
+    else if (CanPs == &CanPs1)
+        print("\nCAN 1");
+    else
+        print("\nCAN peripheral not set properly");
+#endif
+}
+
+// Check packet received in loopback mode is correct
+static int can_checkpacket(can_peripheral_t device)
+{
+    u8 *FramePtr;
+    int Status;
+    int Index;
+
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+
+    // Wait until a frame is received
+    while (XCanPs_IsRxEmpty(CanInstPtr) == TRUE)
+        ;
+
+    // Receive a frame and verify its contents
+    Status = XCanPs_Recv(CanInstPtr, RxFrame);
+    if (Status == XST_SUCCESS) {
+        // Verify Identifier and Data Length Code
+        if (RxFrame[0] != (u32) XCanPs_CreateIdValue((u32) DEFAULT_CAN_MESSAGE_ID, 0, 0, 0, 0))
+            return XST_LOOPBACK_ERROR;
+
+        if ((RxFrame[1] & ~XCANPS_DLCR_TIMESTAMP_MASK) != TxFrame[1])
+            return XST_LOOPBACK_ERROR;
+
+        // Verify Data field contents
+        FramePtr = (u8 *) (&RxFrame[2]);
+        for (Index = 0; Index < FRAME_DATA_LENGTH; Index++) {
+            if (*FramePtr++ != (u8) Index) {
+                return XST_LOOPBACK_ERROR;
+            }
+        }
+    }
+
+    return Status;
+}
+
+// Run a sanity check loopback test
+int can_loopback_test(can_peripheral_t device)
+{
+
+    int Status;
+    uint8_t data[FRAME_DATA_LENGTH];
+
+    // Check we are in loopback mode
+    uint32_t mode;
+    XCanPs *CanInstPtr;
+	if (!device) {
+		CanInstPtr = &CanPs0;
+	} else {
+		CanInstPtr = &CanPs1;
+	}
+    mode = XCanPs_GetMode(CanInstPtr);
+    if (mode != XCANPS_MODE_LOOPBACK) {
+#ifdef CAN_DEBUG
+        print("\nNot in loopback mode, can't run self test");
+#endif
+        return FAILURE;
+    }
+
+    // Populate CAN packet
+    can_packet_t packet;
+	packet.message_id = 1;
+	packet.num_bytes = FRAME_DATA_LENGTH;
+    int i;
+    for (i = 0; i < FRAME_DATA_LENGTH; i++) {
+        data[i] = i;
+    }
+    memcpy(packet.buffer, data, FRAME_DATA_LENGTH);
+
+    // Send fake packet of data
+    Status = can_send(packet, FRAME_DATA_LENGTH, device);
+    if (Status != XST_SUCCESS) {
+        return FAILURE;
+    }
+
+    // Check fake packet of data is received correctly
+    Status = can_checkpacket(device);
+    if (Status != XST_SUCCESS)
+        return FAILURE;
+    return SUCCESS;
+}
