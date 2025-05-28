@@ -40,6 +40,11 @@
 #define DEFAULT_BAUD_PRESCALAR 16
 #define DEFAULT_CAN_MESSAGE_ID 1
 
+typedef enum {
+	CAN0,
+	CAN1,
+} can_peripheral_t;
+
 // Different CAN modes
 typedef enum {
     CAN_CONFIG = XCANPS_MODE_CONFIG,
@@ -57,24 +62,24 @@ typedef struct can_packets_t {
 } can_packet_t;
 
 // Setter methods, useful for configuring the CAN peripheral
-int can_setmode(can_mode_t MODE);
-int can_setbaud(int rate);
-int can_set_btr(uint8_t sjw, uint8_t ts1, uint8_t ts2);
-int can_set_peripheral(int device_id);
+int can_setmode(can_mode_t MODE, can_peripheral_t device);
+int can_setbaud(int rate, can_peripheral_t device);
+int can_set_btr(uint8_t sjw, uint8_t ts1, uint8_t ts2, can_peripheral_t device);
+//int can_set_peripheral(int device_id);
 
 // Initialize the CAN peripheral
 int can_init(int device_id);
 int can_deinit();
 
 // Send and get CAN packets
-int can_send(uint8_t data[8], uint32_t num_bytes);
-int can_rcv(uint8_t buffer[8]);
+int can_send(can_packet_t packet, uint32_t num_bytes, can_peripheral_t device);
+int can_rcv(uint8_t buffer[8], can_peripheral_t device);
 
 // Useful debugging functionality
-void can_print_mode();
+void can_print_mode(can_peripheral_t device);
 void can_print_peripheral();
 
 // Sanity check that hardware working
-int can_loopback_test();
+int can_loopback_test(can_peripheral_t device);
 
 #endif // CAN_H
