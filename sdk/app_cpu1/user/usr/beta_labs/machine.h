@@ -20,9 +20,9 @@
 #define Tu_HAT (0.0025)  // kg-m/s^2
 
 #define Kt_HAT (1.0 / (4.0 / (3.0 * POLES * Lambda_pm_HAT)))
-// #define Kt_HAT        (0.177768)  // Nm / Arms
-// #define Km_HAT        (0.330)     // Nm / sqrt(W)
-// #define Ke_HAT        (0.160)     // Vpkll / (rads/s)
+//#define Kt_HAT        (0.177768)  // Nm / Arms
+//#define Km_HAT        (0.330)     // Nm / sqrt(W)
+//#define Ke_HAT        (0.160)     // Vpkll / (rads/s)
 
 #define POLE_PAIRS (16.0)
 #define POLES      (32.0)
@@ -30,7 +30,7 @@
 // NOTE: use this to artificially limit current
 #define I_rated_rms (10.0) // Arms
 
-// #define I_rated_rms   (24.2) // Arms
+//#define I_rated_rms   (24.2) // Arms
 #define I_rated_pk (I_rated_rms * SQRT2) // Apk
 #define I_rated_dq (I_rated_pk / SQRT23) // A_dq
 
