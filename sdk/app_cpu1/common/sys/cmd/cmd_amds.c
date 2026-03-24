@@ -45,20 +45,20 @@ int cmd_amds(int argc, char **argv)
 
     // Handle 'amds <port> valid' command
     if (argc == 3 && STREQ("valid", argv[2])) {
-        uint8_t valid_bits = amds_check_data_validity(port);
+        uint32_t valid_bits = amds_check_data_validity(port);
 
-        uint8_t mask = 0x01;
-        uint8_t channel = 1;
+        for (int ch = 0; ch < 24; ch++) {
+			uint32_t mask = (1 << ch); // Shift 1 by 'ch' positions
 
-        while (mask) {
-            if (valid_bits & mask)
-                cmd_resp_printf("Channel %i: Valid data\r\n", channel);
-            else
-                cmd_resp_printf("Channel %i: Invalid data\r\n", channel);
-
-            mask = mask << 1;
-            channel++;
-        }
+			// Only print if the channel is enabled for this port
+			if (AMDS_PORT_CH_ENABLE[port - 1] & mask) {
+				if (valid_bits & mask) {
+					cmd_resp_printf("Channel %i:\tValid data\r\n", ch);
+				} else {
+					cmd_resp_printf("Channel %i:\tInvalid data\r\n", ch);
+				}
+			}
+		}
 
         return CMD_SUCCESS;
     }

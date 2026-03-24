@@ -824,8 +824,8 @@
     // In the event of either timeout, the driver must say that it is done, so that the timing
     //  manager does not freeze.
     wire first_packet_timeout0, first_packet_timeout1;
-    assign first_packet_timeout0 = (trigger_to_fe0_timer > 11'd2000);
-    assign first_packet_timeout1 = (trigger_to_fe1_timer > 11'd2000);
+    assign first_packet_timeout0 = (trigger_to_fe0_timer > 13'd6000);
+    assign first_packet_timeout1 = (trigger_to_fe1_timer > 13'd6000);
 
     always @(posedge S_AXI_ACLK) begin
         if (~S_AXI_ARESETN)

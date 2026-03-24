@@ -11,6 +11,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+volatile uint32_t AMDS_PORT_CH_ENABLE[AMDS_MAX_IP_CORES] = {
+    0x00FFFFFF,
+    0x00FFFFFF,
+    0x00FFFFFF,
+    0x00FFFFFF
+};
+
 void amds_init(void)
 {
     xil_printf("AMDS: Initializing...\r\n");
@@ -31,7 +38,7 @@ void amds_init(void)
  * NOTE: Because the AMDS mainboard firmware does not do anything different for unpopulated
  *       SensorCards, the validity of those channels is meaningless
  */
-uint8_t amds_check_data_validity(uint8_t port)
+uint32_t amds_check_data_validity(uint8_t port)
 {
     uint32_t base_addr = amds_port_to_base_addr(port);
 
@@ -40,7 +47,7 @@ uint8_t amds_check_data_validity(uint8_t port)
         return 0;
     }
 
-    return Xil_In8(base_addr + AMDS_CH_VALID_REG_OFFSET);
+    return Xil_In32(base_addr + AMDS_CH_VALID_REG_OFFSET);
 }
 
 /* Retrieves the raw ADC data for a single channel on a single AMDS.
@@ -62,7 +69,7 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
         return FAILURE;
     }
 
-    if (!is_amds_channel_in_bounds(channel)) {
+    if (!is_amds_channel_in_bounds(channel) || !is_amds_channel_enabled(port - 1, channel)) {
         return FAILURE;
     } else {
         *out = (int32_t) (Xil_In32(base_addr + channel * sizeof(uint32_t)));
@@ -136,9 +143,18 @@ void amds_print_data(uint8_t port)
         // Cast the address to a pointer for array-like access
         volatile uint32_t *arr_base_addr = (volatile uint32_t *) base_addr;
 
-        for (int i = 0; i < 8; i++) {
-            uint32_t val = arr_base_addr[i];
-            cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
+        for (int i = 0; i < 24; i++) {
+        	if (!is_amds_channel_enabled(port - 1, i)) {
+        		continue;
+        	}
+
+            if (i < 8) {
+            	uint32_t val = arr_base_addr[i];
+            	cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
+            } else {
+            	uint32_t val = arr_base_addr[i + 6];
+				cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
+            }
         }
     }
 }
@@ -208,11 +224,15 @@ int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double 
         // Data line 0 is bits [15:0] and Data line 1 is bits [31:16]
         uint32_t delay_cycles_both_lines = Xil_In32(base_addr + AMDS_DELAY_TIMER_REG_OFFSET);
 
-        if (channel >= AMDS_CH_1 && channel <= AMDS_CH_4) {
+        if ((channel >= AMDS_CH_1 && channel <= AMDS_CH_4) ||
+        	(channel >= AMDS_CH_9 && channel <= AMDS_CH_12) ||
+			(channel >= AMDS_CH_17 && channel <= AMDS_CH_20)) {
             // Delay time in us for data line 0
             *out = (double) (delay_cycles_both_lines & 0xFFFF) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;
-        } else if (channel >= AMDS_CH_5 && channel <= AMDS_CH_8) {
+        } else if ((channel >= AMDS_CH_5 && channel <= AMDS_CH_8) ||
+        		   (channel >= AMDS_CH_13 && channel <= AMDS_CH_16) ||
+				   (channel >= AMDS_CH_21 && channel <= AMDS_CH_24)) {
             // Delay time in us for data line 1
             *out = (double) (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;

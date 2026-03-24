@@ -34,18 +34,9 @@ void cmd_ctrl_register(void)
 
 int cmd_ctrl(int argc, char **argv)
 {
-    if (argc == 2 && STREQ("print", argv[1])) {
-//    	uint32_t reg_addr = AMDS_1_BASE_ADDR + (0x1E * sizeof(uint32_t));
-//    	uint32_t value = Xil_In32(reg_addr);
-//    	printf("data_enable = 0x%08lX\r\n", value);
-
-    	Xil_Out32(AMDS_1_BASE_ADDR + (0x1F * sizeof(uint32_t)), 0xDEADBEEF);
-    	uint32_t test = Xil_In32(AMDS_1_BASE_ADDR + (0x1F * sizeof(uint32_t)));
-    	printf("\nslv_reg31 = 0x%08lX\r\n", test);  // should be 0xDEADBEEF
-
-
-		test = Xil_In32(AMDS_1_BASE_ADDR + (0x1E * sizeof(uint32_t)));
-		printf("\nslv_reg30 = 0x%08lX\r\n", test);  // should be 0xDEADBEEF
+    if (argc == 2 && STREQ("read", argv[1])) {
+		uint32_t test = Xil_In32(AMDS_1_BASE_ADDR + AMDS_CH_VALID_REG_OFFSET);
+		printf("\nValid = 0x%08lX\r\n", test);  // should be 0xDEADBEEF
 
     	return CMD_SUCCESS;
     }

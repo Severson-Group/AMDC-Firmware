@@ -59,9 +59,9 @@ void task_controller_callback(void *arg)
     pwm_set_duty(2, duty_c); // Set HB3 duty ratio (INV1, PWM5 and PWM6)
 
 	// Check validity of latest data for the AMDS plugged into your GPIO port
-	uint8_t valid = amds_check_data_validity(amds_port);
+	uint32_t valid = amds_check_data_validity(amds_port);
 
-	if (valid == 0xFF) {
+	if ((valid << 8) == 0xFFFFFF) {
 		// 0xFF means the bits for all channels are valid!
 		// Read in values sampled on the AMDS (plugged into your GPIO port) from all channels:
 
