@@ -135,7 +135,7 @@ typedef enum {
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 {
-    if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
+    if ((channel >= AMDS_CH_1 && channel <= AMDS_CH_8) || (channel >= AMDS_CH_9 && channel <= AMDS_CH_24)) {
         return true;
     }
 
@@ -144,7 +144,11 @@ static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 
 static inline bool is_amds_channel_enabled(uint8_t port, amds_channel_e channel)
 {
-    return (AMDS_PORT_CH_ENABLE[port] & (1u << channel)) != 0;
+	uint8_t shift = channel;
+	if (channel > AMDS_CH_8) {
+		shift -= 6;
+	}
+	return (AMDS_PORT_CH_ENABLE[port] & (1 << shift)) != 0;
 }
 
 static inline bool is_amds_port_in_bounds(int port)

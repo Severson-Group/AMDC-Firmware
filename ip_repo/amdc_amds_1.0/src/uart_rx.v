@@ -176,16 +176,18 @@ end
 // after adc_uart_rx tells us to expect it
 //
 // 2.5us = 2500ns = 500 clock cycles
+// 5us = 5000ns = 1000
 //
 // Let's have max of 512, so 9 bit.
+// 10 bits for max 1024
 
-reg [8:0] byte_timeout_timer;
+reg [9:0] byte_timeout_timer;
 reg reset_byte_timeout_timer;
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		byte_timeout_timer <= 9'b0;
+		byte_timeout_timer <= 10'b0;
 	else if (reset_byte_timeout_timer)
-		byte_timeout_timer <= 9'b0;
+		byte_timeout_timer <= 10'b0;
 	else
 		byte_timeout_timer <= byte_timeout_timer + 1;
 end

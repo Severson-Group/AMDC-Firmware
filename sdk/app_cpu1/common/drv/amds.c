@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 volatile uint32_t AMDS_PORT_CH_ENABLE[AMDS_MAX_IP_CORES] = {
-    0x00FFFFFF,
+    0x00111111,
     0x00FFFFFF,
     0x00FFFFFF,
     0x00FFFFFF

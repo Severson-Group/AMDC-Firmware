@@ -31,7 +31,7 @@
 
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_LOGGING (0)
+#define USER_CONFIG_ENABLE_LOGGING (1)
 
 // Override default number of available logging variables
 // when defined, this takes precedence over system default of 32
