@@ -34,15 +34,19 @@ void cmd_ctrl_register(void)
 
 int cmd_ctrl(int argc, char **argv)
 {
-    if (argc == 2 && STREQ("read", argv[1])) {
-		uint32_t test = Xil_In32(AMDS_1_BASE_ADDR + AMDS_CH_VALID_REG_OFFSET);
-		printf("\nValid = 0x%08lX\r\n", test);  // should be 0xDEADBEEF
+    if (argc == 3 && STREQ("read", argv[1]) && STREQ("enable", argv[2])) {
+		uint32_t enable = Xil_In32(AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET);
+		cmd_resp_printf("\nEnable: 0x%08lX\r\n", enable);
 
     	return CMD_SUCCESS;
     }
 
-    if (argc == 4 && STREQ("set", argv[1]) && STREQ("enable", argv[2])) {
+    if (argc == 3 && STREQ("set", argv[1]) && STREQ("enable", argv[2])) {
+		uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+		AMDS_PORT_CH_ENABLE[0] = 0x00FFFFFF;
+		Xil_Out32(reg_addr, AMDS_PORT_CH_ENABLE[0]);  // enable 24 channels
 
+		return CMD_SUCCESS;
     }
 
 	if (argc == 2 && STREQ("init", argv[1])) {

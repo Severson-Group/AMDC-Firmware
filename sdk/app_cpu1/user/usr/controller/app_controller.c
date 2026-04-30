@@ -22,13 +22,12 @@ void app_controller_init(void)
 	// Enable data sampling for AMDS on GPIO Port #
 	timing_manager_enable_sensor(AMDS_1);
 
+	uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+	AMDS_PORT_CH_ENABLE[0] = 0x00FFFFFF;
+	Xil_Out32(reg_addr, AMDS_PORT_CH_ENABLE[0]);  // enable 24 channels
+
 	pwm_disable();
 	pwm_set_switching_freq(PWM_MIN_SWITCHING_FREQ_HZ);
-
-
-//	uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-//	AMDS_PORT_CH_ENABLE[0] = 0x0000FFFF;
-//	Xil_Out32(reg_addr, AMDS_PORT_CH_ENABLE[0]);  // enable 16 channels
 
 	// register commands
     cmd_ctrl_register();
