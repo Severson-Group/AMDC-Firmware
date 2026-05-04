@@ -33,17 +33,14 @@ module adc_uart_rx(
 );
 
 // ==============
-// Packet Counter
+// Packet Valid and Current Packet
 // ==============
 
-reg rst_packet_counter;
-reg inc_packet_counter;
 reg rst_packet_valid;
 reg set_packet_valid;
 reg rst_current_packet;
 reg load_current_packet;
 
-reg [11:0] packet_counter;
 reg [11:0] packet_valid;
 reg [3:0] current_packet;
 
@@ -63,15 +60,6 @@ always @(posedge clk, negedge rst_n) begin
         packet_valid <= 12'b0;
     else if (set_packet_valid)
         packet_valid[current_packet] <= 1'b1;
-end
-
-always @(posedge clk, negedge rst_n) begin
-    if (!rst_n)
-        packet_counter <= 12'b0;
-    else if (rst_packet_counter)
-        packet_counter <= 12'b0;
-    else if (inc_packet_counter)
-        packet_counter <= packet_counter + 1;
 end
 
 // =======================
@@ -410,9 +398,6 @@ always @(*) begin
 
     uart_start_rx = 0;
     
-    rst_packet_counter = 0;
-    inc_packet_counter = 0;
-    
     rst_packet_valid = 0;
     set_packet_valid = 0;
     rst_current_packet = 0;
@@ -447,7 +432,6 @@ always @(*) begin
 
                 deassert_done = 1;
             
-                rst_packet_counter = 1;
                 rst_packet_valid = 1;
                 rst_current_packet = 1;
                 next_state = `SM_WAIT_FOR_HEADER;
@@ -555,15 +539,14 @@ always @(*) begin
                 set_packet_valid = 1;
             end
 
-            if ((packet_valid | (1 << current_packet)) == is_dout_enabled || packet_counter == 12'd11) begin
+            if ((packet_valid | (1 << current_packet)) == is_dout_enabled) begin
                 next_state = `SM_IDLE;
                 assert_done = 1;
                 clr_sm_helpers = 1;
             end
             
             else begin
-                // If the packet counter is 0-2, there is still more data to rx
-                inc_packet_counter = 1;
+                // If there are more enabled channels, there is still more data to rx
                 uart_start_rx = 1;
                 next_state = `SM_WAIT_FOR_HEADER;
                 clr_sm_helpers = 1;
