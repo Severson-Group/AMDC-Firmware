@@ -23,8 +23,8 @@ void app_controller_init(void)
 	timing_manager_enable_sensor(AMDS_1);
 
 	uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-	AMDS_PORT_CH_ENABLE[0] = 0x00111111;
-	Xil_Out32(reg_addr, AMDS_PORT_CH_ENABLE[0]);  // enable 3 FBC channels
+	uint32_t enable = 0x00111111;
+	Xil_Out32(reg_addr, enable);  // enable 3 FBC channels
 
 	pwm_disable();
 	pwm_set_switching_freq(50000);

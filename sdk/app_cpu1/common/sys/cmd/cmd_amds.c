@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "xil_io.h"
 
 static command_entry_t cmd_entry;
 
@@ -49,9 +50,10 @@ int cmd_amds(int argc, char **argv)
 
         for (int ch = 0; ch < 24; ch++) {
 			uint32_t mask = (1 << ch); // Shift 1 by 'ch' positions
+			uint32_t enabled = amds_get_enabled(port);
 
 			// Only print if the channel is enabled for this port
-			if (AMDS_PORT_CH_ENABLE[port - 1] & mask) {
+			if (enabled & mask) {
 				if (valid_bits & mask) {
 					cmd_resp_printf("Channel %i:\tValid data\r\n", ch);
 				} else {

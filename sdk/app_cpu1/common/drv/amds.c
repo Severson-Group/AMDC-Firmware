@@ -11,13 +11,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-volatile uint32_t AMDS_PORT_CH_ENABLE[AMDS_MAX_IP_CORES] = {
-    0x00111111,
-    0x00FFFFFF,
-    0x00FFFFFF,
-    0x00FFFFFF
-};
-
 void amds_init(void)
 {
     xil_printf("AMDS: Initializing...\r\n");
@@ -69,7 +62,9 @@ int amds_get_data(uint8_t port, amds_channel_e channel, int32_t *out)
         return FAILURE;
     }
 
-    if (!is_amds_channel_in_bounds(channel) || !is_amds_channel_enabled(port - 1, channel)) {
+    uint32_t enabled = amds_get_enabled(port);
+
+    if (!is_amds_channel_in_bounds(channel) || !(enabled & (1 << channel))) {
         return FAILURE;
     } else {
         *out = (int32_t) (Xil_In32(base_addr + channel * sizeof(uint32_t)));
@@ -142,19 +137,14 @@ void amds_print_data(uint8_t port)
     } else {
         // Cast the address to a pointer for array-like access
         volatile uint32_t *arr_base_addr = (volatile uint32_t *) base_addr;
+        uint32_t enabled = amds_get_enabled(port);
 
         for (int i = 0; i < 24; i++) {
-        	if (!is_amds_channel_enabled(port - 1, i)) {
-        		continue;
-        	}
-
-            if (i < 8) {
-            	uint32_t val = arr_base_addr[i];
-            	cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
-            } else {
-            	uint32_t val = arr_base_addr[i + 6];
-				cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
-            }
+        	if (!(enabled & (1 << i))) {
+				continue;
+			}
+			uint32_t val = arr_base_addr[i];
+			cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
         }
     }
 }
@@ -210,6 +200,29 @@ void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, u
             *DT = Xil_In32(base_addr + AMDS_DATA_TIMED_OUT_REG_OFFSET);
         }
     }
+}
+
+/**
+ * This function retrieves the values of the AMDS Driver Channel Enable Register for a given GPIO port
+ * The channel enable register is mapped with the MSb referring to channel 24 and the LSb for channel 1
+ * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
+ */
+uint32_t amds_get_enabled(uint8_t port) {
+	uint32_t base_addr = amds_port_to_base_addr(port);
+
+	return Xil_In32(base_addr + AMDS_CH_ENABLE_REG_OFFSET);
+}
+
+/**
+ * This function sets the values of the AMDS Driver Channel Enable Register for a given GPIO port
+ * The channel enable register is mapped with the MSb referring to channel 24 and the LSb for channel 1
+ * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
+ */
+void amds_set_enabled(uint8_t port, amds_channel_e channel) {
+	uint32_t base_addr = amds_port_to_base_addr(port);
+	uint32_t enable = 0 | 1 << channel;
+
+	Xil_Out32(base_addr + AMDS_CH_ENABLE_REG_OFFSET, enable);  // enable 24 channels
 }
 
 int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out)

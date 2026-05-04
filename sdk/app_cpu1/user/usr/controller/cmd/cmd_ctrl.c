@@ -44,8 +44,8 @@ int cmd_ctrl(int argc, char **argv)
 
     if (argc == 3 && STREQ("set", argv[1]) && STREQ("enable", argv[2])) {
 		uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-		AMDS_PORT_CH_ENABLE[0] = 0x00FFFFFF;
-		Xil_Out32(reg_addr, AMDS_PORT_CH_ENABLE[0]);  // enable 24 channels
+		uint32_t enable = 0x00FFFFFF;
+		Xil_Out32(reg_addr, enable);  // enable 24 channels
 
 		return CMD_SUCCESS;
     }

@@ -31,32 +31,29 @@
 #define AMDS_CH_6_DATA_REG_OFFSET        (5 * sizeof(uint32_t))
 #define AMDS_CH_7_DATA_REG_OFFSET        (6 * sizeof(uint32_t))
 #define AMDS_CH_8_DATA_REG_OFFSET        (7 * sizeof(uint32_t))
-#define AMDS_DELAY_TIMER_REG_OFFSET      (8 * sizeof(uint32_t))
-#define AMDS_CH_VALID_REG_OFFSET         (9 * sizeof(uint32_t))
-#define AMDS_BYTES_VALID_REG_OFFSET      (10 * sizeof(uint32_t))
-#define AMDS_BYTES_CORRUPT_REG_OFFSET    (11 * sizeof(uint32_t))
-#define AMDS_BYTES_TIMED_OUT_REG_OFFSET  (12 * sizeof(uint32_t))
-#define AMDS_DATA_TIMED_OUT_REG_OFFSET   (13 * sizeof(uint32_t))
-#define AMDS_CH_9_DATA_REG_OFFSET        (14 * sizeof(uint32_t))
-#define AMDS_CH_10_DATA_REG_OFFSET       (15 * sizeof(uint32_t))
-#define AMDS_CH_11_DATA_REG_OFFSET       (16 * sizeof(uint32_t))
-#define AMDS_CH_12_DATA_REG_OFFSET       (17 * sizeof(uint32_t))
-#define AMDS_CH_13_DATA_REG_OFFSET       (18 * sizeof(uint32_t))
-#define AMDS_CH_14_DATA_REG_OFFSET       (19 * sizeof(uint32_t))
-#define AMDS_CH_15_DATA_REG_OFFSET       (20 * sizeof(uint32_t))
-#define AMDS_CH_16_DATA_REG_OFFSET       (21 * sizeof(uint32_t))
-#define AMDS_CH_17_DATA_REG_OFFSET       (22 * sizeof(uint32_t))
-#define AMDS_CH_18_DATA_REG_OFFSET       (23 * sizeof(uint32_t))
-#define AMDS_CH_19_DATA_REG_OFFSET       (24 * sizeof(uint32_t))
-#define AMDS_CH_20_DATA_REG_OFFSET       (25 * sizeof(uint32_t))
-#define AMDS_CH_21_DATA_REG_OFFSET       (26 * sizeof(uint32_t))
-#define AMDS_CH_22_DATA_REG_OFFSET       (27 * sizeof(uint32_t))
-#define AMDS_CH_23_DATA_REG_OFFSET       (28 * sizeof(uint32_t))
-#define AMDS_CH_24_DATA_REG_OFFSET       (29 * sizeof(uint32_t))
+#define AMDS_CH_9_DATA_REG_OFFSET        (8 * sizeof(uint32_t))
+#define AMDS_CH_10_DATA_REG_OFFSET       (9 * sizeof(uint32_t))
+#define AMDS_CH_11_DATA_REG_OFFSET       (10 * sizeof(uint32_t))
+#define AMDS_CH_12_DATA_REG_OFFSET       (11 * sizeof(uint32_t))
+#define AMDS_CH_13_DATA_REG_OFFSET       (12 * sizeof(uint32_t))
+#define AMDS_CH_14_DATA_REG_OFFSET       (13 * sizeof(uint32_t))
+#define AMDS_CH_15_DATA_REG_OFFSET       (14 * sizeof(uint32_t))
+#define AMDS_CH_16_DATA_REG_OFFSET       (15 * sizeof(uint32_t))
+#define AMDS_CH_17_DATA_REG_OFFSET       (16 * sizeof(uint32_t))
+#define AMDS_CH_18_DATA_REG_OFFSET       (17 * sizeof(uint32_t))
+#define AMDS_CH_19_DATA_REG_OFFSET       (18 * sizeof(uint32_t))
+#define AMDS_CH_20_DATA_REG_OFFSET       (19 * sizeof(uint32_t))
+#define AMDS_CH_21_DATA_REG_OFFSET       (20 * sizeof(uint32_t))
+#define AMDS_CH_22_DATA_REG_OFFSET       (21 * sizeof(uint32_t))
+#define AMDS_CH_23_DATA_REG_OFFSET       (22 * sizeof(uint32_t))
+#define AMDS_CH_24_DATA_REG_OFFSET       (23 * sizeof(uint32_t))
+#define AMDS_DELAY_TIMER_REG_OFFSET      (24 * sizeof(uint32_t))
+#define AMDS_CH_VALID_REG_OFFSET         (25 * sizeof(uint32_t))
+#define AMDS_BYTES_VALID_REG_OFFSET      (26 * sizeof(uint32_t))
+#define AMDS_BYTES_CORRUPT_REG_OFFSET    (27 * sizeof(uint32_t))
+#define AMDS_BYTES_TIMED_OUT_REG_OFFSET  (28 * sizeof(uint32_t))
+#define AMDS_DATA_TIMED_OUT_REG_OFFSET   (29 * sizeof(uint32_t))
 #define AMDS_CH_ENABLE_REG_OFFSET        (30 * sizeof(uint32_t))
-
-// Bit mask selecting channels to enable
-extern volatile uint32_t AMDS_PORT_CH_ENABLE[AMDS_MAX_IP_CORES];
 
 // Bit masks for use with amds_check_data_validity()
 #define AMDS_CH_1_VALID_MASK   0x1
@@ -104,7 +101,7 @@ typedef enum {
     AMDS_CH_6,
     AMDS_CH_7,
     AMDS_CH_8,
-	AMDS_CH_9 = 14,
+	AMDS_CH_9,
 	AMDS_CH_10,
 	AMDS_CH_11,
 	AMDS_CH_12,
@@ -123,7 +120,7 @@ typedef enum {
 
 
     // Keep this as last entry!
-    AMDS_NUM_CHANNELS = 24,
+    AMDS_NUM_CHANNELS,
 } amds_channel_e;
 
 typedef enum {
@@ -135,20 +132,11 @@ typedef enum {
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 {
-    if ((channel >= AMDS_CH_1 && channel <= AMDS_CH_8) || (channel >= AMDS_CH_9 && channel <= AMDS_CH_24)) {
+	if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
         return true;
     }
 
     return false;
-}
-
-static inline bool is_amds_channel_enabled(uint8_t port, amds_channel_e channel)
-{
-	uint8_t shift = channel;
-	if (channel > AMDS_CH_8) {
-		shift -= 6;
-	}
-	return (AMDS_PORT_CH_ENABLE[port] & (1 << shift)) != 0;
 }
 
 static inline bool is_amds_port_in_bounds(int port)
@@ -190,6 +178,9 @@ int amds_convert_voltage(double voltage, double offset, double gain, double *out
 void amds_print_data(uint8_t port);
 void amds_print_counters(uint8_t port);
 void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, uint32_t *DT);
+
+uint32_t amds_get_enabled(uint8_t port);
+void amds_set_enabled(uint8_t port, amds_channel_e channel);
 
 int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out);
 

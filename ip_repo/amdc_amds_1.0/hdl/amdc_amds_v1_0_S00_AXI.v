@@ -94,11 +94,6 @@
     reg [31:0] adc_dout5;
     reg [31:0] adc_dout6;
     reg [31:0] adc_dout7;
-    reg [15:0] trigger_to_fe0_timer, trigger_to_fe1_timer;
-    reg [31:0] ch_valid_reg;
-    reg [31:0] valid_reg;
-    reg [31:0] corrupt_reg;
-    reg [31:0] timeout_reg;
     reg [31:0] adc_dout8;
     reg [31:0] adc_dout9;
     reg [31:0] adc_dout10;
@@ -115,6 +110,11 @@
     reg [31:0] adc_dout21;
     reg [31:0] adc_dout22;
     reg [31:0] adc_dout23;
+    reg [15:0] trigger_to_fe0_timer, trigger_to_fe1_timer;
+    reg [31:0] ch_valid_reg;
+    reg [31:0] valid_reg;
+    reg [31:0] corrupt_reg;
+    reg [31:0] timeout_reg;
     
     // Debugging counters: Valid and Corrupt Counters are in each instance of adc_uart
     //                     Timeout Counters are just below in this module
@@ -704,29 +704,29 @@
             5'h5   : reg_data_out <= adc_dout5;
             5'h6   : reg_data_out <= adc_dout6;
             5'h7   : reg_data_out <= adc_dout7;
-            5'h8   : reg_data_out <= {trigger_to_fe1_timer, trigger_to_fe0_timer};
-            5'h9   : reg_data_out <= ch_valid_reg;
-            5'hA   : reg_data_out <= {counter_line1_bytes_valid, counter_line0_bytes_valid};            // slv_reg10
-            5'hB   : reg_data_out <= {counter_line1_bytes_corrupt, counter_line0_bytes_corrupt};        // slv_reg11
-            5'hC   : reg_data_out <= {counter_line1_bytes_timed_out, counter_line0_bytes_timed_out};    // slv_reg12
-            5'hD   : reg_data_out <= {counter_line1_data_timed_out, counter_line0_data_timed_out};      // slv_reg13
-            5'hE   : reg_data_out <= adc_dout8;
-            5'hF   : reg_data_out <= adc_dout9;
-            5'h10  : reg_data_out <= adc_dout10;
-            5'h11  : reg_data_out <= adc_dout11;
-            5'h12  : reg_data_out <= adc_dout12;
-            5'h13  : reg_data_out <= adc_dout13;
-            5'h14  : reg_data_out <= adc_dout14;
-            5'h15  : reg_data_out <= adc_dout15;
-            5'h16  : reg_data_out <= adc_dout16;
-            5'h17  : reg_data_out <= adc_dout17;
-            5'h18  : reg_data_out <= adc_dout18;
-            5'h19  : reg_data_out <= adc_dout19;
-            5'h1A  : reg_data_out <= adc_dout20;
-            5'h1B  : reg_data_out <= adc_dout21;
-            5'h1C  : reg_data_out <= adc_dout22;
-            5'h1D  : reg_data_out <= adc_dout23;
-            5'h1E  : reg_data_out <= slv_reg30;
+            5'h8   : reg_data_out <= adc_dout8;
+            5'h9   : reg_data_out <= adc_dout9;
+            5'hA   : reg_data_out <= adc_dout10;                    // slv_reg10
+            5'hB   : reg_data_out <= adc_dout11;                    // slv_reg11
+            5'hC   : reg_data_out <= adc_dout12;                    // slv_reg12
+            5'hD   : reg_data_out <= adc_dout13;                    // slv_reg13
+            5'hE   : reg_data_out <= adc_dout14;
+            5'hF   : reg_data_out <= adc_dout15;
+            5'h10  : reg_data_out <= adc_dout16;
+            5'h11  : reg_data_out <= adc_dout17;
+            5'h12  : reg_data_out <= adc_dout18;
+            5'h13  : reg_data_out <= adc_dout19;
+            5'h14  : reg_data_out <= adc_dout20;
+            5'h15  : reg_data_out <= adc_dout21;
+            5'h16  : reg_data_out <= adc_dout22;
+            5'h17  : reg_data_out <= adc_dout23;
+            5'h18  : reg_data_out <= {trigger_to_fe1_timer, trigger_to_fe0_timer};
+            5'h19  : reg_data_out <= ch_valid_reg;
+            5'h1A  : reg_data_out <= {counter_line1_bytes_valid, counter_line0_bytes_valid};
+            5'h1B  : reg_data_out <= {counter_line1_bytes_corrupt, counter_line0_bytes_corrupt};
+            5'h1C  : reg_data_out <= {counter_line1_bytes_timed_out, counter_line0_bytes_timed_out};
+            5'h1D  : reg_data_out <= {counter_line1_data_timed_out, counter_line0_data_timed_out};
+            5'h1E  : reg_data_out <= slv_reg30;                     // channel enable register
             5'h1F  : reg_data_out <= slv_reg31;
             default : reg_data_out <= 0;
           endcase
