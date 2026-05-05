@@ -15,6 +15,20 @@ void amds_init(void)
 {
     xil_printf("AMDS: Initializing...\r\n");
 
+    uint32_t enable = 0x00FFFFFF;
+
+    uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+	Xil_Out32(reg_addr, enable);  // enable 24 channels
+
+    reg_addr = AMDS_2_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+    Xil_Out32(reg_addr, enable);  // enable 24 channels
+
+    reg_addr = AMDS_3_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+	Xil_Out32(reg_addr, enable);  // enable 24 channels
+
+	reg_addr = AMDS_4_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
+	Xil_Out32(reg_addr, enable);  // enable 24 channels
+
     cmd_amds_register();
 }
 
