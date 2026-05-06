@@ -15,19 +15,13 @@ void amds_init(void)
 {
     xil_printf("AMDS: Initializing...\r\n");
 
-    uint32_t enable = 0x00FFFFFF;
+    // enable 24 channels on all ports
+    uint32_t mask = 0x00FFFFFF;
 
-    uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-	Xil_Out32(reg_addr, enable);  // enable 24 channels
-
-    reg_addr = AMDS_2_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-    Xil_Out32(reg_addr, enable);  // enable 24 channels
-
-    reg_addr = AMDS_3_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-	Xil_Out32(reg_addr, enable);  // enable 24 channels
-
-	reg_addr = AMDS_4_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
-	Xil_Out32(reg_addr, enable);  // enable 24 channels
+    amds_set_enabled(0, mask);
+    amds_set_enabled(1, mask);
+    amds_set_enabled(2, mask);
+    amds_set_enabled(3, mask);
 
     cmd_amds_register();
 }
@@ -232,11 +226,10 @@ uint32_t amds_get_enabled(uint8_t port) {
  * The channel enable register is mapped with the MSb referring to channel 24 and the LSb for channel 1
  * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
  */
-void amds_set_enabled(uint8_t port, amds_channel_e channel) {
+void amds_set_enabled(uint8_t port, uint32_t mask) {
 	uint32_t base_addr = amds_port_to_base_addr(port);
-	uint32_t enable = 0 | 1 << channel;
 
-	Xil_Out32(base_addr + AMDS_CH_ENABLE_REG_OFFSET, enable);  // enable 24 channels
+	Xil_Out32(base_addr + AMDS_CH_ENABLE_REG_OFFSET, mask);  // enable 24 channels
 }
 
 int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out)
