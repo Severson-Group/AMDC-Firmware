@@ -23,7 +23,7 @@ void app_controller_init(void)
 	timing_manager_enable_sensor(AMDS_1);
 
 	uint32_t enable = 0x00111111;
-	amds_set_enabled(0, enable);  // enable 3 FBC channels
+	amds_set_enabled(1, enable);  // enable 3 FBC channels
 
 	pwm_disable();
 	pwm_set_switching_freq(50000);
