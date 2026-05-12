@@ -7,7 +7,7 @@ module uart_rx(
 	// UART data input (not in our clock domain!)
 	// 
 	// UART settings
-	// > Bit Rate (MBit/s): 25
+	// > Bit Rate (MBit/s): 20
 	// > Bits per Frame:    8
 	// > Stop bits:         2
 	// > Parity bit:        Odd
@@ -172,30 +172,27 @@ end
 // Byte Timeout Timer
 // ==================
 
-// Wait for a max of 2.5us for the start bit
+// Wait for a max of 10us for the start bit
 // after adc_uart_rx tells us to expect it
 //
 // 2.5us = 2500ns = 500 clock cycles
-// 5us = 5000ns = 1000
-// 10us = 10000ns = 2000
-// 20us = 20000ns = 4000
+// 10us = 10000ns = 2000 
 //
-// Let's have max of 512, so 9 bit.
+// Let's have max of 1024, so 10 bit.
 // 10 bits for max 1024
-// 11 bits for max 2048
 
-reg [11:0] byte_timeout_timer;
+reg [10:0] byte_timeout_timer;
 reg reset_byte_timeout_timer;
 always @(posedge clk, negedge rst_n) begin
 	if (!rst_n)
-		byte_timeout_timer <= 12'b0;
+		byte_timeout_timer <= 11'b0;
 	else if (reset_byte_timeout_timer)
-		byte_timeout_timer <= 12'b0;
+		byte_timeout_timer <= 11'b0;
 	else
 		byte_timeout_timer <= byte_timeout_timer + 1;
 end
 
-// Detect when timer = max value (i.e., about 2.5us)
+// Detect when timer = max value (i.e., about 10us)
 wire max_byte_timeout_timer;
 assign max_byte_timeout_timer = &byte_timeout_timer;
 
@@ -269,12 +266,12 @@ always @(*) begin
 			//
 			// Means timer gets to timer_max = (((1 / baud_rate)/2) * 1e9 / clk_ns)
 			// 
-			// If clk_ns = 5ns and baud_rate 25M,
-			// then timer_max = 4 cycles			
+			// If clk_ns = 5ns and baud_rate 20M,
+			// then timer_max = 5 cycles			
 			//
 			// Because we detected the DIN falling edge 1 clock cycle late, wait 1 less cycle
-			// 4 - 1 = 3 cycle
-			if (baud_timer >= 4'd3) begin
+			// 5 - 1 = 4 cycle
+			if (baud_timer >= 4'd4) begin
 				rst_baud_timer = 1;
 				next_state = `SM_WAIT_FULL_BAUD;
 			end
@@ -288,8 +285,8 @@ always @(*) begin
 			// to wait for EXACTLY one baud period.
 			//
 			// timer_max = ((1 / baud_rate) * 1e9 / clk_ns)
-			//           = 8 cycles
-			if (baud_timer >= 4'd7) begin
+			//           = 10 cycles
+			if (baud_timer >= 4'd9) begin
 				shift_reg_shift = 1;
 				rst_baud_timer = 1;
 				inc_bit_counter = 1;
