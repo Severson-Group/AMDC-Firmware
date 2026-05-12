@@ -3,7 +3,7 @@
 
 #include "sys/scheduler.h"
 
-#define TASK_CONTROLLER_UPDATES_PER_SEC (20000)
+#define TASK_CONTROLLER_UPDATES_PER_SEC (25000)
 #define TASK_CONTROLLER_INTERVAL_USEC   (USEC_IN_SEC / TASK_CONTROLLER_UPDATES_PER_SEC)
 
 int task_controller_init(void);

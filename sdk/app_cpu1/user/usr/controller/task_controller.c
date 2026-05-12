@@ -22,6 +22,11 @@ int task_controller_init(void)
         return FAILURE;
     }
 
+    pwm_disable();
+	pwm_set_switching_freq(50000);
+	pwm_set_deadtime_ns(150);
+	pwm_enable();
+
     // Fill TCB with parameters
     scheduler_tcb_init(&tcb, task_controller_callback,
                         NULL, "ctrl", TASK_CONTROLLER_INTERVAL_USEC);
@@ -32,7 +37,9 @@ int task_controller_init(void)
 
 int task_controller_deinit(void)
 {
-    return scheduler_tcb_unregister(&tcb);
+	pwm_disable();
+
+	return scheduler_tcb_unregister(&tcb);
 }
 
 double Ts    = 1.0 / (double) TASK_CONTROLLER_UPDATES_PER_SEC;

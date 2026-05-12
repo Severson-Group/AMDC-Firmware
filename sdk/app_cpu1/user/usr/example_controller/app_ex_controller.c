@@ -13,7 +13,7 @@ void app_ex_controller_init(void)
     cmd_ctrl_register();
 
     // Initialize controller with system
-    task_ex_controller_init();
+//    task_ex_controller_init();
 }
 
 #endif // APP_EXAMPLE_CONTROLLER
