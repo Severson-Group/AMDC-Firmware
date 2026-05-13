@@ -23,7 +23,7 @@ int task_controller_init(void)
     }
 
     pwm_disable();
-	pwm_set_switching_freq(50000);
+	pwm_set_switching_freq(25000);
 	pwm_set_deadtime_ns(150);
 	pwm_enable();
 

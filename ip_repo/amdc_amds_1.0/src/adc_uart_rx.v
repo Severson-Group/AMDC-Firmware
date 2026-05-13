@@ -424,17 +424,27 @@ always @(*) begin
     case (state)
         `SM_IDLE: begin
             if (start_rx) begin
-                // Incoming UART transmission, so start UART RX module
-                uart_start_rx = 1;
-                
-                // Tell user that the all data regs are no longer valid
-                clr_all_data_valid = 1;
-
-                deassert_done = 1;
+                if (|is_dout_enabled) begin
+                    // We have a trigger and at least one channel is enabled
+                    
+                    // Incoming UART transmission, so start UART RX module
+                    uart_start_rx = 1;
+                    
+                    // Tell user that the all data regs are no longer valid
+                    clr_all_data_valid = 1;
+                    
+                    deassert_done = 1;
             
-                rst_packet_valid = 1;
-                rst_current_packet = 1;
-                next_state = `SM_WAIT_FOR_HEADER;
+                    rst_packet_valid = 1;
+                    rst_current_packet = 1;
+                    next_state = `SM_WAIT_FOR_HEADER;
+                end
+                else begin
+                    // Trigger received, but the line is disabled. 
+                    // Immediately signal "done" so the AXI wrapper doesn't wait/timeout.
+                    assert_done = 1;
+                    next_state = `SM_IDLE;
+                end
             end
         end
         

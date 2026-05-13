@@ -16,7 +16,7 @@ void amds_init(void)
     xil_printf("AMDS: Initializing...\r\n");
 
     // enable 24 channels on all ports
-    uint32_t mask = 0x00FFFFFF;
+    uint32_t mask = 0x000000FF;
 
     amds_set_enabled(0, mask);
     amds_set_enabled(1, mask);
