@@ -15,7 +15,8 @@ void amds_init(void)
 {
     xil_printf("AMDS: Initializing...\r\n");
 
-    // enable 24 channels on all ports
+    // setup amds for default link configuration:
+    // --> single amds (no daisy chain), all sensor cards enabled
     uint32_t mask = 0x000000FF;
 
     amds_set_enabled(0, mask);
