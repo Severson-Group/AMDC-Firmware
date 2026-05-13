@@ -3,7 +3,7 @@
   <spirit:vendor>xilinx.com</spirit:vendor>
   <spirit:library>user</spirit:library>
   <spirit:name>amdc_amds</spirit:name>
-  <spirit:version>2.0</spirit:version>
+  <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
       <spirit:name>S00_AXI</spirit:name>
@@ -815,7 +815,7 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/amdc_amds_v2_0.tcl</spirit:name>
+        <spirit:name>xgui/amdc_amds_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_dda4df14</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
@@ -895,8 +895,11 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_amds_v2.0</xilinx:displayName>
-      <xilinx:coreRevision>37</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2026-05-13T19:03:16Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:upgrades>
+        <xilinx:canUpgradeFrom>xilinx.com:user:amdc_amds:2.0</xilinx:canUpgradeFrom>
+      </xilinx:upgrades>
+      <xilinx:coreCreationDateTime>2026-05-13T19:47:45Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@b6a820a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1dc30708_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
@@ -1296,6 +1299,14 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@5b60e871_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@2a509d93_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@734f4b91_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4fbc2007_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@37f13c2f_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5514cf0a_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@23b44e1d_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5791ad3a_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@5b4f8d9a_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6e0e2b1_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@54657b0d_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>

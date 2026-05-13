@@ -29,9 +29,8 @@ void app_controller_init(void)
 
 	timing_manager_set_ratio(EVENT_RATIO);
 
-//	uint32_t enable = 0x00111111;
-//	uint32_t enable = 0x00FF00FF;
-//	amds_set_enabled(1, enable);  // enable 3 FBC channels
+	uint32_t enable = 0x00000001;
+	amds_set_enabled(1, enable);
 
 	// register commands
     cmd_ctrl_register();

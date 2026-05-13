@@ -6,6 +6,7 @@
 #include "sys/util.h"
 #include "usr/controller/task_controller.h"
 #include "drv/pwm.h"
+#include "drv/timing_manager.h"
 #include <stdlib.h>
 #include <string.h>
 #include "drv/amds.h"
@@ -24,6 +25,7 @@ static command_help_t cmd_help[] = {
 	{ "print amds", "print raw AMDS channels" },
 	{ "read <channel>", "read data out of channel" },
 	{ "get data", "Read sensor card data from 3 FBC boards" },
+	{ "get timing", "Get the timing of sensor acquisition for AMDS1" },
 };
 
 void cmd_ctrl_register(void)
@@ -41,6 +43,13 @@ int cmd_ctrl(int argc, char **argv)
 
     	return CMD_SUCCESS;
     }
+
+    if (argc == 3 && STREQ("get", argv[1]) && STREQ("timing", argv[2])) {
+		double timing = timing_manager_get_time_per_sensor(AMDS_1);
+		cmd_resp_printf("\nAMDS 1 Timing: %f\r\n", timing);
+
+		return CMD_SUCCESS;
+	}
 
     if (argc == 3 && STREQ("set", argv[1]) && STREQ("enable", argv[2])) {
 		uint32_t reg_addr = AMDS_1_BASE_ADDR + AMDS_CH_ENABLE_REG_OFFSET;
