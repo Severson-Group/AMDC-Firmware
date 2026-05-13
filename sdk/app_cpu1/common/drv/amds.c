@@ -149,11 +149,11 @@ void amds_print_data(uint8_t port)
         uint32_t enabled = amds_get_enabled(port);
 
         for (int i = 0; i < 24; i++) {
-        	if (!(enabled & (1 << i))) {
-				continue;
-			}
-			uint32_t val = arr_base_addr[i];
-			cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
+            if (!(enabled & (1 << i))) {
+                continue;
+            }
+            uint32_t val = arr_base_addr[i];
+            cmd_resp_printf("CH_%i: %04X\r\n", i + 1, val);
         }
     }
 }
@@ -217,9 +217,9 @@ void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, u
  * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
  */
 uint32_t amds_get_enabled(uint8_t port) {
-	uint32_t base_addr = amds_port_to_base_addr(port);
+    uint32_t base_addr = amds_port_to_base_addr(port);
 
-	return Xil_In32(base_addr + AMDS_CH_ENABLE_REG_OFFSET);
+    return Xil_In32(base_addr + AMDS_CH_ENABLE_REG_OFFSET);
 }
 
 /**
@@ -228,9 +228,9 @@ uint32_t amds_get_enabled(uint8_t port) {
  * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
  */
 void amds_set_enabled(uint8_t port, uint32_t mask) {
-	uint32_t base_addr = amds_port_to_base_addr(port);
+    uint32_t base_addr = amds_port_to_base_addr(port);
 
-	Xil_Out32(base_addr + AMDS_CH_ENABLE_REG_OFFSET, mask);  // enable 24 channels
+    Xil_Out32(base_addr + AMDS_CH_ENABLE_REG_OFFSET, mask);  // enable 24 channels
 }
 
 int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double *out)
@@ -246,14 +246,14 @@ int amds_get_trigger_to_edge_delay(uint8_t port, amds_channel_e channel, double 
         uint32_t delay_cycles_both_lines = Xil_In32(base_addr + AMDS_DELAY_TIMER_REG_OFFSET);
 
         if ((channel >= AMDS_CH_1 && channel <= AMDS_CH_4) ||
-        	(channel >= AMDS_CH_9 && channel <= AMDS_CH_12) ||
-			(channel >= AMDS_CH_17 && channel <= AMDS_CH_20)) {
+            (channel >= AMDS_CH_9 && channel <= AMDS_CH_12) ||
+            (channel >= AMDS_CH_17 && channel <= AMDS_CH_20)) {
             // Delay time in us for data line 0
             *out = (double) (delay_cycles_both_lines & 0xFFFF) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;
         } else if ((channel >= AMDS_CH_5 && channel <= AMDS_CH_8) ||
-        		   (channel >= AMDS_CH_13 && channel <= AMDS_CH_16) ||
-				   (channel >= AMDS_CH_21 && channel <= AMDS_CH_24)) {
+                   (channel >= AMDS_CH_13 && channel <= AMDS_CH_16) ||
+                   (channel >= AMDS_CH_21 && channel <= AMDS_CH_24)) {
             // Delay time in us for data line 1
             *out = (double) (delay_cycles_both_lines >> 16) / CLOCK_FPGA_CLK_FREQ_MHZ;
             return SUCCESS;

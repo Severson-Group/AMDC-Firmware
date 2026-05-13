@@ -101,22 +101,22 @@ typedef enum {
     AMDS_CH_6,
     AMDS_CH_7,
     AMDS_CH_8,
-	AMDS_CH_9,
-	AMDS_CH_10,
-	AMDS_CH_11,
-	AMDS_CH_12,
-	AMDS_CH_13,
-	AMDS_CH_14,
-	AMDS_CH_15,
-	AMDS_CH_16,
-	AMDS_CH_17,
-	AMDS_CH_18,
-	AMDS_CH_19,
-	AMDS_CH_20,
-	AMDS_CH_21,
-	AMDS_CH_22,
-	AMDS_CH_23,
-	AMDS_CH_24,
+    AMDS_CH_9,
+    AMDS_CH_10,
+    AMDS_CH_11,
+    AMDS_CH_12,
+    AMDS_CH_13,
+    AMDS_CH_14,
+    AMDS_CH_15,
+    AMDS_CH_16,
+    AMDS_CH_17,
+    AMDS_CH_18,
+    AMDS_CH_19,
+    AMDS_CH_20,
+    AMDS_CH_21,
+    AMDS_CH_22,
+    AMDS_CH_23,
+    AMDS_CH_24,
 
 
     // Keep this as last entry!
@@ -132,7 +132,7 @@ typedef enum {
 
 static inline bool is_amds_channel_in_bounds(amds_channel_e channel)
 {
-	if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
+    if (channel >= AMDS_CH_1 && channel < AMDS_NUM_CHANNELS) {
         return true;
     }
 

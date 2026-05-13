@@ -49,18 +49,18 @@ int cmd_amds(int argc, char **argv)
         uint32_t valid_bits = amds_check_data_validity(port);
 
         for (int ch = 0; ch < 24; ch++) {
-			uint32_t mask = (1 << ch); // Shift 1 by 'ch' positions
-			uint32_t enabled = amds_get_enabled(port);
+            uint32_t mask = (1 << ch); // Shift 1 by 'ch' positions
+            uint32_t enabled = amds_get_enabled(port);
 
-			// Only print if the channel is enabled for this port
-			if (enabled & mask) {
-				if (valid_bits & mask) {
-					cmd_resp_printf("Channel %i:\tValid data\r\n", ch);
-				} else {
-					cmd_resp_printf("Channel %i:\tInvalid data\r\n", ch);
-				}
-			}
-		}
+            // Only print if the channel is enabled for this port
+            if (enabled & mask) {
+                if (valid_bits & mask) {
+                    cmd_resp_printf("Channel %i:\tValid data\r\n", ch);
+                } else {
+                    cmd_resp_printf("Channel %i:\tInvalid data\r\n", ch);
+                }
+            }
+        }
 
         return CMD_SUCCESS;
     }
