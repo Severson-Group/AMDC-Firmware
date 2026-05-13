@@ -20,10 +20,6 @@
 #include "usr/controller/app_controller.h"
 #endif
 
-#ifdef APP_EXAMPLE_CONTROLLER
-#include "usr/example_controller/app_ex_controller.h"
-#endif
-
 #ifdef APP_BETA_LABS
 #include "usr/beta_labs/app_beta_labs.h"
 #endif
@@ -48,10 +44,6 @@ void user_apps_init(void)
 
 #ifdef APP_CONTROLLER
     app_controller_init();
-#endif
-
-#ifdef APP_EXAMPLE_CONTROLLER
-    app_ex_controller_init();
 #endif
 
 #ifdef APP_BETA_LABS

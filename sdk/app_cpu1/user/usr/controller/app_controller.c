@@ -18,12 +18,14 @@ void app_controller_init(void)
 	// GP3IO_MUX_DEVICE1 is AMDS driver IP block
 	// GP3IO_MUX_DEVICE2 is Eddy Current Sensor IP block
 	gp3io_mux_set_device(GP3IO_MUX_1_BASE_ADDR, GP3IO_MUX_DEVICE1);
+	gp3io_mux_set_device(GP3IO_MUX_3_BASE_ADDR, GP3IO_MUX_DEVICE1);
 
 	// Enable data sampling for ADC
 //	timing_manager_enable_sensor(ADC);
 
 	// Enable data sampling for AMDS on GPIO Port #
 	timing_manager_enable_sensor(AMDS_1);
+	timing_manager_enable_sensor(AMDS_3);
 
 	timing_manager_set_ratio(EVENT_RATIO);
 
