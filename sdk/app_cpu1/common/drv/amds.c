@@ -214,7 +214,8 @@ void amds_get_counters(uint8_t port, uint32_t *BV, uint32_t *BC, uint32_t *BT, u
 /**
  * This function retrieves the values of the AMDS Driver Channel Enable Register for a given GPIO port
  * The channel enable register is mapped with the MSb referring to channel 24 and the LSb for channel 1
- * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
+ * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, 
+ * everything else is disabled.
  */
 uint32_t amds_get_enabled(uint8_t port) {
     uint32_t base_addr = amds_port_to_base_addr(port);
@@ -225,7 +226,11 @@ uint32_t amds_get_enabled(uint8_t port) {
 /**
  * This function sets the values of the AMDS Driver Channel Enable Register for a given GPIO port
  * The channel enable register is mapped with the MSb referring to channel 24 and the LSb for channel 1
- * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, everything else is disabled.
+ * For example: 0b100010001000100010001 (0x00111111) means channels 1, 5, 9, 13, 17, 21 are active, 
+ * everything else is disabled (this match active_sensor_mask in the AMDS firmware). 
+ * This register is used to determine when all data has been received from the AMDS. This information is
+ * needed to assert the sensor_done status to the timing manager. Is a channel is disabled, the AMDC does
+ * not wait for that channel's data to arrive.
  */
 void amds_set_enabled(uint8_t port, uint32_t mask) {
     uint32_t base_addr = amds_port_to_base_addr(port);
