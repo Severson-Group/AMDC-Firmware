@@ -23,63 +23,63 @@
 #endif
 
 // Offsets for relevant slave registers, to be added to one of the AMDS_N_BASE_ADDR
-#define AMDS_CH_1_DATA_REG_OFFSET        (0)
-#define AMDS_CH_2_DATA_REG_OFFSET        (1 * sizeof(uint32_t))
-#define AMDS_CH_3_DATA_REG_OFFSET        (2 * sizeof(uint32_t))
-#define AMDS_CH_4_DATA_REG_OFFSET        (3 * sizeof(uint32_t))
-#define AMDS_CH_5_DATA_REG_OFFSET        (4 * sizeof(uint32_t))
-#define AMDS_CH_6_DATA_REG_OFFSET        (5 * sizeof(uint32_t))
-#define AMDS_CH_7_DATA_REG_OFFSET        (6 * sizeof(uint32_t))
-#define AMDS_CH_8_DATA_REG_OFFSET        (7 * sizeof(uint32_t))
-#define AMDS_CH_9_DATA_REG_OFFSET        (8 * sizeof(uint32_t))
-#define AMDS_CH_10_DATA_REG_OFFSET       (9 * sizeof(uint32_t))
-#define AMDS_CH_11_DATA_REG_OFFSET       (10 * sizeof(uint32_t))
-#define AMDS_CH_12_DATA_REG_OFFSET       (11 * sizeof(uint32_t))
-#define AMDS_CH_13_DATA_REG_OFFSET       (12 * sizeof(uint32_t))
-#define AMDS_CH_14_DATA_REG_OFFSET       (13 * sizeof(uint32_t))
-#define AMDS_CH_15_DATA_REG_OFFSET       (14 * sizeof(uint32_t))
-#define AMDS_CH_16_DATA_REG_OFFSET       (15 * sizeof(uint32_t))
-#define AMDS_CH_17_DATA_REG_OFFSET       (16 * sizeof(uint32_t))
-#define AMDS_CH_18_DATA_REG_OFFSET       (17 * sizeof(uint32_t))
-#define AMDS_CH_19_DATA_REG_OFFSET       (18 * sizeof(uint32_t))
-#define AMDS_CH_20_DATA_REG_OFFSET       (19 * sizeof(uint32_t))
-#define AMDS_CH_21_DATA_REG_OFFSET       (20 * sizeof(uint32_t))
-#define AMDS_CH_22_DATA_REG_OFFSET       (21 * sizeof(uint32_t))
-#define AMDS_CH_23_DATA_REG_OFFSET       (22 * sizeof(uint32_t))
-#define AMDS_CH_24_DATA_REG_OFFSET       (23 * sizeof(uint32_t))
-#define AMDS_DELAY_TIMER_REG_OFFSET      (24 * sizeof(uint32_t))
-#define AMDS_CH_VALID_REG_OFFSET         (25 * sizeof(uint32_t))
-#define AMDS_BYTES_VALID_REG_OFFSET      (26 * sizeof(uint32_t))
-#define AMDS_BYTES_CORRUPT_REG_OFFSET    (27 * sizeof(uint32_t))
-#define AMDS_BYTES_TIMED_OUT_REG_OFFSET  (28 * sizeof(uint32_t))
-#define AMDS_DATA_TIMED_OUT_REG_OFFSET   (29 * sizeof(uint32_t))
-#define AMDS_CH_ENABLE_REG_OFFSET        (30 * sizeof(uint32_t))
+#define AMDS_CH_1_DATA_REG_OFFSET       (0)
+#define AMDS_CH_2_DATA_REG_OFFSET       (1 * sizeof(uint32_t))
+#define AMDS_CH_3_DATA_REG_OFFSET       (2 * sizeof(uint32_t))
+#define AMDS_CH_4_DATA_REG_OFFSET       (3 * sizeof(uint32_t))
+#define AMDS_CH_5_DATA_REG_OFFSET       (4 * sizeof(uint32_t))
+#define AMDS_CH_6_DATA_REG_OFFSET       (5 * sizeof(uint32_t))
+#define AMDS_CH_7_DATA_REG_OFFSET       (6 * sizeof(uint32_t))
+#define AMDS_CH_8_DATA_REG_OFFSET       (7 * sizeof(uint32_t))
+#define AMDS_CH_9_DATA_REG_OFFSET       (8 * sizeof(uint32_t))
+#define AMDS_CH_10_DATA_REG_OFFSET      (9 * sizeof(uint32_t))
+#define AMDS_CH_11_DATA_REG_OFFSET      (10 * sizeof(uint32_t))
+#define AMDS_CH_12_DATA_REG_OFFSET      (11 * sizeof(uint32_t))
+#define AMDS_CH_13_DATA_REG_OFFSET      (12 * sizeof(uint32_t))
+#define AMDS_CH_14_DATA_REG_OFFSET      (13 * sizeof(uint32_t))
+#define AMDS_CH_15_DATA_REG_OFFSET      (14 * sizeof(uint32_t))
+#define AMDS_CH_16_DATA_REG_OFFSET      (15 * sizeof(uint32_t))
+#define AMDS_CH_17_DATA_REG_OFFSET      (16 * sizeof(uint32_t))
+#define AMDS_CH_18_DATA_REG_OFFSET      (17 * sizeof(uint32_t))
+#define AMDS_CH_19_DATA_REG_OFFSET      (18 * sizeof(uint32_t))
+#define AMDS_CH_20_DATA_REG_OFFSET      (19 * sizeof(uint32_t))
+#define AMDS_CH_21_DATA_REG_OFFSET      (20 * sizeof(uint32_t))
+#define AMDS_CH_22_DATA_REG_OFFSET      (21 * sizeof(uint32_t))
+#define AMDS_CH_23_DATA_REG_OFFSET      (22 * sizeof(uint32_t))
+#define AMDS_CH_24_DATA_REG_OFFSET      (23 * sizeof(uint32_t))
+#define AMDS_DELAY_TIMER_REG_OFFSET     (24 * sizeof(uint32_t))
+#define AMDS_CH_VALID_REG_OFFSET        (25 * sizeof(uint32_t))
+#define AMDS_BYTES_VALID_REG_OFFSET     (26 * sizeof(uint32_t))
+#define AMDS_BYTES_CORRUPT_REG_OFFSET   (27 * sizeof(uint32_t))
+#define AMDS_BYTES_TIMED_OUT_REG_OFFSET (28 * sizeof(uint32_t))
+#define AMDS_DATA_TIMED_OUT_REG_OFFSET  (29 * sizeof(uint32_t))
+#define AMDS_CH_ENABLE_REG_OFFSET       (30 * sizeof(uint32_t))
 
 // Bit masks for use with amds_check_data_validity()
-#define AMDS_CH_1_VALID_MASK   0x1
-#define AMDS_CH_2_VALID_MASK   0x2
-#define AMDS_CH_3_VALID_MASK   0x4
-#define AMDS_CH_4_VALID_MASK   0x8
-#define AMDS_CH_5_VALID_MASK   0x10
-#define AMDS_CH_6_VALID_MASK   0x20
-#define AMDS_CH_7_VALID_MASK   0x40
-#define AMDS_CH_8_VALID_MASK   0x80
-#define AMDS_CH_9_VALID_MASK   0x100
-#define AMDS_CH_10_VALID_MASK  0x200
-#define AMDS_CH_11_VALID_MASK  0x400
-#define AMDS_CH_12_VALID_MASK  0x800
-#define AMDS_CH_13_VALID_MASK  0x1000
-#define AMDS_CH_14_VALID_MASK  0x2000
-#define AMDS_CH_15_VALID_MASK  0x4000
-#define AMDS_CH_16_VALID_MASK  0x8000
-#define AMDS_CH_17_VALID_MASK  0x10000
-#define AMDS_CH_18_VALID_MASK  0x20000
-#define AMDS_CH_19_VALID_MASK  0x40000
-#define AMDS_CH_20_VALID_MASK  0x80000
-#define AMDS_CH_21_VALID_MASK  0x100000
-#define AMDS_CH_22_VALID_MASK  0x200000
-#define AMDS_CH_23_VALID_MASK  0x400000
-#define AMDS_CH_24_VALID_MASK  0x800000
+#define AMDS_CH_1_VALID_MASK  0x1
+#define AMDS_CH_2_VALID_MASK  0x2
+#define AMDS_CH_3_VALID_MASK  0x4
+#define AMDS_CH_4_VALID_MASK  0x8
+#define AMDS_CH_5_VALID_MASK  0x10
+#define AMDS_CH_6_VALID_MASK  0x20
+#define AMDS_CH_7_VALID_MASK  0x40
+#define AMDS_CH_8_VALID_MASK  0x80
+#define AMDS_CH_9_VALID_MASK  0x100
+#define AMDS_CH_10_VALID_MASK 0x200
+#define AMDS_CH_11_VALID_MASK 0x400
+#define AMDS_CH_12_VALID_MASK 0x800
+#define AMDS_CH_13_VALID_MASK 0x1000
+#define AMDS_CH_14_VALID_MASK 0x2000
+#define AMDS_CH_15_VALID_MASK 0x4000
+#define AMDS_CH_16_VALID_MASK 0x8000
+#define AMDS_CH_17_VALID_MASK 0x10000
+#define AMDS_CH_18_VALID_MASK 0x20000
+#define AMDS_CH_19_VALID_MASK 0x40000
+#define AMDS_CH_20_VALID_MASK 0x80000
+#define AMDS_CH_21_VALID_MASK 0x100000
+#define AMDS_CH_22_VALID_MASK 0x200000
+#define AMDS_CH_23_VALID_MASK 0x400000
+#define AMDS_CH_24_VALID_MASK 0x800000
 
 // Default offset and gain values
 #define AMDS_LOW_VOLTAGE_DEFAULT_GAIN    10
@@ -117,7 +117,6 @@ typedef enum {
     AMDS_CH_22,
     AMDS_CH_23,
     AMDS_CH_24,
-
 
     // Keep this as last entry!
     AMDS_NUM_CHANNELS,
