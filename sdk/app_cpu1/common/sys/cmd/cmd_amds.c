@@ -6,10 +6,10 @@
 #include "sys/cmd/cmd_amds.h"
 #include "sys/commands.h"
 #include "sys/util.h"
+#include "xil_io.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "xil_io.h"
 
 static command_entry_t cmd_entry;
 
