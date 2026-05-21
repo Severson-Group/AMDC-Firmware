@@ -894,10 +894,10 @@
       <xilinx:taxonomies>
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>amdc_amds_v2.0</xilinx:displayName>
+      <xilinx:displayName>amdc_amds_v1.0</xilinx:displayName>
       <xilinx:coreRevision>1</xilinx:coreRevision>
       <xilinx:upgrades>
-        <xilinx:canUpgradeFrom>xilinx.com:user:amdc_amds:2.0</xilinx:canUpgradeFrom>
+        <xilinx:canUpgradeFrom>xilinx.com:user:amdc_amds:1.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
       <xilinx:coreCreationDateTime>2026-05-13T19:47:45Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
