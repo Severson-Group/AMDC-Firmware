@@ -19,10 +19,10 @@ void amds_init(void)
     // --> single amds (no daisy chain), all sensor cards enabled
     uint32_t mask = 0x000000FF;
 
-    amds_set_enabled(0, mask);
     amds_set_enabled(1, mask);
     amds_set_enabled(2, mask);
     amds_set_enabled(3, mask);
+    amds_set_enabled(4, mask);
 
     cmd_amds_register();
 }

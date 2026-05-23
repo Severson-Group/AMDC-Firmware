@@ -895,12 +895,12 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>amdc_amds_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
       <xilinx:upgrades>
         <xilinx:canUpgradeFrom>xilinx.com:user:amdc_amds:1.0</xilinx:canUpgradeFrom>
         <xilinx:canUpgradeFrom>xilinx.com:user:amdc_amds:2.0</xilinx:canUpgradeFrom>
       </xilinx:upgrades>
-      <xilinx:coreCreationDateTime>2026-05-23T17:16:08Z</xilinx:coreCreationDateTime>
+      <xilinx:coreCreationDateTime>2026-05-23T17:26:21Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@b6a820a_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@1dc30708_ARCHIVE_LOCATION">s:/School/WEMPEC/firmware-amds/ip_repo/amdc_amds_1.0</xilinx:tag>
@@ -1332,6 +1332,11 @@
         <xilinx:tag xilinx:name="ui.data.coregen.dd@7fa892e0_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@404b8061_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="ui.data.coregen.dd@354c403_ARCHIVE_LOCATION">c:/Users/moha2063/Desktop/eLev/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@4caa50c0_ARCHIVE_LOCATION">c:/Users/fkamiset/Gitrepos/nsf_pfi_bearingless/firmware/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@111678de_ARCHIVE_LOCATION">c:/Users/fkamiset/Gitrepos/nsf_pfi_bearingless/firmware/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@6a8d3f75_ARCHIVE_LOCATION">c:/Users/fkamiset/Gitrepos/nsf_pfi_bearingless/firmware/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@59549190_ARCHIVE_LOCATION">c:/Users/fkamiset/Gitrepos/nsf_pfi_bearingless/firmware/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="ui.data.coregen.dd@31272706_ARCHIVE_LOCATION">c:/Users/fkamiset/Gitrepos/nsf_pfi_bearingless/firmware/AMDC-Firmware/ip_repo/amdc_amds_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
