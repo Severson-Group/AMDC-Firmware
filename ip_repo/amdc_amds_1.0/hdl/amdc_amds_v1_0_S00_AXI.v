@@ -1143,7 +1143,7 @@
         if (~S_AXI_ARESETN)
             ch_valid_reg <= 32'b0;
         else if (done)
-            ch_valid_reg <= {8'b0, is_dout1_valid, is_dout0_valid};
+            ch_valid_reg <= {8'b0, is_dout1_valid[11:8], is_dout0_valid[11:8], is_dout1_valid[7:4], is_dout0_valid[7:4], is_dout1_valid[3:0], is_dout0_valid[3:0]};
     end
 
     // Receiving is done when both sub-receivers are done, but
