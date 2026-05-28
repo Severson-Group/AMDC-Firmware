@@ -133,14 +133,14 @@ double task_cc_get_theta_e_enc(void)
     // Add offset (align to DQ frame)
     position += dq_offset;
 
-    while (position >= ENCODER_PULSES_PER_REV) {
-        position -= ENCODER_PULSES_PER_REV;
+    while (position >= ENCODER_COUNTS_PER_REV) {
+        position -= ENCODER_COUNTS_PER_REV;
     }
 
     double theta_e_enc = 0.0;
 
     // Convert to radians
-    theta_e_enc = (double) PI2 * ((double) position / (double) ENCODER_PULSES_PER_REV);
+    theta_e_enc = (double) PI2 * ((double) position / (double) ENCODER_COUNTS_PER_REV);
 
     // Multiple by pole pairs to convert mechanical to electrical degrees
     theta_e_enc *= POLE_PAIRS;

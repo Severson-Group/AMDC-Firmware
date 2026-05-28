@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-`define PULSES_PER_REVOLUTION_BITS	(32'd12)
+`define COUNTS_PER_REVOLUTION_BITS	(32'd12)
 
 module tb_encoder();
 
@@ -34,7 +34,7 @@ task sim_revs;
 			repeat (5) @(posedge clk);
 
 
-			// Simulate (`cycles_per_rev` - 1) more cycles (or 4x pulses)
+			// Simulate (`cycles_per_rev` - 1) more cycles (or 4x counts)
 			repeat (cycles_per_rev - 1) begin
 				if (dir) A = 1; else B = 1;
 				repeat (5) @(posedge clk);
@@ -83,10 +83,10 @@ initial begin
 		repeat (5) @(posedge clk);
 	end
 	
-	sim_revs(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4);
-	sim_revs(0, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4);
-	sim_revs(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4);
-	sim_revs(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4);
+	sim_revs(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4);
+	sim_revs(0, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4);
+	sim_revs(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4);
+	sim_revs(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4);
 	
 	$stop();
 end
@@ -102,7 +102,7 @@ encoder iDUT(
 	.Z(Z),
 	.counter(counter),
 	.position(position),
-	.pulses_per_rev_bits(`PULSES_PER_REVOLUTION_BITS) // 256 pulses => 64 cycles
+	.counts_per_rev_bits(`COUNTS_PER_REVOLUTION_BITS) // 256 counts => 64 cycles
 );
 
 endmodule

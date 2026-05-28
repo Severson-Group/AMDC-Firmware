@@ -8,12 +8,12 @@
 void encoder_init(void)
 {
 	printf("ENC:\tInitializing...\n");
-	encoder_set_pulses_per_rev_bits(ENCODER_PULSES_PER_REV_BITS);
+	encoder_set_counts_per_rev_bits(ENCODER_COUNTS_PER_REV_BITS);
 }
 
-void encoder_set_pulses_per_rev_bits(uint32_t bits)
+void encoder_set_counts_per_rev_bits(uint32_t bits)
 {
-	printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
+	printf("ENC:\tSetting counts per rev bits = %ld...\n", bits);
 
 	Xil_Out32(ENCODER_BASE_ADDR + 2*sizeof(uint32_t), bits);
 }

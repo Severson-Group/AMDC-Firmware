@@ -1,12 +1,12 @@
 `timescale 1ns / 1ps
 
-`define PULSES_PER_REVOLUTION_BITS (32'd12)
+`define COUNTS_PER_REVOLUTION_BITS (32'd12)
 
 module encoder_tb();
 
 logic clk, rst_n;
 logic A, B, Z;
-logic [31:0] pulses_per_rev_bits;
+logic [31:0] counts_per_rev_bits;
 logic [7:0] divider;
 logic [15:0] carrier_max;
 
@@ -39,7 +39,7 @@ encoder iDUT(
 	.pwm_carrier_high(pwm_carrier_high),
 	.pwm_carrier_low(pwm_carrier_low),
 	.position(position),
-	.pulses_per_rev(`PULSES_PER_REVOLUTION_BITS),
+	.counts_per_rev(`COUNTS_PER_REVOLUTION_BITS),
 	.steps_synced(steps_synced),
 	.position_synced(position_synced)
 );
@@ -66,7 +66,7 @@ task test_updates;
 			repeat (speed) @(posedge clk);
 
 
-			// Simulate (`cycles_per_rev` - 1) more cycles (or 4x pulses)
+			// Simulate (`cycles_per_rev` - 1) more cycles (or 4x counts)
 			repeat (cycles - 1) begin
 				if (dir) A = 1; else B = 1;
 				repeat (speed) @(posedge clk);
@@ -112,17 +112,17 @@ initial begin
 		repeat (5) @(posedge clk);
 	end
 
-	test_updates(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 5);	// 2,400,000 RPM
+	test_updates(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 5);	// 2,400,000 RPM
 	$display("2,400,000 RPM | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
-	test_updates(0, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 60);	// 200,000 RPM
+	test_updates(0, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 60);	// 200,000 RPM
 	$display("200,000 RPM   | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
-	test_updates(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 120);	// 100,000 RPM
+	test_updates(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 120);	// 100,000 RPM
 	$display("100,000 RPM   | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
-	test_updates(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 240);	// 50,000 RPM
+	test_updates(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 240);	// 50,000 RPM
 	$display("50,000 RPM    | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
-	test_updates(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 1200);	// 10,000 RPM
+	test_updates(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 1200);	// 10,000 RPM
 	$display("10,000 RPM    | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
-	test_updates(1, 1, (1 << `PULSES_PER_REVOLUTION_BITS) / 4, 2400);	// 5,000 RPM
+	test_updates(1, 1, (1 << `COUNTS_PER_REVOLUTION_BITS) / 4, 2400);	// 5,000 RPM
 	$display("5,000 RPM     | Synced Steps: %d | Synced Position: %d | Inst. Steps: %d | Inst. Position: %d",steps_synced, position_synced, counter, position);
 
 	$display("All tests passed!");
