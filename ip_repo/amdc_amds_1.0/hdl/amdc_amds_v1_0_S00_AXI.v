@@ -1143,7 +1143,11 @@
         if (~S_AXI_ARESETN)
             ch_valid_reg <= 32'b0;
         else if (done)
-            ch_valid_reg <= {8'b0, is_dout1_valid, is_dout0_valid};
+            ch_valid_reg <= {8'b0, is_dout1_valid[11:8], is_dout0_valid[11:8], is_dout1_valid[7:4], is_dout0_valid[7:4], is_dout1_valid[3:0], is_dout0_valid[3:0]};
+            // Before daisy chain     => ch1,sensor[0->4], ch0,sensor[0->4]
+            // Before data scramble   => ch1,sensor[0->12], ch0,sensor[0->12]
+            // After data scramble    =>  ch1,sensor[0->3], ch0,sensor[0->3],    ch1,sensor[4->7], ch0,sensor[4->7] ...etc...
+            //                                 ^FIRST AMDS IN CHAIN ^                 ^SECOND AMDS IN CHAIN ^  ...etc...
     end
 
     // Receiving is done when both sub-receivers are done, but
