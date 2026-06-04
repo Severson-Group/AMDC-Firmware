@@ -31,7 +31,7 @@ void task_mo_callback(void *arg)
     int32_t steps;
     encoder_get_steps(&steps);
     int32_t delta = steps - last_steps;
-    double rads = PI2 * ((double) delta / (double) (1 << ENCODER_PULSES_PER_REV_BITS));
+    double rads = PI2 * ((double) delta / (double) (1 << ENCODER_COUNTS_PER_REV_BITS));
 
     last_steps = steps;
 
@@ -44,7 +44,7 @@ void task_mo_callback(void *arg)
     encoder_get_position(&pos);
     LOG_enc_pos = pos;
 
-    double p = (double) pos / (double) ENCODER_PULSES_PER_REV;
+    double p = (double) pos / (double) ENCODER_COUNTS_PER_REV;
 
     dac_set_output(0, p, 0.0, 1.0);
 }

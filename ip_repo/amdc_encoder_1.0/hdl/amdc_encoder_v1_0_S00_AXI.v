@@ -416,7 +416,7 @@
 		.Z(Z),
         .counter(counter),
 		.position(position),
-		.pulses_per_rev(slv_reg2),
+		.counts_per_rev(slv_reg2),
 		.trigger(trigger & enable),
 		.position_synced(position_synced),
 		.steps_synced(steps_synced),

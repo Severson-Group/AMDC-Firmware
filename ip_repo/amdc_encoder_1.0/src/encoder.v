@@ -9,16 +9,16 @@
 // and sum them into a binary counter register.
 //
 // Z is used to provide single revolution position via `position` output
-// `position` ranges between 0 and pulses_per_rev_bits - 1
+// `position` ranges between 0 and counts_per_rev_bits - 1
 //
-module encoder(clk, rst_n, A, B, Z, trigger, counter, position, pulses_per_rev, steps_synced, position_synced, done);
+module encoder(clk, rst_n, A, B, Z, trigger, counter, position, counts_per_rev, steps_synced, position_synced, done);
 
 input A, B, Z;
 input trigger;
 input clk;
 input rst_n;
 
-input [31:0] pulses_per_rev;
+input [31:0] counts_per_rev;
 
 output wire [31:0] counter;
 output wire [31:0] position;
@@ -182,15 +182,15 @@ end
 // NOTE: # bits configured from C code
 //       to match encoder user has attached to AMDC.
 //
-//       Typically ~12-bit (2^12 = 4096 pulses per rev).
+//       Typically ~12-bit (2^12 = 4096 counts per rev).
 //       
-//       Stored in `pulses_per_rev` input signal.
+//       Stored in `counts_per_rev` input signal.
 //
-//       Max pulses per rev: 2^32
+//       Max counts per rev: 2^32
 // *****************************
 
 wire [31:0] MAX_POS;
-assign MAX_POS = pulses_per_rev - 32'd1;
+assign MAX_POS = counts_per_rev - 32'd1;
 
 // Find rising edge of Z
 wire z_rise;

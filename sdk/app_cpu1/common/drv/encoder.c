@@ -6,20 +6,20 @@
 void encoder_init(void)
 {
     printf("ENC:\tInitializing...\n");
-    encoder_set_pulses_per_rev_bits(ENCODER_PULSES_PER_REV_BITS);
+    encoder_set_counts_per_rev_bits(ENCODER_COUNTS_PER_REV_BITS);
 }
 
-void encoder_set_pulses_per_rev_bits(uint32_t bits)
+void encoder_set_counts_per_rev_bits(uint32_t bits)
 {
-    printf("ENC:\tSetting pulses per rev bits = %ld...\n", bits);
-    encoder_set_pulses_per_rev(1 << bits);
+    printf("ENC:\tSetting counts per rev bits = %ld...\n", bits);
+    encoder_set_counts_per_rev(1 << bits);
 }
 
-void encoder_set_pulses_per_rev(uint32_t pulses)
+void encoder_set_counts_per_rev(uint32_t counts)
 {
-    printf("ENC:\tSetting pulses per rev = %ld...\n", pulses);
+    printf("ENC:\tSetting counts per rev = %ld...\n", counts);
 
-    Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), pulses);
+    Xil_Out32(ENCODER_BASE_ADDR + 2 * sizeof(uint32_t), counts);
 }
 
 void encoder_get_steps(int32_t *steps)

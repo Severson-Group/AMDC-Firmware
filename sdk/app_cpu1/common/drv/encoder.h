@@ -7,13 +7,13 @@
 
 #define ENCODER_BASE_ADDR (XPAR_AMDC_ENCODER_0_S00_AXI_BASEADDR)
 
-#define ENCODER_PULSES_PER_REV_BITS (14)
-#define ENCODER_PULSES_PER_REV      (1 << ENCODER_PULSES_PER_REV_BITS)
+#define ENCODER_COUNTS_PER_REV_BITS (14)
+#define ENCODER_COUNTS_PER_REV      (1 << ENCODER_COUNTS_PER_REV_BITS)
 
 void encoder_init(void);
 
-void encoder_set_pulses_per_rev_bits(uint32_t bits);
-void encoder_set_pulses_per_rev(uint32_t pulses);
+void encoder_set_counts_per_rev_bits(uint32_t bits);
+void encoder_set_counts_per_rev(uint32_t counts);
 void encoder_get_steps(int32_t *steps);
 void encoder_get_steps_instantaneous(int32_t *steps);
 void encoder_get_position(uint32_t *position);
