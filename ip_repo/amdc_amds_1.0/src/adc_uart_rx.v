@@ -426,6 +426,7 @@ always @(*) begin
             if (|is_dout_enabled) begin
                 if (start_rx) begin
                     // We have a trigger and at least one channel is enabled
+                    clr_sm_helpers = 1;
                     
                     // Incoming UART transmission, so start UART RX module
                     uart_start_rx = 1;
@@ -549,7 +550,7 @@ always @(*) begin
                 set_packet_valid = 1;
             end
 
-            if ((packet_valid | (1 << current_packet)) == is_dout_enabled) begin
+            if (&((packet_valid | (1 << current_packet)) | ~is_dout_enabled)) begin
                 next_state = `SM_IDLE;
                 assert_done = 1;
                 clr_sm_helpers = 1;
