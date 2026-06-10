@@ -2,6 +2,21 @@
 
 This document summarizes the changes introduced to the code base for each release.
 
+## v1.5.0
+
+**Sensor Interfaces**
+
+- Fix typos in AMDC encoder function names
+- Update default AMDS sensor gains
+
+**FPGA Changes**
+
+- Fix timeouts occuring on disabled AMDS channels
+- Add UART testbench for FPGA fabric
+- Add AMDS daisy chain support
+- Add new AMDC board definition file
+- Update AMDC->AMDS baud rate to 20MHz
+
 ## v1.4.1
 
 - Add helper functions to read AMDS sensor card data
