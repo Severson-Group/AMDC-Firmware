@@ -18,7 +18,7 @@
 
 // Enforce time quantum limits
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (1)
+#define USER_CONFIG_ENABLE_TIME_QUANTUM_CHECKING (0)
 
 // Enable task statistic collection by default
 // NOTE: The user can still go and enable the stats themselves if this is set to 0!
@@ -31,7 +31,7 @@
 
 // Enable logging functionality
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_LOGGING (0)
+#define USER_CONFIG_ENABLE_LOGGING (1)
 
 // Override default number of available logging variables
 // when defined, this takes precedence over system default of 32
@@ -47,7 +47,7 @@
 
 // Enable support for AMDS (Advanced Motor Drive Sensing) platform
 // set to 1 for enabled, 0 for disabled
-#define USER_CONFIG_ENABLE_AMDS_SUPPORT (0)
+#define USER_CONFIG_ENABLE_AMDS_SUPPORT (1)
 
 // Scheduler Interval Tolerance Override
 // as of AMDC Firmware v1.3, all timing variables for tasks (runtime, loop time, etc)

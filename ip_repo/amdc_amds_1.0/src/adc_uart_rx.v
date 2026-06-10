@@ -9,14 +9,23 @@ module adc_uart_rx(
     
     // The data line coming from the AMDS
     input wire din,
+    input wire [11:0] is_dout_enabled,
     
-    output wire [3:0] is_dout_valid, // is_dout_valid[0] == 1 implies that adc_dout0 is valid
+    output wire [11:0] is_dout_valid, // is_dout_valid[0] == 1 implies that adc_dout0 is valid
     output reg adc_uart_done,
     output reg assert_done,
     output reg [15:0] adc_dout0,
     output reg [15:0] adc_dout1,
     output reg [15:0] adc_dout2,
     output reg [15:0] adc_dout3,
+    output reg [15:0] adc_dout4,
+    output reg [15:0] adc_dout5,
+    output reg [15:0] adc_dout6,
+    output reg [15:0] adc_dout7,
+    output reg [15:0] adc_dout8,
+    output reg [15:0] adc_dout9,
+    output reg [15:0] adc_dout10,
+    output reg [15:0] adc_dout11,
     
     output reg [15:0] counter_bytes_valid,
     output reg [15:0] counter_bytes_corrupt,
@@ -24,21 +33,33 @@ module adc_uart_rx(
 );
 
 // ==============
-// Packet Counter
+// Packet Valid and Current Packet
 // ==============
 
-reg rst_packet_counter;
-reg inc_packet_counter;
+reg rst_packet_valid;
+reg set_packet_valid;
+reg rst_current_packet;
+reg load_current_packet;
 
-reg [1:0] packet_counter;
+reg [11:0] packet_valid;
+reg [3:0] current_packet;
+
+always @(posedge clk, negedge rst_n) begin
+    if (!rst_n) 
+        current_packet <= 15;
+    else if (rst_current_packet) 
+        current_packet <= 15;
+    else if (load_current_packet)
+        current_packet <= uart_data_byte[3:0];
+end
 
 always @(posedge clk, negedge rst_n) begin
     if (!rst_n)
-        packet_counter <= 2'b0;
-    else if (rst_packet_counter)
-        packet_counter <= 2'b0;
-    else if (inc_packet_counter)
-        packet_counter <= packet_counter + 1;
+        packet_valid <= 12'b0;
+    else if (rst_packet_valid)
+        packet_valid <= 12'b0;
+    else if (set_packet_valid)
+        packet_valid[current_packet] <= 1'b1;
 end
 
 // =======================
@@ -47,6 +68,9 @@ end
 
 reg is_dout0_valid, is_dout1_valid, is_dout2_valid, is_dout3_valid;
 
+reg is_dout4_valid, is_dout5_valid, is_dout6_valid, is_dout7_valid;
+reg is_dout8_valid, is_dout9_valid, is_dout10_valid, is_dout11_valid;
+
 reg assert_data_valid, clr_all_data_valid;
 
 always @(posedge clk, negedge rst_n) begin
@@ -54,7 +78,7 @@ always @(posedge clk, negedge rst_n) begin
         is_dout0_valid <= 1'b0;
     else if (clr_all_data_valid)
         is_dout0_valid <= 1'b0;
-    else if (assert_data_valid & packet_counter == 0)
+    else if (assert_data_valid & (current_packet == 0) & is_dout_enabled[0])
         is_dout0_valid <= 1'b1;
 end
 
@@ -63,7 +87,7 @@ always @(posedge clk, negedge rst_n) begin
         is_dout1_valid <= 1'b0;
     else if (clr_all_data_valid)
         is_dout1_valid <= 1'b0;
-    else if (assert_data_valid & packet_counter == 1)
+    else if (assert_data_valid & (current_packet == 1) & is_dout_enabled[1])
         is_dout1_valid <= 1'b1;
 end
 
@@ -72,7 +96,7 @@ always @(posedge clk, negedge rst_n) begin
         is_dout2_valid <= 1'b0;
     else if (clr_all_data_valid)
         is_dout2_valid <= 1'b0;
-    else if (assert_data_valid & packet_counter == 2)
+    else if (assert_data_valid & (current_packet == 2) & is_dout_enabled[2])
         is_dout2_valid <= 1'b1;
 end
 
@@ -81,12 +105,97 @@ always @(posedge clk, negedge rst_n) begin
         is_dout3_valid <= 1'b0;
     else if (clr_all_data_valid)
         is_dout3_valid <= 1'b0;
-    else if (assert_data_valid & packet_counter == 3)
+    else if (assert_data_valid & (current_packet == 3) & is_dout_enabled[3])
         is_dout3_valid <= 1'b1;
 end
 
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout4_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout4_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 4) & is_dout_enabled[4])
+        is_dout4_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout5_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout5_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 5) & is_dout_enabled[5])
+        is_dout5_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout6_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout6_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 6) & is_dout_enabled[6])
+        is_dout6_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout7_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout7_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 7) & is_dout_enabled[7])
+        is_dout7_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout8_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout8_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 8) & is_dout_enabled[8])
+        is_dout8_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout9_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout9_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 9) & is_dout_enabled[9])
+        is_dout9_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout10_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout10_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 10) & is_dout_enabled[10])
+        is_dout10_valid <= 1'b1;
+end
+
+always @(posedge clk, negedge rst_n) begin
+    if (~rst_n)
+        is_dout11_valid <= 1'b0;
+    else if (clr_all_data_valid)
+        is_dout11_valid <= 1'b0;
+    else if (assert_data_valid & (current_packet == 11) & is_dout_enabled[11])
+        is_dout11_valid <= 1'b1;
+end
+
 // Concatenate the individual valid registers into output bus
-assign is_dout_valid = {is_dout3_valid, is_dout2_valid, is_dout1_valid, is_dout0_valid};
+assign is_dout_valid = {
+    is_dout11_valid,
+    is_dout10_valid,
+    is_dout9_valid,
+    is_dout8_valid,
+    is_dout7_valid,
+    is_dout6_valid,
+    is_dout5_valid,
+    is_dout4_valid,
+    is_dout3_valid,
+    is_dout2_valid,
+    is_dout1_valid,
+    is_dout0_valid
+};
 
 
 // ===================
@@ -178,39 +287,47 @@ always @(posedge clk, negedge rst_n) begin
         adc_dout1 <= 16'b0;
         adc_dout2 <= 16'b0;
         adc_dout3 <= 16'b0;
+        adc_dout4 <= 16'b0;
+        adc_dout5 <= 16'b0;
+        adc_dout6 <= 16'b0;
+        adc_dout7 <= 16'b0;
+        adc_dout8 <= 16'b0;
+        adc_dout9 <= 16'b0;
+        adc_dout10 <= 16'b0;
+        adc_dout11 <= 16'b0;
     end
 
     else if (load_doutN_LSB) begin
-        case (packet_counter)
-            4'd0: begin
-                adc_dout0[7:0] <= uart_data_byte;
-            end
-            4'd1: begin
-                adc_dout1[7:0] <= uart_data_byte;
-            end
-            4'd2: begin
-                adc_dout2[7:0] <= uart_data_byte;
-            end
-            4'd3: begin
-                adc_dout3[7:0] <= uart_data_byte;
-            end
+        case (current_packet)
+            4'd0:  adc_dout0[7:0]  <= uart_data_byte;
+            4'd1:  adc_dout1[7:0]  <= uart_data_byte;
+            4'd2:  adc_dout2[7:0]  <= uart_data_byte;
+            4'd3:  adc_dout3[7:0]  <= uart_data_byte;
+            4'd4:  adc_dout4[7:0]  <= uart_data_byte;
+            4'd5:  adc_dout5[7:0]  <= uart_data_byte;
+            4'd6:  adc_dout6[7:0]  <= uart_data_byte;
+            4'd7:  adc_dout7[7:0]  <= uart_data_byte;
+            4'd8:  adc_dout8[7:0]  <= uart_data_byte;
+            4'd9:  adc_dout9[7:0]  <= uart_data_byte;
+            4'd10: adc_dout10[7:0] <= uart_data_byte;
+            4'd11: adc_dout11[7:0] <= uart_data_byte;
         endcase
     end
     
     else if (load_doutN_MSB) begin
-        case (packet_counter)
-            4'd0: begin
-                adc_dout0[15:8] <= uart_data_byte;
-            end
-            4'd1: begin
-                adc_dout1[15:8] <= uart_data_byte;
-            end
-            4'd2: begin
-                adc_dout2[15:8] <= uart_data_byte;
-            end
-            4'd3: begin
-                adc_dout3[15:8] <= uart_data_byte;
-            end
+        case (current_packet)
+            4'd0:  adc_dout0[15:8]  <= uart_data_byte;
+            4'd1:  adc_dout1[15:8]  <= uart_data_byte;
+            4'd2:  adc_dout2[15:8]  <= uart_data_byte;
+            4'd3:  adc_dout3[15:8]  <= uart_data_byte;
+            4'd4:  adc_dout4[15:8]  <= uart_data_byte;
+            4'd5:  adc_dout5[15:8]  <= uart_data_byte;
+            4'd6:  adc_dout6[15:8]  <= uart_data_byte;
+            4'd7:  adc_dout7[15:8]  <= uart_data_byte;
+            4'd8:  adc_dout8[15:8]  <= uart_data_byte;
+            4'd9:  adc_dout9[15:8]  <= uart_data_byte;
+            4'd10: adc_dout10[15:8] <= uart_data_byte;
+            4'd11: adc_dout11[15:8] <= uart_data_byte;
         endcase
     end
 end
@@ -281,8 +398,10 @@ always @(*) begin
 
     uart_start_rx = 0;
     
-    rst_packet_counter = 0;
-    inc_packet_counter = 0;
+    rst_packet_valid = 0;
+    set_packet_valid = 0;
+    rst_current_packet = 0;
+    load_current_packet = 0;
 
     assert_done = 0;
     deassert_done = 0;
@@ -304,17 +423,29 @@ always @(*) begin
     
     case (state)
         `SM_IDLE: begin
-            if (start_rx) begin
-                // Incoming UART transmission, so start UART RX module
-                uart_start_rx = 1;
-                
-                // Tell user that the all data regs are no longer valid
-                clr_all_data_valid = 1;
-
-                deassert_done = 1;
+            if (|is_dout_enabled) begin
+                if (start_rx) begin
+                    // We have a trigger and at least one channel is enabled
+                    clr_sm_helpers = 1;
+                    
+                    // Incoming UART transmission, so start UART RX module
+                    uart_start_rx = 1;
+                    
+                    // Tell user that the all data regs are no longer valid
+                    clr_all_data_valid = 1;
+                    
+                    deassert_done = 1;
             
-                rst_packet_counter = 1;
-                next_state = `SM_WAIT_FOR_HEADER;
+                    rst_packet_valid = 1;
+                    rst_current_packet = 1;
+                    next_state = `SM_WAIT_FOR_HEADER;
+                end
+            end
+            else begin
+                // Trigger received, but the line is disabled. 
+                // Immediately signal "done" so the AXI wrapper doesn't wait/timeout.
+                assert_done = 1;
+                next_state = `SM_IDLE;
             end
         end
         
@@ -323,9 +454,10 @@ always @(*) begin
                 // Check that the new header is valid:
                 // * expect more-significant nibble to be 0x9
                 // * expect packet number in less-significant nibble
-                if ((uart_data_byte[7:4] == 4'h9) & (uart_data_byte[3:0] == packet_counter)) begin
+                if (uart_data_byte[7:4] == 4'h9) begin
                     // Ideally we make it to here: parity check passed and header byte was what we expected it to be
                     assert_header_good = 1;
+                    load_current_packet = 1;
                     inc_counter_bytes_valid = 1;
                 end
                 else begin
@@ -415,17 +547,17 @@ always @(*) begin
                 // This signal is ANDed with the value of the packet counter to make sure the *correct*
                 // packet is marked valid 
                 assert_data_valid = 1;
+                set_packet_valid = 1;
             end
 
-            if (packet_counter == 4'd3) begin
-                // Done (for real)! Captured all 4 data packets, so assert done and return to idle
+            if (&((packet_valid | (1 << current_packet)) | ~is_dout_enabled)) begin
                 next_state = `SM_IDLE;
                 assert_done = 1;
                 clr_sm_helpers = 1;
             end
+            
             else begin
-                // If the packet counter is 0-2, there is still more data to rx
-                inc_packet_counter = 1;
+                // If there are more enabled channels, there is still more data to rx
                 uart_start_rx = 1;
                 next_state = `SM_WAIT_FOR_HEADER;
                 clr_sm_helpers = 1;
