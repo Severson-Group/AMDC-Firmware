@@ -4,7 +4,7 @@
 #
 # Created by Nathan Petersen
 # February 26, 2019
-# 
+#
 # ----------------------------------------
 #
 # Use this tcl script to re-create the AMDC Vivado
@@ -25,6 +25,9 @@
 # of this script. Nathan then modified it to fit
 # the needs of the AMDC project. To recreate the
 # base script, use File > Write Project Tcl...
+#
+# Minor edits made by Harley Peterson on 6/2/2026
+# to support a custom eLev group board file.
 #
 # ----------------------------------------
 
@@ -57,7 +60,7 @@ set design_name $proj_name
 
 # Set project properties
 set obj [get_projects $proj_name]
-set_property -name "board_part" -value "em.avnet.com:picozed_7030_fmc2:part0:1.1" -objects $obj
+set_property -name "board_part" -value "elev.umn.edu:AMDC:part0:1.1" -objects $obj
 set_property -name "default_lib" -value "xil_defaultlib" -objects $obj
 set_property -name "ip_cache_permissions" -value "read write" -objects $obj
 set_property -name "ip_output_repo" -value "$proj_dir/${proj_name}.cache/ip" -objects $obj
