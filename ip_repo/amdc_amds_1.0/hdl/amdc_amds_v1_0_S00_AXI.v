@@ -860,8 +860,8 @@
         end
     end
 
-    assign amds_data0_fe = amds_data_ff3[0] & ~amds_data_ff2[0];
-    assign amds_data1_fe = amds_data_ff3[1] & ~amds_data_ff2[1];
+    assign amds_data0_fe = (amds_data_ff3[0] & ~amds_data_ff2[0]) | (&(~is_dout0_enabled));
+    assign amds_data1_fe = (amds_data_ff3[1] & ~amds_data_ff2[1]) | (&(~is_dout1_enabled));
 
 
     reg waiting_for_first_fe0, waiting_for_first_fe1, start_rx0, start_rx1;
