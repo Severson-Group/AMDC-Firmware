@@ -43,7 +43,7 @@ Want to help build the leading open-source advanced motor drive platform? Join t
 [releases-shield]: https://img.shields.io/github/release/Severson-Group/AMDC-Firmware.svg
 [license-shield]: https://img.shields.io/github/license/Severson-Group/AMDC-Firmware.svg
 [check-format-shield]: https://github.com/Severson-Group/AMDC-Firmware/actions/workflows/check-format.yml/badge.svg
-[maintenance-shield]: https://img.shields.io/maintenance/yes/2024.svg
+[maintenance-shield]: https://img.shields.io/maintenance/yes/2026.svg
 [commits-shield]: https://img.shields.io/github/commit-activity/y/Severson-Group/AMDC-Firmware/develop.svg
 
 [releases]: https://github.com/Severson-Group/AMDC-Firmware/releases
