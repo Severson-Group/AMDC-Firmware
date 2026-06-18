@@ -1,5 +1,9 @@
 `timescale 1 ns / 1 ps
 
+// Author: Harley Peterson
+// Date: 5/28/2026
+// This file READS individual BYTES from UART, then exposes them as an 8-bit register.
+
 module uart_rx(
 	input wire clk,
 	input wire rst_n,
@@ -14,302 +18,116 @@ module uart_rx(
 	// > Significant bit:   LSB first
 	input wire din,
 	
-	// Flag which indicates when to start looking for new UART data
-	// i.e. this should set some time before the start bit occurs
-	input wire start_rx,
-	
-	// Asserted when we saw a start bit and have receieved all data
+	// Asserted when we saw a start bit and have receieved all data and it's valid
 	output reg is_byte_valid,
 
 	// Asserted when we saw a start bit and received all data, but failed the parity check
 	output reg is_byte_corrupt,
 	
-	// Asserted when the user has started a rx, but we never saw a start bit!
-	output reg byte_timed_out,
-	
 	// Holds the contents of what we received over the UART line
 	output wire [7:0] dout
 );
 
-// ==============
-// "din" has already been double-flopped for meta-stability in the AXI driver file!
-//
-// HOWEVER... all of the state machines above this UART receiver add in several clock
-// cycles of delay. Without extra flopping of the data line in this module, the start bit
-// will fall several clock cyles before this module's SM is in the WAIT_START_BIT_STATE
-// Therefore, we will add some extra flopping in this module to line things up again
-// 
-// NOTE: The last ff is used to detect falling edges
-// ==============
+/*
 
-reg [4:0] din_flopper;
+First, identify the start bit.
+This is easy, always @ falling edge,
+UNLESS currently receiving data.
 
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		din_flopper <= 1'b0;
-	else
-		din_flopper <= {din_flopper[3:0], din};
-end
+Then, wait 5 clock cycles to offset read location for accuracy.
+Wait another 10 clock cycles to fast foward to the first data bit.
 
-// ===========================
-// Falling Edge Detector (din)
-// ===========================
+All of our packets are 9 bits long, 8 data 1 parity.
+On every tenth cycle, shift data into buffer.
 
-wire din_fall;
-assign din_fall = (~din_flopper[3] & din_flopper[4]);
+After 9 bits are read, check for parity. Timeouts don't exist anymore.
 
-// =================
-// UART RX Shift Reg
-// =================
+*/
 
+// flag to prevent logic execution until start bit has been seen.
+reg currently_reading_data;
+// The baud timer counts down until the next bit.
+reg [3:0] baud_timer;
+// This register tells the code to reset the countdown.
+wire reset_baud_timer;
+// This register tells the code to start a 1.5 baud countdown
+reg initial_baud_timer;
+// The baud clock is a clock signal operating at the baud rate.
+wire baud_clock;
+// the internal clock only runs when we are receiving data.
+wire internal_clock;
+// RX'd data + parity bit.
 reg [8:0] shift_reg;
-reg shift_reg_shift;
-reg reset_reg_shift;
+// This counts to 9, one increment for each bit read.
+reg [3:0] counter_bits_recieved;
+// Signals that we have received 9 bits and should finalise the data.
+wire transmission_complete;
+// Always contains the current validity of the shift register.
+// HIGH is VALID.
+wire shift_register_validity;
 
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		shift_reg <= 9'b0;
-	else if (reset_reg_shift)
-		shift_reg <= 9'b0;
-	else if (shift_reg_shift)
-		shift_reg <= {din_flopper[3], shift_reg[8:1]};
-end
 
+
+
+assign internal_clock = currently_reading_data & clk;
+// 10->6 (inclusive) are baud_clock HIGH
+// 5 ->1 (inclusive) are baud_clock LOW
+assign baud_clock = (baud_timer > 4'd5) & currently_reading_data;
+assign reset_baud_timer = baud_timer == 4'd0;
 // Extract only the data bits from the shift reg
 // The shift reg also holds the parity bit!
 assign dout[7:0] = shift_reg[7:0];
+// 10 bits in a (byte + parity + start bit), transmission complete when counter == 10.
+assign transmission_complete = counter_bits_recieved == 4'd10;
+// Odd parity, so XOR TRUE.
+assign shift_register_validity = ^shift_reg[8:0];
 
-// =======================
-// S/R flop: is_byte_valid
-// =======================
 
-reg deassert_is_byte_valid;
-reg assert_is_byte_valid;
-
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		is_byte_valid <= 1'b0;
-	else if (deassert_is_byte_valid)
-		is_byte_valid <= 1'b0;
-	else if (assert_is_byte_valid)
-		is_byte_valid <= 1'b1;
-	else
-		is_byte_valid <= is_byte_valid;
+always @(negedge din, negedge rst_n, posedge transmission_complete) begin
+    initial_baud_timer <= 1'b0;
+    if (!rst_n) begin
+        currently_reading_data <= 1'b0;
+        is_byte_corrupt <= 1'b0;
+        is_byte_valid <= 1'b0;
+    end else if (transmission_complete) begin
+        is_byte_valid <= shift_register_validity;
+        is_byte_corrupt <= !shift_register_validity;
+    end else begin
+    // Do nothing if we are already within a transmission.
+    if (!currently_reading_data) begin
+        initial_baud_timer <= 1'b1;
+        currently_reading_data <= 1'b1;
+        // Reset validity/corrupt flags.
+        is_byte_corrupt <= 1'b0;
+        is_byte_valid <= 1'b0;
+    end
+    end
 end
 
-// =======================
-// S/R flop: is_byte_corrupt
-// =======================
-
-reg deassert_is_byte_corrupt;
-reg assert_is_byte_corrupt;
-
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		is_byte_corrupt <= 1'b0;
-	else if (deassert_is_byte_corrupt)
-		is_byte_corrupt <= 1'b0;
-	else if (assert_is_byte_corrupt)
-		is_byte_corrupt <= 1'b1;
-	else
-		is_byte_corrupt <= is_byte_corrupt;
+// Continously count down while receiving data.
+always @(posedge internal_clock, posedge reset_baud_timer, negedge rst_n, posedge initial_baud_timer) begin
+    if (!rst_n)
+        baud_timer <= 4'b0000;
+    else if (reset_baud_timer)
+        baud_timer <= 4'd9;
+    else if (initial_baud_timer)
+        // 15 = 5 clock cycle delay for data integrity
+        //    + 9 clock cycle delay due to start bit.
+        baud_timer <= 4'd14;
+    else
+        baud_timer <= baud_timer - 3'd1;
 end
-
-// =======================
-// S/R flop: byte_timed_out
-// =======================
-
-reg deassert_byte_timed_out;
-reg assert_byte_timed_out;
-
-always @(posedge clk, negedge rst_n) begin
-	if (~rst_n)
-		byte_timed_out <= 1'b0;
-	else if (deassert_byte_timed_out)
-		byte_timed_out <= 1'b0;
-	else if (assert_byte_timed_out)
-		byte_timed_out <= 1'b1;
-	else
-		byte_timed_out <= byte_timed_out;
-end
-
-// ==============
-// Baud Period Timer
-// ==============
-
-reg [3:0] baud_timer;
-reg rst_baud_timer;
-
-always @(posedge clk, negedge rst_n) begin
-	if (!rst_n)
-		baud_timer <= 4'b0;
-	else if (rst_baud_timer)
-		baud_timer <= 4'b0;
-	else
-		baud_timer <= baud_timer + 4'd1;
-end
-
-// ===========
-// Bit counter
-// ===========
-
-reg [3:0] bit_counter;
-reg inc_bit_counter;
-reg rst_bit_counter;
-
-always @(posedge clk, negedge rst_n) begin
-	if (!rst_n)
-		bit_counter <= 4'b0;
-	else if (rst_bit_counter)
-		bit_counter <= 4'b0;
-	else if (inc_bit_counter)
-		bit_counter <= bit_counter + 4'd1;
-	else
-		bit_counter <= bit_counter;
-end
-
-// ==================
-// Byte Timeout Timer
-// ==================
-
-// Wait for a max of 10us for the start bit
-// after adc_uart_rx tells us to expect it
-//
-// 2.5us = 2500ns = 500 clock cycles
-// 10us = 10000ns = 2000 
-//
-// Let's have max of 1024, so 10 bit.
-// 10 bits for max 1024
-
-reg [10:0] byte_timeout_timer;
-reg reset_byte_timeout_timer;
-always @(posedge clk, negedge rst_n) begin
-	if (!rst_n)
-		byte_timeout_timer <= 11'b0;
-	else if (reset_byte_timeout_timer)
-		byte_timeout_timer <= 11'b0;
-	else
-		byte_timeout_timer <= byte_timeout_timer + 1;
-end
-
-// Detect when timer = max value (i.e., about 10us)
-wire max_byte_timeout_timer;
-assign max_byte_timeout_timer = &byte_timeout_timer;
-
-// =============
-// State Machine
-// =============
-
-`define SM_IDLE           (3'h0)
-`define SM_WAIT_START_BIT (3'h1)
-`define SM_WAIT_HALF_BAUD (3'h2)
-`define SM_WAIT_FULL_BAUD (3'h3)
-`define SM_END_OF_RX      (3'h4)
-
-reg [2:0] state;
-reg [2:0] next_state;
-
-always @(posedge clk, negedge rst_n) begin
-	if (!rst_n)
-		state <= `SM_IDLE;
-	else
-		state <= next_state;
-end
-
-always @(*) begin
-	// Set default outputs
-	next_state = state;
-	
-	reset_reg_shift = 0;
-	shift_reg_shift = 0;
-	inc_bit_counter = 0;
-	rst_bit_counter = 0;
-	rst_baud_timer = 0;
-	reset_byte_timeout_timer = 0;
-	
-	deassert_is_byte_valid = 0;
-	assert_is_byte_valid = 0;
-	deassert_byte_timed_out = 0;
-	assert_byte_timed_out = 0;
-	deassert_is_byte_corrupt = 0;
-	assert_is_byte_corrupt = 0;
-	
-	case (state)
-		`SM_IDLE: begin
-			if (start_rx) begin
-			    reset_reg_shift = 1;
-				rst_bit_counter = 1;
-				reset_byte_timeout_timer = 1;
-				deassert_is_byte_valid = 1;
-				deassert_byte_timed_out = 1;
-				deassert_is_byte_corrupt = 1;
-				next_state = `SM_WAIT_START_BIT;
-			end
-		end	
-	
-		`SM_WAIT_START_BIT: begin
-			if (din_fall) begin
-				// Falling DIN means start-bit, here comes a packet!				
-				rst_baud_timer = 1;
-				next_state = `SM_WAIT_HALF_BAUD;
-			end
-			
-			else if (max_byte_timeout_timer) begin
-				// TIMEOUT! Abort...
-				next_state = `SM_IDLE;
-				assert_byte_timed_out = 1;
-			end
-		end
-		
-		`SM_WAIT_HALF_BAUD: begin
-			// Wait for half of a baud period
-			//
-			// Means timer gets to timer_max = (((1 / baud_rate)/2) * 1e9 / clk_ns)
-			// 
-			// If clk_ns = 5ns and baud_rate 20M,
-			// then timer_max = 5 cycles			
-			//
-			// Because we detected the DIN falling edge 1 clock cycle late, wait 1 less cycle
-			// 5 - 1 = 4 cycle
-			if (baud_timer >= 4'd4) begin
-				rst_baud_timer = 1;
-				next_state = `SM_WAIT_FULL_BAUD;
-			end
-		end
-
-		`SM_WAIT_FULL_BAUD: begin
-			// Wait for full baud period
-			//
-			// In the half baud wait state, we accounted for the delay
-			// because of our flip flopping of DIN, so here we want 
-			// to wait for EXACTLY one baud period.
-			//
-			// timer_max = ((1 / baud_rate) * 1e9 / clk_ns)
-			//           = 10 cycles
-			if (baud_timer >= 4'd9) begin
-				shift_reg_shift = 1;
-				rst_baud_timer = 1;
-				inc_bit_counter = 1;
-								
-				if (bit_counter >= 4'd8) begin
-					next_state = `SM_END_OF_RX;
-				end
-			end
-		end
-		
-		`SM_END_OF_RX: begin
-			if (/*ODD parity:*/^shift_reg[8:0]) begin
-				// Packet looks valid!
-				assert_is_byte_valid = 1;
-			end
-			else begin
-				// Data is corrupt!
-				assert_is_byte_corrupt = 1;
-			end
-			
-			next_state = `SM_IDLE;
-		end
-	endcase
+ 
+// Read data from the input.
+always @(posedge baud_clock, negedge rst_n) begin
+    if (!rst_n) begin
+        shift_reg <= 9'b000000000;
+        counter_bits_recieved <= 4'b0000;
+    end else if (baud_clock) begin
+        shift_reg <= {din, shift_reg[8:1]};
+        counter_bits_recieved = counter_bits_recieved + 4'd1;
+    end 
+    
 end
 
 endmodule
