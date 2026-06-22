@@ -73,7 +73,6 @@ assign internal_clock = currently_reading_data & clk;
 // 10->6 (inclusive) are baud_clock HIGH
 // 5 ->1 (inclusive) are baud_clock LOW
 assign baud_clock = (baud_timer > 4'd5) & currently_reading_data;
-assign reset_baud_timer = baud_timer == 4'd0;
 // Extract only the data bits from the shift reg
 // The shift reg also holds the parity bit!
 assign dout[7:0] = shift_reg[7:0];
@@ -83,7 +82,7 @@ assign transmission_complete = counter_bits_recieved == 4'd10;
 assign shift_register_validity = ^shift_reg[8:0];
 
 
-always @(negedge din, negedge rst_n, posedge transmission_complete) begin
+always @(negedge rst_n, posedge clk) begin
     initial_baud_timer <= 1'b0;
     if (!rst_n) begin
         currently_reading_data <= 1'b0;
@@ -94,7 +93,7 @@ always @(negedge din, negedge rst_n, posedge transmission_complete) begin
         is_byte_corrupt <= !shift_register_validity;
     end else begin
     // Do nothing if we are already within a transmission.
-    if (!currently_reading_data) begin
+    if ((!currently_reading_data) & (!din)) begin
         initial_baud_timer <= 1'b1;
         currently_reading_data <= 1'b1;
         // Reset validity/corrupt flags.
@@ -105,17 +104,18 @@ always @(negedge din, negedge rst_n, posedge transmission_complete) begin
 end
 
 // Continously count down while receiving data.
-always @(posedge internal_clock, posedge reset_baud_timer, negedge rst_n, posedge initial_baud_timer) begin
+always @(posedge internal_clock, negedge rst_n, posedge initial_baud_timer) begin
     if (!rst_n)
         baud_timer <= 4'b0000;
-    else if (reset_baud_timer)
-        baud_timer <= 4'd9;
     else if (initial_baud_timer)
         // 15 = 5 clock cycle delay for data integrity
         //    + 9 clock cycle delay due to start bit.
-        baud_timer <= 4'd14;
-    else
+        baud_timer <= 4'd12;
+    else if (baud_timer > 1) begin
         baud_timer <= baud_timer - 3'd1;
+    end else begin
+        baud_timer <= 4'd9;
+    end
 end
  
 // Read data from the input.

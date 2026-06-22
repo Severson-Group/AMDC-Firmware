@@ -1,6 +1,6 @@
 `timescale 1 ns / 1 ps
 
-module adc_uart_rx(
+module adc_uart_rx_new(
     input wire clk,
     input wire rst_n,
     
