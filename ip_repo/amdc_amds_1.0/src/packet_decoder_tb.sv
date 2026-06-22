@@ -83,81 +83,41 @@ module packet_decoder_tb();
     #2;
     
     auto_start_rx();
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b10101010, 0);
     send_byte(8'b11111111, 0);
-    
-    // TRANSMISSION COMPLETE
-    #20;
-    auto_start_rx();
     send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
-    send_byte(8'b11111111, 0);
-    
-    send_byte(8'b10101010, 0);
     
     $finish;
     end

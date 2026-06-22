@@ -31,6 +31,17 @@ module adc_uart_rx(
     output reg [15:0] counter_bytes_timed_out
 );
 
+wire[15:0] counter_bytes_valid_next;
+wire[15:0] counter_bytes_corrupt_next;
+wire[15:0] counter_bytes_timed_out_next;
+
+reg[3:0] sensor_index;
+wire[3:0] sensor_index_next;
+reg MSB;
+reg[15:0] timer;
+wire[15:0] timer_next;
+reg finalize;
+
 reg[15:0] adc_data[11:0];
 assign adc_dout0 = adc_data[0];
 assign adc_dout1 = adc_data[1];
@@ -44,10 +55,14 @@ assign adc_dout8 = adc_data[8];
 assign adc_dout9 = adc_data[9];
 assign adc_dout10 = adc_data[10];
 assign adc_dout11 = adc_data[11];
-reg[3:0] sensor_index;
-reg MSB;
-reg[15:0] timer;
-reg finalize;
+
+assign sensor_index_next = sensor_index + 1;
+assign timer_next = timer + 1;
+
+assign counter_bytes_valid_next = counter_bytes_valid + 1;
+assign counter_bytes_corrupt_next = counter_bytes_corrupt + 1;
+assign counter_bytes_timed_out_next = counter_bytes_timed_out + 1;
+
 
 	// input wire clk,
 	// input wire rst_n,
@@ -107,53 +122,61 @@ uart_rx byte_reader(
 // }
 
 always @(posedge clk, negedge rst_n) begin
-    timer = timer + 1;
+    sensor_index <= sensor_index;
+    counter_bytes_corrupt <= counter_bytes_corrupt;
+    counter_bytes_timed_out <= counter_bytes_timed_out;
+    counter_bytes_valid <= counter_bytes_valid;
+    timer <= timer;
+    
     if(!rst_n) begin
+        timer <= 0;
         MSB <= 1;
-        sensor_index = 0;
+        sensor_index <= 0;
         is_dout_valid <= 0;
         should_be_reading <= 0;
-        finalize = 0;
+        finalize <= 0;
     end else if (read_complete & trigger_uart_rst_n) begin
-        timer = 0;
-        if (valid) begin
-            if (MSB) begin
+        timer <= 0;
+        if (valid == 1) begin
+            if (MSB == 1) begin
                 MSB <= 0;
                 adc_data[sensor_index][15:8] <= ephemeral_data;
             end else begin
                 MSB <= 1;
                 adc_data[sensor_index][7:0] <= ephemeral_data;
                 is_dout_valid[sensor_index] <= 1;
-                sensor_index = sensor_index + 1;
+                sensor_index <= sensor_index_next;
+                if (sensor_index == 11) begin
+                    finalize <= 1;
+                end
             end
-            counter_bytes_valid = counter_bytes_valid + 1;
-            if (sensor_index == 12) begin
-                finalize = 1;
-            end
+            counter_bytes_valid <= counter_bytes_valid_next;
         end else begin
-            finalize = 1;
-            counter_bytes_corrupt = counter_bytes_corrupt + 1;
+            finalize <= 1;
+            counter_bytes_corrupt <= counter_bytes_corrupt_next;
         end 
         trigger_uart_rst_n <= 0;
-    end else if (finalize) begin
-        finalize = 0;
+    end else if (finalize == 1) begin
+        finalize <= 0;
         assert_done <= 1;
         adc_uart_done <= 1;
         MSB <= 1;
         should_be_reading <= 0;
+        trigger_uart_rst_n <= 1;
     end else if (!should_be_reading) begin
         sensor_index <= 0;
         assert_done <= 0;
+        timer <= 0;
         if (start_rx) begin
             should_be_reading <= 1;
             adc_uart_done <= 0;
         end
     end else begin
+        timer <= timer_next;
         trigger_uart_rst_n <= 1;
-        assert_done <= 0;
         if (timer >= 1000) begin
-            finalize = 1;
-            counter_bytes_timed_out = counter_bytes_timed_out + 1;
+            finalize <= 1;
+            counter_bytes_timed_out <= counter_bytes_timed_out_next;
         end
     end
 end
