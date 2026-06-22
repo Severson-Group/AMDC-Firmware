@@ -143,9 +143,11 @@ always @(posedge clk, negedge rst_n) begin
         should_be_reading <= 0;
     end else if (!should_be_reading) begin
         sensor_index <= 0;
-        adc_uart_done <= 0;
-        is_dout_valid <= 0;
-        should_be_reading <= 1;
+        assert_done <= 0;
+        if (start_rx) begin
+            should_be_reading <= 1;
+            adc_uart_done <= 0;
+        end
     end else begin
         trigger_uart_rst_n <= 1;
         assert_done <= 0;

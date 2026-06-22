@@ -70,7 +70,8 @@ module packet_decoder_tb();
         .din(uart_data[examine_line_x]),
         .is_dout_enabled(is_dout_enabled),
         .adc_uart_done(adc_uart_done),
-        .assert_done(assert_done)
+        .assert_done(assert_done),
+        .start_rx(start_rx)
     );
     assign adc_data = packet_decoder.adc_data;
     initial begin 
@@ -117,6 +118,46 @@ module packet_decoder_tb();
     
     send_byte(8'b10101010, 0);
     send_byte(8'b11111111, 0);
+    
+    // TRANSMISSION COMPLETE
+    #20;
+    auto_start_rx();
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
+    send_byte(8'b11111111, 0);
+    
+    send_byte(8'b10101010, 0);
     
     $finish;
     end
