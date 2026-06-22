@@ -119,7 +119,7 @@ always @(posedge clk, negedge rst_n) begin
         if (valid) begin
             if (MSB) begin
                 MSB <= 0;
-                adc_data[sensor_index][16:8] <= ephemeral_data;
+                adc_data[sensor_index][15:8] <= ephemeral_data;
             end else begin
                 MSB <= 1;
                 adc_data[sensor_index][7:0] <= ephemeral_data;
