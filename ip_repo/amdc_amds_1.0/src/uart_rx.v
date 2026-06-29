@@ -69,11 +69,6 @@ wire transmission_complete;
 wire shift_register_validity;
 
 
-
-
-assign internal_clock = currently_reading_data & clk;
-// 10->6 (inclusive) are baud_clock HIGH
-// 5 ->1 (inclusive) are baud_clock LOW
 assign baud_clock = (baud_timer == 4'd9) & currently_reading_data;
 // Extract only the data bits from the shift reg
 // The shift reg also holds the parity bit!
@@ -109,13 +104,15 @@ always @(negedge rst_n or posedge clk) begin
 end
 
 // Continously count down while receiving data.
-always @(posedge internal_clock or negedge rst_n) begin
+always @(posedge clk or negedge rst_n) begin
     if (!rst_n)
         baud_timer <= 4'b0000;
+    else if (!currently_reading_data)
+        baud_timer <= baud_timer;//do nothing
     else if (initial_baud_timer)
         // 15 = 5 clock cycle delay for data integrity
         //    + 9 clock cycle delay due to start bit.
-        baud_timer = 4'd12;
+        baud_timer <= 4'd12;
     else if (baud_timer > 1) begin
         baud_timer <= baud_timer_next;
     end else begin

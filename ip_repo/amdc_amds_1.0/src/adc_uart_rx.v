@@ -87,7 +87,6 @@ assign counter_bytes_timed_out_next = counter_bytes_timed_out + 1;
 	// output wire [7:0] dout
 wire valid;
 wire corrupt;
-reg [7:0] data;
 wire[7:0] ephemeral_data;
 wire read_complete;
 reg should_be_reading;
@@ -122,12 +121,6 @@ uart_rx byte_reader(
 // }
 
 always @(posedge clk, negedge rst_n) begin
-    sensor_index <= sensor_index;
-    counter_bytes_corrupt <= counter_bytes_corrupt;
-    counter_bytes_timed_out <= counter_bytes_timed_out;
-    counter_bytes_valid <= counter_bytes_valid;
-    timer <= timer;
-    
     if(!rst_n) begin
         timer <= 0;
         MSB <= 1;
@@ -135,6 +128,12 @@ always @(posedge clk, negedge rst_n) begin
         is_dout_valid <= 0;
         should_be_reading <= 0;
         finalize <= 0;
+        counter_bytes_corrupt <= 0;
+        counter_bytes_timed_out <= 0;
+        counter_bytes_valid <= 0;
+        trigger_uart_rst_n <= 1;
+        adc_uart_done <= 0;
+        assert_done <= 0;
     end else if (read_complete & trigger_uart_rst_n) begin
         timer <= 0;
         if (valid == 1) begin
@@ -174,7 +173,7 @@ always @(posedge clk, negedge rst_n) begin
     end else begin
         timer <= timer_next;
         trigger_uart_rst_n <= 1;
-        if (timer >= 1000) begin
+        if (timer >= 2000) begin
             finalize <= 1;
             counter_bytes_timed_out <= counter_bytes_timed_out_next;
         end
