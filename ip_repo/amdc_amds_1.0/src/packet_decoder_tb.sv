@@ -30,7 +30,7 @@ module packet_decoder_tb();
 	always #1 clk = ~clk;
 	reg rst_n = 1'b1;
 	reg [1:0] uart_data = 2'b11;
-	reg [11:0] is_dout_enabled = 12'b111111111111;
+	reg [11:0] is_dout_enabled = 12'b010101010101;
 	wire adc_uart_done;
 	wire assert_done;
 	reg start_rx = 0;
@@ -83,6 +83,7 @@ module packet_decoder_tb();
     #2;
     
     auto_start_rx();
+    #2000;
     send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
@@ -101,23 +102,23 @@ module packet_decoder_tb();
     send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
     $finish;
     end

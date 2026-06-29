@@ -932,7 +932,7 @@
     adc_uart_rx iADC_UART_RX0 (
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
-        .start_rx(enabled_trigger),
+        .start_rx(start_rx0),
         .din(amds_data_ff2[0]),
         .is_dout_valid(is_dout0_valid),
         .is_dout_enabled(is_dout0_enabled),
@@ -958,7 +958,7 @@
     adc_uart_rx iADC_UART_RX1 (
         .clk(S_AXI_ACLK),
         .rst_n(S_AXI_ARESETN),
-        .start_rx(enabled_trigger),
+        .start_rx(start_rx1),
         .din(amds_data_ff2[1]),
         .is_dout_valid(is_dout1_valid),
         .is_dout_enabled(is_dout1_enabled),

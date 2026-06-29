@@ -28,7 +28,9 @@ module axi_tb();
 	always #1 clk = ~clk;
 	reg rst_n = 1'b1;
 	reg [1:0] uart_data = 2'b11;
-	reg [11:0] is_dout_enabled = 12'b111111111111;
+	reg [11:0] is_dout_enabled = 12'b010101010101;
+	wire [11:0] is_dout_enabled_real;
+	
 	 wire axi_driver_done;
 	 reg trigger_axi_read = 0;
 	 
@@ -42,7 +44,7 @@ module axi_tb();
         .done(axi_driver_done),
         .trigger(trigger_axi_read)
         );
-    
+    assign is_dout_enabled_real = axi_module.iADC_UART_RX0.is_dout_enabled;
     assign adc_data[0] = axi_module.my_adc_data0;
     assign adc_data[1] = axi_module.my_adc_data1;
     assign adc_data[2] = axi_module.my_adc_data2;
@@ -82,7 +84,7 @@ module axi_tb();
     #3000;
     send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
-    
+    #2100;
     send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
@@ -98,23 +100,23 @@ module axi_tb();
     send_byte(8'b11111111, 0);
     send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
-    send_byte(8'b11111111, 0);
-    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
+//    send_byte(8'b11111111, 0);
     
     $finish;
     end

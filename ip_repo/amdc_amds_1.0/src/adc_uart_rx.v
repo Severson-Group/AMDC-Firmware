@@ -134,9 +134,12 @@ always @(posedge clk, negedge rst_n) begin
         trigger_uart_rst_n <= 1;
         adc_uart_done <= 0;
         assert_done <= 0;
-    end else if (!is_dout_enabled[sensor_index] & trigger_uart_rst_n) begin
+    end else if (~(is_dout_enabled[sensor_index]) & trigger_uart_rst_n & ~finalize) begin
         //The selected dout is not enabled, move to the next one.
         sensor_index <= sensor_index_next;
+        if (is_dout_enabled == 0) begin
+            finalize <= 1;
+        end
     end else if (read_complete & trigger_uart_rst_n) begin
         timer <= 0;
         if (valid == 1) begin
@@ -162,14 +165,14 @@ always @(posedge clk, negedge rst_n) begin
         MSB <= 1;
         should_be_reading <= 0;
         trigger_uart_rst_n <= 1;
-        is_dout_valid <= 0;
     end else if (!should_be_reading) begin
         sensor_index <= 0;
         assert_done <= 0;
         timer <= 0;
         if (start_rx) begin
             should_be_reading <= 1;
-            trigger_uart_rst_n <= 0;
+            //trigger_uart_rst_n <= 0;
+            is_dout_valid <= 0;
             adc_uart_done <= 0;
         end
     end else begin
