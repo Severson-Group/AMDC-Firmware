@@ -40,7 +40,6 @@ wire[3:0] sensor_index_next;
 reg MSB;
 reg[15:0] timer;
 wire[15:0] timer_next;
-reg finalize;
 
 reg[15:0] adc_data[11:0];
 assign adc_dout0 = adc_data[0];
@@ -89,8 +88,9 @@ wire valid;
 wire corrupt;
 wire[7:0] ephemeral_data;
 wire read_complete;
-reg should_be_reading;
 assign read_complete = (valid | corrupt) & should_be_reading;
+wire selected_dout_is_not_enabled;
+assign selected_dout_is_not_enabled = ~(is_dout_enabled[sensor_index]) & trigger_uart_rst_n & ~finalize;
 wire uart_rst_n;
 reg trigger_uart_rst_n;
 assign uart_rst_n = rst_n & trigger_uart_rst_n;
@@ -120,69 +120,83 @@ uart_rx byte_reader(
 // reset uart.
 // }
 
+reg [4:0] state;
+
+`define IDLE 0
+`define FINALIZE 1
+`define SEARCH_FOR_ENABLED_SENSOR 2
+`define READING 3
+
 always @(posedge clk, negedge rst_n) begin
     if(!rst_n) begin
         timer <= 0;
         MSB <= 1;
         sensor_index <= 0;
         is_dout_valid <= 0;
-        should_be_reading <= 0;
-        finalize <= 0;
         counter_bytes_corrupt <= 0;
         counter_bytes_timed_out <= 0;
         counter_bytes_valid <= 0;
         trigger_uart_rst_n <= 1;
         adc_uart_done <= 0;
         assert_done <= 0;
-    end else if (~(is_dout_enabled[sensor_index]) & trigger_uart_rst_n & ~finalize) begin
-        //The selected dout is not enabled, move to the next one.
-        sensor_index <= sensor_index_next;
-        if (is_dout_enabled == 0) begin
-            finalize <= 1;
-        end
-    end else if (read_complete & trigger_uart_rst_n) begin
-        timer <= 0;
-        if (valid == 1) begin
-            if (MSB == 1) begin
-                MSB <= 0;
-                adc_data[sensor_index][15:8] <= ephemeral_data;
-            end else begin
-                MSB <= 1;
-                adc_data[sensor_index][7:0] <= ephemeral_data;
-                is_dout_valid[sensor_index] <= 1;
-                sensor_index <= sensor_index_next;
-            end
-            counter_bytes_valid <= counter_bytes_valid_next;
-        end else begin
-            finalize <= 1;
-            counter_bytes_corrupt <= counter_bytes_corrupt_next;
-        end 
-        trigger_uart_rst_n <= 0;
-    end else if (finalize == 1) begin
-        finalize <= 0;
+        state <= IDLE;
+    end else if (state == FINALIZE) begin
+        //We are done with the transmission. We need to stop reading and prepare for a new transmission.
         assert_done <= 1;
         adc_uart_done <= 1;
         MSB <= 1;
-        should_be_reading <= 0;
+        state <= IDLE;
         trigger_uart_rst_n <= 1;
-    end else if (!should_be_reading) begin
+    end else if (state == IDLE) begin
+        // We are currently idle, and must be ready to begin reading at any time.
         sensor_index <= 0;
         assert_done <= 0;
         timer <= 0;
         if (start_rx) begin
-            should_be_reading <= 1;
+            state <= SEARCH_FOR_ENABLED_SENSOR;
             //trigger_uart_rst_n <= 0;
             is_dout_valid <= 0;
             adc_uart_done <= 0;
         end
-    end else begin
-        timer <= timer_next;
-        trigger_uart_rst_n <= 1;
-        if (timer >= 1000) begin
-            finalize <= 1;
-            counter_bytes_timed_out <= counter_bytes_timed_out_next;
-        end else if (is_dout_valid == is_dout_enabled) begin
-            finalize <= 1;
+    end else if (state == SEARCH_FOR_ENABLED_SENSOR) begin
+        if(selected_dout_is_not_enabled) begin
+            //The selected dout is not enabled, move to the next one.
+            sensor_index <= sensor_index_next;
+            if (is_dout_enabled == 0) begin // Check to make sure that at least one sensor is enabled
+                state <= FINALIZE;
+            end
+        end else begin // Selected DOUT is enabled
+            state <= READING;
+        end
+    end else if (state == READING) begin
+        if (read_complete & trigger_uart_rst_n) begin
+            timer <= 0;
+            if (valid == 1) begin
+                if (MSB == 1) begin
+                    MSB <= 0;
+                    adc_data[sensor_index][15:8] <= ephemeral_data;
+                end else begin
+                    MSB <= 1;
+                    adc_data[sensor_index][7:0] <= ephemeral_data;
+                    is_dout_valid[sensor_index] <= 1;
+                    sensor_index <= sensor_index_next;
+                    state <= SEARCH_FOR_ENABLED_SENSOR;
+                end
+                counter_bytes_valid <= counter_bytes_valid_next;
+            end else begin
+                state <= FINALIZE;
+                counter_bytes_corrupt <= counter_bytes_corrupt_next;
+            end 
+            trigger_uart_rst_n <= 0;
+        end else begin 
+            timer <= timer_next;
+            trigger_uart_rst_n <= 1;
+            if (timer >= 1000) begin
+                state <= FINALIZE;
+                counter_bytes_timed_out <= counter_bytes_timed_out_next;
+            end else if (is_dout_valid == is_dout_enabled) begin
+                state <= FINALIZE;
+            end
         end
     end
 end
