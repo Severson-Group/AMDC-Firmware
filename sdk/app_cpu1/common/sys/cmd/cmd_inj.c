@@ -20,6 +20,7 @@ static command_help_t cmd_help[] = {
     { "chirp <name> <set|add|sub> <gain> <freqMin> <freqMax> <period>", "Inject chirp" },
     { "triangle <name> <set|add|sub> <valueMin> <valueMax> <period>", "Inject triangle" },
     { "square <name> <set|add|sub> <valueMin> <valueMax> <period>", "Inject square" },
+    { "ramp <name> <set|add|sub> <valueMin> <valueMax> <period>", "Inject ramp" },
 };
 
 void cmd_inj_register(void)
